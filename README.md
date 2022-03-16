@@ -1,2 +1,2 @@
 # Finale-to-do
-Minimalistic to-do a[[
+Minimalistic to-do app
