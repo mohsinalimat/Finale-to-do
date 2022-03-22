@@ -1,0 +1,136 @@
+//
+//  TaskGroupView.swift
+//  Finale To-do
+//
+//  Created by Grant Oganan on 3/15/22.
+//
+
+import SwiftUI
+
+struct TaskListView: View {
+    @Binding var taskList: TaskList
+    
+    @State var showCalendar = false
+    @State var taskBeingEdited = Task(name: "")
+    
+    @State var oldTaskListID = UUID()
+    
+    var mainView: MainView?
+    
+    @State var scrollScaleFactor = 0.0
+    @State var initialHeaderOffset = 1.0
+    
+    var body: some View {
+        ZStack {
+            Color(uiColor: UIColor.systemBackground)
+                .ignoresSafeArea()
+                .zIndex(0)
+            
+            VStack (spacing: 0) {
+                ZStack (alignment: .leading) {
+                    Rectangle()
+                        .ignoresSafeArea()
+                        .background(.ultraThinMaterial)
+                        .foregroundColor(taskList.primaryColor.secondaryColor)
+                        .frame(height: UIScreen.main.bounds.height*0.2)
+                        .scaleEffect(y: 1+(scrollScaleFactor/(UIScreen.main.bounds.height*0.2)), anchor: UnitPoint(x: 0, y: 0))
+                    VStack (alignment: .leading, spacing: 20) {
+                        Button {
+                            if mainView!.isSideMenuOpen { mainView?.CloseSideMenu() }
+                            else { mainView?.OpenSideMenu() }
+                        } label: {
+                            Label("", systemImage: "line.3.horizontal")
+                                .foregroundColor(.primary)
+                                .font(.title)
+                        }
+                        .padding()
+                        
+                        Text(taskList.name)
+                            .font(.system(size: 40 + scrollScaleFactor/30))
+                            .fontWeight(.bold)
+                            .font(.system(size: 40))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal)
+                            .offset(y: scrollScaleFactor)
+                    }.offset(y: 20)
+                }.zIndex(2)
+                
+                
+                List {
+                    Section (header: Text("Upcoming")) {
+                        ForEach(taskList.upcomingTasks) { task in
+                            UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: taskList.primaryColor)
+                                .onAppear {
+                                    oldTaskListID = taskList.id
+                                }
+                        }
+                        .onDelete(perform: deleteUpcoming)
+                    }
+                    .listRowSeparator(.hidden)
+                    Section (header: Text("Completed")) {
+                        ForEach(taskList.completedTasks) { task in
+                            CompletedTaskSlider(task: task, sliderColor: taskList.primaryColor.secondaryColor)
+                        }
+                        .onDelete(perform: deleteCompleted)
+                    }
+                    .listRowSeparator(.hidden)
+                    GeometryReader { proxy in
+                        let offset = proxy.frame(in: .named("scroll")).minY
+                        Color.clear.preference(key: ViewOffsetKey.self, value: offset)
+                    }
+                    .onPreferenceChange(ViewOffsetKey.self) { value in
+                        if initialHeaderOffset == 1.0 { initialHeaderOffset = value; return; }
+                        if oldTaskListID != taskList.id { initialHeaderOffset = value}
+
+                        if oldTaskListID == taskList.id {
+                            withAnimation(.linear(duration: 0.04)) {
+                                scrollScaleFactor = value-initialHeaderOffset > 0 ? value-initialHeaderOffset : 0
+                            }
+                        }
+                    }
+                    .listRowSeparator(.hidden)
+                }
+                .padding(.top, -200)
+                .listStyle(.plain)
+                .overlay {
+                    GeometryReader { geo in
+                        AddTaskButton(color: taskList.primaryColor)
+                            .padding()
+                            .position(x: geo.size.width*0.85, y: geo.size.height-geo.size.width*0.25)
+                    }
+
+                }
+                .coordinateSpace(name: "scroll")
+                .onAppear {
+                    UIScrollView.appearance().clipsToBounds = false
+                    UIScrollView.appearance().contentInset = UIEdgeInsets(top: 200, left: 0, bottom: 0, right: 0)
+                }
+                .zIndex(1)
+            }
+        
+            DateSelectionUI(showView: $showCalendar, task: $taskBeingEdited, color: $taskList.primaryColor)
+        }
+    }
+    
+    func deleteUpcoming(at offsets: IndexSet) {
+        taskList.upcomingTasks.remove(atOffsets: offsets)
+    }
+    func deleteCompleted(at offsets: IndexSet) {
+        taskList.completedTasks.remove(atOffsets: offsets)
+    }
+}
+
+struct TaskListView_Previews: PreviewProvider {
+    static var previews: some View {
+        TaskListView(taskList: .constant(TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])), mainView: nil)
+    }
+}
+
+struct ViewOffsetKey: PreferenceKey {
+    typealias Value = CGFloat
+    static var defaultValue = CGFloat.zero
+    static func reduce(value: inout Value, nextValue: () -> Value) {
+        value += nextValue()
+    }
+}
+

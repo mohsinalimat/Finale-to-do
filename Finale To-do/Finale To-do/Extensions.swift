@@ -25,7 +25,7 @@ extension Color {
     }
     
     func lerp (second: Color, percentage: CGFloat) -> Color {
-        return Color(red: (1-percentage)*self.components.red + percentage*second.components.red, green: (1-percentage)*self.components.green + percentage*second.components.green, blue: (1-percentage)*self.components.blue + percentage*second.components.blue)
+        return Color(red: (1-percentage)*self.components.red + percentage*second.components.red, green: (1-percentage)*self.components.green + percentage*second.components.green, blue: (1-percentage)*self.components.blue + percentage*second.components.blue, opacity: (1-percentage)*self.components.opacity + percentage*second.components.opacity)
     }
     
     init(hex: String) {
@@ -75,3 +75,12 @@ extension Color {
     }
 }
 
+
+extension Date {
+    func get(_ components: Calendar.Component..., calendar: Calendar = Calendar.current) -> DateComponents {
+        return calendar.dateComponents(Set(components), from: self)
+    }
+    func get(_ components: Calendar.Component, calendar: Calendar = Calendar.current) -> Int {
+        return calendar.component(components, from: self)
+    }
+}

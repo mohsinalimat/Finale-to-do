@@ -15,7 +15,7 @@ struct MainView: View {
     @State var isSideMenuOpen = false
     @State var xOffset: CGFloat = 0
     
-    @State var allTaskList = [TaskList(name: "Work", primaryColor: .red, upcomingTasks: [Task(name: "Yollo")]), TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])]
+    @State var allTaskList = [TaskList(name: "Work", primaryColor: .red, upcomingTasks: [Task(name: "Yollo"), Task(name: "Yollo2")], completedTasks: [Task(name: "Yollo"), Task(name: "Yollo2")]), TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])]
     
     @State var currentListIndex = 0
     
@@ -24,7 +24,7 @@ struct MainView: View {
             SideMenuView(sideMenuWidth: sideMenuWidth, allTaskLists: $allTaskList, currentListIndex: $currentListIndex, mainView: self)
                 .offset(x: -0.5*(UIScreen.main.bounds.width-sideMenuWidth))
             
-            TaskGroupView(taskList: $allTaskList[currentListIndex], mainView: self)
+            TaskListView(taskList: $allTaskList[currentListIndex], mainView: self)
                 .offset(x: xOffset)
             Rectangle()
                 .offset(x: xOffset, y: 80)
@@ -140,13 +140,15 @@ class Task: Identifiable, Equatable {
     var dateAssigned: Date
     var dateCreated: Date
     var dateCompleted: Date
+    var notificationEnabled: Bool
     
-    init(name: String, isComleted: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date(timeIntervalSince1970: 0), dateCompleted: Date = Date(timeIntervalSince1970: 0)) {
+    init(name: String, isComleted: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date(timeIntervalSince1970: 0), dateCompleted: Date = Date(timeIntervalSince1970: 0), notificationEnabled: Bool = false) {
         self.name = name
         self.isCompleted = isComleted
         self.dateAssigned = dateAssigned
         self.dateCreated = dateCreated
         self.dateCompleted = dateCompleted
+        self.notificationEnabled = notificationEnabled
     }
 }
 

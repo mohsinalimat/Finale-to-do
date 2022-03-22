@@ -11,14 +11,14 @@ struct CompletedTaskSlider: View {
     @State var task: Task
     
     let sliderHeight = UIScreen.main.bounds.height * 0.04
-    let sliderColor = Color.clear //Color(uiColor: UIColor.systemGray6)
+    @State var sliderColor = Color.clear
     let cornerRadius: CGFloat = 10
     
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 Rectangle()
-                    .foregroundColor(sliderColor)
+                    .foregroundColor(sliderColor.opacity(0.5))
                     .cornerRadius(cornerRadius)
                     .frame(height: sliderHeight)
                 Text(task.name)
