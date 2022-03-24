@@ -15,17 +15,19 @@ struct MainView: View {
     @State var isSideMenuOpen = false
     @State var xOffset: CGFloat = 0
     
-    @State var allTaskList = [TaskList(name: "Work", primaryColor: .red, upcomingTasks: [Task(name: "Yollo"), Task(name: "Yollo2")], completedTasks: [Task(name: "Yollo"), Task(name: "Yollo2")]), TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])]
+    @State var mainTaskList = TaskList(name: "Main", primaryColor: .defaultColor)
+    @State var userTaskLists = [TaskList(name: "Work", primaryColor: .red, upcomingTasks: [Task(name: "Yollo"), Task(name: "Yollo2")], completedTasks: [Task(name: "Yollo"), Task(name: "Yollo2")]), TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])]
     
     @State var currentListIndex = 0
     
     var body: some View {
         ZStack {
-            SideMenuView(sideMenuWidth: sideMenuWidth, allTaskLists: $allTaskList, currentListIndex: $currentListIndex, mainView: self)
+            SideMenuView(sideMenuWidth: sideMenuWidth, mainTaskList: $mainTaskList, userTaskLists: $userTaskLists, currentListIndex: $currentListIndex, mainView: self)
                 .offset(x: -0.5*(UIScreen.main.bounds.width-sideMenuWidth))
             
-            TaskListView(taskList: $allTaskList[currentListIndex], mainView: self)
+            TaskListView(taskList: currentListIndex == 0 ? $mainTaskList : $userTaskLists[currentListIndex-1], mainView: self)
                 .offset(x: xOffset)
+            
             Rectangle()
                 .offset(x: xOffset, y: 80)
                 .foregroundColor(.clearInteractive)
@@ -78,7 +80,6 @@ struct MainView: View {
                     })
         }
     }
-
     
     func OpenSideMenu() {
         withAnimation (.easeOut(duration: 0.2)) {
@@ -137,18 +138,20 @@ class Task: Identifiable, Equatable {
     
     var name: String
     var isCompleted: Bool
+    var isDateAssigned: Bool
+    var isNotificationEnabled: Bool
     var dateAssigned: Date
     var dateCreated: Date
     var dateCompleted: Date
-    var notificationEnabled: Bool
     
-    init(name: String, isComleted: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date(timeIntervalSince1970: 0), dateCompleted: Date = Date(timeIntervalSince1970: 0), notificationEnabled: Bool = false) {
+    init(name: String, isComleted: Bool = false, isDateAssigned: Bool = false, isNotificationEnabled: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date(timeIntervalSince1970: 0), dateCompleted: Date = Date(timeIntervalSince1970: 0)) {
         self.name = name
         self.isCompleted = isComleted
+        self.isDateAssigned = isDateAssigned
+        self.isNotificationEnabled = isNotificationEnabled
         self.dateAssigned = dateAssigned
         self.dateCreated = dateCreated
         self.dateCompleted = dateCompleted
-        self.notificationEnabled = notificationEnabled
     }
 }
 

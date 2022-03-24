@@ -16,7 +16,7 @@ struct UpcomingTaskSlider: View {
     @Binding var taskBeingEdited: Task
     
     var sliderColor: Color
-    let sliderHeight = UIScreen.main.bounds.height * 0.04
+    let sliderHeight = UIScreen.main.bounds.height * 0.042
     let sliderWidth = UIScreen.main.bounds.height * 0.027 //0.07
     let backgroundColor = Color(uiColor: UIColor.systemGray6)
     let cornerRadius: CGFloat = 10
@@ -27,9 +27,6 @@ struct UpcomingTaskSlider: View {
                 Rectangle()
                     .foregroundColor(backgroundColor)
                     .cornerRadius(cornerRadius)
-                    .onLongPressGesture {
-                        isEditing.toggle()
-                    }
                 Rectangle()
                     .foregroundColor(sliderColor)
                     .cornerRadius(cornerRadius)
@@ -82,16 +79,16 @@ struct UpcomingTaskSlider: View {
                     }
                     
                     Spacer()
-                    
+
                     HStack {
                         if isEditing {
                             Group {
-                                if assignedDateString != "" {
-                                    Text(assignedDateString)
+                                if assignedDateTimeString != "" {
+                                    Text(assignedDateTimeString)
                                         .frame(height: sliderHeight, alignment: .trailing)
                                         .foregroundColor(Color(uiColor: UIColor.systemGray))
                                 }
-                                
+
                                 Image(systemName: "calendar")
                                     .foregroundColor(.gray)
                             }
@@ -101,13 +98,13 @@ struct UpcomingTaskSlider: View {
                                     isPickingDate.toggle()
                                     taskBeingEdited = task
                                 }
-                                if task.dateAssigned == Date(timeIntervalSince1970: 0) {
-                                    task.dateAssigned = Date.now
+                                if !task.isDateAssigned {
+                                    task.dateAssigned = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date.now)!
                                 }
                             }
                         } else {
-                            if assignedDateString != "" {
-                                Text(assignedDateString)
+                            if assignedDateTimeString != "" {
+                                Text(assignedDateTimeString)
                                     .frame(height: sliderHeight, alignment: .trailing)
                                     .foregroundColor(Color(uiColor: UIColor.systemGray))
                                 Image(systemName: "calendar")
@@ -121,25 +118,38 @@ struct UpcomingTaskSlider: View {
             .onAppear {
                 percentage = sliderWidth/geometry.size.width
             }
-            
         }
         .ignoresSafeArea(.keyboard)
         .frame(height: sliderHeight)
+        .contextMenu {
+            Button {
+                isEditing = true
+            } label: {
+                Label("Edit", systemImage: "square.and.pencil")
+            }
+        }
     }
     
     func OnFullSlide () {
         task.isCompleted = true
     }
     
-    var assignedDateString: String {
-        if task.dateAssigned == Date(timeIntervalSince1970: 0) {
+    var assignedDateTimeString: String {
+        if !task.isDateAssigned {
             return ""
         }
         
         let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        if task.dateAssigned.get(.year) == Date.now.get(.year) {
-            formatter.setLocalizedDateFormatFromTemplate("MMMMd")
+        
+        if task.dateAssigned.get(.year) == Date.now.get(.year) { //this year
+            if !task.isNotificationEnabled {
+                formatter.setLocalizedDateFormatFromTemplate("MMMMd")
+            } else {
+                formatter.setLocalizedDateFormatFromTemplate("MMMMd, hh:mm")
+            }
+        } else { //other years
+            formatter.timeStyle = task.isNotificationEnabled ? .short : .none
+            formatter.dateStyle = .short
         }
         return formatter.string(from: task.dateAssigned)
     }

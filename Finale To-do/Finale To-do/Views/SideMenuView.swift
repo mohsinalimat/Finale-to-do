@@ -10,7 +10,10 @@ import SwiftUI
 struct SideMenuView: View {
     let sideMenuWidth: CGFloat
     
-    @Binding var allTaskLists: [TaskList]
+    var allTaskList = TaskList(name: "All", primaryColor: .defaultColor)
+    
+    @Binding var mainTaskList: TaskList
+    @Binding var userTaskLists: [TaskList]
     @Binding var currentListIndex: Int
     
     var mainView: MainView?
@@ -24,27 +27,46 @@ struct SideMenuView: View {
                 ScrollView {
                     VStack (alignment: .leading, spacing: 10) {
                         Spacer().padding(20)
-                        ForEach(0..<allTaskLists.count) { i in
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 12)
-                                    .foregroundColor(getFrameColor(ID: i))
-                                HStack () {
-                                    Image(systemName: "folder.fill")
-                                        .foregroundColor(allTaskLists[i].primaryColor)
-                                    Text(allTaskLists[i].name)
-                                }
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.all, 14)
-                                .foregroundColor(.white)
-                            }.onTapGesture {
-                                mainView?.SelectList(ID: i)
+                        CategoryView(taskList: allTaskList, index: 0, currentListIndex: $currentListIndex)
+                            .onTapGesture {
+                                mainView?.SelectList(ID: 0)
                             }
+                        CategoryView(taskList: mainTaskList, index: 1, currentListIndex: $currentListIndex)
+                            .onTapGesture {
+                                mainView?.SelectList(ID: 1)
+                            }
+                        ForEach(0..<userTaskLists.count) { i in
+                            CategoryView(taskList: userTaskLists[i], index: i+2, currentListIndex: $currentListIndex)
+                                .onTapGesture {
+                                    mainView?.SelectList(ID: i+2)
+                                }
                         }
                     }.padding()
                 }
             }
         }
         .frame(width: sideMenuWidth)
+    }
+}
+
+struct CategoryView: View {
+    var taskList: TaskList
+    var index: Int
+    @Binding var currentListIndex: Int
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 12)
+                   .foregroundColor(getFrameColor(ID: index))
+               HStack () {
+                   Image(systemName: "folder.fill")
+                       .foregroundColor(taskList.primaryColor)
+                   Text(taskList.name)
+               }
+               .frame(maxWidth: .infinity, alignment: .leading)
+               .padding(.all, 14)
+               .foregroundColor(.white)
+        }
     }
     
     func getFrameColor (ID: Int) -> Color {
@@ -54,6 +76,6 @@ struct SideMenuView: View {
 
 struct SideBarView_Previews: PreviewProvider {
     static var previews: some View {
-        SideMenuView(sideMenuWidth: UIScreen.main.bounds.width * 0.8, allTaskLists: .constant([TaskList(name: "Work", primaryColor: .red), TaskList(name: "Home", primaryColor: .cyan)]), currentListIndex: .constant(0), mainView: nil)
+        SideMenuView(sideMenuWidth: UIScreen.main.bounds.width * 0.8, mainTaskList: .constant(TaskList(name: "Main", primaryColor: .defaultColor)), userTaskLists: .constant([TaskList(name: "Work", primaryColor: .red, upcomingTasks: [Task(name: "Yollo"), Task(name: "Yollo2")], completedTasks: [Task(name: "Yollo"), Task(name: "Yollo2")]), TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])]), currentListIndex: .constant(0), mainView: nil)
     }
 }

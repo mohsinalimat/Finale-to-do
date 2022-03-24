@@ -11,11 +11,12 @@ struct TaskListView: View {
     @Binding var taskList: TaskList
     
     @State var showCalendar = false
-    @State var taskBeingEdited = Task(name: "")
+    @State var taskBeingEdited = Task(name: "", dateAssigned: Date.now)
     
-    @State var oldTaskListID = UUID()
+    @State var needResetInitialOffest = true
     
     var mainView: MainView?
+    var allSliders = [UpcomingTaskSlider]()
     
     @State var scrollScaleFactor = 0.0
     @State var initialHeaderOffset = 1.0
@@ -60,9 +61,6 @@ struct TaskListView: View {
                     Section (header: Text("Upcoming")) {
                         ForEach(taskList.upcomingTasks) { task in
                             UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: taskList.primaryColor)
-                                .onAppear {
-                                    oldTaskListID = taskList.id
-                                }
                         }
                         .onDelete(perform: deleteUpcoming)
                     }
@@ -74,15 +72,18 @@ struct TaskListView: View {
                         .onDelete(perform: deleteCompleted)
                     }
                     .listRowSeparator(.hidden)
+                    .onChange(of: taskList) { newVal in
+                        needResetInitialOffest = true
+                    }
                     GeometryReader { proxy in
                         let offset = proxy.frame(in: .named("scroll")).minY
                         Color.clear.preference(key: ViewOffsetKey.self, value: offset)
                     }
                     .onPreferenceChange(ViewOffsetKey.self) { value in
-                        if initialHeaderOffset == 1.0 { initialHeaderOffset = value; return; }
-                        if oldTaskListID != taskList.id { initialHeaderOffset = value}
-
-                        if oldTaskListID == taskList.id {
+                        if needResetInitialOffest {
+                            initialHeaderOffset = value
+                            needResetInitialOffest = false
+                        } else {
                             withAnimation(.linear(duration: 0.04)) {
                                 scrollScaleFactor = value-initialHeaderOffset > 0 ? value-initialHeaderOffset : 0
                             }
@@ -107,8 +108,12 @@ struct TaskListView: View {
                 }
                 .zIndex(1)
             }
-        
-            DateSelectionUI(showView: $showCalendar, task: $taskBeingEdited, color: $taskList.primaryColor)
+            if showCalendar {
+                DateSelectionUI(showView: $showCalendar, task: $taskBeingEdited, color: $taskList.primaryColor, notificationEnabled: taskBeingEdited.isNotificationEnabled)
+                    .transition(.opacity)
+                    .zIndex(3)
+            }
+            
         }
     }
     

@@ -13,7 +13,7 @@ struct DateSelectionUI: View {
     @Binding var task: Task
     @Binding var color: Color
     
-    @State var notificationEnabled = false
+    @State var notificationEnabled: Bool
     var selectedNotificationTime = Date()
     
     var body: some View {
@@ -27,7 +27,6 @@ struct DateSelectionUI: View {
                         .padding(.horizontal)
                         .padding(.bottom, -50)
                         .accentColor(color)
-                    
                     ZStack {
                         HStack {
                                 DatePicker("Notification", selection: $task.dateAssigned, displayedComponents: [.hourAndMinute])
@@ -38,25 +37,26 @@ struct DateSelectionUI: View {
                                     .onTapGesture {
                                         withAnimation(.linear(duration: 0.2)) {
                                             notificationEnabled = false
-                                            task.notificationEnabled = false
+                                            task.isNotificationEnabled = false
                                         }
                                     }
                             }
                             .padding(.horizontal)
                             .disabled(!notificationEnabled)
+                            .opacity(notificationEnabled ? 1 : 0)
                         HStack {
                             Spacer()
                             ZStack () {
                                 RoundedRectangle(cornerRadius: 6)
                                     .foregroundColor(Color(uiColor: .systemGray4))
-                                Text("Add")
+                                Text("Notification")
                                     .padding(.horizontal)
                             }
                             .frame(width: UIScreen.main.bounds.width*0.32, height: 34)
                             .onTapGesture {
                                 withAnimation(.linear(duration: 0.2)) {
                                     notificationEnabled = true
-                                    task.notificationEnabled = true
+                                    task.isNotificationEnabled = true
                                 }
                             }
                         }
@@ -71,7 +71,7 @@ struct DateSelectionUI: View {
                             action: {
                                 withAnimation (.linear(duration: 0.2)) {
                                     showView.toggle()
-                                    task.dateAssigned = Date(timeIntervalSince1970: 0)
+                                    task.isDateAssigned = false
                                 }
                             },
                             label: {
@@ -88,6 +88,7 @@ struct DateSelectionUI: View {
                             action: {
                                 withAnimation (.linear(duration: 0.2)) {
                                     showView.toggle()
+                                    task.isDateAssigned = true
                                 }
                             },
                             label: {
@@ -107,14 +108,12 @@ struct DateSelectionUI: View {
                 }
             }
             .frame(width: UIScreen.main.bounds.width*0.8, height: UIScreen.main.bounds.width, alignment: .center)
-            .opacity(showView ? 1 : 0)
     }
-    
 }
 
 struct DateSelectionUI_Previews: PreviewProvider {
     static var previews: some View {
-        DateSelectionUI(showView: .constant(true), task: .constant(Task(name: "Test")), color: .constant(.defaultColor))
+        DateSelectionUI(showView: .constant(true), task: .constant(Task(name: "Test")), color: .constant(.defaultColor), notificationEnabled: true)
     }
 }
 
