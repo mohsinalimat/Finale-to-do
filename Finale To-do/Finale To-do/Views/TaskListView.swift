@@ -15,7 +15,7 @@ struct TaskListView: View {
     
     @State var needResetInitialOffest = true
     
-    var mainView: MainView?
+    var appView: AppView?
     
     @State var scrollScaleFactor = 0.0
     @State var initialHeaderOffset = 1.0
@@ -25,22 +25,25 @@ struct TaskListView: View {
             Color(uiColor: UIColor.systemBackground)
                 .ignoresSafeArea()
                 .zIndex(0)
+                .onChange(of: showCalendar) { newValue in
+                    appView?.blockSideMenu = newValue
+                }
             
             VStack (spacing: 0) {
                 ZStack (alignment: .leading) {
                     Rectangle()
                         .ignoresSafeArea()
-                        .background(.ultraThinMaterial)
-                        .foregroundColor(taskList.primaryColor.secondaryColor)
-                        .frame(height: UIScreen.main.bounds.height*0.2)
-                        .scaleEffect(y: 1+(scrollScaleFactor/(UIScreen.main.bounds.height*0.2)), anchor: UnitPoint(x: 0, y: 0))
-                    VStack (alignment: .leading, spacing: 20) {
+                        .foregroundStyle(.ultraThinMaterial)
+                        .colorMultiply(taskList.primaryColor)
+                        .frame(height: UIScreen.main.bounds.height*0.15)
+                        .scaleEffect(y: 1+(scrollScaleFactor/(UIScreen.main.bounds.height*0.15)), anchor: UnitPoint(x: 0, y: 0))
+                    VStack (alignment: .leading, spacing: 10) {
                         Button {
-                            if mainView!.isSideMenuOpen { mainView?.CloseSideMenu() }
-                            else { mainView?.OpenSideMenu() }
+                            if appView!.isSideMenuOpen { appView?.CloseSideMenu() }
+                            else { appView?.OpenSideMenu() }
                         } label: {
                             Label("", systemImage: "line.3.horizontal")
-                                .foregroundColor(.primary)
+                                .foregroundColor(.white)
                                 .font(.title)
                         }
                         .padding()
@@ -48,11 +51,11 @@ struct TaskListView: View {
                         Text(taskList.name)
                             .font(.system(size: 40 + scrollScaleFactor/30))
                             .fontWeight(.bold)
-                            .font(.system(size: 40))
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal)
                             .offset(y: scrollScaleFactor)
-                    }.offset(y: 20)
+                            .foregroundColor(.white)
+                    }
                 }.zIndex(2)
                 
                 
@@ -96,7 +99,7 @@ struct TaskListView: View {
                     GeometryReader { geo in
                         AddTaskButton(color: taskList.primaryColor)
                             .padding()
-                            .position(x: geo.size.width*0.85, y: geo.size.height-geo.size.width*0.25)
+                            .position(x: geo.size.width*0.85, y: geo.size.height-geo.size.width*0.075)
                     }
 
                 }
@@ -112,7 +115,6 @@ struct TaskListView: View {
                     .transition(.opacity)
                     .zIndex(3)
             }
-            
         }
     }
     
@@ -126,7 +128,7 @@ struct TaskListView: View {
 
 struct TaskListView_Previews: PreviewProvider {
     static var previews: some View {
-        TaskListView(taskList: .constant(TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])), mainView: nil)
+        TaskListView(taskList: .constant(TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])), appView: nil)
     }
 }
 

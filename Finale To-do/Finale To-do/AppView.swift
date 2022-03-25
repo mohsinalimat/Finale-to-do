@@ -7,9 +7,10 @@
 
 import SwiftUI
 
-struct MainView: View {
-    
-    let openSideMenuThreashold = UIScreen.main.bounds.width * 0.3
+struct AppView: View {
+    @GestureState private var dragGestureActive: Bool = false
+    @State var blockSideMenu = false
+    let openSideMenuThreashold = UIScreen.main.bounds.width * 0.2
     let sideMenuWidth = UIScreen.main.bounds.width * 0.8
     
     @State var isSideMenuOpen = false
@@ -22,72 +23,96 @@ struct MainView: View {
     
     var body: some View {
         ZStack {
-            SideMenuView(sideMenuWidth: sideMenuWidth, mainTaskList: $mainTaskList, userTaskLists: $userTaskLists, currentListIndex: $currentListIndex, mainView: self)
+            SideMenuView(sideMenuWidth: sideMenuWidth, mainTaskList: $mainTaskList, userTaskLists: $userTaskLists, currentListIndex: $currentListIndex, appView: self)
                 .offset(x: -0.5*(UIScreen.main.bounds.width-sideMenuWidth))
             
-            TaskListView(taskList: currentListIndex == 0 ? $mainTaskList : $userTaskLists[currentListIndex-1], mainView: self)
+            TaskListView(taskList: currentListIndex <= 1 ? $mainTaskList : $userTaskLists[currentListIndex-2], appView: self)
                 .offset(x: xOffset)
-            
-            Rectangle()
-                .offset(x: xOffset, y: 80)
-                .foregroundColor(.clearInteractive)
-                .frame(height: UIScreen.main.bounds.height)
-                .allowsHitTesting(isSideMenuOpen)
-                .gesture(
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { value in
-                            if !isSideMenuOpen { return }
-                            
-                            withAnimation(.linear(duration: 0.03)) {
-                                self.xOffset = max(0, min(sideMenuWidth, sideMenuWidth + value.translation.width))
-                            }
-                        }
-                        .onEnded { value in
-                            if !isSideMenuOpen { return }
-                            
-                            if value.translation.width < -openSideMenuThreashold*0.5 {
-                                CloseSideMenu()
-                            } else {
-                                withAnimation (.easeOut(duration: 0.2)) {
-                                    self.xOffset = sideMenuWidth
-                                }
-                            }
-                        })
-            Rectangle()
-                .foregroundColor(.clearInteractive)
-                .frame(width: UIScreen.main.bounds.width*0.05, height: UIScreen.main.bounds.height)
-                .position(x: 0, y: UIScreen.main.bounds.height * 0.45)
-                .offset(x: xOffset)
+                .opacity(currentListIndex == 0 ? 0 : 1)
                 .gesture(
                     DragGesture()
-                    .onChanged { value in
-                        if isSideMenuOpen { return }
-                        
-                        withAnimation(.linear(duration: 0.03)) {
-                            self.xOffset = max(0, min(sideMenuWidth, value.translation.width))
+                        .updating($dragGestureActive) { value, state, transaction in
+                            state = true
+                        }
+                        .onChanged { value in
+                            OnDragChanged(value: value)
+                        }
+                        .onEnded { value in
+                            OnDragEnded(value: value)
+                        })
+                .onChange(of: dragGestureActive) { newIsActiveValue in
+                        if newIsActiveValue == false {
+                            OnDragCancelled()
                         }
                     }
-                    .onEnded { value in
-                        if isSideMenuOpen { return }
-                        
-                        if value.translation.width > openSideMenuThreashold {
-                            OpenSideMenu()
-                        } else {
-                            withAnimation (.easeOut(duration: 0.2)) {
-                                self.xOffset = .zero
-                            }
+            
+            MainView(mainTaskList: $mainTaskList, userTaskLists: $userTaskLists, appView: self)
+                .offset(x: xOffset)
+                .opacity(currentListIndex == 0 ? 1 : 0)
+                .gesture(
+                    DragGesture()
+                        .updating($dragGestureActive) { value, state, transaction in
+                            state = true
                         }
-                    })
+                        .onChanged { value in
+                            OnDragChanged(value: value)
+                        }
+                        .onEnded { value in
+                            OnDragEnded(value: value)
+                        })
+                .onChange(of: dragGestureActive) { newIsActiveValue in
+                        if newIsActiveValue == false {
+                            OnDragCancelled()
+                        }
+                    }
+        }
+    }
+    
+    func OnDragChanged (value: DragGesture.Value) {
+        if blockSideMenu { return }
+        
+        withAnimation(.linear(duration: 0.03)) {
+            self.xOffset = max(0, min(sideMenuWidth, (!isSideMenuOpen ? 0 : sideMenuWidth) + value.translation.width))
+        }
+    }
+    
+    func OnDragEnded (value: DragGesture.Value) {
+        if blockSideMenu { return }
+        
+        if !isSideMenuOpen {
+            if value.translation.width > openSideMenuThreashold {
+                OpenSideMenu()
+            } else {
+                CloseSideMenu()
+            }
+        } else {
+            if value.translation.width < -openSideMenuThreashold*0.5 {
+                CloseSideMenu()
+            } else {
+                OpenSideMenu()
+            }
+        }
+    }
+    
+    func OnDragCancelled () {
+        if !isSideMenuOpen {
+            CloseSideMenu()
+        } else {
+            OpenSideMenu()
         }
     }
     
     func OpenSideMenu() {
+        if blockSideMenu { return }
+        
         withAnimation (.easeOut(duration: 0.2)) {
             xOffset = sideMenuWidth
         }
         isSideMenuOpen = true
     }
     func CloseSideMenu () {
+        if blockSideMenu { return }
+        
         withAnimation (.easeOut(duration: 0.2)) {
             xOffset = 0
         }
@@ -113,12 +138,14 @@ class TaskList: Identifiable, Equatable {
     
     var name: String
     var primaryColor: Color
+    var systemIcon: String
     var upcomingTasks: [Task]
     var completedTasks: [Task]
     
-    init(name: String, primaryColor: Color = Color.defaultColor, upcomingTasks: [Task] = [Task](), completedTasks: [Task] = [Task]()) {
+    init(name: String, primaryColor: Color = Color.defaultColor, systemIcon: String = "folder.fill", upcomingTasks: [Task] = [Task](), completedTasks: [Task] = [Task]()) {
         self.name = name
         self.upcomingTasks = upcomingTasks
+        self.systemIcon = systemIcon
         self.completedTasks = completedTasks
         self.primaryColor = primaryColor
     }
@@ -157,6 +184,6 @@ class Task: Identifiable, Equatable {
 
 struct UpcomingTaskSlider_Previews: PreviewProvider {
     static var previews: some View {
-        MainView()
+        AppView()
     }
 }

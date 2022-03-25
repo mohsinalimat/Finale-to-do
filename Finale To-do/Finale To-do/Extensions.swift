@@ -9,7 +9,7 @@ import SwiftUI
 
 extension Color {
     public static var defaultColor: Color {
-        return Color(hex: "57A9FF")
+        return Color(hex: "3255CC")
     }
     
     public static var clearInteractive: Color {
@@ -21,7 +21,7 @@ extension Color {
     }
     
     var thirdColor: Color {
-        return self.lerp(second: .black, percentage: 0.3)
+        return self.lerp(second: .black, percentage: 0.5)
     }
     
     func lerp (second: Color, percentage: CGFloat) -> Color {

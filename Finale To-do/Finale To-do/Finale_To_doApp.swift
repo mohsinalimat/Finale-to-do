@@ -11,7 +11,7 @@ import SwiftUI
 struct Finale_To_doApp: App {
     var body: some Scene {
         WindowGroup {
-            MainView()
+            AppView()
         }
     }
 }

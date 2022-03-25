@@ -94,7 +94,7 @@ struct UpcomingTaskSlider: View {
                             }
                             .contentShape(Rectangle())
                             .onTapGesture {
-                                withAnimation (.linear(duration: 0.2)) {
+                                withAnimation (.linear(duration: 0.15)) {
                                     isPickingDate.toggle()
                                     taskBeingEdited = task
                                 }
