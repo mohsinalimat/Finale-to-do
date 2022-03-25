@@ -27,18 +27,14 @@ struct SideMenuView: View {
                 ScrollView {
                     VStack (alignment: .leading, spacing: 10) {
                         Spacer().padding(20)
-                        CategoryView(taskList: allTaskList, index: 0, currentListIndex: $currentListIndex)
+                        CategoryView(taskList: mainTaskList, index: 0, currentListIndex: $currentListIndex)
                             .onTapGesture {
                                 mainView?.SelectList(ID: 0)
                             }
-                        CategoryView(taskList: mainTaskList, index: 1, currentListIndex: $currentListIndex)
-                            .onTapGesture {
-                                mainView?.SelectList(ID: 1)
-                            }
                         ForEach(0..<userTaskLists.count) { i in
-                            CategoryView(taskList: userTaskLists[i], index: i+2, currentListIndex: $currentListIndex)
+                            CategoryView(taskList: userTaskLists[i], index: i+1, currentListIndex: $currentListIndex)
                                 .onTapGesture {
-                                    mainView?.SelectList(ID: i+2)
+                                    mainView?.SelectList(ID: i+1)
                                 }
                         }
                     }.padding()

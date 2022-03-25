@@ -11,7 +11,7 @@ struct DateSelectionUI: View {
     
     @Binding var showView: Bool
     @Binding var task: Task
-    @Binding var color: Color
+    var color: Color
     
     @State var notificationEnabled: Bool
     var selectedNotificationTime = Date()
@@ -113,7 +113,7 @@ struct DateSelectionUI: View {
 
 struct DateSelectionUI_Previews: PreviewProvider {
     static var previews: some View {
-        DateSelectionUI(showView: .constant(true), task: .constant(Task(name: "Test")), color: .constant(.defaultColor), notificationEnabled: true)
+        DateSelectionUI(showView: .constant(true), task: .constant(Task(name: "Test")), color: .defaultColor, notificationEnabled: true)
     }
 }
 

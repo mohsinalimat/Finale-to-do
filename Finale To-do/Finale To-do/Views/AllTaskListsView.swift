@@ -1,14 +1,15 @@
 //
-//  TaskGroupView.swift
+//  AllTaskListsView.swift
 //  Finale To-do
 //
-//  Created by Grant Oganan on 3/15/22.
+//  Created by Grant Oganan on 3/24/22.
 //
 
 import SwiftUI
 
-struct TaskListView: View {
-    @Binding var taskList: TaskList
+struct AllListView: View {
+    @Binding var mainTaskList: TaskList
+    @Binding var userTaskLists: [TaskList]
     
     @State var showCalendar = false
     @State var taskBeingEdited = Task(name: "", dateAssigned: Date.now)
@@ -31,7 +32,7 @@ struct TaskListView: View {
                     Rectangle()
                         .ignoresSafeArea()
                         .background(.ultraThinMaterial)
-                        .foregroundColor(taskList.primaryColor.secondaryColor)
+                        .foregroundColor(.defaultColor.secondaryColor)
                         .frame(height: UIScreen.main.bounds.height*0.2)
                         .scaleEffect(y: 1+(scrollScaleFactor/(UIScreen.main.bounds.height*0.2)), anchor: UnitPoint(x: 0, y: 0))
                     VStack (alignment: .leading, spacing: 20) {
@@ -45,7 +46,7 @@ struct TaskListView: View {
                         }
                         .padding()
                         
-                        Text(taskList.name)
+                        Text("All")
                             .font(.system(size: 40 + scrollScaleFactor/30))
                             .fontWeight(.bold)
                             .font(.system(size: 40))
@@ -58,22 +59,19 @@ struct TaskListView: View {
                 
                 List {
                     Section (header: Text("Upcoming")) {
-                        ForEach(taskList.upcomingTasks) { task in
-                            UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: taskList.primaryColor)
+                        ForEach(userTaskLists[0].upcomingTasks) { task in
+                            UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: userTaskLists[0].primaryColor)
                         }
                         .onDelete(perform: deleteUpcoming)
                     }
                     .listRowSeparator(.hidden)
                     Section (header: Text("Completed")) {
-                        ForEach(taskList.completedTasks) { task in
-                            CompletedTaskSlider(task: task, sliderColor: taskList.primaryColor.secondaryColor)
+                        ForEach(userTaskLists[0].completedTasks) { task in
+                            CompletedTaskSlider(task: task, sliderColor: userTaskLists[0].primaryColor.secondaryColor)
                         }
                         .onDelete(perform: deleteCompleted)
                     }
                     .listRowSeparator(.hidden)
-                    .onChange(of: taskList) { newVal in
-                        needResetInitialOffest = true
-                    }
                     GeometryReader { proxy in
                         let offset = proxy.frame(in: .named("scroll")).minY
                         Color.clear.preference(key: ViewOffsetKey.self, value: offset)
@@ -94,7 +92,7 @@ struct TaskListView: View {
                 .listStyle(.plain)
                 .overlay {
                     GeometryReader { geo in
-                        AddTaskButton(color: taskList.primaryColor)
+                        AddTaskButton(color: .defaultColor)
                             .padding()
                             .position(x: geo.size.width*0.85, y: geo.size.height-geo.size.width*0.25)
                     }
@@ -108,7 +106,7 @@ struct TaskListView: View {
                 .zIndex(1)
             }
             if showCalendar {
-                DateSelectionUI(showView: $showCalendar, task: $taskBeingEdited, color: taskList.primaryColor, notificationEnabled: taskBeingEdited.isNotificationEnabled)
+                DateSelectionUI(showView: $showCalendar, task: $taskBeingEdited, color: .defaultColor, notificationEnabled: taskBeingEdited.isNotificationEnabled)
                     .transition(.opacity)
                     .zIndex(3)
             }
@@ -117,24 +115,15 @@ struct TaskListView: View {
     }
     
     func deleteUpcoming(at offsets: IndexSet) {
-        taskList.upcomingTasks.remove(atOffsets: offsets)
+//        taskList.upcomingTasks.remove(atOffsets: offsets)
     }
     func deleteCompleted(at offsets: IndexSet) {
-        taskList.completedTasks.remove(atOffsets: offsets)
+//        taskList.completedTasks.remove(atOffsets: offsets)
     }
 }
 
-struct TaskListView_Previews: PreviewProvider {
+struct AllListView_Previews: PreviewProvider {
     static var previews: some View {
-        TaskListView(taskList: .constant(TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])), mainView: nil)
+        AllListView(mainTaskList: .constant(TaskList(name: "Main", primaryColor: .defaultColor)), userTaskLists: .constant([TaskList(name: "Work", primaryColor: .red, upcomingTasks: [Task(name: "Yollo"), Task(name: "Yollo2")], completedTasks: [Task(name: "Yollo"), Task(name: "Yollo2")]), TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])]))
     }
 }
-
-struct ViewOffsetKey: PreferenceKey {
-    typealias Value = CGFloat
-    static var defaultValue = CGFloat.zero
-    static func reduce(value: inout Value, nextValue: () -> Value) {
-        value += nextValue()
-    }
-}
-
