@@ -10,7 +10,7 @@ import SwiftUI
 struct DateSelectionUI: View {
     
     @Binding var showView: Bool
-    @Binding var task: Task
+    @Binding var taskBeingEdited: Task
     var color: Color
     
     @State var notificationEnabled: Bool
@@ -29,14 +29,14 @@ struct DateSelectionUI: View {
                         .foregroundStyle(.ultraThinMaterial)
                         .shadow(color: .black.opacity(0.5), radius: 20)
                     VStack {
-                        DatePicker("", selection: $task.dateAssigned, displayedComponents: [.date])
+                        DatePicker("", selection: $taskBeingEdited.dateAssigned, displayedComponents: [.date])
                             .datePickerStyle(.graphical)
                             .padding(.horizontal)
                             .padding(.bottom, -50)
                             .accentColor(color)
                         ZStack {
                             HStack {
-                                    DatePicker("Notification", selection: $task.dateAssigned, displayedComponents: [.hourAndMinute])
+                                    DatePicker("Notification", selection: $taskBeingEdited.dateAssigned, displayedComponents: [.hourAndMinute])
                                         .datePickerStyle(.graphical)
                                         .accentColor(color)
                                     Image(systemName: "xmark.circle.fill")
@@ -44,7 +44,7 @@ struct DateSelectionUI: View {
                                         .onTapGesture {
                                             withAnimation(.linear(duration: transitionDuration)) {
                                                 notificationEnabled = false
-                                                task.isNotificationEnabled = false
+                                                taskBeingEdited.isNotificationEnabled = false
                                             }
                                         }
                                 }
@@ -63,7 +63,7 @@ struct DateSelectionUI: View {
                                 .onTapGesture {
                                     withAnimation(.linear(duration: transitionDuration)) {
                                         notificationEnabled = true
-                                        task.isNotificationEnabled = true
+                                        taskBeingEdited.isNotificationEnabled = true
                                     }
                                 }
                             }
@@ -78,7 +78,7 @@ struct DateSelectionUI: View {
                                 action: {
                                     withAnimation (.linear(duration: transitionDuration)) {
                                         showView.toggle()
-                                        task.isDateAssigned = false
+                                        taskBeingEdited.isDateAssigned = false
                                     }
                                 },
                                 label: {
@@ -95,7 +95,7 @@ struct DateSelectionUI: View {
                                 action: {
                                     withAnimation (.linear(duration: transitionDuration)) {
                                         showView.toggle()
-                                        task.isDateAssigned = true
+                                        taskBeingEdited.isDateAssigned = true
                                     }
                                 },
                                 label: {
@@ -121,7 +121,7 @@ struct DateSelectionUI: View {
 
 struct DateSelectionUI_Previews: PreviewProvider {
     static var previews: some View {
-        DateSelectionUI(showView: .constant(true), task: .constant(Task(name: "Test")), color: .defaultColor, notificationEnabled: true)
+        DateSelectionUI(showView: .constant(true), taskBeingEdited: .constant(Task(name: "Test")), color: .defaultColor, notificationEnabled: true)
     }
 }
 

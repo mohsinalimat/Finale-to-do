@@ -12,11 +12,13 @@ struct AddTaskButton: View {
     var color: Color
     @State var radius: CGFloat = 45
     
+    var taskListView: TaskListView?
+    var homeView: HomeView?
+    
     var body: some View {
         Circle()
             .shadow(radius: 10)
             .foregroundColor(color)
-//            .foregroundStyle(.ultraThinMaterial)
             .padding()
             .frame(width: radius*2, height: radius*2, alignment: .center)
             .overlay {
@@ -27,20 +29,10 @@ struct AddTaskButton: View {
                     .frame(width: radius*0.7, height: radius*0.1, alignment: .center)
                     .foregroundColor(color.lerp(second: .white, percentage: 0.8))
             }
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged({ value in
-                        withAnimation(.easeOut(duration: 0.07)) {
-                            self.radius = 40
-                        }
-                    })
-                    .onEnded( { value in
-                        withAnimation(.easeOut(duration: 0.07)) {
-                            self.radius = 45
-                        }
-                    })
-            )
-            
+            .onTapGesture {
+                taskListView?.CreateNewTask()
+                homeView?.CreateNewTask()
+            }
     }
 }
 

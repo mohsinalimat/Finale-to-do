@@ -9,11 +9,14 @@ import SwiftUI
 
 struct UpcomingTaskSlider: View {
     @State private var percentage: CGFloat = 0.027
-    @State var task: Task
-    @State var isEditing: Bool = false
+    @Binding var task: Task
+    
+    @FocusState var focusInputField: Bool
     
     @Binding var isPickingDate: Bool
     @Binding var taskBeingEdited: Task
+    
+    var taskListView: TaskListView?
     
     var sliderColor: Color
     let sliderHeight = UIScreen.main.bounds.height * 0.042
@@ -35,14 +38,14 @@ struct UpcomingTaskSlider: View {
                         DragGesture(minimumDistance: 0)
                             .onChanged({ value in
                                 if task.isCompleted { return }
-                                
+
                                 withAnimation(.linear(duration: 0.03)) {
                                     self.percentage = min(max(sliderWidth/geometry.size.width, value.location.x / geometry.size.width), 1)
                                 }
                             })
                             .onEnded( { value in
                                 if task.isCompleted { return }
-                                
+
                                 if self.percentage >= 1 {
                                     OnFullSlide()
                                 } else {
@@ -66,29 +69,33 @@ struct UpcomingTaskSlider: View {
                             .frame(width: sliderWidth * 0.8, height: sliderHeight * 0.85)
                             .position(x: geometry.size.width * (CGFloat(percentage) - (sliderWidth/geometry.size.width)*0.5), y: sliderHeight*0.5)
                     )
-                
+
                 HStack {
-                    if isEditing {
-                        TextField("New task", text: $task.name)
-                            .padding(.horizontal, CGFloat((sliderWidth + 4)))
-                            .frame(height: sliderHeight, alignment: .leading)
-                    } else {
-                        Text(task.name)
-                            .padding(.horizontal, CGFloat((sliderWidth + 4)))
-                            .frame(height: sliderHeight, alignment: .leading)
-                    }
-                    
+                    TextField("New task", text: $task.name)
+                        .padding(.horizontal, CGFloat((sliderWidth + 4)))
+                        .frame(height: sliderHeight, alignment: .leading)
+                        .disabled(!isBeingEdited)
+                        .focused($focusInputField)
+                        .onSubmit {
+                            StopEditing()
+                        }
+
                     Spacer()
 
                     HStack {
-                        if isEditing {
+                        if !isBeingEdited {
+                            if task.isDateAssigned {
+                                Text(assignedDateTimeString)
+                                    .frame(height: sliderHeight, alignment: .trailing)
+                                    .foregroundColor(Color(uiColor: UIColor.systemGray))
+                                Image(systemName: "calendar")
+                                    .foregroundColor(.gray)
+                            }
+                        } else {
                             Group {
-                                if assignedDateTimeString != "" {
-                                    Text(assignedDateTimeString)
-                                        .frame(height: sliderHeight, alignment: .trailing)
-                                        .foregroundColor(Color(uiColor: UIColor.systemGray))
-                                }
-
+                                Text(assignedDateTimeString)
+                                    .frame(height: sliderHeight, alignment: .trailing)
+                                    .foregroundColor(Color(uiColor: UIColor.systemGray))
                                 Image(systemName: "calendar")
                                     .foregroundColor(.gray)
                             }
@@ -102,14 +109,6 @@ struct UpcomingTaskSlider: View {
                                     task.dateAssigned = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date.now)!
                                 }
                             }
-                        } else {
-                            if assignedDateTimeString != "" {
-                                Text(assignedDateTimeString)
-                                    .frame(height: sliderHeight, alignment: .trailing)
-                                    .foregroundColor(Color(uiColor: UIColor.systemGray))
-                                Image(systemName: "calendar")
-                                    .foregroundColor(.gray)
-                            }
                         }
                     }
                     .padding(.trailing, 6)
@@ -117,16 +116,32 @@ struct UpcomingTaskSlider: View {
             }
             .onAppear {
                 percentage = sliderWidth/geometry.size.width
+                if isBeingEdited { StartEditing() }
             }
         }
         .ignoresSafeArea(.keyboard)
-        .frame(height: sliderHeight)
         .contextMenu {
             Button {
-                isEditing = true
+                StartEditing()
             } label: {
-                Label("Edit", systemImage: "square.and.pencil")
+                Label("Edit task", systemImage: "square.and.pencil")
             }
+        }
+    }
+    
+    func StartEditing () {
+        taskBeingEdited = task
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                focusInputField = true
+            }
+    }
+    
+    func StopEditing () {
+        taskBeingEdited = Task()
+        focusInputField = false
+        UIApplication.shared.endEditing()
+        if task.name == "" {
+            taskListView?.DeleteUpcoming(task: task)
         }
     }
     
@@ -153,11 +168,15 @@ struct UpcomingTaskSlider: View {
         }
         return formatter.string(from: task.dateAssigned)
     }
+    
+    var isBeingEdited: Bool {
+        return taskBeingEdited == task
+    }
 }
 
 struct UpcomingTaskSlider_Preview: PreviewProvider {
     static var previews: some View {
-        UpcomingTaskSlider(task: Task(name: "Task title", dateAssigned: Date()), isPickingDate: .constant(false), taskBeingEdited: .constant(Task(name: "")), sliderColor: .cyan)
+        UpcomingTaskSlider(task: .constant(Task(name: "Task title", dateAssigned: Date())), isPickingDate: .constant(false), taskBeingEdited: .constant(Task(name: "")), sliderColor: .cyan)
     }
 }
 

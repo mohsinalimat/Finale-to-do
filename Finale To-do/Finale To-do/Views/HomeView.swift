@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct MainView: View {
-    @Binding var mainTaskList: TaskList
-    @Binding var userTaskLists: [TaskList]
+struct HomeView: View {
+    @ObservedObject var mainTaskList: TaskList
+    @ObservedObject var userTaskLists: TaskListContainer
     
     @State var showCalendar = false
     @State var taskBeingEdited = Task(name: "", dateAssigned: Date.now)
@@ -60,17 +60,25 @@ struct MainView: View {
                 
                 List {
                     Section (header: Text("Upcoming")) {
-//                        ForEach(userTaskLists[0].upcomingTasks) { task in
-//                            UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: userTaskLists[0].primaryColor)
-//                        }
-//                        .onDelete(perform: deleteUpcoming)
+                      ForEach($mainTaskList.upcomingTasks) { task in
+                            UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: mainTaskList.primaryColor)
+                        }
+                        ForEach(0..<userTaskLists.taskLists.count) { i in
+                            ForEach($userTaskLists.taskLists[i].upcomingTasks) { task in
+                                UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: userTaskLists.taskLists[i].primaryColor)
+                            }
+                        }
                     }
                     .listRowSeparator(.hidden)
                     Section (header: Text("Completed")) {
-//                        ForEach(userTaskLists[0].completedTasks) { task in
-//                            CompletedTaskSlider(task: task, sliderColor: userTaskLists[0].primaryColor.secondaryColor)
-//                        }
-//                        .onDelete(perform: deleteCompleted)
+                        ForEach(mainTaskList.completedTasks) { task in
+                                CompletedTaskSlider(task: task, sliderColor: mainTaskList.primaryColor.secondaryColor)
+                          }
+                          ForEach(userTaskLists.taskLists) { taskList in
+                              ForEach(taskList.completedTasks) { task in
+                                  CompletedTaskSlider(task: task, sliderColor: taskList.primaryColor.secondaryColor)
+                              }
+                          }
                     }
                     .listRowSeparator(.hidden)
                     GeometryReader { proxy in
@@ -107,11 +115,15 @@ struct MainView: View {
                 .zIndex(1)
             }
             if showCalendar {
-                DateSelectionUI(showView: $showCalendar, task: $taskBeingEdited, color: .defaultColor, notificationEnabled: taskBeingEdited.isNotificationEnabled)
+                DateSelectionUI(showView: $showCalendar, taskBeingEdited: $taskBeingEdited, color: .defaultColor, notificationEnabled: taskBeingEdited.isNotificationEnabled)
                     .transition(.opacity)
                     .zIndex(3)
             }
         }
+    }
+    
+    func CreateNewTask () {
+        
     }
     
     func deleteUpcoming(at offsets: IndexSet) {
@@ -120,10 +132,15 @@ struct MainView: View {
     func deleteCompleted(at offsets: IndexSet) {
 //        taskList.completedTasks.remove(atOffsets: offsets)
     }
+    
+    func StopEditingTasks () {
+        taskBeingEdited = Task(name: "", dateAssigned: Date.now)
+        UIApplication.shared.endEditing()
+    }
 }
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView(mainTaskList: .constant(TaskList(name: "Main", primaryColor: .defaultColor)), userTaskLists: .constant([TaskList(name: "Work", primaryColor: .red, upcomingTasks: [Task(name: "Yollo"), Task(name: "Yollo2")], completedTasks: [Task(name: "Yollo"), Task(name: "Yollo2")]), TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])]))
+        HomeView(mainTaskList: TaskList(name: "Main", primaryColor: .defaultColor, upcomingTasks: [Task(name: "Main task")]), userTaskLists: TaskListContainer())
     }
 }

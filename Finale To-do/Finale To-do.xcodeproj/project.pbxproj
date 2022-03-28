@@ -18,7 +18,7 @@
 		37E734FC27DD139F008FC48F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E734FB27DD139F008FC48F /* AppView.swift */; };
 		37E734FE27DD13A0008FC48F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37E734FD27DD13A0008FC48F /* Assets.xcassets */; };
 		37E7350127DD13A0008FC48F /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 37E7350027DD13A0008FC48F /* Preview Assets.xcassets */; };
-		37EB1A1B27ECF90600AAB680 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EB1A1A27ECF90600AAB680 /* MainView.swift */; };
+		37EB1A1B27ECF90600AAB680 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37EB1A1A27ECF90600AAB680 /* HomeView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,7 +34,7 @@
 		37E734FB27DD139F008FC48F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		37E734FD27DD13A0008FC48F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		37E7350027DD13A0008FC48F /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		37EB1A1A27ECF90600AAB680 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		37EB1A1A27ECF90600AAB680 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +53,7 @@
 			children = (
 				3760E3D427E0E2630065078C /* SideMenuView.swift */,
 				3760E3D227E0E1840065078C /* TaskListView.swift */,
-				37EB1A1A27ECF90600AAB680 /* MainView.swift */,
+				37EB1A1A27ECF90600AAB680 /* HomeView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -180,7 +180,7 @@
 				376A391527DF969800AB45C7 /* CompletedTaskSlider.swift in Sources */,
 				3760E3D527E0E2630065078C /* SideMenuView.swift in Sources */,
 				37E734FC27DD139F008FC48F /* AppView.swift in Sources */,
-				37EB1A1B27ECF90600AAB680 /* MainView.swift in Sources */,
+				37EB1A1B27ECF90600AAB680 /* HomeView.swift in Sources */,
 				376A391027DF6A1A00AB45C7 /* UpcomingTaskSlider.swift in Sources */,
 				37E734FA27DD139F008FC48F /* Finale_To_doApp.swift in Sources */,
 				376A391227DF7BDC00AB45C7 /* Extensions.swift in Sources */,

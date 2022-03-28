@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TaskListView: View {
-    @Binding var taskList: TaskList
+    @ObservedObject var taskList: TaskList
     
     @State var showCalendar = false
     @State var taskBeingEdited = Task(name: "", dateAssigned: Date.now)
@@ -33,8 +33,8 @@ struct TaskListView: View {
                 ZStack (alignment: .leading) {
                     Rectangle()
                         .ignoresSafeArea()
-                        .foregroundStyle(.ultraThinMaterial)
                         .colorMultiply(taskList.primaryColor)
+                        .foregroundStyle(.ultraThinMaterial)
                         .frame(height: UIScreen.main.bounds.height*0.15)
                         .scaleEffect(y: 1+(scrollScaleFactor/(UIScreen.main.bounds.height*0.15)), anchor: UnitPoint(x: 0, y: 0))
                     VStack (alignment: .leading, spacing: 10) {
@@ -61,17 +61,15 @@ struct TaskListView: View {
                 
                 List {
                     Section (header: Text("Upcoming")) {
-                        ForEach(taskList.upcomingTasks) { task in
-                            UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: taskList.primaryColor)
+                        ForEach($taskList.upcomingTasks) { task in
+                            UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, taskListView: self, sliderColor: taskList.primaryColor)
                         }
-                        .onDelete(perform: deleteUpcoming)
                     }
                     .listRowSeparator(.hidden)
                     Section (header: Text("Completed")) {
                         ForEach(taskList.completedTasks) { task in
                             CompletedTaskSlider(task: task, sliderColor: taskList.primaryColor.secondaryColor)
                         }
-                        .onDelete(perform: deleteCompleted)
                     }
                     .listRowSeparator(.hidden)
                     .onChange(of: taskList) { newVal in
@@ -97,7 +95,7 @@ struct TaskListView: View {
                 .listStyle(.plain)
                 .overlay {
                     GeometryReader { geo in
-                        AddTaskButton(color: taskList.primaryColor)
+                        AddTaskButton(color: taskList.primaryColor, taskListView: self)
                             .padding()
                             .position(x: geo.size.width*0.85, y: geo.size.height-geo.size.width*0.075)
                     }
@@ -110,25 +108,44 @@ struct TaskListView: View {
                 }
                 .zIndex(1)
             }
+            
             if showCalendar {
-                DateSelectionUI(showView: $showCalendar, task: $taskBeingEdited, color: taskList.primaryColor, notificationEnabled: taskBeingEdited.isNotificationEnabled)
+                DateSelectionUI(showView: $showCalendar, taskBeingEdited: $taskBeingEdited, color: taskList.primaryColor, notificationEnabled: taskBeingEdited.isNotificationEnabled)
                     .transition(.opacity)
                     .zIndex(3)
             }
         }
     }
     
-    func deleteUpcoming(at offsets: IndexSet) {
+    func CreateNewTask () {
+        withAnimation(.linear(duration: 0.5)) {
+            let newTask = Task(name: "")
+            taskList.upcomingTasks.insert(newTask, at: 0)
+            taskBeingEdited = newTask
+            needResetInitialOffest = true
+        }
+    }
+    
+    func DeleteUpcoming (task: Task) {
+        if !taskList.upcomingTasks.contains(task) { return }
+        
+        withAnimation(.linear(duration: 0.5)) {
+            taskList.upcomingTasks.remove(at: taskList.upcomingTasks.firstIndex(of: task)!)
+        }
+        
+    }
+    
+    func DeleteUpcoming(at offsets: IndexSet) {
         taskList.upcomingTasks.remove(atOffsets: offsets)
     }
-    func deleteCompleted(at offsets: IndexSet) {
+    func DeleteCompleted(at offsets: IndexSet) {
         taskList.completedTasks.remove(atOffsets: offsets)
     }
 }
 
 struct TaskListView_Previews: PreviewProvider {
     static var previews: some View {
-        TaskListView(taskList: .constant(TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])), appView: nil)
+        TaskListView(taskList: TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")]), appView: nil)
     }
 }
 

@@ -12,8 +12,8 @@ struct SideMenuView: View {
     
     var allTaskList = TaskList(name: "Home", primaryColor: .defaultColor, systemIcon: "house.fill")
     
-    @Binding var mainTaskList: TaskList
-    @Binding var userTaskLists: [TaskList]
+    @ObservedObject var mainTaskList: TaskList
+    @ObservedObject var userTaskLists: TaskListContainer
     @Binding var currentListIndex: Int
     
     var appView: AppView?
@@ -57,8 +57,8 @@ struct SideMenuView: View {
                             .onTapGesture {
                                 appView?.SelectList(ID: 1)
                             }
-                        ForEach(0..<userTaskLists.count) { i in
-                            CategoryView(taskList: userTaskLists[i], index: i+2, currentListIndex: $currentListIndex)
+                        ForEach(0..<userTaskLists.taskLists.count) { i in
+                            CategoryView(taskList: userTaskLists.taskLists[i], index: i+2, currentListIndex: $currentListIndex)
                                 .onTapGesture {
                                     appView?.SelectList(ID: i+2)
                                 }
@@ -124,6 +124,6 @@ struct CategoryView: View {
 
 struct SideBarView_Previews: PreviewProvider {
     static var previews: some View {
-        SideMenuView(sideMenuWidth: UIScreen.main.bounds.width * 0.8, mainTaskList: .constant(TaskList(name: "Main", primaryColor: .defaultColor)), userTaskLists: .constant([TaskList(name: "Work", primaryColor: .red, upcomingTasks: [Task(name: "Yollo"), Task(name: "Yollo2")], completedTasks: [Task(name: "Yollo"), Task(name: "Yollo2")]), TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])]), currentListIndex: .constant(0), appView: nil)
+        SideMenuView(sideMenuWidth: UIScreen.main.bounds.width * 0.8, mainTaskList: TaskList(name: "Main", primaryColor: .defaultColor), userTaskLists: TaskListContainer(), currentListIndex: .constant(0), appView: nil)
     }
 }

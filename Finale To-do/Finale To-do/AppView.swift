@@ -16,19 +16,20 @@ struct AppView: View {
     @State var isSideMenuOpen = false
     @State var xOffset: CGFloat = 0
     
-    @State var mainTaskList = TaskList(name: "Main", primaryColor: .defaultColor)
-    @State var userTaskLists = [TaskList(name: "Work", primaryColor: .red, upcomingTasks: [Task(name: "Yollo"), Task(name: "Yollo2")], completedTasks: [Task(name: "Yollo"), Task(name: "Yollo2")]), TaskList(name: "Home", primaryColor: .cyan, upcomingTasks: [Task(name: "Die")])]
+    @StateObject var mainTaskList = TaskList(name: "Main", primaryColor: .defaultColor)
+    @StateObject var userTaskLists = TaskListContainer()
     
     @State var currentListIndex = 0
     
     var body: some View {
         ZStack {
-            SideMenuView(sideMenuWidth: sideMenuWidth, mainTaskList: $mainTaskList, userTaskLists: $userTaskLists, currentListIndex: $currentListIndex, appView: self)
+            SideMenuView(sideMenuWidth: sideMenuWidth, mainTaskList: mainTaskList, userTaskLists: userTaskLists, currentListIndex: $currentListIndex, appView: self)
                 .offset(x: -0.5*(UIScreen.main.bounds.width-sideMenuWidth))
             
-            TaskListView(taskList: currentListIndex <= 1 ? $mainTaskList : $userTaskLists[currentListIndex-2], appView: self)
+            TaskListView(taskList: currentListIndex <= 1 ? mainTaskList : userTaskLists.taskLists[currentListIndex-2], appView: self)
                 .offset(x: xOffset)
                 .opacity(currentListIndex == 0 ? 0 : 1)
+                .disabled(isSideMenuOpen)
                 .gesture(
                     DragGesture()
                         .updating($dragGestureActive) { value, state, transaction in
@@ -46,9 +47,10 @@ struct AppView: View {
                         }
                     }
             
-            MainView(mainTaskList: $mainTaskList, userTaskLists: $userTaskLists, appView: self)
+            HomeView(mainTaskList: mainTaskList, userTaskLists: userTaskLists, appView: self)
                 .offset(x: xOffset)
                 .opacity(currentListIndex == 0 ? 1 : 0)
+                .disabled(isSideMenuOpen)
                 .gesture(
                     DragGesture()
                         .updating($dragGestureActive) { value, state, transaction in
@@ -125,7 +127,11 @@ struct AppView: View {
     }
 }
 
-class TaskList: Identifiable, Equatable {
+class TaskListContainer: ObservableObject {
+    @Published var taskLists = [TaskList]()
+}
+
+class TaskList: Identifiable, Equatable, ObservableObject {
     static func == (lhs: TaskList, rhs: TaskList) -> Bool {
         return
             lhs.name == rhs.name &&
@@ -134,13 +140,13 @@ class TaskList: Identifiable, Equatable {
             lhs.completedTasks == rhs.completedTasks
     }
     
-    var id = UUID()
+    @Published var id = UUID()
     
-    var name: String
-    var primaryColor: Color
-    var systemIcon: String
-    var upcomingTasks: [Task]
-    var completedTasks: [Task]
+    @Published var name: String
+    @Published var primaryColor: Color
+    @Published var systemIcon: String
+    @Published var upcomingTasks: [Task]
+    @Published var completedTasks: [Task]
     
     init(name: String, primaryColor: Color = Color.defaultColor, systemIcon: String = "folder.fill", upcomingTasks: [Task] = [Task](), completedTasks: [Task] = [Task]()) {
         self.name = name
@@ -151,9 +157,10 @@ class TaskList: Identifiable, Equatable {
     }
 }
 
-class Task: Identifiable, Equatable {
+class Task: Identifiable, Equatable, ObservableObject {
     static func == (lhs: Task, rhs: Task) -> Bool {
         return
+            lhs.id == rhs.id &&
             lhs.name == rhs.name &&
             lhs.isCompleted == rhs.isCompleted &&
             lhs.dateAssigned == rhs.dateAssigned &&
@@ -161,15 +168,26 @@ class Task: Identifiable, Equatable {
             lhs.dateCompleted == rhs.dateCompleted
     }
     
-    var id = UUID()
+    @Published var id = UUID()
     
-    var name: String
-    var isCompleted: Bool
-    var isDateAssigned: Bool
-    var isNotificationEnabled: Bool
-    var dateAssigned: Date
-    var dateCreated: Date
-    var dateCompleted: Date
+    @Published var name: String
+    @Published var isCompleted: Bool
+    @Published var isDateAssigned: Bool
+    @Published var isNotificationEnabled: Bool
+    @Published var dateAssigned: Date
+    @Published var dateCreated: Date
+    @Published var dateCompleted: Date
+    
+    init () {
+        self.id = UUID()
+        self.name = ""
+        self.isCompleted = false
+        self.isDateAssigned = false
+        self.isNotificationEnabled = false
+        self.dateAssigned = Date(timeIntervalSince1970: 0)
+        self.dateCreated = Date(timeIntervalSince1970: 0)
+        self.dateCompleted = Date(timeIntervalSince1970: 0)
+    }
     
     init(name: String, isComleted: Bool = false, isDateAssigned: Bool = false, isNotificationEnabled: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date(timeIntervalSince1970: 0), dateCompleted: Date = Date(timeIntervalSince1970: 0)) {
         self.name = name

@@ -84,3 +84,10 @@ extension Date {
         return calendar.component(components, from: self)
     }
 }
+
+
+extension UIApplication {
+    func endEditing() {
+        sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
