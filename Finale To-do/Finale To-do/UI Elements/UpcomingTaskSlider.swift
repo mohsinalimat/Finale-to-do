@@ -6,8 +6,11 @@
 //
 
 import SwiftUI
+import ConfettiSwiftUI
 
 struct UpcomingTaskSlider: View {
+    @State private var movingToCompleted: Bool = false
+    @State private var confettiCannon: Int = 0
     @State private var percentage: CGFloat = 0.027
     @Binding var task: Task
     
@@ -27,6 +30,10 @@ struct UpcomingTaskSlider: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
+                ForEach (0..<10) {
+                    ConfettiCannon(counter: $confettiCannon, num: 10,  confettis: [.shape(.circle)], colors: [sliderColor], confettiSize: 5, rainHeight: 0, openingAngle: Angle(degrees: 0), closingAngle: Angle(degrees: 360), radius: 50)
+                        .offset(x: CGFloat($0) * geometry.size.width / 5)
+                }
                 Rectangle()
                     .foregroundColor(backgroundColor)
                     .cornerRadius(cornerRadius)
@@ -71,11 +78,13 @@ struct UpcomingTaskSlider: View {
                     )
 
                 HStack {
+                    let padding = movingToCompleted ? 4 : sliderWidth
                     TextField("New task", text: $task.name)
-                        .padding(.horizontal, CGFloat((sliderWidth + 4)))
+                        .padding(.horizontal, CGFloat((padding + 4)))
                         .frame(height: sliderHeight, alignment: .leading)
                         .disabled(!isBeingEdited)
                         .focused($focusInputField)
+                        .foregroundColor(movingToCompleted ? Color(uiColor: .systemGray2) : Color.primary)
                         .onSubmit {
                             StopEditing()
                         }
@@ -119,13 +128,18 @@ struct UpcomingTaskSlider: View {
                 if isBeingEdited { StartEditing() }
             }
         }
-        .ignoresSafeArea(.keyboard)
+        .opacity(movingToCompleted ? 0.1 : 1)
         .contextMenu {
-            Button {
+            Button(action: {
                 StartEditing()
-            } label: {
-                Label("Edit task", systemImage: "square.and.pencil")
-            }
+            }, label: {
+                Label("Edit", systemImage: "square.and.pencil")
+            })
+            Button(role: .destructive, action: {
+                DeleteTask()
+            }, label: {
+                Label("Delete", systemImage: "trash")
+            })
         }
     }
     
@@ -136,17 +150,27 @@ struct UpcomingTaskSlider: View {
             }
     }
     
+    func DeleteTask () {
+        taskListView?.DeleteUpcoming(task: task)
+    }
+    
     func StopEditing () {
         taskBeingEdited = Task()
         focusInputField = false
         UIApplication.shared.endEditing()
         if task.name == "" {
-            taskListView?.DeleteUpcoming(task: task)
+            DeleteTask()
         }
     }
     
     func OnFullSlide () {
         task.isCompleted = true
+        focusInputField = false
+        confettiCannon+=1
+        taskListView?.CompleteTask(task: task)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            movingToCompleted = true
+            }
     }
     
     var assignedDateTimeString: String {

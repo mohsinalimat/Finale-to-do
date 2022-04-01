@@ -57,7 +57,7 @@ struct SideMenuView: View {
                             .onTapGesture {
                                 appView?.SelectList(ID: 1)
                             }
-                        ForEach(0..<userTaskLists.taskLists.count) { i in
+                        ForEach(0..<userTaskLists.taskLists.count, id: \.self) { i in
                             CategoryView(taskList: userTaskLists.taskLists[i], index: i+2, currentListIndex: $currentListIndex)
                                 .onTapGesture {
                                     appView?.SelectList(ID: i+2)
@@ -70,7 +70,7 @@ struct SideMenuView: View {
 
                 HStack {
                     Button(action: {
-                        
+                        ShowAddListView()
                     }, label: {
                         Label("Add list", systemImage: "plus")
                             .foregroundColor(.white)
@@ -95,7 +95,14 @@ struct SideMenuView: View {
             .frame(width: sideMenuWidth)
         }
     }
+    
+    func ShowAddListView () {
+        withAnimation(.easeOut(duration: 0.25)) {
+            appView?.isAddListOpen = true
+        }
+    }
 }
+
 
 struct CategoryView: View {
     var taskList: TaskList

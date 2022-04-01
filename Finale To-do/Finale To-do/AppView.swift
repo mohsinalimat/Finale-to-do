@@ -15,6 +15,8 @@ struct AppView: View {
     
     @State var isSideMenuOpen = false
     @State var xOffset: CGFloat = 0
+    @State var isAddListOpen = false
+    @State var addListYOffset: CGFloat = 0
     
     @StateObject var mainTaskList = TaskList(name: "Main", primaryColor: .defaultColor)
     @StateObject var userTaskLists = TaskListContainer()
@@ -67,6 +69,41 @@ struct AppView: View {
                             OnDragCancelled()
                         }
                     }
+            
+            Rectangle()
+                .fill(Color.black)
+                .ignoresSafeArea()
+                .opacity(isAddListOpen ? 0.5 : 0)
+                .onTapGesture {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        self.addListYOffset = 0
+                        isAddListOpen = false
+                    }
+                    UIApplication.shared.endEditing()
+                }
+            
+            AddListView (appView: self)
+                .offset(x: 0, y: addListYOffset)
+                .gesture(
+                    DragGesture()
+                        .onChanged { value in
+                            withAnimation(.linear(duration: 0.03)) {
+                                self.addListYOffset = max(0, value.translation.height)
+                            }
+                        }
+                        .onEnded { value in
+                            if value.translation.height <= UIScreen.main.bounds.height*0.2 {
+                                withAnimation(.linear(duration: 0.25)) {
+                                    self.addListYOffset = 0
+                                }
+                            } else {
+                                withAnimation(.easeOut(duration: 0.2)) {
+                                    self.addListYOffset = 0
+                                    isAddListOpen = false
+                                }
+                            }
+                        }
+                )
         }
     }
     

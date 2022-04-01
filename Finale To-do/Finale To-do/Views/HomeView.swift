@@ -29,6 +29,10 @@ struct HomeView: View {
                 .onChange(of: showCalendar) { newValue in
                     appView?.blockSideMenu = newValue
                 }
+                .onChange(of: appView?.currentListIndex) { newVal in
+                    scrollScaleFactor = 0
+                    needResetInitialOffest = true
+                }
             
             VStack (spacing: 0) {
                 ZStack (alignment: .leading) {
@@ -63,7 +67,7 @@ struct HomeView: View {
                       ForEach($mainTaskList.upcomingTasks) { task in
                             UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: mainTaskList.primaryColor)
                         }
-                        ForEach(0..<userTaskLists.taskLists.count) { i in
+                        ForEach(0..<userTaskLists.taskLists.count, id: \.self) { i in
                             ForEach($userTaskLists.taskLists[i].upcomingTasks) { task in
                                 UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: userTaskLists.taskLists[i].primaryColor)
                             }
@@ -101,7 +105,7 @@ struct HomeView: View {
                 .listStyle(.plain)
                 .overlay {
                     GeometryReader { geo in
-                        AddTaskButton(color: .defaultColor)
+                        AddTaskButton(color: .defaultColor, homeView: self)
                             .padding()
                             .position(x: geo.size.width*0.85, y: geo.size.height-geo.size.width*0.075)
                     }
@@ -123,7 +127,12 @@ struct HomeView: View {
     }
     
     func CreateNewTask () {
-        
+        needResetInitialOffest = true
+        withAnimation(.linear(duration: 0.5)) {
+            let newTask = Task(name: "")
+            mainTaskList.upcomingTasks.insert(newTask, at: 0)
+            taskBeingEdited = newTask
+        }
     }
     
     func deleteUpcoming(at offsets: IndexSet) {

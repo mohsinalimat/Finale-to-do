@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		371CD4B127F36658000FA318 /* RoundedCross.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CD4AD27F36657000FA318 /* RoundedCross.swift */; };
+		371CD4B227F36658000FA318 /* Triangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CD4AE27F36657000FA318 /* Triangle.swift */; };
+		371CD4B327F36658000FA318 /* SlimRectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CD4AF27F36657000FA318 /* SlimRectangle.swift */; };
+		371CD4B427F36658000FA318 /* ConfettiSwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CD4B027F36658000FA318 /* ConfettiSwiftUI.swift */; };
+		371CD4B627F614E5000FA318 /* AddListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CD4B527F614E5000FA318 /* AddListView.swift */; };
 		3760E3D327E0E1840065078C /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3760E3D227E0E1840065078C /* TaskListView.swift */; };
 		3760E3D527E0E2630065078C /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3760E3D427E0E2630065078C /* SideMenuView.swift */; };
 		376A391027DF6A1A00AB45C7 /* UpcomingTaskSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376A390F27DF6A1A00AB45C7 /* UpcomingTaskSlider.swift */; };
@@ -22,6 +27,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		371CD4AD27F36657000FA318 /* RoundedCross.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedCross.swift; sourceTree = "<group>"; };
+		371CD4AE27F36657000FA318 /* Triangle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Triangle.swift; sourceTree = "<group>"; };
+		371CD4AF27F36657000FA318 /* SlimRectangle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlimRectangle.swift; sourceTree = "<group>"; };
+		371CD4B027F36658000FA318 /* ConfettiSwiftUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfettiSwiftUI.swift; sourceTree = "<group>"; };
+		371CD4B527F614E5000FA318 /* AddListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListView.swift; sourceTree = "<group>"; };
 		3760E3D227E0E1840065078C /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
 		3760E3D427E0E2630065078C /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		376A390F27DF6A1A00AB45C7 /* UpcomingTaskSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingTaskSlider.swift; sourceTree = "<group>"; };
@@ -48,12 +58,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		371CD4AB27F36657000FA318 /* ConfettiSwiftUI */ = {
+			isa = PBXGroup;
+			children = (
+				371CD4AC27F36657000FA318 /* Shapes */,
+				371CD4B027F36658000FA318 /* ConfettiSwiftUI.swift */,
+			);
+			path = ConfettiSwiftUI;
+			sourceTree = "<group>";
+		};
+		371CD4AC27F36657000FA318 /* Shapes */ = {
+			isa = PBXGroup;
+			children = (
+				371CD4AD27F36657000FA318 /* RoundedCross.swift */,
+				371CD4AE27F36657000FA318 /* Triangle.swift */,
+				371CD4AF27F36657000FA318 /* SlimRectangle.swift */,
+			);
+			path = Shapes;
+			sourceTree = "<group>";
+		};
 		3760E3D627E0E2670065078C /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				3760E3D427E0E2630065078C /* SideMenuView.swift */,
 				3760E3D227E0E1840065078C /* TaskListView.swift */,
 				37EB1A1A27ECF90600AAB680 /* HomeView.swift */,
+				371CD4B527F614E5000FA318 /* AddListView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -95,6 +125,7 @@
 				376A391127DF7BDC00AB45C7 /* Extensions.swift */,
 				37E734FD27DD13A0008FC48F /* Assets.xcassets */,
 				37E734FF27DD13A0008FC48F /* Preview Content */,
+				371CD4AB27F36657000FA318 /* ConfettiSwiftUI */,
 			);
 			path = "Finale To-do";
 			sourceTree = "<group>";
@@ -123,6 +154,8 @@
 			dependencies = (
 			);
 			name = "Finale To-do";
+			packageProductDependencies = (
+			);
 			productName = "Finale To-do";
 			productReference = 37E734F627DD139F008FC48F /* Finale To-do.app */;
 			productType = "com.apple.product-type.application";
@@ -151,6 +184,8 @@
 				Base,
 			);
 			mainGroup = 37E734ED27DD139F008FC48F;
+			packageReferences = (
+			);
 			productRefGroup = 37E734F727DD139F008FC48F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -178,15 +213,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				376A391527DF969800AB45C7 /* CompletedTaskSlider.swift in Sources */,
+				371CD4B127F36658000FA318 /* RoundedCross.swift in Sources */,
 				3760E3D527E0E2630065078C /* SideMenuView.swift in Sources */,
+				371CD4B227F36658000FA318 /* Triangle.swift in Sources */,
 				37E734FC27DD139F008FC48F /* AppView.swift in Sources */,
+				371CD4B427F36658000FA318 /* ConfettiSwiftUI.swift in Sources */,
 				37EB1A1B27ECF90600AAB680 /* HomeView.swift in Sources */,
 				376A391027DF6A1A00AB45C7 /* UpcomingTaskSlider.swift in Sources */,
 				37E734FA27DD139F008FC48F /* Finale_To_doApp.swift in Sources */,
 				376A391227DF7BDC00AB45C7 /* Extensions.swift in Sources */,
+				371CD4B327F36658000FA318 /* SlimRectangle.swift in Sources */,
 				3760E3D327E0E1840065078C /* TaskListView.swift in Sources */,
 				376A391927DFA2AE00AB45C7 /* AddTaskButton.swift in Sources */,
 				37793A6827E89EAB00E95FEC /* DateSelectionUI.swift in Sources */,
+				371CD4B627F614E5000FA318 /* AddListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

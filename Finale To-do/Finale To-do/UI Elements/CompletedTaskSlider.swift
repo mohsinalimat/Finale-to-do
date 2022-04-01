@@ -14,6 +14,8 @@ struct CompletedTaskSlider: View {
     @State var sliderColor = Color.clear
     let cornerRadius: CGFloat = 10
     
+    var taskListView: TaskListView?
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
@@ -23,17 +25,38 @@ struct CompletedTaskSlider: View {
                     .frame(height: sliderHeight)
                 Text(task.name)
                     .strikethrough()
-                    .padding(.horizontal, geometry.size.width*0.02)
+                    .padding(.horizontal, 8)
                     .frame(height: sliderHeight, alignment: .leading)
                     .foregroundColor(Color(uiColor: .systemGray2))
                 Text(assignedDateString)
                     .strikethrough()
-                    .padding(.horizontal, geometry.size.width*0.02)
+                    .padding(.horizontal, 8)
                     .frame(height: sliderHeight, alignment: .trailing)
                     .foregroundColor(Color(uiColor: UIColor.systemGray))
             }
         }
         .frame(height: sliderHeight)
+        .contextMenu {
+            Button(action: {
+                Undo()
+            }, label: {
+                Label("Undo", systemImage: "arrow.uturn.backward")
+            })
+            Button(role: .destructive, action: {
+                DeleteTask()
+            }, label: {
+                Label("Delete", systemImage: "trash")
+            })
+        }
+    }
+    
+    func Undo () {
+        task.isCompleted = false
+        taskListView?.UndoTask(task: task)
+    }
+    
+    func DeleteTask () {
+        taskListView?.DeleteCompleted(task: task)
     }
     
     var assignedDateString: String {

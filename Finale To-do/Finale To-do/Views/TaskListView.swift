@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TaskListView: View {
+    @Environment(\.colorScheme) var colorScheme
+    
     @ObservedObject var taskList: TaskList
     
     @State var showCalendar = false
@@ -28,15 +30,24 @@ struct TaskListView: View {
                 .onChange(of: showCalendar) { newValue in
                     appView?.blockSideMenu = newValue
                 }
+                .onChange(of: appView?.currentListIndex) { newVal in
+                    scrollScaleFactor = 0
+                    needResetInitialOffest = true
+                }
             
             VStack (spacing: 0) {
                 ZStack (alignment: .leading) {
-                    Rectangle()
-                        .ignoresSafeArea()
-                        .colorMultiply(taskList.primaryColor)
-                        .foregroundStyle(.ultraThinMaterial)
-                        .frame(height: UIScreen.main.bounds.height*0.15)
-                        .scaleEffect(y: 1+(scrollScaleFactor/(UIScreen.main.bounds.height*0.15)), anchor: UnitPoint(x: 0, y: 0))
+                    ZStack {
+                        Rectangle()
+                            .foregroundStyle(.ultraThinMaterial)
+                        Rectangle()
+                            .foregroundColor(taskList.primaryColor.opacity(colorScheme == .light ? 1 : 0.8))
+                            .blendMode(colorScheme == .light ? .multiply : .screen)
+                    }
+                    .ignoresSafeArea()
+                    .frame(height: UIScreen.main.bounds.height*0.15)
+                    .scaleEffect(y: 1+(scrollScaleFactor/(UIScreen.main.bounds.height*0.15)), anchor: UnitPoint(x: 0, y: 0))
+                    
                     VStack (alignment: .leading, spacing: 10) {
                         Button {
                             if appView!.isSideMenuOpen { appView?.CloseSideMenu() }
@@ -68,11 +79,12 @@ struct TaskListView: View {
                     .listRowSeparator(.hidden)
                     Section (header: Text("Completed")) {
                         ForEach(taskList.completedTasks) { task in
-                            CompletedTaskSlider(task: task, sliderColor: taskList.primaryColor.secondaryColor)
+                            CompletedTaskSlider(task: task, sliderColor: taskList.primaryColor.secondaryColor, taskListView: self)
                         }
                     }
                     .listRowSeparator(.hidden)
                     .onChange(of: taskList) { newVal in
+                        scrollScaleFactor = 0
                         needResetInitialOffest = true
                     }
                     GeometryReader { proxy in
@@ -115,14 +127,35 @@ struct TaskListView: View {
                     .zIndex(3)
             }
         }
+        .ignoresSafeArea(.keyboard)
+    }
+    
+    func CompleteTask (task: Task) {
+        if !taskList.upcomingTasks.contains(task) { return }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            withAnimation(.linear(duration: 0.5)) {
+                taskList.upcomingTasks.remove(at: taskList.upcomingTasks.firstIndex(of: task)!)
+                taskList.completedTasks.insert(task, at: 0)
+            }
+        }
+    }
+    
+    func UndoTask (task: Task) {
+        if !taskList.completedTasks.contains(task) { return }
+        
+        withAnimation(.linear(duration: 0.5)) {
+            taskList.completedTasks.remove(at: taskList.completedTasks.firstIndex(of: task)!)
+            taskList.upcomingTasks.insert(task, at: 0)
+        }
     }
     
     func CreateNewTask () {
+        needResetInitialOffest = true
         withAnimation(.linear(duration: 0.5)) {
             let newTask = Task(name: "")
             taskList.upcomingTasks.insert(newTask, at: 0)
             taskBeingEdited = newTask
-            needResetInitialOffest = true
         }
     }
     
@@ -132,14 +165,14 @@ struct TaskListView: View {
         withAnimation(.linear(duration: 0.5)) {
             taskList.upcomingTasks.remove(at: taskList.upcomingTasks.firstIndex(of: task)!)
         }
-        
     }
     
-    func DeleteUpcoming(at offsets: IndexSet) {
-        taskList.upcomingTasks.remove(atOffsets: offsets)
-    }
-    func DeleteCompleted(at offsets: IndexSet) {
-        taskList.completedTasks.remove(atOffsets: offsets)
+    func DeleteCompleted (task: Task) {
+        if !taskList.completedTasks.contains(task) { return }
+        
+        withAnimation(.linear(duration: 0.5)) {
+            taskList.completedTasks.remove(at: taskList.completedTasks.firstIndex(of: task)!)
+        }
     }
 }
 
@@ -156,4 +189,3 @@ struct ViewOffsetKey: PreferenceKey {
         value += nextValue()
     }
 }
-
