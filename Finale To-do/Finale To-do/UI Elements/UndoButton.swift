@@ -1,17 +1,17 @@
 //
-//  FinaleDivider.swift
+//  UndoButton.swift
 //  Finale To-do
 //
-//  Created by Grant Oganan on 3/14/22.
+//  Created by Grant Oganan on 4/2/22.
 //
 
 import SwiftUI
 
-struct AddTaskButton: View {
+struct UndoButton: View {
     @Environment(\.colorScheme) var colorScheme
     
     var color: Color
-    @State var radius: CGFloat = 45
+    @State var radius: CGFloat = 40
     
     var taskListView: TaskListView?
     var homeView: HomeView?
@@ -23,26 +23,24 @@ struct AddTaskButton: View {
             Circle()
                 .foregroundColor(color.opacity(colorScheme == .light ? 1 : 0.8))
                 .blendMode(colorScheme == .light ? .multiply : .screen)
-            RoundedRectangle(cornerRadius: 20)
-                .frame(width: radius*0.1, height: radius*0.6, alignment: .center)
+            Image(systemName: "arrow.uturn.left")
                 .foregroundColor(color.lerp(second: .white, percentage: 0.8))
-            RoundedRectangle(cornerRadius: 20)
-                .frame(width: radius*0.6, height: radius*0.1, alignment: .center)
-                .foregroundColor(color.lerp(second: .white, percentage: 0.8))
+                .font(Font.system(size: 20, weight: .bold))
         }
         .shadow(radius: 10)
         .padding()
         .frame(width: radius*2, height: radius*2, alignment: .center)
         .onTapGesture {
-            taskListView?.CreateNewTask()
-            homeView?.CreateNewTask()
+            taskListView?.UndoTask()
+//            homeView?.UndoTask()
         }
         
     }
 }
 
-struct AddTaskButton_Previews: PreviewProvider {
+struct UndoButton_Previews: PreviewProvider {
     static var previews: some View {
-        AddTaskButton(color: .cyan)
+        UndoButton(color: .cyan)
     }
 }
+

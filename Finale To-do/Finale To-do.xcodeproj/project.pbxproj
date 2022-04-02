@@ -14,10 +14,10 @@
 		371CD4B627F614E5000FA318 /* AddListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CD4B527F614E5000FA318 /* AddListView.swift */; };
 		3760E3D327E0E1840065078C /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3760E3D227E0E1840065078C /* TaskListView.swift */; };
 		3760E3D527E0E2630065078C /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3760E3D427E0E2630065078C /* SideMenuView.swift */; };
-		376A391027DF6A1A00AB45C7 /* UpcomingTaskSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376A390F27DF6A1A00AB45C7 /* UpcomingTaskSlider.swift */; };
+		376A391027DF6A1A00AB45C7 /* TaskSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376A390F27DF6A1A00AB45C7 /* TaskSlider.swift */; };
 		376A391227DF7BDC00AB45C7 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376A391127DF7BDC00AB45C7 /* Extensions.swift */; };
-		376A391527DF969800AB45C7 /* CompletedTaskSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376A391427DF969800AB45C7 /* CompletedTaskSlider.swift */; };
 		376A391927DFA2AE00AB45C7 /* AddTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376A391827DFA2AE00AB45C7 /* AddTaskButton.swift */; };
+		3774F2A127F892430006AB82 /* UndoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3774F2A027F892430006AB82 /* UndoButton.swift */; };
 		37793A6827E89EAB00E95FEC /* DateSelectionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37793A6727E89EAB00E95FEC /* DateSelectionUI.swift */; };
 		37E734FA27DD139F008FC48F /* Finale_To_doApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E734F927DD139F008FC48F /* Finale_To_doApp.swift */; };
 		37E734FC27DD139F008FC48F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E734FB27DD139F008FC48F /* AppView.swift */; };
@@ -34,10 +34,10 @@
 		371CD4B527F614E5000FA318 /* AddListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListView.swift; sourceTree = "<group>"; };
 		3760E3D227E0E1840065078C /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
 		3760E3D427E0E2630065078C /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
-		376A390F27DF6A1A00AB45C7 /* UpcomingTaskSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingTaskSlider.swift; sourceTree = "<group>"; };
+		376A390F27DF6A1A00AB45C7 /* TaskSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSlider.swift; sourceTree = "<group>"; };
 		376A391127DF7BDC00AB45C7 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
-		376A391427DF969800AB45C7 /* CompletedTaskSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTaskSlider.swift; sourceTree = "<group>"; };
 		376A391827DFA2AE00AB45C7 /* AddTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskButton.swift; sourceTree = "<group>"; };
+		3774F2A027F892430006AB82 /* UndoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoButton.swift; sourceTree = "<group>"; };
 		37793A6727E89EAB00E95FEC /* DateSelectionUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateSelectionUI.swift; sourceTree = "<group>"; };
 		37E734F627DD139F008FC48F /* Finale To-do.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Finale To-do.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		37E734F927DD139F008FC48F /* Finale_To_doApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Finale_To_doApp.swift; sourceTree = "<group>"; };
@@ -91,10 +91,10 @@
 		376A391327DF968600AB45C7 /* UI Elements */ = {
 			isa = PBXGroup;
 			children = (
-				376A390F27DF6A1A00AB45C7 /* UpcomingTaskSlider.swift */,
-				376A391427DF969800AB45C7 /* CompletedTaskSlider.swift */,
+				376A390F27DF6A1A00AB45C7 /* TaskSlider.swift */,
 				376A391827DFA2AE00AB45C7 /* AddTaskButton.swift */,
 				37793A6727E89EAB00E95FEC /* DateSelectionUI.swift */,
+				3774F2A027F892430006AB82 /* UndoButton.swift */,
 			);
 			path = "UI Elements";
 			sourceTree = "<group>";
@@ -212,19 +212,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				376A391527DF969800AB45C7 /* CompletedTaskSlider.swift in Sources */,
 				371CD4B127F36658000FA318 /* RoundedCross.swift in Sources */,
 				3760E3D527E0E2630065078C /* SideMenuView.swift in Sources */,
 				371CD4B227F36658000FA318 /* Triangle.swift in Sources */,
 				37E734FC27DD139F008FC48F /* AppView.swift in Sources */,
 				371CD4B427F36658000FA318 /* ConfettiSwiftUI.swift in Sources */,
 				37EB1A1B27ECF90600AAB680 /* HomeView.swift in Sources */,
-				376A391027DF6A1A00AB45C7 /* UpcomingTaskSlider.swift in Sources */,
+				376A391027DF6A1A00AB45C7 /* TaskSlider.swift in Sources */,
 				37E734FA27DD139F008FC48F /* Finale_To_doApp.swift in Sources */,
 				376A391227DF7BDC00AB45C7 /* Extensions.swift in Sources */,
 				371CD4B327F36658000FA318 /* SlimRectangle.swift in Sources */,
 				3760E3D327E0E1840065078C /* TaskListView.swift in Sources */,
 				376A391927DFA2AE00AB45C7 /* AddTaskButton.swift in Sources */,
+				3774F2A127F892430006AB82 /* UndoButton.swift in Sources */,
 				37793A6827E89EAB00E95FEC /* DateSelectionUI.swift in Sources */,
 				371CD4B627F614E5000FA318 /* AddListView.swift in Sources */,
 			);

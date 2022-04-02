@@ -65,22 +65,22 @@ struct HomeView: View {
                 List {
                     Section (header: Text("Upcoming")) {
                       ForEach($mainTaskList.upcomingTasks) { task in
-                            UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: mainTaskList.primaryColor)
+                          TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: mainTaskList.primaryColor)
                         }
                         ForEach(0..<userTaskLists.taskLists.count, id: \.self) { i in
                             ForEach($userTaskLists.taskLists[i].upcomingTasks) { task in
-                                UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, sliderColor: userTaskLists.taskLists[i].primaryColor)
+                                TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: userTaskLists.taskLists[i].primaryColor)
                             }
                         }
                     }
                     .listRowSeparator(.hidden)
                     Section (header: Text("Completed")) {
-                        ForEach(mainTaskList.completedTasks) { task in
-                                CompletedTaskSlider(task: task, sliderColor: mainTaskList.primaryColor.secondaryColor)
+                        ForEach($mainTaskList.completedTasks) { task in
+                            TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: mainTaskList.primaryColor)
                           }
-                          ForEach(userTaskLists.taskLists) { taskList in
+                          ForEach($userTaskLists.taskLists) { taskList in
                               ForEach(taskList.completedTasks) { task in
-                                  CompletedTaskSlider(task: task, sliderColor: taskList.primaryColor.secondaryColor)
+                                  TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: taskList.primaryColor.wrappedValue)
                               }
                           }
                     }
@@ -126,6 +126,32 @@ struct HomeView: View {
         }
     }
     
+    func CompleteTask (task: Task) {
+        if mainTaskList.upcomingTasks.contains(task) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                withAnimation(.linear(duration: 0.5)) {
+                    mainTaskList.upcomingTasks.remove(at: mainTaskList.upcomingTasks.firstIndex(of: task)!)
+                    mainTaskList.completedTasks.insert(task, at: 0)
+                }
+            }
+            task.isCompleted = true
+            return
+        }
+        
+        for i in 0..<userTaskLists.taskLists.count {
+            if userTaskLists.taskLists[i].upcomingTasks.contains(task) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    withAnimation(.linear(duration: 0.5)) {
+                        userTaskLists.taskLists[i].upcomingTasks.remove(at: userTaskLists.taskLists[i].upcomingTasks.firstIndex(of: task)!)
+                        userTaskLists.taskLists[i].completedTasks.insert(task, at: 0)
+                    }
+                }
+                task.isCompleted = true
+                return
+            }
+        }
+    }
+    
     func CreateNewTask () {
         needResetInitialOffest = true
         withAnimation(.linear(duration: 0.5)) {
@@ -135,11 +161,39 @@ struct HomeView: View {
         }
     }
     
-    func deleteUpcoming(at offsets: IndexSet) {
-//        taskList.upcomingTasks.remove(atOffsets: offsets)
+    func DeleteUpcoming (task: Task) {
+        if mainTaskList.upcomingTasks.contains(task) {
+            withAnimation(.linear(duration: 0.5)) {
+                mainTaskList.upcomingTasks.remove(at: mainTaskList.upcomingTasks.firstIndex(of: task)!)
+            }
+            return
+        }
+        
+        for i in 0..<userTaskLists.taskLists.count {
+            if userTaskLists.taskLists[i].upcomingTasks.contains(task) {
+                withAnimation(.linear(duration: 0.5)) {
+                    userTaskLists.taskLists[i].upcomingTasks.remove(at: userTaskLists.taskLists[i].upcomingTasks.firstIndex(of: task)!)
+                }
+                return
+            }
+        }
     }
-    func deleteCompleted(at offsets: IndexSet) {
-//        taskList.completedTasks.remove(atOffsets: offsets)
+    
+    func DeleteCompleted (task: Task) {
+        if mainTaskList.completedTasks.contains(task) {
+            withAnimation(.linear(duration: 0.5)) {
+                mainTaskList.completedTasks.remove(at: mainTaskList.completedTasks.firstIndex(of: task)!)
+            }
+            return
+        }
+        for i in 0..<userTaskLists.taskLists.count {
+            if userTaskLists.taskLists[i].completedTasks.contains(task) {
+                withAnimation(.linear(duration: 0.5)) {
+                    userTaskLists.taskLists[i].completedTasks.remove(at: userTaskLists.taskLists[i].completedTasks.firstIndex(of: task)!)
+                }
+                return
+            }
+        }
     }
     
     func StopEditingTasks () {

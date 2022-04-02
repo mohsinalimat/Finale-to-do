@@ -10,7 +10,7 @@ import SwiftUI
 struct SideMenuView: View {
     let sideMenuWidth: CGFloat
     
-    var allTaskList = TaskList(name: "Home", primaryColor: .defaultColor, systemIcon: "house.fill")
+    var allTaskList = TaskList(name: "Overview", primaryColor: .defaultColor, systemIcon: "tray.full.fill")
     
     @ObservedObject var mainTaskList: TaskList
     @ObservedObject var userTaskLists: TaskListContainer

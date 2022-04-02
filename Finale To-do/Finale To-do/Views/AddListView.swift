@@ -8,16 +8,18 @@
 import SwiftUI
 
 struct AddListView: View {
-    @State var newList = TaskList(name: "", primaryColor: Color.red, systemIcon: "folder")
+    @State var newList = TaskList(name: "", primaryColor: Color.red, systemIcon: "folder.fill")
     @State var listName = ""
     @State var updater = 0
     @State var panelHeight = 0.0
     
-    var swatchSize: CGFloat = UIScreen.main.bounds.width*0.09
+    let swatchSize: CGFloat = UIScreen.main.bounds.width*0.09
     
-    var icons: [String] = ["folder.fill", "line.3.horizontal", "heart.fill", "paperplane.fill", "calendar", "rectangle.fill.on.rectangle.fill", "trash.fill", "clock.fill", "hourglass", "bolt.fill", "-", "-", "-", "-", "-", "-"]
+    let icons: [String] = ["folder.fill", "book.closed.fill", "heart.fill", "paperplane.fill", "calendar", "rectangle.fill.on.rectangle.fill", "trash.fill", "alarm.fill", "hourglass", "bolt.fill", "person.fill", "bag.fill", "tray.full.fill", "archivebox.fill", "graduationcap.fill", "briefcase.fill"]
     
-    var colors: [Color] = [Color.red, Color.blue, Color.defaultColor, Color.cyan, Color.yellow, Color.black, Color.green, Color.white, Color.red, Color.blue, Color.defaultColor, Color.cyan, Color.yellow, Color.black, Color.green, Color.white]
+    let colors: [Color] = [Color.red, Color.blue, Color.defaultColor, Color.cyan, Color.yellow, Color.black, Color.green, Color.white, Color.red, Color.blue, Color.defaultColor, Color.cyan, Color.yellow, Color.black, Color.green, Color.white]
+    
+    let placeholders: [String] = ["Work", "Family", "Sports club", "Hobbies", "Home", "Shopping list"]
     
     var appView: AppView?
     
@@ -39,7 +41,7 @@ struct AddListView: View {
               .frame(maxWidth: .infinity)
 
             Text("Title")
-            TextField("New list", text: $listName)
+            TextField(placeholders[Int.random(in: 0..<placeholders.count)], text: $listName)
               .textFieldStyle(GreyTextFieldStyle())
 
             Text("Color")
@@ -97,11 +99,11 @@ struct AddListView: View {
                     .opacity(listName.isEmpty ? 0.5 : 1)
                     .disabled(listName.isEmpty)
             }
-            .padding(.top, 50)
+            .padding(.top, 20)
         }
         .foregroundColor(.white)
         .padding()
-        .padding(.bottom, 80)
+        .padding(.bottom, 50)
         .background(
             GeometryReader { geo in
                 RoundedRectangle(cornerRadius: 20)
@@ -173,7 +175,8 @@ struct IconSwatch: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(Color(uiColor: UIColor.systemGray2))
+                .fill(Color.defaultColor)
+//                .fill(Color(uiColor: UIColor.systemGray2))
                 .overlay {
                     if listIcon == icon {
                         Circle()

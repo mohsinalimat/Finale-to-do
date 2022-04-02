@@ -14,6 +14,7 @@ struct TaskListView: View {
     
     @State var showCalendar = false
     @State var taskBeingEdited = Task(name: "", dateAssigned: Date.now)
+    @State var lastCompletedTask: Task?
     
     @State var needResetInitialOffest = true
     
@@ -21,6 +22,8 @@ struct TaskListView: View {
     
     @State var scrollScaleFactor = 0.0
     @State var initialHeaderOffset = 1.0
+    
+    @State var undoTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
         ZStack {
@@ -73,13 +76,13 @@ struct TaskListView: View {
                 List {
                     Section (header: Text("Upcoming")) {
                         ForEach($taskList.upcomingTasks) { task in
-                            UpcomingTaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, taskListView: self, sliderColor: taskList.primaryColor)
+                            TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, taskListView: self, sliderColor: taskList.primaryColor)
                         }
                     }
                     .listRowSeparator(.hidden)
                     Section (header: Text("Completed")) {
-                        ForEach(taskList.completedTasks) { task in
-                            CompletedTaskSlider(task: task, sliderColor: taskList.primaryColor.secondaryColor, taskListView: self)
+                        ForEach($taskList.completedTasks) { task in
+                            TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, taskListView: self, sliderColor: taskList.primaryColor)
                         }
                     }
                     .listRowSeparator(.hidden)
@@ -110,6 +113,16 @@ struct TaskListView: View {
                         AddTaskButton(color: taskList.primaryColor, taskListView: self)
                             .padding()
                             .position(x: geo.size.width*0.85, y: geo.size.height-geo.size.width*0.075)
+                        
+                        UndoButton(color: taskList.primaryColor, taskListView: self)
+                            .padding()
+                            .position(x: lastCompletedTask == nil ? -geo.size.width*0.15 : geo.size.width*0.15, y: geo.size.height-geo.size.width*0.075)
+                            .onReceive(undoTimer) { _ in
+                                withAnimation(.linear(duration: 0.25)) {
+                                    lastCompletedTask = nil
+                                }
+                                self.undoTimer.upstream.connect().cancel()
+                            }
                     }
 
                 }
@@ -133,20 +146,35 @@ struct TaskListView: View {
     func CompleteTask (task: Task) {
         if !taskList.upcomingTasks.contains(task) { return }
         
+        task.isCompleted = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             withAnimation(.linear(duration: 0.5)) {
                 taskList.upcomingTasks.remove(at: taskList.upcomingTasks.firstIndex(of: task)!)
                 taskList.completedTasks.insert(task, at: 0)
             }
+            withAnimation(.linear(duration: 0.25)) {
+                lastCompletedTask = task
+            }
+            
+            self.undoTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
         }
     }
     
-    func UndoTask (task: Task) {
+    func UndoTask () {
+        if lastCompletedTask == nil { return }
+        
+        UndoTask(task: lastCompletedTask!)
+    }
+    func UndoTask(task: Task) {
         if !taskList.completedTasks.contains(task) { return }
         
         withAnimation(.linear(duration: 0.5)) {
-            taskList.completedTasks.remove(at: taskList.completedTasks.firstIndex(of: task)!)
+            task.isCompleted = false
             taskList.upcomingTasks.insert(task, at: 0)
+            taskList.completedTasks.remove(at: taskList.completedTasks.firstIndex(of: task)!)
+        }
+        withAnimation(.linear(duration: 0.25)) {
+            lastCompletedTask = nil
         }
     }
     
