@@ -190,7 +190,7 @@ struct TaskSlider: View {
     func StartEditing () {
         taskBeingEdited = task
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-//                focusInputField = true
+                focusInputField = true
             }
     }
     

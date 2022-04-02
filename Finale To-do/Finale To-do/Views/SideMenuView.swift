@@ -78,9 +78,9 @@ struct SideMenuView: View {
                     })
                     
                     Spacer()
-                    
-                    Button(action: {
                         
+                    Button(action: {
+                        OpenSettings()
                     }, label: {
                         Image(systemName: "gearshape")
                             .foregroundColor(.white)
@@ -99,6 +99,12 @@ struct SideMenuView: View {
     func ShowAddListView () {
         withAnimation(.easeOut(duration: 0.25)) {
             appView?.isAddListOpen = true
+        }
+    }
+    
+    func OpenSettings (){
+        withAnimation(.easeOut(duration: 0.25)) {
+            appView?.isSettingsOpen = true
         }
     }
 }

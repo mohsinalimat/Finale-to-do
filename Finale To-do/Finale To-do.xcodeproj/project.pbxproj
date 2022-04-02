@@ -18,6 +18,7 @@
 		376A391227DF7BDC00AB45C7 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376A391127DF7BDC00AB45C7 /* Extensions.swift */; };
 		376A391927DFA2AE00AB45C7 /* AddTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376A391827DFA2AE00AB45C7 /* AddTaskButton.swift */; };
 		3774F2A127F892430006AB82 /* UndoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3774F2A027F892430006AB82 /* UndoButton.swift */; };
+		3774F2A327F8C1C20006AB82 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3774F2A227F8C1C20006AB82 /* SettingsView.swift */; };
 		37793A6827E89EAB00E95FEC /* DateSelectionUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37793A6727E89EAB00E95FEC /* DateSelectionUI.swift */; };
 		37E734FA27DD139F008FC48F /* Finale_To_doApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E734F927DD139F008FC48F /* Finale_To_doApp.swift */; };
 		37E734FC27DD139F008FC48F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E734FB27DD139F008FC48F /* AppView.swift */; };
@@ -38,6 +39,7 @@
 		376A391127DF7BDC00AB45C7 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		376A391827DFA2AE00AB45C7 /* AddTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskButton.swift; sourceTree = "<group>"; };
 		3774F2A027F892430006AB82 /* UndoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoButton.swift; sourceTree = "<group>"; };
+		3774F2A227F8C1C20006AB82 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		37793A6727E89EAB00E95FEC /* DateSelectionUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateSelectionUI.swift; sourceTree = "<group>"; };
 		37E734F627DD139F008FC48F /* Finale To-do.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Finale To-do.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		37E734F927DD139F008FC48F /* Finale_To_doApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Finale_To_doApp.swift; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 				3760E3D227E0E1840065078C /* TaskListView.swift */,
 				37EB1A1A27ECF90600AAB680 /* HomeView.swift */,
 				371CD4B527F614E5000FA318 /* AddListView.swift */,
+				3774F2A227F8C1C20006AB82 /* SettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -221,6 +224,7 @@
 				376A391027DF6A1A00AB45C7 /* TaskSlider.swift in Sources */,
 				37E734FA27DD139F008FC48F /* Finale_To_doApp.swift in Sources */,
 				376A391227DF7BDC00AB45C7 /* Extensions.swift in Sources */,
+				3774F2A327F8C1C20006AB82 /* SettingsView.swift in Sources */,
 				371CD4B327F36658000FA318 /* SlimRectangle.swift in Sources */,
 				3760E3D327E0E1840065078C /* TaskListView.swift in Sources */,
 				376A391927DFA2AE00AB45C7 /* AddTaskButton.swift in Sources */,

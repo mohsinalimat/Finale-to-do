@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct HomeView: View {
+    @Binding var userName: String
     @ObservedObject var mainTaskList: TaskList
     @ObservedObject var userTaskLists: TaskListContainer
     
@@ -52,12 +53,11 @@ struct HomeView: View {
                         }
                         .padding()
                         
-                        Text("Hi, Grant")
-                            .font(.system(size: 40 + scrollScaleFactor/30))
-                            .fontWeight(.bold)
+                        Text("Hi, " + userName)
+                            .font(.system(size: 40 + scrollScaleFactor/30, weight: .bold))
+                            .offset(y: scrollScaleFactor)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal)
-                            .offset(y: scrollScaleFactor)
                     }
                 }.zIndex(2)
                 
@@ -204,6 +204,6 @@ struct HomeView: View {
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView(mainTaskList: TaskList(name: "Main", primaryColor: .defaultColor, upcomingTasks: [Task(name: "Main task")]), userTaskLists: TaskListContainer())
+        HomeView(userName: .constant("Friend"), mainTaskList: TaskList(name: "Main", primaryColor: .defaultColor, upcomingTasks: [Task(name: "Main task")]), userTaskLists: TaskListContainer())
     }
 }

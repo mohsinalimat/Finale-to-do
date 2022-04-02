@@ -116,7 +116,7 @@ struct TaskListView: View {
                         
                         UndoButton(color: taskList.primaryColor, taskListView: self)
                             .padding()
-                            .position(x: lastCompletedTask == nil ? -geo.size.width*0.15 : geo.size.width*0.15, y: geo.size.height-geo.size.width*0.075)
+                            .position(x: geo.size.width*0.15, y: lastCompletedTask == nil ? geo.size.height+geo.size.width*0.15 : geo.size.height-geo.size.width*0.075)
                             .onReceive(undoTimer) { _ in
                                 withAnimation(.linear(duration: 0.25)) {
                                     lastCompletedTask = nil

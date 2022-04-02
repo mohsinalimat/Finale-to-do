@@ -20,6 +20,7 @@ struct AddListView: View {
     let colors: [Color] = [Color.red, Color.blue, Color.defaultColor, Color.cyan, Color.yellow, Color.black, Color.green, Color.white, Color.red, Color.blue, Color.defaultColor, Color.cyan, Color.yellow, Color.black, Color.green, Color.white]
     
     let placeholders: [String] = ["Work", "Family", "Sports club", "Hobbies", "Home", "Shopping list"]
+    @State var randomPlaceholder = 0
     
     var appView: AppView?
     
@@ -32,6 +33,9 @@ struct AddListView: View {
                   .frame(width: UIScreen.main.bounds.width*0.13, height: 3)
               Spacer()
             }
+            .onAppear {
+                randomPlaceholder = Int.random(in: 0..<placeholders.count)
+            }
 
 
             Text("Create new list")
@@ -41,7 +45,7 @@ struct AddListView: View {
               .frame(maxWidth: .infinity)
 
             Text("Title")
-            TextField(placeholders[Int.random(in: 0..<placeholders.count)], text: $listName)
+            TextField(placeholders[randomPlaceholder], text: $listName)
               .textFieldStyle(GreyTextFieldStyle())
 
             Text("Color")
