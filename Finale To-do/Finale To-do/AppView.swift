@@ -16,6 +16,8 @@ struct AppView: View {
     let openSideMenuThreashold = UIScreen.main.bounds.width * 0.2
     let sideMenuWidth = UIScreen.main.bounds.width * 0.8
     
+    @State var isDragging = false
+    
     @State var isSideMenuOpen = false
     @State var xOffset: CGFloat = 0
     
@@ -44,21 +46,21 @@ struct AppView: View {
                         SaveData()
                     }
                 }
-            
+
             TaskListView(taskList: currentListIndex <= 1 ? mainTaskList : userTaskLists.taskLists[currentListIndex-2], appView: self)
                 .offset(x: xOffset)
                 .opacity(currentListIndex == 0 ? 0 : 1)
                 .overlay {
                     DragRectangle(xOffset: $xOffset, isSideMenuOpen: $isSideMenuOpen, appView: self)
                 }
-            
+
             HomeView(userName: $settings.userName, mainTaskList: mainTaskList, userTaskLists: userTaskLists, appView: self)
                 .offset(x: xOffset)
                 .opacity(currentListIndex == 0 ? 1 : 0)
                 .overlay {
                     DragRectangle(xOffset: $xOffset, isSideMenuOpen: $isSideMenuOpen, appView: self)
                 }
-            
+
             Rectangle()
                 .fill(Color.black)
                 .ignoresSafeArea()
@@ -67,20 +69,20 @@ struct AppView: View {
                     withAnimation(.easeOut(duration: 0.2)) {
                         self.addListYOffset = 0
                         isAddListOpen = false
-                        
+
                         if isSettingsOpen { SaveSettings() }
                         self.settingsYOffset = 0
                         isSettingsOpen = false
                     }
                     UIApplication.shared.endEditing()
                 }
-            
-            AddListView (appView: self)
+
+            AddListView (isViewOpen: $isAddListOpen, appView: self)
                 .offset(x: 0, y: addListYOffset)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { value in
-                            withAnimation(.linear(duration: 0.03)) {
+                            withAnimation(.linear(duration: 0.1)) {
                                 self.addListYOffset = max(0, value.translation.height)
                             }
                         }
@@ -97,13 +99,13 @@ struct AppView: View {
                             }
                         }
                 )
-            
+
             SettingsView(settings: $settings, userTaskLists: userTaskLists, appView: self)
                 .offset(x: 0, y: settingsYOffset)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { value in
-                            withAnimation(.linear(duration: 0.03)) {
+                            withAnimation(.linear(duration: 0.1)) {
                                 self.settingsYOffset = max(0, value.translation.height)
                             }
                         }
@@ -127,7 +129,8 @@ struct AppView: View {
     func OnDragChanged (value: DragGesture.Value) {
         if blockSideMenu { return }
         
-        withAnimation(.linear(duration: 0.03)) {
+        isDragging = true
+        withAnimation(.linear(duration: 0.1)) {
             self.xOffset = max(0, min(sideMenuWidth, (!isSideMenuOpen ? 0 : sideMenuWidth) + value.translation.width))
         }
     }
@@ -135,6 +138,9 @@ struct AppView: View {
     func OnDragEnded (value: DragGesture.Value) {
         if blockSideMenu { return }
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            isDragging = false
+        }
         if !isSideMenuOpen {
             if value.translation.width > openSideMenuThreashold {
                 OpenSideMenu()
@@ -161,7 +167,7 @@ struct AppView: View {
     func OpenSideMenu() {
         if blockSideMenu { return }
         
-        withAnimation (.easeOut(duration: 0.2)) {
+        withAnimation (.easeOut(duration: 0.25)) {
             xOffset = sideMenuWidth
         }
         isSideMenuOpen = true
@@ -169,7 +175,7 @@ struct AppView: View {
     func CloseSideMenu () {
         if blockSideMenu { return }
         
-        withAnimation (.easeOut(duration: 0.2)) {
+        withAnimation (.easeOut(duration: 0.25)) {
             xOffset = 0
         }
         isSideMenuOpen = false

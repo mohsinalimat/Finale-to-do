@@ -19,9 +19,6 @@ struct HomeView: View {
     
     var appView: AppView?
     
-    @State var scrollScaleFactor = 0.0
-    @State var initialHeaderOffset = 1.0
-    
     var body: some View {
         ZStack {
             Color(uiColor: UIColor.systemBackground)
@@ -30,18 +27,14 @@ struct HomeView: View {
                 .onChange(of: showCalendar) { newValue in
                     appView?.blockSideMenu = newValue
                 }
-                .onChange(of: appView?.currentListIndex) { newVal in
-                    scrollScaleFactor = 0
-                    needResetInitialOffest = true
-                }
-            
+                
             VStack (spacing: 0) {
                 ZStack (alignment: .leading) {
                     Rectangle()
                         .ignoresSafeArea()
                         .foregroundStyle(.ultraThinMaterial)
                         .frame(height: UIScreen.main.bounds.height*0.15)
-                        .scaleEffect(y: 1+(scrollScaleFactor/(UIScreen.main.bounds.height*0.15)), anchor: UnitPoint(x: 0, y: 0))
+                      
                     VStack (alignment: .leading, spacing: 10) {
                         Button {
                             if appView!.isSideMenuOpen { appView?.CloseSideMenu() }
@@ -54,69 +47,53 @@ struct HomeView: View {
                         .padding()
                         
                         Text("Hi, " + userName)
-                            .font(.system(size: 40 + scrollScaleFactor/30, weight: .bold))
-                            .offset(y: scrollScaleFactor)
+                            .font(.system(size: 40, weight: .bold))
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal)
                     }
                 }.zIndex(2)
-                
-                
-                List {
-                    Section (header: Text("Upcoming")) {
-                      ForEach($mainTaskList.upcomingTasks) { task in
-                          TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: mainTaskList.primaryColor)
-                        }
-                        ForEach(0..<userTaskLists.taskLists.count, id: \.self) { i in
-                            ForEach($userTaskLists.taskLists[i].upcomingTasks) { task in
-                                TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: userTaskLists.taskLists[i].primaryColor)
+                ScrollViewReader { value in
+                    List {
+                        Section (header: Text("Upcoming")) {
+                          ForEach($mainTaskList.upcomingTasks) { task in
+                              TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: mainTaskList.primaryColor)
+                            }
+                            ForEach(0..<userTaskLists.taskLists.count, id: \.self) { i in
+                                ForEach($userTaskLists.taskLists[i].upcomingTasks) { task in
+                                    TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: userTaskLists.taskLists[i].primaryColor)
+                                }
                             }
                         }
-                    }
-                    .listRowSeparator(.hidden)
-                    Section (header: Text("Completed")) {
-                        ForEach($mainTaskList.completedTasks) { task in
-                            TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: mainTaskList.primaryColor)
-                          }
-                          ForEach($userTaskLists.taskLists) { taskList in
-                              ForEach(taskList.completedTasks) { task in
-                                  TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: taskList.primaryColor.wrappedValue)
+                        .id(0)
+                        .listRowSeparator(.hidden)
+                        Section (header: Text("Completed")) {
+                            ForEach($mainTaskList.completedTasks) { task in
+                                TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: mainTaskList.primaryColor)
                               }
-                          }
-                    }
-                    .listRowSeparator(.hidden)
-                    GeometryReader { proxy in
-                        let offset = proxy.frame(in: .named("scroll")).minY
-                        Color.clear.preference(key: ViewOffsetKey.self, value: offset)
-                    }
-                    .onPreferenceChange(ViewOffsetKey.self) { value in
-                        if needResetInitialOffest {
-                            initialHeaderOffset = value
-                            needResetInitialOffest = false
-                        } else {
-                            withAnimation(.linear(duration: 0.04)) {
-                                scrollScaleFactor = value-initialHeaderOffset > 0 ? value-initialHeaderOffset : 0
-                            }
+                              ForEach($userTaskLists.taskLists) { taskList in
+                                  ForEach(taskList.completedTasks) { task in
+                                      TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: taskList.primaryColor.wrappedValue)
+                                  }
+                              }
                         }
+                        .listRowSeparator(.hidden)
                     }
-                    .listRowSeparator(.hidden)
-                }
-                .padding(.top, -200)
-                .listStyle(.plain)
-                .overlay {
-                    GeometryReader { geo in
-                        AddTaskButton(color: .defaultColor, homeView: self)
-                            .padding()
-                            .position(x: geo.size.width*0.85, y: geo.size.height-geo.size.width*0.075)
-                    }
+                    .padding(.top, -200)
+                    .listStyle(.plain)
+                    .overlay {
+                        GeometryReader { geo in
+                            AddTaskButton(color: .defaultColor, homeView: self)
+                                .padding()
+                                .position(x: geo.size.width*0.85, y: geo.size.height-geo.size.width*0.075)
+                        }
 
+                    }
+                    .onAppear {
+                        UIScrollView.appearance(for: .current).contentInset = UIEdgeInsets(top: 200, left: 0, bottom: 0, right: 0)
+                        value.scrollTo(0, anchor: UnitPoint(x: 0, y: 100))
+                    }
+                    .zIndex(1)
                 }
-                .coordinateSpace(name: "scroll")
-                .onAppear {
-                    UIScrollView.appearance().clipsToBounds = false
-                    UIScrollView.appearance().contentInset = UIEdgeInsets(top: 200, left: 0, bottom: 0, right: 0)
-                }
-                .zIndex(1)
             }
             if showCalendar {
                 DateSelectionUI(showView: $showCalendar, taskBeingEdited: $taskBeingEdited, color: .defaultColor, notificationEnabled: taskBeingEdited.isNotificationEnabled)

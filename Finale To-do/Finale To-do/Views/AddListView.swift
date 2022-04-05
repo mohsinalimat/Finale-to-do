@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AddListView: View {
+    @Binding var isViewOpen: Bool
     @State var newList = TaskList(name: "", primaryColor: Color.red, systemIcon: "folder.fill")
     @State var listName = ""
     @State var updater = 0
@@ -35,6 +36,9 @@ struct AddListView: View {
             }
             .onAppear {
                 randomPlaceholder = Int.random(in: 0..<placeholders.count)
+            }
+            .onChange(of: isViewOpen) { i in
+                if i { OnAppear() }
             }
 
 
@@ -133,11 +137,13 @@ struct AddListView: View {
     
     func OnAppear() {
         newList = TaskList(name: "", primaryColor: Color.red, systemIcon: "folder")
+        listName = ""
     }
     
     func CloseView () {
         withAnimation(.easeOut(duration: 0.2)) {
             appView?.isAddListOpen = false
+            listName = ""
         }
         UIApplication.shared.endEditing()
     }
@@ -226,6 +232,6 @@ extension View {
 
 struct AddListView_Previews: PreviewProvider {
     static var previews: some View {
-        AddListView()
+        AddListView(isViewOpen: .constant(true))
     }
 }

@@ -20,9 +20,6 @@ struct TaskListView: View {
     
     var appView: AppView?
     
-    @State var scrollScaleFactor = 0.0
-    @State var initialHeaderOffset = 1.0
-    
     @State var undoTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     var body: some View {
@@ -32,10 +29,6 @@ struct TaskListView: View {
                 .zIndex(0)
                 .onChange(of: showCalendar) { newValue in
                     appView?.blockSideMenu = newValue
-                }
-                .onChange(of: appView?.currentListIndex) { newVal in
-                    scrollScaleFactor = 0
-                    needResetInitialOffest = true
                 }
             
             VStack (spacing: 0) {
@@ -49,7 +42,6 @@ struct TaskListView: View {
                     }
                     .ignoresSafeArea()
                     .frame(height: UIScreen.main.bounds.height*0.15)
-                    .scaleEffect(y: 1+(scrollScaleFactor/(UIScreen.main.bounds.height*0.15)), anchor: UnitPoint(x: 0, y: 0))
                     
                     VStack (alignment: .leading, spacing: 10) {
                         Button {
@@ -63,11 +55,9 @@ struct TaskListView: View {
                         .padding()
                         
                         Text(taskList.name)
-                            .font(.system(size: 40 + scrollScaleFactor/30))
-                            .fontWeight(.bold)
+                            .font(.system(size: 40, weight: .bold))
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal)
-                            .offset(y: scrollScaleFactor)
                             .foregroundColor(.white)
                     }
                 }.zIndex(2)
@@ -76,32 +66,13 @@ struct TaskListView: View {
                 List {
                     Section (header: Text("Upcoming")) {
                         ForEach($taskList.upcomingTasks) { task in
-                            TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, taskListView: self, sliderColor: taskList.primaryColor)
+                            TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, taskListView: self, sliderColor: taskList.primaryColor)
                         }
                     }
                     .listRowSeparator(.hidden)
                     Section (header: Text("Completed")) {
                         ForEach($taskList.completedTasks) { task in
-                            TaskSlider(task: task, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, taskListView: self, sliderColor: taskList.primaryColor)
-                        }
-                    }
-                    .listRowSeparator(.hidden)
-                    .onChange(of: taskList) { newVal in
-                        scrollScaleFactor = 0
-                        needResetInitialOffest = true
-                    }
-                    GeometryReader { proxy in
-                        let offset = proxy.frame(in: .named("scroll")).minY
-                        Color.clear.preference(key: ViewOffsetKey.self, value: offset)
-                    }
-                    .onPreferenceChange(ViewOffsetKey.self) { value in
-                        if needResetInitialOffest {
-                            initialHeaderOffset = value
-                            needResetInitialOffest = false
-                        } else {
-                            withAnimation(.linear(duration: 0.04)) {
-                                scrollScaleFactor = value-initialHeaderOffset > 0 ? value-initialHeaderOffset : 0
-                            }
+                            TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, taskListView: self, sliderColor: taskList.primaryColor)
                         }
                     }
                     .listRowSeparator(.hidden)
@@ -125,11 +96,6 @@ struct TaskListView: View {
                             }
                     }
 
-                }
-                .coordinateSpace(name: "scroll")
-                .onAppear {
-                    UIScrollView.appearance().clipsToBounds = false
-                    UIScrollView.appearance().contentInset = UIEdgeInsets(top: 200, left: 0, bottom: 0, right: 0)
                 }
                 .zIndex(1)
             }

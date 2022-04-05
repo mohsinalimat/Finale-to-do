@@ -6,13 +6,15 @@
 //
 
 import SwiftUI
-import ConfettiSwiftUI
 
 struct TaskSlider: View {
     @State private var confettiCannon: Int = 0
     @State private var percentage: CGFloat = 0.027
+    
     @State var isCompleted = false
+    @State var taskName: String = ""
     @Binding var task: Task
+    @Binding var isDraggingParentView: Bool
     
     @FocusState var focusInputField: Bool
     
@@ -24,7 +26,7 @@ struct TaskSlider: View {
     
     var sliderColor: Color
     let sliderHeight = UIScreen.main.bounds.height * 0.042
-    let sliderWidth = UIScreen.main.bounds.height * 0.027
+    let sliderWidth = UIScreen.main.bounds.height * 0.03
     let backgroundColor = Color(uiColor: UIColor.systemGray6)
     let cornerRadius: CGFloat = 10
     
@@ -37,7 +39,7 @@ struct TaskSlider: View {
                 ForEach (0..<4) {
                     ConfettiCannon(counter: $confettiCannon, num: 5,  confettis: [.shape(.circle)], colors: [sliderColor], confettiSize: 5, rainHeight: 0, openingAngle: Angle(degrees: 10), closingAngle: Angle(degrees: 170), radius: 50)
                         .offset(x: CGFloat($0) * geometry.size.width / 4)
-                    
+
                     ConfettiCannon(counter: $confettiCannon, num: 5,  confettis: [.shape(.circle)], colors: [sliderColor], confettiSize: 5, rainHeight: 0, openingAngle: Angle(degrees: 190), closingAngle: Angle(degrees: 350), radius: 50)
                         .offset(x: CGFloat($0) * geometry.size.width / 4)
                 }
@@ -48,6 +50,7 @@ struct TaskSlider: View {
                     .onAppear {
                         randomPlaceholder = Int.random(in: 0..<placeholders.count)
                         isCompleted = task.isCompleted
+                        taskName = task.name
                     }
                 
                 Rectangle()
@@ -94,9 +97,9 @@ struct TaskSlider: View {
 
                 HStack {
                     let padding = isCompleted ? 4 : sliderWidth
-                    
+
                     if !isCompleted {
-                        TextField(placeholders[randomPlaceholder], text: $task.name)
+                        TextField(placeholders[randomPlaceholder], text: $taskName)
                             .padding(.horizontal, CGFloat((padding + 4)))
                             .frame(height: sliderHeight, alignment: .leading)
                             .disabled(!isBeingEdited)
@@ -157,26 +160,31 @@ struct TaskSlider: View {
                 percentage = sliderWidth/geometry.size.width
                 if isBeingEdited { StartEditing() }
             }
-        }
-        .contextMenu {
-            if task.isCompleted {
-                Button(action: {
-                    Undo()
-                }, label: {
-                    Label("Undo", systemImage: "arrow.uturn.backward")
-                })
-            } else {
-                Button(action: {
-                    StartEditing()
-                }, label: {
-                    Label("Edit", systemImage: "square.and.pencil")
-                })
+            .contextMenu {
+                if !isDraggingParentView {
+                    if task.isCompleted {
+                        Button(action: {
+                            Undo()
+                        }, label: {
+                            Label("Undo", systemImage: "arrow.uturn.backward")
+                        })
+                    } else {
+                        Button(action: {
+                            StartEditing()
+                        }, label: {
+                            Label("Edit", systemImage: "square.and.pencil")
+                        })
+                    }
+                    Button(role: .destructive, action: {
+                        DeleteTask()
+                    }, label: {
+                        Label("Delete", systemImage: "trash")
+                    })
+                }
             }
-            Button(role: .destructive, action: {
-                DeleteTask()
-            }, label: {
-                Label("Delete", systemImage: "trash")
-            })
+            .onTapGesture(count: 2) {
+                StartEditing()
+            }
         }
     }
     
@@ -208,6 +216,7 @@ struct TaskSlider: View {
         taskBeingEdited = Task()
         focusInputField = false
         UIApplication.shared.endEditing()
+        task.name = taskName
         if task.name == "" {
             DeleteTask()
         }
@@ -250,10 +259,43 @@ struct TaskSlider: View {
     }
 }
 
+struct MenuView: View {
+    var slider: TaskSlider
+    
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 16)
+                .foregroundStyle(.ultraThinMaterial)
+            
+            VStack (alignment: .leading) {
+                if slider.task.isCompleted {
+                    Button(action: {
+                        slider.Undo()
+                    }, label: {
+                        Label("Undo", systemImage: "arrow.uturn.backward")
+                    })
+                } else {
+                    Button(action: {
+                        slider.StartEditing()
+                    }, label: {
+                        Label("Edit", systemImage: "square.and.pencil")
+                    })
+                }
+                Button(role: .destructive, action: {
+                    slider.DeleteTask()
+                }, label: {
+                    Label("Delete", systemImage: "trash")
+                })
+            }
+        }
+        .frame(width: UIScreen.main.bounds.width*0.3, height: UIScreen.main.bounds.width*0.2)
+    }
+}
+
 struct TaskSlider_Preview: PreviewProvider {
     static var previews: some View {
-        let task = Task(name: "Name", isComleted: true, isDateAssigned: true, dateAssigned: Date())
-        TaskSlider(task: .constant(task), isPickingDate: .constant(false), taskBeingEdited: .constant(Task(name: "")), sliderColor: .cyan)
+        let task = Task(name: "Name", isComleted: false, isDateAssigned: true, dateAssigned: Date())
+        TaskSlider(task: .constant(task), isDraggingParentView: .constant(false), isPickingDate: .constant(false), taskBeingEdited: .constant(Task(name: "")), sliderColor: .cyan)
     }
 }
 
