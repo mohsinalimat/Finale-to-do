@@ -52,6 +52,15 @@ struct TaskSlider: View {
                         isCompleted = task.isCompleted
                         taskName = task.name
                     }
+                    .onChange(of: taskBeingEdited) { newVal in
+                        if newVal != task {
+                            if taskName == "" && task.name == "" {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.51) {
+                                    DeleteTask()
+                                }
+                            }
+                        }
+                    }
                 
                 Rectangle()
                     .foregroundColor(sliderColor)

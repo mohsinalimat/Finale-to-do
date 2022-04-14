@@ -58,10 +58,10 @@ struct HomeView: View {
                           ForEach($mainTaskList.upcomingTasks) { task in
                               TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: mainTaskList.primaryColor)
                             }
-                            ForEach(0..<userTaskLists.taskLists.count, id: \.self) { i in
-                                ForEach($userTaskLists.taskLists[i].upcomingTasks) { task in
-                                    TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: userTaskLists.taskLists[i].primaryColor)
-                                }
+                            ForEach($userTaskLists.taskLists) { taskList in
+                                ForEach(taskList.upcomingTasks) { task in
+                                    TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: taskList.primaryColor.wrappedValue)
+                                    }
                             }
                         }
                         .id(0)
@@ -105,25 +105,26 @@ struct HomeView: View {
     
     func CompleteTask (task: Task) {
         if mainTaskList.upcomingTasks.contains(task) {
+            task.isCompleted = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 withAnimation(.linear(duration: 0.5)) {
                     mainTaskList.upcomingTasks.remove(at: mainTaskList.upcomingTasks.firstIndex(of: task)!)
                     mainTaskList.completedTasks.insert(task, at: 0)
                 }
             }
-            task.isCompleted = true
             return
         }
         
         for i in 0..<userTaskLists.taskLists.count {
             if userTaskLists.taskLists[i].upcomingTasks.contains(task) {
+                task.isCompleted = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     withAnimation(.linear(duration: 0.5)) {
                         userTaskLists.taskLists[i].upcomingTasks.remove(at: userTaskLists.taskLists[i].upcomingTasks.firstIndex(of: task)!)
                         userTaskLists.taskLists[i].completedTasks.insert(task, at: 0)
+                        userTaskLists.updater += 1
                     }
                 }
-                task.isCompleted = true
                 return
             }
         }
@@ -131,11 +132,11 @@ struct HomeView: View {
     
     func CreateNewTask () {
         needResetInitialOffest = true
+        let newTask = Task(name: "")
         withAnimation(.linear(duration: 0.5)) {
-            let newTask = Task(name: "")
             mainTaskList.upcomingTasks.insert(newTask, at: 0)
-            taskBeingEdited = newTask
         }
+        taskBeingEdited = newTask
     }
     
     func DeleteUpcoming (task: Task) {

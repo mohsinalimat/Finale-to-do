@@ -261,7 +261,8 @@ struct DragRectangle: View {
 }
 
 class TaskListContainer: ObservableObject {
-    @Published var taskLists = [TaskList]()
+    @Published var taskLists: [TaskList] = [TaskList]()
+    @Published var updater: Int = 0
 }
 
 class TaskList: Identifiable, Equatable, ObservableObject, Codable {
