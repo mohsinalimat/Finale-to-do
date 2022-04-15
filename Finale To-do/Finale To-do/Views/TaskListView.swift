@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
+class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     let app: App
     
@@ -39,6 +39,7 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         hamburgerButton.imageView?.contentMode = .scaleAspectFit
         hamburgerButton.contentVerticalAlignment = .fill
         hamburgerButton.contentHorizontalAlignment = .fill
+        hamburgerButton.addTarget(self, action: #selector(ToggleSideMenu), for: .touchUpInside)
         
         header.addSubview(hamburgerButton)
         
@@ -59,11 +60,15 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 40+padding*0.5
-        tableView.register(TaskSliderTableCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(TaskSliderTableCell.self, forCellReuseIdentifier: "taskCell")
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: frame.origin.y, left: 0, bottom: 0, right: 0)
         
         contentView.addSubview(tableView)
+        
+        let dragGesture = UIPanGestureRecognizer(target: self, action: #selector(DragGesture))
+        dragGesture.minimumNumberOfTouches = 1
+        contentView.addGestureRecognizer(dragGesture)
         
         addSubview(contentView)
     }
@@ -73,7 +78,7 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TaskSliderTableCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskSliderTableCell
         
         cell.Setup(
             task: indexPath.section == 0 ? App.mainTaskList.upcomingTasks[indexPath.row] : App.mainTaskList.completedTasks[indexPath.row],
@@ -90,6 +95,16 @@ class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return section == 0 ? "Upcoming" : "Completed"
+    }
+    
+    
+    
+    @objc func ToggleSideMenu () {
+        app.ToggleSideMenu()
+    }
+    
+    @objc func DragGesture (sender: UIPanGestureRecognizer) {
+        app.DragSideMenu(sender: sender)
     }
     
     required init?(coder: NSCoder) {
