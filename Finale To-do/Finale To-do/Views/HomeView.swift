@@ -1,187 +1,98 @@
 //
-//  AllTaskListsView.swift
+//  HomeView.swift
 //  Finale To-do
 //
-//  Created by Grant Oganan on 3/24/22.
+//  Created by Grant Oganan on 4/14/22.
 //
 
-import SwiftUI
+import UIKit
 
-struct HomeView: View {
-    @Binding var userName: String
-    @ObservedObject var mainTaskList: TaskList
-    @ObservedObject var userTaskLists: TaskListContainer
+class HomeView: UIView, UITableViewDataSource, UITableViewDelegate {
     
-    @State var showCalendar = false
-    @State var taskBeingEdited = Task(name: "", dateAssigned: Date.now)
+    let app: App
     
-    @State var needResetInitialOffest = true
+    let padding = 16.0
     
-    var appView: AppView?
+    var tableView = UITableView()
+    let sliderHeight = 30.0
     
-    var body: some View {
-        ZStack {
-            Color(uiColor: UIColor.systemBackground)
-                .ignoresSafeArea()
-                .zIndex(0)
-                .onChange(of: showCalendar) { newValue in
-                    appView?.blockSideMenu = newValue
-                }
-                
-            VStack (spacing: 0) {
-                ZStack (alignment: .leading) {
-                    Rectangle()
-                        .ignoresSafeArea()
-                        .foregroundStyle(.ultraThinMaterial)
-                        .frame(height: UIScreen.main.bounds.height*0.15)
-                      
-                    VStack (alignment: .leading, spacing: 10) {
-                        Button {
-                            if appView!.isSideMenuOpen { appView?.CloseSideMenu() }
-                            else { appView?.OpenSideMenu() }
-                        } label: {
-                            Label("", systemImage: "line.3.horizontal")
-                                .foregroundColor(.primary)
-                                .font(.title)
-                        }
-                        .padding()
-                        
-                        Text("Hi, " + userName)
-                            .font(.system(size: 40, weight: .bold))
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal)
-                    }
-                }.zIndex(2)
-                ScrollViewReader { value in
-                    List {
-                        Section (header: Text("Upcoming")) {
-                          ForEach($mainTaskList.upcomingTasks) { task in
-                              TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: mainTaskList.primaryColor)
-                            }
-                            ForEach($userTaskLists.taskLists) { taskList in
-                                ForEach(taskList.upcomingTasks) { task in
-                                    TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: taskList.primaryColor.wrappedValue)
-                                    }
-                            }
-                        }
-                        .id(0)
-                        .listRowSeparator(.hidden)
-                        Section (header: Text("Completed")) {
-                            ForEach($mainTaskList.completedTasks) { task in
-                                TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: mainTaskList.primaryColor)
-                              }
-                              ForEach($userTaskLists.taskLists) { taskList in
-                                  ForEach(taskList.completedTasks) { task in
-                                      TaskSlider(task: task, isDraggingParentView: appView!.$isDragging, isPickingDate: $showCalendar, taskBeingEdited: $taskBeingEdited, homeView: self, sliderColor: taskList.primaryColor.wrappedValue)
-                                  }
-                              }
-                        }
-                        .listRowSeparator(.hidden)
-                    }
-                    .padding(.top, -200)
-                    .listStyle(.plain)
-                    .overlay {
-                        GeometryReader { geo in
-                            AddTaskButton(color: .defaultColor, homeView: self)
-                                .padding()
-                                .position(x: geo.size.width*0.85, y: geo.size.height-geo.size.width*0.075)
-                        }
-
-                    }
-                    .onAppear {
-                        UIScrollView.appearance(for: .current).contentInset = UIEdgeInsets(top: 200, left: 0, bottom: 0, right: 0)
-                        value.scrollTo(0, anchor: UnitPoint(x: 0, y: 100))
-                    }
-                    .zIndex(1)
-                }
-            }
-            if showCalendar {
-                DateSelectionUI(showView: $showCalendar, taskBeingEdited: $taskBeingEdited, color: .defaultColor, notificationEnabled: taskBeingEdited.isNotificationEnabled)
-                    .transition(.opacity)
-                    .zIndex(3)
-            }
-        }
-    }
-    
-    func CompleteTask (task: Task) {
-        if mainTaskList.upcomingTasks.contains(task) {
-            task.isCompleted = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                withAnimation(.linear(duration: 0.5)) {
-                    mainTaskList.upcomingTasks.remove(at: mainTaskList.upcomingTasks.firstIndex(of: task)!)
-                    mainTaskList.completedTasks.insert(task, at: 0)
-                }
-            }
-            return
-        }
+    init(frame: CGRect, app: App) {
+        self.app = app
         
-        for i in 0..<userTaskLists.taskLists.count {
-            if userTaskLists.taskLists[i].upcomingTasks.contains(task) {
-                task.isCompleted = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    withAnimation(.linear(duration: 0.5)) {
-                        userTaskLists.taskLists[i].upcomingTasks.remove(at: userTaskLists.taskLists[i].upcomingTasks.firstIndex(of: task)!)
-                        userTaskLists.taskLists[i].completedTasks.insert(task, at: 0)
-                        userTaskLists.updater += 1
-                    }
-                }
-                return
-            }
-        }
-    }
-    
-    func CreateNewTask () {
-        needResetInitialOffest = true
-        let newTask = Task(name: "")
-        withAnimation(.linear(duration: 0.5)) {
-            mainTaskList.upcomingTasks.insert(newTask, at: 0)
-        }
-        taskBeingEdited = newTask
-    }
-    
-    func DeleteUpcoming (task: Task) {
-        if mainTaskList.upcomingTasks.contains(task) {
-            withAnimation(.linear(duration: 0.5)) {
-                mainTaskList.upcomingTasks.remove(at: mainTaskList.upcomingTasks.firstIndex(of: task)!)
-            }
-            return
-        }
+        super.init(frame: frame)
         
-        for i in 0..<userTaskLists.taskLists.count {
-            if userTaskLists.taskLists[i].upcomingTasks.contains(task) {
-                withAnimation(.linear(duration: 0.5)) {
-                    userTaskLists.taskLists[i].upcomingTasks.remove(at: userTaskLists.taskLists[i].upcomingTasks.firstIndex(of: task)!)
-                }
-                return
-            }
-        }
+        DrawContent(frame: CGRect(x: 0, y: frame.height*0.2, width: frame.width, height: frame.height*0.8))
+        DrawHeader(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height*0.2))
     }
     
-    func DeleteCompleted (task: Task) {
-        if mainTaskList.completedTasks.contains(task) {
-            withAnimation(.linear(duration: 0.5)) {
-                mainTaskList.completedTasks.remove(at: mainTaskList.completedTasks.firstIndex(of: task)!)
-            }
-            return
-        }
-        for i in 0..<userTaskLists.taskLists.count {
-            if userTaskLists.taskLists[i].completedTasks.contains(task) {
-                withAnimation(.linear(duration: 0.5)) {
-                    userTaskLists.taskLists[i].completedTasks.remove(at: userTaskLists.taskLists[i].completedTasks.firstIndex(of: task)!)
-                }
-                return
-            }
-        }
+    func DrawHeader(frame: CGRect) {
+        let header = UIView(frame: frame)
+        
+        let blur = UIVisualEffectView(frame: header.frame)
+        blur.effect = UIBlurEffect(style: .systemUltraThinMaterial)
+        header.addSubview(blur)
+        
+        let hamburgerButtonSize = frame.width * 0.1
+        let hamburgerButton = UIButton(frame: CGRect(x: padding, y: padding*4, width: hamburgerButtonSize, height: hamburgerButtonSize))
+        hamburgerButton.tintColor = .label
+        hamburgerButton.setImage(UIImage(systemName: "line.3.horizontal"), for: .normal)
+        hamburgerButton.imageView?.contentMode = .scaleAspectFit
+        hamburgerButton.contentVerticalAlignment = .fill
+        hamburgerButton.contentHorizontalAlignment = .fill
+        
+        header.addSubview(hamburgerButton)
+        
+        let titleLabel = UILabel(frame: CGRect(x: padding, y: hamburgerButton.frame.maxY + padding*0.5, width: header.frame.width-padding*2, height: header.frame.height*0.3))
+        titleLabel.font = UIFont.systemFont(ofSize: 40, weight: .bold)
+        titleLabel.text = "Hi, Grant"
+        
+        
+        header.addSubview(titleLabel)
+        
+        addSubview(header)
     }
     
-    func StopEditingTasks () {
-        taskBeingEdited = Task(name: "", dateAssigned: Date.now)
-        UIApplication.shared.endEditing()
+    func DrawContent(frame: CGRect) {
+        let contentView = UIView(frame: frame)
+        
+        tableView = UITableView(frame: CGRect(x: 0, y: -frame.origin.y, width: frame.width, height: frame.height+frame.origin.y))
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.rowHeight = 40+padding*0.5
+        tableView.register(TaskSliderTableCell.self, forCellReuseIdentifier: "cell")
+        tableView.separatorStyle = .none
+        tableView.contentInset = UIEdgeInsets(top: frame.origin.y, left: 0, bottom: 0, right: 0)
+        
+        contentView.addSubview(tableView)
+        
+        addSubview(contentView)
     }
-}
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return section == 0 ? App.mainTaskList.upcomingTasks.count : App.mainTaskList.completedTasks.count
+    }
 
-struct MainView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView(userName: .constant("Friend"), mainTaskList: TaskList(name: "Main", primaryColor: .defaultColor, upcomingTasks: [Task(name: "Main task")]), userTaskLists: TaskListContainer())
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! TaskSliderTableCell
+        
+        cell.Setup(
+            task: indexPath.section == 0 ? App.mainTaskList.upcomingTasks[indexPath.row] : App.mainTaskList.completedTasks[indexPath.row],
+            sliderSize: CGSize(width: tableView.frame.width-padding*2, height: tableView.rowHeight-padding*0.5),
+            cellSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight),
+            sliderColor: .defaultColor, app: app)
+        
+        return cell
+    }
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return section == 0 ? "Upcoming" : "Completed"
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
