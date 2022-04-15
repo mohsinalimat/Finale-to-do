@@ -13,7 +13,9 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     let padding = 16.0
     
-    var tableView = UITableView()
+    var tableView: UITableView!
+    var addTaskButton: AddTaskButton!
+    
     let sliderHeight = 30.0
     
     init(frame: CGRect, app: App) {
@@ -69,6 +71,11 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate {
         let dragGesture = UIPanGestureRecognizer(target: self, action: #selector(DragGesture))
         dragGesture.minimumNumberOfTouches = 1
         contentView.addGestureRecognizer(dragGesture)
+        
+        let addTaskButtonSize = 50.0
+        addTaskButton = AddTaskButton(frame: CGRect(x: frame.width-addTaskButtonSize-padding*2, y: frame.height-addTaskButtonSize-padding*3, width: addTaskButtonSize, height: addTaskButtonSize), color: .defaultColor)
+        
+        contentView.addSubview(addTaskButton)
         
         addSubview(contentView)
     }
