@@ -30,16 +30,18 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         let homeLabel = UILabel(frame: CGRect(x: padding, y: frame.height*0.2-30, width: frame.width-padding*2, height: 30))
         homeLabel.text = "Home"
         homeLabel.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+        homeLabel.textColor = .white
         
         self.addSubview(homeLabel)
         
-        overviewMenuItem = TaskListMenuItem(frame: CGRect(x: padding*0.5, y: homeLabel.frame.maxY+padding*0.5, width: frame.width-padding, height: menuItemHeight), taskList: App.mainTaskList, index: 0, app: app)
+        overviewMenuItem = TaskListMenuItem(frame: CGRect(x: padding*0.5, y: homeLabel.frame.maxY+padding*0.5, width: frame.width-padding, height: menuItemHeight), taskList: TaskList(name: "Overview", primaryColor: .defaultColor, systemIcon: "tray.full.fill"), index: 0, app: app)
         
         self.addSubview(overviewMenuItem)
         
         let listsLabel = UILabel(frame: CGRect(x: padding, y: overviewMenuItem.frame.maxY + padding*0.5, width: frame.width-padding*2, height: 30))
         listsLabel.text = "Lists"
         listsLabel.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+        listsLabel.textColor = .white
         
         self.addSubview(listsLabel)
         
@@ -73,13 +75,17 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return App.userTaskLists.count
+        return App.userTaskLists.count+1
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "sideMenuTaskListCell", for: indexPath) as! TaskListTableCell
         
-        cell.Setup(taskList: App.userTaskLists[indexPath.row], frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: indexPath.row+1, app: app)
+        if indexPath.row == 0 {
+            cell.Setup(taskList: App.mainTaskList, frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: 1, app: app)
+        } else {
+            cell.Setup(taskList: App.userTaskLists[indexPath.row-1], frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: indexPath.row+1, app: app)
+        }
         
         return cell
     }
@@ -125,6 +131,7 @@ class TaskListMenuItem: UIView {
         
         let titleLabel = UILabel(frame: CGRect(x: (frame.width-padding*2)*imageWidthProportion+padding*3, y: 0, width: (frame.width-padding*3)*(1-imageWidthProportion), height: frame.height))
         titleLabel.text = taskList.name
+        titleLabel.textColor = .white
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(SelectList))
         self.addGestureRecognizer(tapGesture)
@@ -163,6 +170,11 @@ class TaskListTableCell: UITableViewCell {
         }
         contentView.addSubview(TaskListMenuItem(frame: CGRect(x: 0, y: 0, width: frameSize.width, height: frameSize.height), taskList: taskList, index: index, app: app))
     }
+    
+    
+    
+    
+    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

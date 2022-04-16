@@ -72,8 +72,19 @@ class TaskSlider: UIView {
             sliderView.frame.size.width = max(sliderHandleWidth, min(sender.translation(in: self).x + sliderHandleWidth, fullSliderWidth))
             sliderHandle.frame.origin.x = max(sliderHandleOriginX, min(sliderHandleOriginX + sender.translation(in: self).x, fullSliderWidth-sliderHandleWidth*0.925))
         } else if sender.state == .ended {
-            if sliderView.frame.size.width == fullSliderWidth {
-                app.CompleteTask(task: task)
+            if sender.velocity(in: self).x > 2200 {
+                let duration = sender.velocity(in: self).x*0.00006
+                UIView.animate(withDuration: duration) { [self] in
+                    sliderView.frame.size.width = fullSliderWidth
+                    sliderHandle.frame.origin.x = fullSliderWidth-sliderHandleWidth*0.925
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + duration) { [self] in
+                    app.CompleteTask(task: task)
+                }
+            } else if sliderView.frame.size.width == fullSliderWidth {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [self] in
+                    app.CompleteTask(task: task)
+                }
             } else {
                 UIView.animate(withDuration: 0.25) { [self] in
                     sliderView.frame.size.width = sliderHandleWidth

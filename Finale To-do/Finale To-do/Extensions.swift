@@ -68,3 +68,5 @@ struct Color : Codable {
         uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
     }
 }
+
+extension String: Error {}
