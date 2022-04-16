@@ -8,8 +8,8 @@
 import UIKit
 import SwiftUI
 
-class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate {
-    
+class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableViewDragDelegate, UITableViewDropDelegate {
+
     let app: App
     
     let padding = 16.0
@@ -92,6 +92,9 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate {
         tableView.register(TaskSliderTableCell.self, forCellReuseIdentifier: "taskCell")
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: frame.origin.y, left: 0, bottom: 0, right: 0)
+        tableView.dragDelegate = self
+        tableView.dropDelegate = self
+        tableView.dragInteractionEnabled = true
         
         contentView.addSubview(tableView)
         
@@ -99,8 +102,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate {
         dragGesture.minimumNumberOfTouches = 1
         contentView.addGestureRecognizer(dragGesture)
         
-        let addTaskButtonSize = 50.0
-        addTaskButton = AddTaskButton(frame: CGRect(x: frame.width-addTaskButtonSize-padding*2, y: frame.height-addTaskButtonSize-padding*3, width: addTaskButtonSize, height: addTaskButtonSize), color: .defaultColor)
+        let addTaskButtonSize = 56.0
+        addTaskButton = AddTaskButton(frame: CGRect(x: frame.width-addTaskButtonSize-padding*2, y: frame.height-addTaskButtonSize-padding*3, width: addTaskButtonSize, height: addTaskButtonSize), color: .defaultColor, app: app)
         
         contentView.addSubview(addTaskButton)
         
@@ -122,6 +125,96 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate {
             sliderColor: getTaskListColor(id: task.taskListID), app: app)
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil) { suggestedActions in
+            
+            let Delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
+                let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+                self.app.DeleteTask(task: cell.slider.task)
+            }
+
+            return UIMenu(title: "", children: [Delete])
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        return getSliderPreview(configuration: configuration)
+    }
+    
+    func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        return getSliderPreview(configuration: configuration)
+    }
+    
+    func tableView(_ tableView: UITableView, dropPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
+        let dragPreviewParams = UIDragPreviewParameters()
+        let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+        dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.slider.frame, cornerRadius: 10.0)
+        dragPreviewParams.backgroundColor = .clear
+        return dragPreviewParams
+    }
+    
+    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {}
+    
+    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        if indexPath.section == 1 { return [] }
+        let dragItem = UIDragItem(itemProvider: NSItemProvider())
+        let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+        dragItem.localObject = cell.contentView
+        dragItem.previewProvider = {
+            let dragPreviewParams = UIDragPreviewParameters()
+            dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.slider.bounds, cornerRadius: 10.0)
+            return UIDragPreview(view: cell.slider, parameters: dragPreviewParams)
+        }
+        return [dragItem]
+    }
+    
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        if proposedDestinationIndexPath.section == 0 { return proposedDestinationIndexPath }
+        else { return IndexPath(row: allUpcomingTasks.count-1, section: 0) }
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let mover = allUpcomingTasks.remove(at: sourceIndexPath.row)
+        allUpcomingTasks.insert(mover, at: destinationIndexPath.row)
+        if App.selectedTaskListIndex == 0 {
+            var prevTaskIndex = -1
+            for i in 0..<allUpcomingTasks.count {
+                if allUpcomingTasks[i].taskListID == mover.taskListID {
+                    if i < destinationIndexPath.row {
+                        prevTaskIndex = i
+                    }
+                }
+            }
+            let taskList = app.getTaskList(id: mover.taskListID)
+            let index = taskList.upcomingTasks.firstIndex(of: mover)!
+            taskList.upcomingTasks.remove(at: index)
+            if prevTaskIndex != -1 {
+                let insertIndex = taskList.upcomingTasks.firstIndex(of: allUpcomingTasks[prevTaskIndex])! + 1
+                taskList.upcomingTasks.insert(mover, at: insertIndex)
+            } else {
+                taskList.upcomingTasks.insert(mover, at: 0)
+            }
+        } else if App.selectedTaskListIndex == 1 {
+            App.mainTaskList.upcomingTasks.remove(at: sourceIndexPath.row)
+            App.mainTaskList.upcomingTasks.insert(mover, at: destinationIndexPath.row)
+        } else {
+            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.remove(at: sourceIndexPath.row)
+            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.insert(mover, at: destinationIndexPath.row)
+        }
+    }
+    
+    func getSliderPreview(configuration: UIContextMenuConfiguration) -> UITargetedPreview {
+        let indexPath = configuration.identifier as! IndexPath
+        
+        let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+        
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = .clear
+        parameters.visiblePath = UIBezierPath(roundedRect: cell.slider.bounds, cornerRadius: 10)
+
+        return UITargetedPreview(view: cell.slider, parameters: parameters)
     }
     
     var scrollDelta: CGFloat {

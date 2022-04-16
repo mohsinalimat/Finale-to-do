@@ -15,6 +15,7 @@
 		376AD0DB2808EFA300986B49 /* TaskSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DA2808EFA300986B49 /* TaskSlider.swift */; };
 		376AD0DD2808FD4C00986B49 /* Classes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DC2808FD4C00986B49 /* Classes.swift */; };
 		376AD0DF280901AF00986B49 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DE280901AF00986B49 /* Extensions.swift */; };
+		3779280B280B5E410050B908 /* AddListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3779280A280B5E410050B908 /* AddListView.swift */; };
 		37E4CE012809AE3F002B4D87 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E4CE002809AE3F002B4D87 /* SideMenuView.swift */; };
 		37E4CE032809C9F3002B4D87 /* AddTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E4CE022809C9F3002B4D87 /* AddTaskButton.swift */; };
 /* End PBXBuildFile section */
@@ -30,6 +31,7 @@
 		376AD0DA2808EFA300986B49 /* TaskSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSlider.swift; sourceTree = "<group>"; };
 		376AD0DC2808FD4C00986B49 /* Classes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Classes.swift; sourceTree = "<group>"; };
 		376AD0DE280901AF00986B49 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		3779280A280B5E410050B908 /* AddListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListView.swift; sourceTree = "<group>"; };
 		37E4CE002809AE3F002B4D87 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		37E4CE022809C9F3002B4D87 /* AddTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -82,6 +84,7 @@
 			children = (
 				376AD0D62808DDEB00986B49 /* TaskListView.swift */,
 				37E4CE002809AE3F002B4D87 /* SideMenuView.swift */,
+				3779280A280B5E410050B908 /* AddListView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -168,6 +171,7 @@
 				376AD0D72808DDEB00986B49 /* TaskListView.swift in Sources */,
 				37E4CE032809C9F3002B4D87 /* AddTaskButton.swift in Sources */,
 				37E4CE012809AE3F002B4D87 /* SideMenuView.swift in Sources */,
+				3779280B280B5E410050B908 /* AddListView.swift in Sources */,
 				376AD0DD2808FD4C00986B49 /* Classes.swift in Sources */,
 				376AD0C32808DC5900986B49 /* AppDelegate.swift in Sources */,
 				376AD0C52808DC5900986B49 /* SceneDelegate.swift in Sources */,

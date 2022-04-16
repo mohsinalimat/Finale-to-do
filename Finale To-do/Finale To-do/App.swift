@@ -55,11 +55,28 @@ class App: UIViewController {
         
         let workTaskListID = UUID()
         let homeTaskListID = UUID()
-        App.userTaskLists.append(TaskList(name: "Work", primaryColor: .red, systemIcon: "folder.fill", upcomingTasks: [Task(name: "dude", taskListID: workTaskListID)], completedTasks: [Task(name: "dude done", isComleted: true, taskListID: workTaskListID)], id: workTaskListID))
+        App.userTaskLists.append(TaskList(name: "Work", primaryColor: .red, systemIcon: "folder.fill", upcomingTasks: [Task(name: "dude1", taskListID: workTaskListID), Task(name: "dude2", taskListID: workTaskListID), Task(name: "dude3", taskListID: workTaskListID)], completedTasks: [Task(name: "dude done", isComleted: true, taskListID: workTaskListID)], id: workTaskListID))
         App.userTaskLists.append(TaskList(name: "Home", primaryColor: .blue, systemIcon: "house.fill", upcomingTasks: [Task(name: "house work", taskListID: homeTaskListID)], completedTasks: [Task(name: "work not done", isComleted: true, taskListID: homeTaskListID)], id: homeTaskListID))
     }
     
 /// Task Actions
+    
+    func CreateNewTask(sender: UITapGestureRecognizer) {
+        if App.selectedTaskListIndex == 0 || App.selectedTaskListIndex == 1 {
+            if App.mainTaskList.upcomingTasks.count > 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: true) }
+            App.mainTaskList.upcomingTasks.insert(Task(taskListID: App.mainTaskList.id), at: 0)
+        } else {
+            if App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.count > 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: true) }
+            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.insert(Task(taskListID: App.userTaskLists[App.selectedTaskListIndex-2].id), at: 0)
+        }
+        
+        taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
+        taskListView.ReloadTaskData()
+        
+        taskListView.tableView.beginUpdates()
+        taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: UITableView.RowAnimation.automatic)
+        taskListView.tableView.endUpdates()
+    }
     
     func CompleteTask(task: Task) {
         var index = -1
@@ -95,6 +112,51 @@ class App: UIViewController {
         taskListView.tableView.endUpdates()
     }
     
+    func DeleteTask(task: Task) {
+        var index = -1
+        
+        let isCompleted = task.isCompleted
+        
+        if !isCompleted {
+            if App.mainTaskList.upcomingTasks.contains(task) {
+                index = App.mainTaskList.upcomingTasks.firstIndex(of: task)!
+                App.mainTaskList.upcomingTasks.remove(at: index)
+            } else {
+                for taskList in App.userTaskLists {
+                    if taskList.id == task.taskListID {
+                        index = taskList.upcomingTasks.firstIndex(of: task)!
+                        taskList.upcomingTasks.remove(at: index)
+                        break
+                    }
+                }
+            }
+        } else {
+            if App.mainTaskList.completedTasks.contains(task) {
+                index = App.mainTaskList.completedTasks.firstIndex(of: task)!
+                App.mainTaskList.completedTasks.remove(at: index)
+            } else {
+                for taskList in App.userTaskLists {
+                    if taskList.id == task.taskListID {
+                        index = taskList.completedTasks.firstIndex(of: task)!
+                        taskList.completedTasks.remove(at: index)
+                        break
+                    }
+                }
+            }
+        }
+        
+        if index == -1 { return }
+        
+        let indexPath = IndexPath(row: isCompleted ? taskListView.allCompletedTasks.firstIndex(of: task)! : taskListView.allUpcomingTasks.firstIndex(of: task)!, section: isCompleted ? 1 : 0)
+        
+        taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
+        taskListView.ReloadTaskData()
+        
+        taskListView.tableView.beginUpdates()
+        taskListView.tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.right)
+        taskListView.tableView.endUpdates()
+    }
+    
 ///  Sidemenu Actions
 
     func SelectTaskList(index: Int){
@@ -114,13 +176,13 @@ class App: UIViewController {
     }
     
     func OpenSideMenu () {
-        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut) { [self] in
+        UIView.animate(withDuration: 0.23, delay: 0, options: .curveEaseOut) { [self] in
             taskListView.frame.origin.x = sideMenuWidth
         }
     }
     
     func CloseSideMenu () {
-        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut) { [self] in
+        UIView.animate(withDuration: 0.23, delay: 0, options: .curveEaseOut) { [self] in
             taskListView.frame.origin.x = 0
         }
     }
@@ -142,6 +204,21 @@ class App: UIViewController {
                 else { OpenSideMenu() }
             }
         }
+    }
+    
+    func getTaskList (id: UUID) -> TaskList {
+        if App.mainTaskList.id == id { return App.mainTaskList }
+        
+        for i in 0..<App.userTaskLists.count {
+            if App.userTaskLists[i].id == id { return App.userTaskLists[i] }
+        }
+        return TaskList(name: "Error")
+    }
+    
+    func OpenAddTaskListView () {
+        let addListViewFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height*0.7)
+        
+        self.view.addSubview(AddListView(frame: addListViewFrame))
     }
 }
 

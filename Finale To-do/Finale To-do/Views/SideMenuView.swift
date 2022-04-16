@@ -63,6 +63,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         addListButton.contentHorizontalAlignment = .leading
         addListButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 6, bottom: 0, right: 0)
         addListButton.titleLabel?.font = UIFont.systemFont(ofSize: 16)
+        addListButton.addTarget(self, action: #selector(OpenAddTaskListView), for: .touchUpInside)
         
         self.addSubview(addListButton)
         
@@ -90,6 +91,9 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
+    @objc func OpenAddTaskListView () {
+        app.OpenAddTaskListView()
+    }
     
     
     

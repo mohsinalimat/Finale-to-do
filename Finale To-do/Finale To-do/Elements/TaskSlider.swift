@@ -8,11 +8,12 @@
 import UIKit
 import SwiftUI
 
-class TaskSlider: UIView {
+class TaskSlider: UIView, UITextFieldDelegate {
     
     let app: App
     
     var task: Task
+    var isEditing: Bool = false
     
     let padding = 8.0
     let sliderCornerRadius = 10.0
@@ -20,11 +21,13 @@ class TaskSlider: UIView {
     
     var sliderView: UIView
     var sliderHandle: UIView
-    var taskNameLabel: UILabel
+    var taskNameInputField: UITextField
     
     let sliderHandleWidth: CGFloat
     let sliderHandleOriginX: CGFloat
     let fullSliderWidth: CGFloat
+    
+    let placeholders: [String] = ["Finish annual report", "Create images for the presentation", "Meditate", "Plan holidays with the family", "Help mom with groceries", "Buy new shoes", "Get cat food", "Get dog food", "Brush my corgie", "Say hi to QQ", "Chmok my QQ", "Buy airplane tickets", "Cancel streaming subscription", "Schedule coffee chat", "Schedule work meeting", "Dye my hair", "Download Elden Ring", "Get groceries"]
     
     init(task: Task, frame: CGRect, sliderColor: UIColor, app: App) {
         self.task = task
@@ -33,12 +36,12 @@ class TaskSlider: UIView {
         sliderHandleWidth = !task.isCompleted ? frame.width*0.08 : 0
         fullSliderWidth = frame.width
         
-        taskNameLabel = UILabel(frame: CGRect(x: sliderHandleWidth+padding, y: 0, width: frame.width-sliderHandleWidth-padding, height: frame.height))
+        taskNameInputField = UITextField(frame: CGRect(x: sliderHandleWidth+padding, y: 0, width: frame.width-sliderHandleWidth-padding, height: frame.height))
         
         sliderView = UIView(frame: CGRect(x: 0, y: 0, width: sliderHandleWidth, height: frame.height))
         
-        sliderHandleOriginX = sliderView.frame.width*0.075
-        sliderHandle = UIView(frame: CGRect(x: sliderHandleOriginX, y: sliderView.frame.height*0.075, width: sliderView.frame.width*0.85, height: sliderView.frame.height*0.85))
+        sliderHandleOriginX = 2.5
+        sliderHandle = UIView(frame: CGRect(x: sliderHandleOriginX, y: 2.5, width: sliderView.frame.width-5, height: sliderView.frame.height-5))
         
         super.init(frame: frame)
         
@@ -46,25 +49,36 @@ class TaskSlider: UIView {
         background.layer.cornerRadius = sliderCornerRadius
         background.backgroundColor = !task.isCompleted ? sliderBackgroundColor : sliderColor.secondaryColor.withAlphaComponent(sliderColor.secondaryColor.components.alpha*0.5)
         
-        let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: task.name)
+        taskNameInputField.delegate = self
+        taskNameInputField.placeholder = placeholders[Int.random(in: 0..<placeholders.count)]
         if task.isCompleted {
+            let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: task.name)
             attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 1, range: NSRange(location: 0, length: attributeString.length))
+            taskNameInputField.attributedText = attributeString
+        } else { taskNameInputField.text = task.name }
+        if taskNameInputField.text == "" {
+            StartEditing()
         }
-        taskNameLabel.attributedText = attributeString
-        taskNameLabel.textColor = !task.isCompleted ? .label : .systemGray
+        taskNameInputField.textColor = task.isCompleted ? .systemGray : .label
+        taskNameInputField.isEnabled = isEditing
         
         sliderView.backgroundColor = sliderColor
         sliderView.layer.cornerRadius = sliderCornerRadius
         sliderView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(Dragging)))
 
-        sliderHandle.backgroundColor = sliderColor.thirdColor
+        sliderHandle.backgroundColor = !task.isCompleted ? sliderColor.thirdColor : .clear
         sliderHandle.layer.cornerRadius = sliderCornerRadius*0.85
         sliderHandle.isUserInteractionEnabled = false
+        
+        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(StartEditing))
+        doubleTap.numberOfTapsRequired = 2
+        
+        addGestureRecognizer(doubleTap)
         
         addSubview(background)
         addSubview(sliderView)
         addSubview(sliderHandle)
-        addSubview(taskNameLabel)
+        addSubview(taskNameInputField)
     }
     
     @objc func Dragging(sender: UIPanGestureRecognizer) {
@@ -78,7 +92,7 @@ class TaskSlider: UIView {
                     sliderView.frame.size.width = fullSliderWidth
                     sliderHandle.frame.origin.x = fullSliderWidth-sliderHandleWidth*0.925
                 }
-                DispatchQueue.main.asyncAfter(deadline: .now() + duration) { [self] in
+                DispatchQueue.main.asyncAfter(deadline: .now() + duration*0.9) { [self] in
                     app.CompleteTask(task: task)
                 }
             } else if sliderView.frame.size.width == fullSliderWidth {
@@ -94,6 +108,28 @@ class TaskSlider: UIView {
         }
     }
     
+    @objc func StartEditing () {
+        isEditing = true
+        taskNameInputField.isEnabled = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [self] in
+            taskNameInputField.becomeFirstResponder()
+        }
+    }
+    
+    func StopEditing () {
+        taskNameInputField.resignFirstResponder()
+        isEditing = false
+        taskNameInputField.isEnabled = false
+        task.name = taskNameInputField.text!
+        if taskNameInputField.text == "" {
+            app.DeleteTask(task: task)
+        }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        StopEditing()
+        return true
+    }
     
     
     
@@ -106,20 +142,25 @@ class TaskSlider: UIView {
 
 class TaskSliderTableCell: UITableViewCell {
     
+    var slider: TaskSlider!
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: UITableViewCell.CellStyle.default, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         isUserInteractionEnabled = true
+        shouldIndentWhileEditing = false
     }
     
     func Setup(task: Task, sliderSize: CGSize, cellSize: CGSize, sliderColor: UIColor, app: App) {
         for subview in contentView.subviews {
             subview.removeFromSuperview()
         }
-        contentView.addSubview(TaskSlider(
-                task: task,
-                frame: CGRect(x: 0.5*(cellSize.width - sliderSize.width), y: 0.5*(cellSize.height - sliderSize.height), width: sliderSize.width, height: sliderSize.height),
-                sliderColor: sliderColor, app: app))
+        slider = TaskSlider(
+            task: task,
+            frame: CGRect(x: 0.5*(cellSize.width - sliderSize.width), y: 0.5*(cellSize.height - sliderSize.height), width: sliderSize.width, height: sliderSize.height),
+            sliderColor: sliderColor, app: app)
+        
+        contentView.addSubview(slider)
     }
     
     required init?(coder aDecoder: NSCoder) {

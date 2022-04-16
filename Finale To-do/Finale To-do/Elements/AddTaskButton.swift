@@ -10,31 +10,25 @@ import UIKit
 
 class AddTaskButton: UIView {
     
+    let app: App
     var verticalLine: UIView!
     var horizontalLine: UIView!
-    var colorPanel: UIView!
     
-    init(frame: CGRect, color: UIColor) {
+    let originalSize: CGSize
+    
+    init(frame: CGRect, color: UIColor, app: App) {
+        self.app = app
+        self.originalSize = frame.size
         super.init(frame: frame)
         
         self.layer.cornerRadius = frame.height*0.5
-        
-        let blur = UIVisualEffectView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
-        blur.effect = UIBlurEffect(style: .systemUltraThinMaterial)
-        blur.layer.cornerRadius = frame.height*0.5
-        blur.clipsToBounds = true
-        self.addSubview(blur)
-        
-        colorPanel = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
-        colorPanel.backgroundColor = App.selectedTaskListIndex == 0 ? .defaultColor : color
-        colorPanel.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
-        colorPanel.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
-        colorPanel.layer.cornerRadius = frame.height*0.5
-        self.addSubview(colorPanel)
-        
+        self.backgroundColor = color
+        self.layer.shadowRadius = 7
+        self.layer.shadowOpacity = 0.5
+        self.layer.shadowOffset = CGSize.zero
         
         let lineWidth = frame.width*0.07
-        let lineHeight = frame.height*0.6
+        let lineHeight = frame.height*0.5
         verticalLine = UIView(frame: CGRect(x: 0.5*(frame.width-lineWidth), y: 0.5*(frame.height-lineHeight), width: lineWidth, height: lineHeight))
         verticalLine.layer.cornerRadius = lineWidth*0.5
         verticalLine.backgroundColor = color.lerp(second: .white, percentage: 0.7)
@@ -45,18 +39,27 @@ class AddTaskButton: UIView {
         
         self.addSubview(verticalLine)
         self.addSubview(horizontalLine)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(CreateNewTask))
+        self.addGestureRecognizer(tapGesture)
     }
     
     func ReloadVisuals(color: UIColor) {
         verticalLine.backgroundColor = color.lerp(second: .white, percentage: 0.7)
         horizontalLine.backgroundColor = color.lerp(second: .white, percentage: 0.7)
-        
-        colorPanel.backgroundColor = App.selectedTaskListIndex == 0 ? .defaultColor : color
-        colorPanel.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
-        colorPanel.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
+        self.backgroundColor = color
     }
     
-    
+    @objc func CreateNewTask(sender: UITapGestureRecognizer) {
+        UIView.animate(withDuration: 0.1, animations: {
+            self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+        }, completion: { _ in
+            UIView.animate(withDuration: 0.1) {
+                self.transform = CGAffineTransform(scaleX: 1, y: 1)
+            }
+        })
+        app.CreateNewTask(sender: sender)
+    }
     
     
     required init?(coder: NSCoder) {

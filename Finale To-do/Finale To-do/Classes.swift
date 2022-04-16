@@ -30,7 +30,7 @@ class Task: Codable, Equatable {
         self.taskListID = UUID()
     }
     
-    init(name: String, isComleted: Bool = false, isDateAssigned: Bool = false, isNotificationEnabled: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date(timeIntervalSince1970: 0), dateCompleted: Date = Date(timeIntervalSince1970: 0), taskListID: UUID = UUID()) {
+    init(name: String = "", isComleted: Bool = false, isDateAssigned: Bool = false, isNotificationEnabled: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date(timeIntervalSince1970: 0), dateCompleted: Date = Date(timeIntervalSince1970: 0), taskListID: UUID = UUID()) {
         self.name = name
         self.isCompleted = isComleted
         self.isDateAssigned = isDateAssigned
@@ -69,6 +69,8 @@ class Task: Codable, Equatable {
         return
         lhs.name == rhs.name &&
         lhs.isCompleted == rhs.isCompleted &&
+        lhs.isDateAssigned == rhs.isDateAssigned &&
+        lhs.isNotificationEnabled == rhs.isNotificationEnabled &&
         lhs.dateAssigned == rhs.dateAssigned &&
         lhs.dateCreated == rhs.dateCreated &&
         lhs.dateCompleted == rhs.dateCompleted &&
@@ -123,6 +125,7 @@ enum TaskCodingKeys: CodingKey {
     case dateAssigned
     case dateCreated
     case dateCompleted
+    case indexInOverview
     case taskListID
 }
 enum TaskListCodingKeys: CodingKey {
