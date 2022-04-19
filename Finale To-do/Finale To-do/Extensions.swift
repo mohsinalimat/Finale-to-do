@@ -17,12 +17,32 @@ extension UIColor {
         return UIColor.white.withAlphaComponent(0.00001)
     }
     
-    var secondaryColor: UIColor {
-        return self.withAlphaComponent(0.3)
+    var light: UIColor {
+        return self.lerp(second: .white, percentage: 0.35)
     }
     
-    var thirdColor: UIColor {
+    var light2: UIColor {
+        return self.lerp(second: .white, percentage: 0.5)
+    }
+    
+    var light3: UIColor {
+        return self.lerp(second: .white, percentage: 0.65)
+    }
+    
+    var light4: UIColor {
+        return self.lerp(second: .white, percentage: 0.8)
+    }
+    
+    var dark: UIColor {
+        return self.lerp(second: .black, percentage: 0.35)
+    }
+    
+    var dark2: UIColor {
         return self.lerp(second: .black, percentage: 0.5)
+    }
+    
+    var dark3: UIColor {
+        return self.lerp(second: .black, percentage: 0.65)
     }
     
     convenience init(hex: String) {
@@ -81,36 +101,5 @@ extension UITextField {
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: amount, height: self.frame.size.height))
         self.rightView = paddingView
         self.rightViewMode = .always
-    }
-}
-
-
-extension UIImage {
-    func scalePreservingAspectRatio(targetSize: CGSize) -> UIImage {
-        // Determine the scale factor that preserves aspect ratio
-        let widthRatio = targetSize.width / size.width
-        let heightRatio = targetSize.height / size.height
-        
-        let scaleFactor = min(widthRatio, heightRatio)
-        
-        // Compute the new image size that preserves aspect ratio
-        let scaledImageSize = CGSize(
-            width: size.width * scaleFactor,
-            height: size.height * scaleFactor
-        )
-
-        // Draw and return the resized UIImage
-        let renderer = UIGraphicsImageRenderer(
-            size: scaledImageSize
-        )
-
-        let scaledImage = renderer.image { _ in
-            self.draw(in: CGRect(
-                origin: .zero,
-                size: scaledImageSize
-            ))
-        }
-        
-        return scaledImage
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
+class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableViewDragDelegate, UITableViewDropDelegate {
     
     let app: App
     
@@ -18,6 +18,8 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
     let tableView: UITableView
     var overviewMenuItem: TaskListMenuItem!
     
+    var currentContextMenuView: TaskListMenuItem?
+    
     init(frame: CGRect, app: App) {
         self.app = app
         
@@ -25,7 +27,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         
         super.init(frame: frame)
         
-        self.backgroundColor = .defaultColor.thirdColor
+        self.backgroundColor = AppColors().sidemenuBackgroundColor
         
         let homeLabel = UILabel(frame: CGRect(x: padding, y: frame.height*0.2-30, width: frame.width-padding*2, height: 30))
         homeLabel.text = "Home"
@@ -34,7 +36,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         
         self.addSubview(homeLabel)
         
-        overviewMenuItem = TaskListMenuItem(frame: CGRect(x: padding*0.5, y: homeLabel.frame.maxY+padding*0.5, width: frame.width-padding, height: menuItemHeight), taskList: TaskList(name: "Overview", primaryColor: .defaultColor, systemIcon: "tray.full.fill"), index: 0, app: app)
+        overviewMenuItem = TaskListMenuItem(frame: CGRect(x: padding*0.5, y: homeLabel.frame.maxY+padding*0.5, width: frame.width-padding, height: menuItemHeight), taskList: TaskList(name: "Overview", primaryColor: .defaultColor, systemIcon: "tray.full.fill"), index: 0)
         
         self.addSubview(overviewMenuItem)
         
@@ -48,6 +50,9 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         tableView.frame = CGRect(x: padding*0.5, y: listsLabel.frame.maxY+padding*0.5, width: frame.width-padding, height: frame.height*0.87-listsLabel.frame.maxY)
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.dragDelegate = self
+        tableView.dropDelegate = self
+        tableView.dragInteractionEnabled = true
         tableView.rowHeight = menuItemHeight
         tableView.register(TaskListTableCell.self, forCellReuseIdentifier: "sideMenuTaskListCell")
         tableView.separatorStyle = .none
@@ -83,13 +88,100 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         let cell = tableView.dequeueReusableCell(withIdentifier: "sideMenuTaskListCell", for: indexPath) as! TaskListTableCell
         
         if indexPath.row == 0 {
-            cell.Setup(taskList: App.mainTaskList, frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: 1, app: app)
+            cell.Setup(taskList: App.mainTaskList, frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: 1)
         } else {
-            cell.Setup(taskList: App.userTaskLists[indexPath.row-1], frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: indexPath.row+1, app: app)
+            cell.Setup(taskList: App.userTaskLists[indexPath.row-1], frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: indexPath.row+1)
         }
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil) { suggestedActions in
+            if indexPath.row == 0 { return nil }
+                        
+            let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
+                let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
+                App.instance.DeleteTaskList(taskList: cell.taskListMenuItem.taskList)
+            }
+            let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
+            
+            let Edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { action in
+                let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
+                App.instance.OpenEditTaskListView(taskList: cell.taskListMenuItem.taskList)
+            }
+            
+            let Regular = UIMenu(title: "", options: .displayInline, children: [Edit])
+            
+            return UIMenu(title: "", children: [Regular, Delete])
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        return getMenuItemPreview(configuration: configuration, isDismissing: false)
+    }
+    
+    func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        let x = getMenuItemPreview(configuration: configuration, isDismissing: true)
+        x.parameters.backgroundColor = .clear
+        return x
+    }
+    
+    func tableView(_ tableView: UITableView, dropPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
+        let dragPreviewParams = UIDragPreviewParameters()
+        let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
+        dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.taskListMenuItem.frame, cornerRadius: 10.0)
+        dragPreviewParams.backgroundColor = cell.taskListMenuItem.isSelected ? cell.taskListMenuItem.selectedColor : .clear
+        return dragPreviewParams
+    }
+    
+    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {}
+    
+    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+        let dragItem = UIDragItem(itemProvider: NSItemProvider())
+        let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
+        dragItem.localObject = cell.contentView
+        dragItem.previewProvider = {
+            let dragPreviewParams = UIDragPreviewParameters()
+            dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.taskListMenuItem.bounds, cornerRadius: 10.0)
+            dragPreviewParams.backgroundColor = cell.taskListMenuItem.selectedColor
+            return UIDragPreview(view: cell.taskListMenuItem, parameters: dragPreviewParams)
+        }
+        return [dragItem]
+    }
+    
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        if proposedDestinationIndexPath.row != 0 { return proposedDestinationIndexPath }
+        else { return IndexPath(row: 1, section: 0) }
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let mover = App.userTaskLists.remove(at: sourceIndexPath.row-1)
+        App.userTaskLists.insert(mover, at: destinationIndexPath.row-1)
+        tableView.reloadData()
+    }
+    
+    func getMenuItemPreview(configuration: UIContextMenuConfiguration, isDismissing: Bool) -> UITargetedPreview {
+        let indexPath = configuration.identifier as! IndexPath
+        
+        let previewView: TaskListMenuItem
+        if !isDismissing {
+            let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
+            previewView = cell.taskListMenuItem
+            currentContextMenuView = previewView
+        } else {
+            previewView = currentContextMenuView!
+        }
+        
+        
+        let parameters = UIPreviewParameters()
+        parameters.backgroundColor = indexPath.row == 0 ? .clear : previewView.selectedColor
+        parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds, cornerRadius: 10)
+
+        return UITargetedPreview(view: previewView, parameters: parameters)
+    }
+    
+    
     
     @objc func OpenAddTaskListView () {
         app.OpenAddTaskListView()
@@ -108,11 +200,12 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
 
 class TaskListMenuItem: UIView {
     
-    let app: App
-    
+    let taskList: TaskList
     let padding = 8.0
     let imageWidthProportion = 0.1
     let index: Int
+    
+    let selectedColor: UIColor
     
     var isSelected: Bool {
         get {
@@ -120,12 +213,13 @@ class TaskListMenuItem: UIView {
         }
     }
     
-    init(frame: CGRect, taskList: TaskList, index: Int, app: App) {
+    init(frame: CGRect, taskList: TaskList, index: Int) {
         self.index = index
-        self.app = app
+        self.taskList = taskList
+        self.selectedColor = AppColors().sidemenuSelectedItemColor
         super.init(frame: frame)
         
-        self.backgroundColor = isSelected ? .defaultColor.lerp(second: .defaultColor.thirdColor, percentage: 0.7) : .clearInteractive
+        self.backgroundColor = isSelected ? selectedColor : .clearInteractive
         self.layer.cornerRadius = 10
         
         let iconView = UIImageView(frame: CGRect(x: padding*2+1, y: 1, width: (frame.width-padding*2)*imageWidthProportion-2, height: frame.height-2))
@@ -145,11 +239,11 @@ class TaskListMenuItem: UIView {
     }
     
     @objc func SelectList () {
-        app.SelectTaskList(index: index)
+        App.instance.SelectTaskList(index: index)
     }
     
     func ReloadVisuals () {
-        self.backgroundColor = isSelected ? .defaultColor.lerp(second: .defaultColor.thirdColor, percentage: 0.7) : .clearInteractive
+        self.backgroundColor = isSelected ? selectedColor : .clearInteractive
     }
     
     
@@ -161,6 +255,8 @@ class TaskListMenuItem: UIView {
 
 class TaskListTableCell: UITableViewCell {
     
+    var taskListMenuItem: TaskListMenuItem!
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: UITableViewCell.CellStyle.default, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
@@ -168,11 +264,12 @@ class TaskListTableCell: UITableViewCell {
         backgroundColor = .clear
     }
     
-    func Setup(taskList: TaskList, frameSize: CGSize, index: Int, app: App) {
+    func Setup(taskList: TaskList, frameSize: CGSize, index: Int) {
         for subview in contentView.subviews {
             subview.removeFromSuperview()
         }
-        contentView.addSubview(TaskListMenuItem(frame: CGRect(x: 0, y: 0, width: frameSize.width, height: frameSize.height), taskList: taskList, index: index, app: app))
+        taskListMenuItem = TaskListMenuItem(frame: CGRect(x: 0, y: 0, width: frameSize.width, height: frameSize.height), taskList: taskList, index: index)
+        contentView.addSubview(taskListMenuItem)
     }
     
     

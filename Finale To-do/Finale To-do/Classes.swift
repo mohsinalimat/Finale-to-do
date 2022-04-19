@@ -30,7 +30,7 @@ class Task: Codable, Equatable {
         self.taskListID = UUID()
     }
     
-    init(name: String = "", isComleted: Bool = false, isDateAssigned: Bool = false, isNotificationEnabled: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date(timeIntervalSince1970: 0), dateCompleted: Date = Date(timeIntervalSince1970: 0), taskListID: UUID = UUID()) {
+    init(name: String = "", isComleted: Bool = false, isDateAssigned: Bool = false, isNotificationEnabled: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), taskListID: UUID = UUID()) {
         self.name = name
         self.isCompleted = isComleted
         self.isDateAssigned = isDateAssigned
@@ -78,7 +78,7 @@ class Task: Codable, Equatable {
     }
 }
 
-class TaskList: Codable {
+class TaskList: Codable, Equatable {
     
     var id: UUID
     var name: String
@@ -114,6 +114,16 @@ class TaskList: Codable {
         try container.encode(completedTasks, forKey: .completedTasks)
         try container.encode(Color(uiColor: primaryColor), forKey: .primaryColor)
         try container.encode(id, forKey: .id)
+    }
+    
+    static func == (lhs: TaskList, rhs: TaskList) -> Bool {
+        return
+        lhs.name == rhs.name &&
+        lhs.upcomingTasks == rhs.upcomingTasks &&
+        lhs.systemIcon == rhs.systemIcon &&
+        lhs.completedTasks == rhs.completedTasks &&
+        lhs.primaryColor == rhs.primaryColor &&
+        lhs.id == rhs.id
     }
 }
 

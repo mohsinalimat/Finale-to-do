@@ -17,7 +17,6 @@ class TaskSlider: UIView, UITextFieldDelegate {
     
     let padding = 8.0
     let sliderCornerRadius = 10.0
-    let sliderBackgroundColor = UIColor.systemGray6
     
     var sliderView: UIView
     var sliderHandle: UIView
@@ -33,7 +32,7 @@ class TaskSlider: UIView, UITextFieldDelegate {
         self.task = task
         self.app = app
         
-        sliderHandleWidth = !task.isCompleted ? frame.width*0.08 : 0
+        sliderHandleWidth = !task.isCompleted ? frame.width*0.075 : 0
         fullSliderWidth = frame.width
         
         taskNameInputField = UITextField(frame: CGRect(x: sliderHandleWidth+padding, y: 0, width: frame.width-sliderHandleWidth-padding, height: frame.height))
@@ -47,7 +46,7 @@ class TaskSlider: UIView, UITextFieldDelegate {
         
         let background = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
         background.layer.cornerRadius = sliderCornerRadius
-        background.backgroundColor = !task.isCompleted ? sliderBackgroundColor : sliderColor.secondaryColor.withAlphaComponent(sliderColor.secondaryColor.components.alpha*0.5)
+        background.backgroundColor = !task.isCompleted ? UIColor.systemGray6 : AppColors().getCompletedSliderColor(taskListColor: sliderColor)
         
         taskNameInputField.delegate = self
         taskNameInputField.placeholder = placeholders[Int.random(in: 0..<placeholders.count)]
@@ -61,12 +60,14 @@ class TaskSlider: UIView, UITextFieldDelegate {
         }
         taskNameInputField.textColor = task.isCompleted ? .systemGray : .label
         taskNameInputField.isEnabled = isEditing
+        taskNameInputField.addTarget(self, action: #selector(DetectTextFieldChange), for: .editingChanged)
+        taskNameInputField.addTarget(self, action: #selector(DetectTextFieldEndEdit), for: .editingDidEnd)
         
         sliderView.backgroundColor = sliderColor
         sliderView.layer.cornerRadius = sliderCornerRadius
         sliderView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(Dragging)))
 
-        sliderHandle.backgroundColor = !task.isCompleted ? sliderColor.thirdColor : .clear
+        sliderHandle.backgroundColor = !task.isCompleted ? sliderColor.dark : .clear
         sliderHandle.layer.cornerRadius = sliderCornerRadius*0.85
         sliderHandle.isUserInteractionEnabled = false
         
@@ -81,12 +82,22 @@ class TaskSlider: UIView, UITextFieldDelegate {
         addSubview(taskNameInputField)
     }
     
+    var prevProgress = 0.0
     @objc func Dragging(sender: UIPanGestureRecognizer) {
-        if sender.state == .changed {
+        if taskNameInputField.text == "" { return }
+        if sender.state == .began {
+            self.endEditing(true)
+        } else if sender.state == .changed {
             sliderView.frame.size.width = max(sliderHandleWidth, min(sender.translation(in: self).x + sliderHandleWidth, fullSliderWidth))
             sliderHandle.frame.origin.x = max(sliderHandleOriginX, min(sliderHandleOriginX + sender.translation(in: self).x, fullSliderWidth-sliderHandleWidth*0.925))
+            
+            let currentProgress = floor(sliderView.frame.size.width*10/fullSliderWidth)/10
+            if currentProgress != prevProgress {
+                prevProgress = currentProgress
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            }
         } else if sender.state == .ended {
-            if sender.velocity(in: self).x > 2200 {
+            if sender.velocity(in: self).x > 2000 {
                 let duration = sender.velocity(in: self).x*0.00006
                 UIView.animate(withDuration: duration) { [self] in
                     sliderView.frame.size.width = fullSliderWidth
@@ -94,8 +105,10 @@ class TaskSlider: UIView, UITextFieldDelegate {
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + duration*0.9) { [self] in
                     app.CompleteTask(task: task)
+                    UINotificationFeedbackGenerator().notificationOccurred(.success)
                 }
             } else if sliderView.frame.size.width == fullSliderWidth {
+                UINotificationFeedbackGenerator().notificationOccurred(.success)
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [self] in
                     app.CompleteTask(task: task)
                 }
@@ -129,6 +142,13 @@ class TaskSlider: UIView, UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         StopEditing()
         return true
+    }
+    
+    @objc func DetectTextFieldChange() {
+        task.name = taskNameInputField.text!
+    }
+    @objc func DetectTextFieldEndEdit() {
+        StopEditing()
     }
     
     

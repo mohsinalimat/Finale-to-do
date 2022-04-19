@@ -13,7 +13,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     let app: App
     
     let padding = 16.0
-    let sliderHeight = 30.0
+    let sliderHeight = 36.0
     
     var blurEffect: UIVisualEffectView!
     var colorPanelHeader: UIView!
@@ -27,10 +27,13 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     var allUpcomingTasks = [Task]()
     var allCompletedTasks = [Task]()
     
+    var originalAddTaskPositionY = 0.0
     var originalTableContentOffsetY = 0.0
     var originalHeaderHeight = 0.0
     var originalTitlePositionY = 0.0
     var originalTitleFontSize = 40.0
+    
+    var currentContextMenuPreview: TaskSlider?
     
     init(frame: CGRect, taskLists: [TaskList], app: App) {
         self.app = app
@@ -40,6 +43,9 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         DrawContent(frame: CGRect(x: 0, y: frame.height*0.2, width: frame.width, height: frame.height*0.8))
         DrawHeader(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height*0.2))
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(KeyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(KeyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
         
         ReloadTaskData()
     }
@@ -73,6 +79,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         titleLabel.font = UIFont.systemFont(ofSize: originalTitleFontSize, weight: .bold)
         titleLabel.text = App.selectedTaskListIndex == 0 ? "Hi, Grant" : taskLists[0].name
         titleLabel.textColor = App.selectedTaskListIndex == 0 ? .label : .white
+        titleLabel.adjustsFontSizeToFitWidth = true
         originalTitlePositionY = titleLabel.frame.origin.y
         
         header.addSubview(titleLabel)
@@ -88,7 +95,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         tableView = UITableView(frame: CGRect(x: 0, y: -frame.origin.y, width: frame.width, height: frame.height+frame.origin.y))
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 40+padding*0.5
+        tableView.rowHeight = sliderHeight+padding*0.5
         tableView.register(TaskSliderTableCell.self, forCellReuseIdentifier: "taskCell")
         tableView.separatorStyle = .none
         tableView.contentInset = UIEdgeInsets(top: frame.origin.y, left: 0, bottom: 0, right: 0)
@@ -103,7 +110,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         contentView.addGestureRecognizer(dragGesture)
         
         let addTaskButtonSize = 56.0
-        addTaskButton = AddTaskButton(frame: CGRect(x: frame.width-addTaskButtonSize-padding*2, y: frame.height-addTaskButtonSize-padding*3, width: addTaskButtonSize, height: addTaskButtonSize), color: .defaultColor, app: app)
+        originalAddTaskPositionY = frame.height-addTaskButtonSize-padding*3
+        addTaskButton = AddTaskButton(frame: CGRect(x: frame.width-addTaskButtonSize-padding, y: originalAddTaskPositionY, width: addTaskButtonSize, height: addTaskButtonSize), color: .defaultColor, app: app)
         
         contentView.addSubview(addTaskButton)
         
@@ -130,21 +138,37 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil) { suggestedActions in
             
-            let Delete = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
+            let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
                 let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
                 self.app.DeleteTask(task: cell.slider.task)
             }
-
-            return UIMenu(title: "", children: [Delete])
+            let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
+            
+            let Undo = UIAction(title: "Undo", image: UIImage(systemName: "arrow.uturn.left")) { action in
+                let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+                self.app.UndoTask(task: cell.slider.task)
+            }
+            let Edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { action in
+                let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+                cell.slider.StartEditing()
+            }
+            
+            var items = [UIAction]()
+            if indexPath.section == 0 { items.append(Edit) }
+            if indexPath.section == 1 { items.append(Undo) }
+            
+            let Regular = UIMenu(title: "", options: .displayInline, children: items)
+            
+            return UIMenu(title: "", children: [Regular, Delete])
         }
     }
     
     func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-        return getSliderPreview(configuration: configuration)
+        return getSliderPreview(configuration: configuration, isDismissing: false)
     }
     
     func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-        return getSliderPreview(configuration: configuration)
+        return getSliderPreview(configuration: configuration, isDismissing: true)
     }
     
     func tableView(_ tableView: UITableView, dropPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
@@ -158,7 +182,6 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {}
     
     func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        if indexPath.section == 1 { return [] }
         let dragItem = UIDragItem(itemProvider: NSItemProvider())
         let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
         dragItem.localObject = cell.contentView
@@ -171,11 +194,14 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        if sourceIndexPath.section == 1 { return sourceIndexPath }
         if proposedDestinationIndexPath.section == 0 { return proposedDestinationIndexPath }
         else { return IndexPath(row: allUpcomingTasks.count-1, section: 0) }
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        if sourceIndexPath.section == 1 { return }
+        
         let mover = allUpcomingTasks.remove(at: sourceIndexPath.row)
         allUpcomingTasks.insert(mover, at: destinationIndexPath.row)
         if App.selectedTaskListIndex == 0 {
@@ -205,16 +231,23 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         }
     }
     
-    func getSliderPreview(configuration: UIContextMenuConfiguration) -> UITargetedPreview {
+    func getSliderPreview(configuration: UIContextMenuConfiguration, isDismissing: Bool) -> UITargetedPreview {
         let indexPath = configuration.identifier as! IndexPath
         
-        let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+        let previewView: TaskSlider
+        if !isDismissing {
+            let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+            previewView = cell.slider
+            currentContextMenuPreview = previewView
+        } else {
+            previewView = currentContextMenuPreview!
+        }
         
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
-        parameters.visiblePath = UIBezierPath(roundedRect: cell.slider.bounds, cornerRadius: 10)
+        parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds, cornerRadius: 10)
 
-        return UITargetedPreview(view: cell.slider, parameters: parameters)
+        return UITargetedPreview(view: previewView, parameters: parameters)
     }
     
     var scrollDelta: CGFloat {
@@ -277,8 +310,20 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         addTaskButton.ReloadVisuals(color: App.selectedTaskListIndex == 0 ? .defaultColor : taskLists[0].primaryColor)
     }
     
-    
-    
+    @objc func KeyboardWillShow(_ notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardHeight = keyboardFrame.cgRectValue.height
+            UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut) { [self] in
+                let y = frame.height - UIScreen.main.bounds.height*0.17 - keyboardHeight - App.instance.view.safeAreaInsets.bottom - addTaskButton.frame.height
+                addTaskButton.frame.origin.y = y
+            }
+        }
+    }
+    @objc func KeyboardWillHide(_ notification: Notification) {
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut) { [self] in
+            addTaskButton.frame.origin.y = originalAddTaskPositionY
+        }
+    }
     
     
     
