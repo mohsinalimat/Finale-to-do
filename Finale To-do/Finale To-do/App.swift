@@ -62,28 +62,24 @@ class App: UIViewController {
 //MARK: Task Actions
     
     func CreateNewTask() {
-        for task in taskListView.allUpcomingTasks {
-            if task.name == "" { DeleteTask(task: task)}
+        taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true)
+        
+        for cell in taskListView.tableView.visibleCells as! [TaskSliderTableCell] {
+            cell.slider.StopEditing()
+            if cell.slider.task.name == "" { DeleteTask(task: cell.slider.task) }
         }
         
         if App.selectedTaskListIndex == 0 || App.selectedTaskListIndex == 1 {
-            if App.mainTaskList.upcomingTasks.count > 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: true) }
             App.mainTaskList.upcomingTasks.insert(Task(taskListID: App.mainTaskList.id), at: 0)
         } else {
-            if App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.count > 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: true) }
             App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.insert(Task(taskListID: App.userTaskLists[App.selectedTaskListIndex-2].id), at: 0)
         }
         
         taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
         taskListView.ReloadTaskData()
 
-        taskListView.tableView.beginUpdates()
         taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: UITableView.RowAnimation.automatic)
-        taskListView.tableView.endUpdates()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [self] in
-            taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: true)
-        }
+        taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
     }
     
     func CompleteTask(task: Task) {
@@ -170,9 +166,10 @@ class App: UIViewController {
         taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
         taskListView.ReloadTaskData()
         
-        taskListView.tableView.beginUpdates()
         taskListView.tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.right)
-        taskListView.tableView.endUpdates()
+        if taskListView.allUpcomingTasks.count > 0 && indexPath.row == 0 {
+            taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
+        }
         
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }

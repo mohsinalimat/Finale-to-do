@@ -146,23 +146,24 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil) { suggestedActions in
             
+            let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
             let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
-                let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
                 self.app.DeleteTask(task: cell.slider.task)
             }
             let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
             
             let Undo = UIAction(title: "Undo", image: UIImage(systemName: "arrow.uturn.left")) { action in
-                let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
                 self.app.UndoTask(task: cell.slider.task)
             }
             let Edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { action in
-                let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
                 cell.slider.StartEditing()
+            }
+            let AssignDate = UIAction(title: cell.slider.task.isDateAssigned ? "Change date" : "Assign date", image: UIImage(systemName: "calendar")) { action in
+                cell.slider.ShowCalendarView()
             }
             
             var items = [UIAction]()
-            if indexPath.section == 0 { items.append(Edit) }
+            if indexPath.section == 0 { items.append(AssignDate); items.append(Edit) }
             if indexPath.section == 1 { items.append(Undo) }
             
             let Regular = UIMenu(title: "", options: .displayInline, children: items)
@@ -320,7 +321,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     func ReloadView () {
         ReloadTaskData()
         tableView.reloadData()
-        if tableView.cellForRow(at: IndexPath(row: 0, section: 0)) != nil { tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
+        tableView.setContentOffset(CGPoint(x: 0, y: tableView.frame.minY), animated: false)
         originalTableContentOffsetY = tableView.contentOffset.y
         titleLabel.text = App.selectedTaskListIndex == 0 ? "Hi, Grant" : taskLists[0].name
         titleLabel.textColor = App.selectedTaskListIndex == 0 ? .label : .white

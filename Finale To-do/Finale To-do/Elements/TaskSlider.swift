@@ -157,6 +157,8 @@ class TaskSlider: UIView, UITextFieldDelegate {
     }
     
     @objc func StartEditing () {
+        if task.isCompleted { return }
+        
         isEditing = true
         taskNameInputField.isEnabled = true
         dateInfoView.isUserInteractionEnabled = true
@@ -203,11 +205,13 @@ class TaskSlider: UIView, UITextFieldDelegate {
     
     func ClearDate() {
         task.isDateAssigned = false
-        calendarIconView.alpha = 1
+        calendarIconView.alpha = isEditing ? 1 : 0
         UpdateDateLabel()
         
         taskNameInputField.becomeFirstResponder()
     }
+    
+    
     
     func UpdateDateLabel () {
         dateLabel.text = assignedDateTimeString
@@ -229,8 +233,12 @@ class TaskSlider: UIView, UITextFieldDelegate {
     @objc func ShowCalendarView () {
         taskNameInputField.resignFirstResponder()
         
-        let color = App.selectedTaskListIndex == 0 || App.selectedTaskListIndex == 1 ? UIColor.defaultColor : App.userTaskLists[App.selectedTaskListIndex].primaryColor
+        let color = App.selectedTaskListIndex == 0 || App.selectedTaskListIndex == 1 ? UIColor.defaultColor : App.userTaskLists[App.selectedTaskListIndex-2].primaryColor
         App.instance.view.addSubview(CalendarView(frameSize: CGSize(width: UIScreen.main.bounds.width*0.8, height: UIScreen.main.bounds.width), tintColor: color, taskSlider: self))
+    }
+    
+    func HideCalendarView () {
+        taskNameInputField.becomeFirstResponder()
     }
     
     

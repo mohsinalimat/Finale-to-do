@@ -23,6 +23,7 @@ class CalendarView: UIView {
         
         let blurEffect = UIVisualEffectView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
         blurEffect.effect = UIBlurEffect(style: .systemUltraThinMaterial)
+        blurEffect.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(HideViewNoAction)))
         self.backgroundColor = .black.withAlphaComponent(0.2)
         self.addSubview(blurEffect)
         
@@ -53,14 +54,14 @@ class CalendarView: UIView {
         let buttonHeight = 40.0
         let buttonWidth = 0.5*(containerView.frame.width-padding*3)
         let clearButton = UIButton(frame: CGRect(x: padding, y: containerView.frame.height - padding - buttonHeight, width: buttonWidth, height: buttonHeight))
-        clearButton.backgroundColor = .systemGray
+        clearButton.backgroundColor = .systemGray2
         clearButton.setTitle("Clear", for: .normal)
         clearButton.layer.cornerRadius = 10
         clearButton.addTarget(self, action: #selector(Clear), for: .touchUpInside)
         
         let confirmButton = UIButton(frame: CGRect(x: padding*2+buttonWidth, y: containerView.frame.height - padding - buttonHeight, width: buttonWidth, height: buttonHeight))
         confirmButton.backgroundColor = tintColor
-        confirmButton.setTitle("Assign date", for: .normal)
+        confirmButton.setTitle("Assign", for: .normal)
         confirmButton.layer.cornerRadius = 10
         confirmButton.addTarget(self, action: #selector(Confirm), for: .touchUpInside)
         
@@ -99,6 +100,10 @@ class CalendarView: UIView {
         taskSlider.AddDate(date: calendarView.date)
     }
     
+    @objc func HideViewNoAction () {
+        HideView()
+        taskSlider.HideCalendarView()
+    }
     
     
     
