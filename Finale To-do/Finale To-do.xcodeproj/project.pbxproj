@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		370A9DB128106F5D00FC30A7 /* ConfirmationSlideover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370A9DB028106F5D00FC30A7 /* ConfirmationSlideover.swift */; };
 		375E5D79280F1AA2001A289E /* UndoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E5D78280F1AA2001A289E /* UndoButton.swift */; };
 		375E5D7B280F7155001A289E /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E5D7A280F7155001A289E /* CalendarView.swift */; };
 		376AD0C32808DC5900986B49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0C22808DC5900986B49 /* AppDelegate.swift */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		370A9DB028106F5D00FC30A7 /* ConfirmationSlideover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationSlideover.swift; sourceTree = "<group>"; };
 		375E5D78280F1AA2001A289E /* UndoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoButton.swift; sourceTree = "<group>"; };
 		375E5D7A280F7155001A289E /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		376AD0BF2808DC5900986B49 /* Finale To-do.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Finale To-do.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +105,7 @@
 				37E4CE022809C9F3002B4D87 /* AddTaskButton.swift */,
 				375E5D78280F1AA2001A289E /* UndoButton.swift */,
 				375E5D7A280F7155001A289E /* CalendarView.swift */,
+				370A9DB028106F5D00FC30A7 /* ConfirmationSlideover.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -176,6 +179,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				370A9DB128106F5D00FC30A7 /* ConfirmationSlideover.swift in Sources */,
 				376AD0C72808DC5900986B49 /* App.swift in Sources */,
 				376AD0D72808DDEB00986B49 /* TaskListView.swift in Sources */,
 				37E4CE032809C9F3002B4D87 /* AddTaskButton.swift in Sources */,

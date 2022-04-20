@@ -18,15 +18,15 @@ class UndoButton: UIView {
         
         self.layer.cornerRadius = frame.height*0.5
         self.backgroundColor = color
-        self.layer.shadowRadius = 7
+        self.layer.shadowRadius = 5
         self.layer.shadowOpacity = 0.5
         self.layer.shadowOffset = CGSize.zero
         
         let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
-        imageView.image = UIImage(systemName: "arrow.uturn.left")
+        imageView.image = UIImage(systemName: "arrow.uturn.left", withConfiguration: UIImage.SymbolConfiguration(weight: .bold))
         imageView.tintColor = color.lerp(second: .white, percentage: 0.7)
         imageView.contentMode = .scaleAspectFit
-        imageView.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
+        imageView.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(UndoTask))
         self.addGestureRecognizer(tapGesture)
@@ -47,7 +47,7 @@ class UndoButton: UIView {
                 self.transform = CGAffineTransform(scaleX: 1, y: 1)
             }
         })
-        App.instance.UndoLastCompletedTask()
+        App.instance.UndoAction()
     }
     
     

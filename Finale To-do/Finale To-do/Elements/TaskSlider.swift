@@ -26,6 +26,8 @@ class TaskSlider: UIView, UITextFieldDelegate {
     var dateLabel: UILabel!
     var calendarIconView: UIImageView!
     
+    var contextMenuView: UIView!
+    
     let sliderHandleWidth: CGFloat
     let sliderHandleOriginX: CGFloat
     let fullSliderWidth: CGFloat
@@ -109,6 +111,9 @@ class TaskSlider: UIView, UITextFieldDelegate {
         
         addGestureRecognizer(doubleTap)
         
+        contextMenuView = CreateContextMenuPreview()
+        
+        addSubview(contextMenuView)
         addSubview(background)
         addSubview(dateInfoView)
         addSubview(calendarIconView)
@@ -171,6 +176,8 @@ class TaskSlider: UIView, UITextFieldDelegate {
         }
         
         ToggleCalendarButton()
+        
+        App.instance.taskListView.currentSliderEditing = self
     }
     
     func StopEditing () {
@@ -188,7 +195,6 @@ class TaskSlider: UIView, UITextFieldDelegate {
         }
         
         ToggleCalendarButton()
-        
     }
     
     func AddDate(date: Date) {
@@ -244,6 +250,7 @@ class TaskSlider: UIView, UITextFieldDelegate {
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         StopEditing()
+        App.instance.taskListView.currentSliderEditing = nil
         return true
     }
     
@@ -285,6 +292,26 @@ class TaskSlider: UIView, UITextFieldDelegate {
         }
         return formatter.string(from: task.dateAssigned)
     }
+    
+    
+    
+    
+    func CreateContextMenuPreview() -> UIView {
+        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: fullSliderWidth, height: sliderView.frame.height))
+        containerView.backgroundColor = .red
+        containerView.layer.cornerRadius = sliderCornerRadius
+        
+        return (containerView)
+    }
+    func ShowContextMenuView() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            contextMenuView.frame.size.height = 100
+        }
+    }
+    
+    
+    
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

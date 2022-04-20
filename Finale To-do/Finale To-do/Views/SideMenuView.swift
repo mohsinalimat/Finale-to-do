@@ -102,7 +102,12 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
                         
             let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
                 let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
-                App.instance.DeleteTaskList(taskList: cell.taskListMenuItem.taskList)
+                App.instance.view.addSubview(ConfirmationSlideover(
+                    title: "Delete \"\(cell.taskListMenuItem.taskList.name)\"?",
+                    subTitle: "All tasks from this list will be lost",
+                    confirmActionTitle: " Delete",
+                    confirmAction: { App.instance.DeleteTaskList(taskList: cell.taskListMenuItem.taskList) }
+                ))
             }
             let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
             

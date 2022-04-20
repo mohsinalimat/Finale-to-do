@@ -112,3 +112,11 @@ extension Date {
         return calendar.component(components, from: self)
     }
 }
+
+
+extension UIView {
+    
+    func AddStandardShadow() {
+        AppConfiguration().AddStandardShadow(view: self)
+    }
+}

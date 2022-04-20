@@ -15,7 +15,11 @@ class App: UIViewController {
     static var userTaskLists: [TaskList] = [TaskList]()
     
     static var selectedTaskListIndex: Int = 0
+    
     var lastCompletedTask: Task?
+    var lastDeletedTask: Task?
+    var undoTaskIndexPath: IndexPath?
+    var undoTaskArrayIndex: Int?
     
     var allTaskLists: [TaskList] {
         var x = [TaskList]()
@@ -67,6 +71,7 @@ class App: UIViewController {
         for cell in taskListView.tableView.visibleCells as! [TaskSliderTableCell] {
             cell.slider.StopEditing()
             if cell.slider.task.name == "" { DeleteTask(task: cell.slider.task) }
+            taskListView.currentSliderEditing = nil
         }
         
         if App.selectedTaskListIndex == 0 || App.selectedTaskListIndex == 1 {
@@ -108,17 +113,23 @@ class App: UIViewController {
         }
         if index == -1 { return }
         
+        if index == 0 { taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true) } //Jagged animatino glitch fix
+        
         let tableIndex = taskListView.allUpcomingTasks.firstIndex(of: task)!
         
         taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
         taskListView.ReloadTaskData()
         
-        taskListView.tableView.beginUpdates()
-        taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 0)], with: UITableView.RowAnimation.right)
-        taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 1)], with: UITableView.RowAnimation.automatic)
-        taskListView.tableView.endUpdates()
+        taskListView.tableView.performBatchUpdates({
+            taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 0)], with: UITableView.RowAnimation.right)
+            taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 1)], with: UITableView.RowAnimation.automatic)
+        })
+        if index == 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         
         lastCompletedTask = task
+        lastDeletedTask = nil
+        undoTaskIndexPath = IndexPath(row: tableIndex, section: 0)
+        undoTaskArrayIndex = index
         taskListView.ShowUndoButton()
     }
     
@@ -171,10 +182,18 @@ class App: UIViewController {
             taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
         }
         
+        if task.name != "" {
+            lastCompletedTask = nil
+            lastDeletedTask = task
+            undoTaskIndexPath = indexPath
+            undoTaskArrayIndex = index
+            taskListView.ShowUndoButton()
+        }
+        
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
     
-    func UndoTask(task: Task) {
+    func UndoCompletingTask(task: Task) {
         if !task.isCompleted { return }
         
         var index = -1
@@ -184,37 +203,74 @@ class App: UIViewController {
             index = App.mainTaskList.completedTasks.firstIndex(of: task)!
             
             App.mainTaskList.completedTasks.remove(at: index)
-            App.mainTaskList.upcomingTasks.insert(task, at: 0)
+            App.mainTaskList.upcomingTasks.insert(task, at: undoTaskArrayIndex!)
         } else {
             for taskList in App.userTaskLists {
                 if taskList.id == task.taskListID {
                     index = taskList.completedTasks.firstIndex(of: task)!
                     
                     taskList.completedTasks.remove(at: index)
-                    taskList.upcomingTasks.insert(task, at: 0)
+                    taskList.upcomingTasks.insert(task, at: undoTaskArrayIndex!)
                     break
                 }
             }
         }
         if index == -1 { return }
         
+        if index == 0 { taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true) } //Jagged animation fix
+        
         let tableIndex = taskListView.allCompletedTasks.firstIndex(of: task)!
         
         taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
         taskListView.ReloadTaskData()
         
-        taskListView.tableView.beginUpdates()
-        taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 1)], with: UITableView.RowAnimation.automatic)
-        taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: UITableView.RowAnimation.right)
-        taskListView.tableView.endUpdates()
+        taskListView.tableView.performBatchUpdates({
+            taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 1)], with: UITableView.RowAnimation.automatic)
+            taskListView.tableView.insertRows(at: [IndexPath(row: undoTaskIndexPath!.row, section: 0)], with: UITableView.RowAnimation.right)
+        })
+        if index == 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         
         taskListView.HideUndoButton()
     }
     
-    func UndoLastCompletedTask () {
-        if lastCompletedTask == nil { return }
+    func UndoDeletingTask(task: Task) {
+        if task.taskListID == App.mainTaskList.id {
+            if !task.isCompleted {
+                App.mainTaskList.upcomingTasks.insert(task, at: undoTaskArrayIndex!)
+            } else {
+                App.mainTaskList.completedTasks.insert(task, at: undoTaskArrayIndex!)
+            }
+        } else {
+            for taskList in App.userTaskLists {
+                if taskList.id == task.taskListID {
+                    if !task.isCompleted {
+                        taskList.upcomingTasks.insert(task, at: undoTaskArrayIndex!)
+                    } else {
+                        taskList.completedTasks.insert(task, at: undoTaskArrayIndex!)
+                    }
+                    break
+                }
+            }
+        }
         
-        UndoTask(task: lastCompletedTask!)
+        if undoTaskIndexPath == IndexPath(row: 0, section: 0) { taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true) } //Jagged animation fix
+        
+        taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
+        taskListView.ReloadTaskData()
+        
+        taskListView.tableView.insertRows(at: [undoTaskIndexPath!], with: UITableView.RowAnimation.right)
+        
+        if undoTaskIndexPath == IndexPath(row: 0, section: 0) { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
+        
+        taskListView.HideUndoButton()
+    }
+    
+    func UndoAction () {
+        if lastCompletedTask != nil {
+            UndoCompletingTask(task: lastCompletedTask!)
+        } else if lastDeletedTask != nil {
+            UndoDeletingTask(task: lastDeletedTask!)
+        }
     }
     
 //MARK: Sidemenu Actions
@@ -381,6 +437,5 @@ class App: UIViewController {
     @objc func AppMovedToBackground() {
         SaveData()
     }
-    
 }
 

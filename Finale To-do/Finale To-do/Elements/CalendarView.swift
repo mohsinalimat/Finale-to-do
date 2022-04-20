@@ -55,13 +55,19 @@ class CalendarView: UIView {
         let buttonWidth = 0.5*(containerView.frame.width-padding*3)
         let clearButton = UIButton(frame: CGRect(x: padding, y: containerView.frame.height - padding - buttonHeight, width: buttonWidth, height: buttonHeight))
         clearButton.backgroundColor = .systemGray2
-        clearButton.setTitle("Clear", for: .normal)
+        clearButton.setTitle(" Clear", for: .normal)
+        clearButton.setTitleColor(.systemGray, for: .highlighted)
+        clearButton.setImage(UIImage(systemName: "xmark"), for: .normal)
+        clearButton.tintColor = .white
         clearButton.layer.cornerRadius = 10
         clearButton.addTarget(self, action: #selector(Clear), for: .touchUpInside)
         
         let confirmButton = UIButton(frame: CGRect(x: padding*2+buttonWidth, y: containerView.frame.height - padding - buttonHeight, width: buttonWidth, height: buttonHeight))
         confirmButton.backgroundColor = tintColor
-        confirmButton.setTitle("Assign", for: .normal)
+        confirmButton.setTitle(" Assign", for: .normal)
+        confirmButton.setTitleColor(.systemGray, for: .highlighted)
+        confirmButton.setImage(UIImage(systemName: "calendar"), for: .normal)
+        confirmButton.tintColor = .white
         confirmButton.layer.cornerRadius = 10
         confirmButton.addTarget(self, action: #selector(Confirm), for: .touchUpInside)
         

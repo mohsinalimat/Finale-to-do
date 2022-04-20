@@ -36,9 +36,7 @@ class AddListView: UIView, UITextFieldDelegate {
         contentView = UIView(frame: CGRect(x: 0, y: UIScreen.main.bounds.height+10, width: frame.width, height: frame.height))
         contentView.layer.cornerRadius = 20
         contentView.backgroundColor = AppColors().tintedBackgroundColor
-        contentView.layer.shadowOffset = CGSize.zero
-        contentView.layer.shadowRadius = 7
-        contentView.layer.shadowOpacity = 0.5
+        contentView.AddStandardShadow()
         
         let panelWidth = (frame.width-padding*2)*0.8-padding
         let iconWidth = rowHeight

@@ -33,9 +33,10 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     var originalHeaderHeight = 0.0
     var originalTitlePositionY = 0.0
     
-    var currentContextMenuPreview: TaskSlider?
-    var undoButton: UndoButton?
+    var currentContextMenuPreview: UIView?
+    var currentSliderEditing: TaskSlider?
     
+    var undoButton: UndoButton?
     var lastTaskUndoTimer: Timer?
     var lastTaskUndoTimeThreashold = 3.0
     
@@ -110,6 +111,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         tableView.dragDelegate = self
         tableView.dropDelegate = self
         tableView.dragInteractionEnabled = true
+        tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TouchedTable)))
         
         contentView.addSubview(tableView)
         
@@ -144,6 +146,37 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: {
+            return getSliderPreview(configuration: <#T##UIContextMenuConfiguration#>, isDismissing: <#T##Bool#>)
+        }, actionProvider: { _ in
+            let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+            let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
+                self.app.DeleteTask(task: cell.slider.task)
+            }
+            let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
+            
+            let Undo = UIAction(title: "Undo", image: UIImage(systemName: "arrow.uturn.left")) { action in
+                self.app.UndoCompletingTask(task: cell.slider.task)
+            }
+            let Edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { action in
+                cell.slider.StartEditing()
+            }
+            let AssignDate = UIAction(title: cell.slider.task.isDateAssigned ? "Change date" : "Assign date", image: UIImage(systemName: "calendar")) { action in
+                cell.slider.ShowCalendarView()
+            }
+            
+            var items = [UIAction]()
+            if indexPath.section == 0 { items.append(AssignDate); items.append(Edit) }
+            if indexPath.section == 1 { items.append(Undo) }
+            
+            let Regular = UIMenu(title: "", options: .displayInline, children: items)
+            
+            return UIMenu(title: "", children: [Regular, Delete])
+        })
+        
+        
+        //OLD
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil) { suggestedActions in
             
             let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
@@ -153,7 +186,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
             
             let Undo = UIAction(title: "Undo", image: UIImage(systemName: "arrow.uturn.left")) { action in
-                self.app.UndoTask(task: cell.slider.task)
+                self.app.UndoCompletingTask(task: cell.slider.task)
             }
             let Edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { action in
                 cell.slider.StartEditing()
@@ -242,8 +275,11 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     func getSliderPreview(configuration: UIContextMenuConfiguration, isDismissing: Bool) -> UITargetedPreview {
         let indexPath = configuration.identifier as! IndexPath
+        let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
         
-        let previewView: TaskSlider
+        cell.slider.ShowContextMenuView()
+        
+        let previewView: UIView
         if !isDismissing {
             let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
             previewView = cell.slider
@@ -255,7 +291,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
         parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds, cornerRadius: 10)
-
+        
         return UITargetedPreview(view: previewView, parameters: parameters)
     }
     
@@ -370,13 +406,26 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         if undoButton == nil { return }
         
         lastTaskUndoTimer?.invalidate()
+        App.instance.lastDeletedTask = nil
+        App.instance.lastCompletedTask = nil
+        App.instance.undoTaskIndexPath = nil
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: { [self] in
             undoButton!.frame.origin.x = -undoButton!.frame.width - 10
         }, completion: { [self] _ in
-            undoButton!.removeFromSuperview()
+            if undoButton != nil { undoButton!.removeFromSuperview() }
             undoButton = nil
         })
     }
+    
+    @objc func TouchedTable (sender: UITapGestureRecognizer) {
+        sender.cancelsTouchesInView = false
+        
+        currentSliderEditing?.StopEditing()
+        currentSliderEditing = nil
+    }
+    
+    
+    
     
     
     

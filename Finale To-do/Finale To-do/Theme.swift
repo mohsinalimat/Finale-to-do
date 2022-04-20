@@ -13,7 +13,7 @@ class AppColors {
 //MARK: Overall colors
     
     var tintedBackgroundColor: UIColor {
-        return currentTheme == .Light ? .defaultColor.light4 : UIColor.defaultColor.dark3
+        return currentTheme == .Light ? .systemGray5 : UIColor.defaultColor.dark3
     }
    
     
@@ -42,6 +42,18 @@ class AppColors {
             return UITraitCollection.current.userInterfaceStyle == .light ? .Light : .Dark
         }
     }
+}
+
+class AppConfiguration {
+    
+    var slideoverCornerRadius: CGFloat = 20.0
+    
+    func AddStandardShadow(view: UIView) {
+        view.layer.shadowOffset = CGSize.zero
+        view.layer.shadowRadius = 7
+        view.layer.shadowOpacity = 0.5
+    }
+    
 }
 
 enum Theme {
