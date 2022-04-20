@@ -22,7 +22,7 @@ class AddListView: UIView, UITextFieldDelegate {
     var createButton: UIButton!
     var colorPickerView: ColorIconPickerView!
     
-    let placeholders: [String] = ["Work", "Family", "Sports club", "Hobbies", "Home", "Shopping list"]
+    let placeholders: [String] = ["Travel plan" , "Final project" , "Grocery list", "Work", "Family", "Sports club", "Hobbies", "Chores", "Shopping list"]
     
     let icons: [String] = ["folder.fill", "book.closed.fill", "heart.fill", "paperplane.fill", "calendar", "rectangle.fill.on.rectangle.fill", "trash.fill", "alarm.fill", "hourglass", "bolt.fill", "lightbulb.fill", "bag.fill", "tray.full.fill", "archivebox.fill", "graduationcap.fill", "briefcase.fill"]
     
@@ -99,6 +99,8 @@ class AddListView: UIView, UITextFieldDelegate {
         
         self.addSubview(blackoutPanel)
         self.addSubview(contentView)
+        
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
     
     func SetTaskListIcon () {
@@ -152,10 +154,14 @@ class AddListView: UIView, UITextFieldDelegate {
     }
     
     func CreateNewTaskList () {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        
         App.instance.CreateNewTaskList(taskList: newTaskList)
         CloseView()
     }
     func UpdateOldTaskList(oldTaskList: TaskList){
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        
         App.instance.EditTaskList(oldTaskList: oldTaskList, updatedTaskList: newTaskList)
         CloseView()
     }
@@ -239,19 +245,7 @@ class ColorIconPickerView: UIView {
         let newFrame = CGRect(x: frame.origin.x, y: frame.origin.y-(containerHeight*2+padding*4-frame.height), width: frame.width, height: containerHeight*2+padding*4)
         super.init(frame: newFrame)
         
-        self.clipsToBounds = true
-        
-        let blurEffect = UIVisualEffectView(frame: CGRect(x: 0, y: 0, width: newFrame.width, height: newFrame.height))
-        blurEffect.effect = UIBlurEffect(style: .systemUltraThinMaterial)
-        self.addSubview(blurEffect)
-        
-        let colorPanelHeader = UIView(frame: CGRect(x: 0, y: 0, width: newFrame.width, height: newFrame.height))
-        colorPanelHeader.backgroundColor = AppColors().tintedBackgroundColor
-        colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
-        colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
-        
-        self.addSubview(colorPanelHeader)
-        
+        self.backgroundColor = AppColors().sidemenuSelectedItemColor
         self.layer.cornerRadius = 10
         
         let colorsContainer = DrawSwatches(prevFrameMaxY: 0, swatchSize: swatchSize, nRows: 2, nColumns: 8, spacing: spacing, containerWidth: containerWidth, containerHeight: containerHeight, color: true)
@@ -269,7 +263,7 @@ class ColorIconPickerView: UIView {
         self.layer.anchorPoint = CGPoint(x: 0.075, y: 1)
         self.alpha = 0
         
-        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
             self.transform = CGAffineTransform(scaleX: 1, y: 1);
             self.alpha = 1
             self.frame.origin.y -= self.padding*2
@@ -304,7 +298,7 @@ class ColorIconPickerView: UIView {
     }
     
     func Dismiss () {
-        UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: {
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
             self.transform = CGAffineTransform(scaleX: 0.01, y: 0.01);
             self.alpha = 0
             self.frame.origin.y += self.padding*2

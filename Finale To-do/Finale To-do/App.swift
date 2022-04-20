@@ -15,6 +15,7 @@ class App: UIViewController {
     static var userTaskLists: [TaskList] = [TaskList]()
     
     static var selectedTaskListIndex: Int = 0
+    var lastCompletedTask: Task?
     
     var allTaskLists: [TaskList] {
         var x = [TaskList]()
@@ -60,7 +61,11 @@ class App: UIViewController {
     
 //MARK: Task Actions
     
-    func CreateNewTask(sender: UITapGestureRecognizer) {
+    func CreateNewTask() {
+        for task in taskListView.allUpcomingTasks {
+            if task.name == "" { DeleteTask(task: task)}
+        }
+        
         if App.selectedTaskListIndex == 0 || App.selectedTaskListIndex == 1 {
             if App.mainTaskList.upcomingTasks.count > 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: true) }
             App.mainTaskList.upcomingTasks.insert(Task(taskListID: App.mainTaskList.id), at: 0)
@@ -76,25 +81,28 @@ class App: UIViewController {
         taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: UITableView.RowAnimation.automatic)
         taskListView.tableView.endUpdates()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) { [self] in
             taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: true)
         }
     }
     
     func CompleteTask(task: Task) {
         var index = -1
+        
         task.isCompleted = true
         task.dateCompleted = Date.now
         
         if App.mainTaskList.upcomingTasks.contains(task) {
-            index = App.mainTaskList.upcomingTasks.firstIndex(of: task)!
+            index = App.mainTaskList.upcomingTasks.firstIndex(of: task) ?? index
+            if index == -1 { return }
             
             App.mainTaskList.upcomingTasks.remove(at: index)
             App.mainTaskList.completedTasks.insert(task, at: 0)
         } else {
             for taskList in App.userTaskLists {
                 if taskList.id == task.taskListID {
-                    index = taskList.upcomingTasks.firstIndex(of: task)!
+                    index = taskList.upcomingTasks.firstIndex(of: task) ?? index
+                    if index == -1 { return }
                     
                     taskList.upcomingTasks.remove(at: index)
                     taskList.completedTasks.insert(task, at: 0)
@@ -113,6 +121,9 @@ class App: UIViewController {
         taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 0)], with: UITableView.RowAnimation.right)
         taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 1)], with: UITableView.RowAnimation.automatic)
         taskListView.tableView.endUpdates()
+        
+        lastCompletedTask = task
+        taskListView.ShowUndoButton()
     }
     
     func DeleteTask(task: Task) {
@@ -162,6 +173,8 @@ class App: UIViewController {
         taskListView.tableView.beginUpdates()
         taskListView.tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.right)
         taskListView.tableView.endUpdates()
+        
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
     
     func UndoTask(task: Task) {
@@ -197,6 +210,14 @@ class App: UIViewController {
         taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 1)], with: UITableView.RowAnimation.automatic)
         taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: UITableView.RowAnimation.right)
         taskListView.tableView.endUpdates()
+        
+        taskListView.HideUndoButton()
+    }
+    
+    func UndoLastCompletedTask () {
+        if lastCompletedTask == nil { return }
+        
+        UndoTask(task: lastCompletedTask!)
     }
     
 //MARK: Sidemenu Actions

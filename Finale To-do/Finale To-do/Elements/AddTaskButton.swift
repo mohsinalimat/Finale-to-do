@@ -28,7 +28,7 @@ class AddTaskButton: UIView {
         self.layer.shadowOffset = CGSize.zero
         
         let lineWidth = frame.width*0.07
-        let lineHeight = frame.height*0.5
+        let lineHeight = frame.height*0.45
         verticalLine = UIView(frame: CGRect(x: 0.5*(frame.width-lineWidth), y: 0.5*(frame.height-lineHeight), width: lineWidth, height: lineHeight))
         verticalLine.layer.cornerRadius = lineWidth*0.5
         verticalLine.backgroundColor = color.lerp(second: .white, percentage: 0.7)
@@ -51,6 +51,7 @@ class AddTaskButton: UIView {
     }
     
     @objc func CreateNewTask(sender: UITapGestureRecognizer) {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         UIView.animate(withDuration: 0.1, animations: {
             self.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         }, completion: { _ in
@@ -58,7 +59,7 @@ class AddTaskButton: UIView {
                 self.transform = CGAffineTransform(scaleX: 1, y: 1)
             }
         })
-        app.CreateNewTask(sender: sender)
+        app.CreateNewTask()
     }
     
     

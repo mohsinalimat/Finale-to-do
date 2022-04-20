@@ -15,6 +15,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     let padding = 16.0
     let sliderHeight = 36.0
     
+    var contentView: UIView!
     var blurEffect: UIVisualEffectView!
     var colorPanelHeader: UIView!
     var hamburgerButton: UIButton!
@@ -31,9 +32,12 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     var originalTableContentOffsetY = 0.0
     var originalHeaderHeight = 0.0
     var originalTitlePositionY = 0.0
-    var originalTitleFontSize = 40.0
     
     var currentContextMenuPreview: TaskSlider?
+    var undoButton: UndoButton?
+    
+    var lastTaskUndoTimer: Timer?
+    var lastTaskUndoTimeThreashold = 3.0
     
     init(frame: CGRect, taskLists: [TaskList], app: App) {
         self.app = app
@@ -75,11 +79,14 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         header.addSubview(hamburgerButton)
         
-        titleLabel = UILabel(frame: CGRect(x: padding, y: hamburgerButton.frame.maxY + padding*0.45, width: header.frame.width-padding*2, height: header.frame.height*0.3))
-        titleLabel.font = UIFont.systemFont(ofSize: originalTitleFontSize, weight: .bold)
+        let titleHeight = header.frame.height*0.3
+        let titleWidth = header.frame.width-padding*2
+        titleLabel = UILabel(frame: CGRect(x: padding - titleWidth*0.5, y: hamburgerButton.frame.maxY + padding*0.45 + titleHeight*0.5, width: titleWidth, height: titleHeight))
+        titleLabel.font = UIFont.systemFont(ofSize: 40, weight: .bold)
         titleLabel.text = App.selectedTaskListIndex == 0 ? "Hi, Grant" : taskLists[0].name
         titleLabel.textColor = App.selectedTaskListIndex == 0 ? .label : .white
         titleLabel.adjustsFontSizeToFitWidth = true
+        titleLabel.layer.anchorPoint = CGPoint(x: 0, y: 1)
         originalTitlePositionY = titleLabel.frame.origin.y
         
         header.addSubview(titleLabel)
@@ -90,7 +97,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func DrawContent(frame: CGRect) {
-        let contentView = UIView(frame: frame)
+        contentView?.removeFromSuperview()
+        contentView = UIView(frame: frame)
         
         tableView = UITableView(frame: CGRect(x: 0, y: -frame.origin.y, width: frame.width, height: frame.height+frame.origin.y))
         tableView.dataSource = self
@@ -253,10 +261,22 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     var scrollDelta: CGFloat {
         return max(0, originalTableContentOffsetY - tableView.contentOffset.y)
     }
+    var maxScrollDelta = 0.0
+    var stopped = false
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if titleLabel == nil || colorPanelHeader == nil || blurEffect == nil { return }
         
-        titleLabel.font = UIFont.systemFont(ofSize: originalTitleFontSize+scrollDelta*0.05, weight: .bold)
+        if titleLabel.intrinsicContentSize.width*(1 + maxScrollDelta*0.0005) < UIScreen.main.bounds.width-padding*2 {
+            maxScrollDelta = scrollDelta
+        } else {
+            stopped = true
+        }
+        if stopped && scrollDelta < maxScrollDelta {
+            maxScrollDelta = scrollDelta
+            stopped = false
+        }
+        
+        titleLabel.transform = CGAffineTransform(scaleX: (1 + maxScrollDelta*0.0005), y: (1 + maxScrollDelta*0.0005) )
         titleLabel.frame.origin.y = originalTitlePositionY + scrollDelta
         colorPanelHeader.frame.size.height = originalHeaderHeight + scrollDelta
         blurEffect.frame.size.height = originalHeaderHeight + scrollDelta
@@ -300,6 +320,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     func ReloadView () {
         ReloadTaskData()
         tableView.reloadData()
+        if tableView.cellForRow(at: IndexPath(row: 0, section: 0)) != nil { tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         originalTableContentOffsetY = tableView.contentOffset.y
         titleLabel.text = App.selectedTaskListIndex == 0 ? "Hi, Grant" : taskLists[0].name
         titleLabel.textColor = App.selectedTaskListIndex == 0 ? .label : .white
@@ -308,6 +329,10 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
         colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
         addTaskButton.ReloadVisuals(color: App.selectedTaskListIndex == 0 ? .defaultColor : taskLists[0].primaryColor)
+        if undoButton != nil {
+            undoButton!.removeFromSuperview()
+            undoButton = nil
+        }
     }
     
     @objc func KeyboardWillShow(_ notification: Notification) {
@@ -325,7 +350,32 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         }
     }
     
+    func ShowUndoButton () {
+        lastTaskUndoTimer?.invalidate()
+        lastTaskUndoTimer = Timer.scheduledTimer(timeInterval: lastTaskUndoTimeThreashold, target: self, selector: #selector(HideUndoButton), userInfo: nil, repeats: false)
+        
+        if undoButton != nil { return }
+        
+        undoButton = UndoButton(frame: CGRect(x: -addTaskButton.frame.width - 10, y: addTaskButton.frame.origin.y, width: addTaskButton.frame.width, height: addTaskButton.frame.height), color: addTaskButton.backgroundColor!)
+        
+        contentView.addSubview(undoButton!)
+        
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: { [self] in
+            undoButton!.frame.origin.x = padding
+        })
+    }
     
+    @objc func HideUndoButton () {
+        if undoButton == nil { return }
+        
+        lastTaskUndoTimer?.invalidate()
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: { [self] in
+            undoButton!.frame.origin.x = -undoButton!.frame.width - 10
+        }, completion: { [self] _ in
+            undoButton!.removeFromSuperview()
+            undoButton = nil
+        })
+    }
     
     
     
