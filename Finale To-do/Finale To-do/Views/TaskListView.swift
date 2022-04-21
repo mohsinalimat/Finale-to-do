@@ -33,7 +33,6 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     var originalHeaderHeight = 0.0
     var originalTitlePositionY = 0.0
     
-    var currentContextMenuPreview: UIView?
     var currentSliderEditing: TaskSlider?
     
     var undoButton: UndoButton?
@@ -147,8 +146,10 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         
-        return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: {
-            return getSliderPreview(configuration: <#T##UIContextMenuConfiguration#>, isDismissing: <#T##Bool#>)
+        return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: {  
+            let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+            
+            return TaskSliderContextMenu(slider: cell.slider, indexPath: indexPath)
         }, actionProvider: { _ in
             let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
             let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
@@ -174,43 +175,23 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             
             return UIMenu(title: "", children: [Regular, Delete])
         })
-        
-        
-        //OLD
-        return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil) { suggestedActions in
-            
-            let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
-            let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
-                self.app.DeleteTask(task: cell.slider.task)
+    }
+
+    func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
+        animator.addCompletion {
+            if let preview = animator.previewViewController {
+                let x = preview as! TaskSliderContextMenu
+                x.PresentFullScreen()
+                App.instance.present(preview, animated: true)
             }
-            let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
-            
-            let Undo = UIAction(title: "Undo", image: UIImage(systemName: "arrow.uturn.left")) { action in
-                self.app.UndoCompletingTask(task: cell.slider.task)
-            }
-            let Edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { action in
-                cell.slider.StartEditing()
-            }
-            let AssignDate = UIAction(title: cell.slider.task.isDateAssigned ? "Change date" : "Assign date", image: UIImage(systemName: "calendar")) { action in
-                cell.slider.ShowCalendarView()
-            }
-            
-            var items = [UIAction]()
-            if indexPath.section == 0 { items.append(AssignDate); items.append(Edit) }
-            if indexPath.section == 1 { items.append(Undo) }
-            
-            let Regular = UIMenu(title: "", options: .displayInline, children: items)
-            
-            return UIMenu(title: "", children: [Regular, Delete])
         }
     }
     
-    func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-        return getSliderPreview(configuration: configuration, isDismissing: false)
-    }
-    
     func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-        return getSliderPreview(configuration: configuration, isDismissing: true)
+        return getSliderPreview(configuration: configuration)
+    }
+    func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        return getSliderPreview(configuration: configuration)
     }
     
     func tableView(_ tableView: UITableView, dropPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
@@ -273,27 +254,21 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         }
     }
     
-    func getSliderPreview(configuration: UIContextMenuConfiguration, isDismissing: Bool) -> UITargetedPreview {
+    func getSliderPreview(configuration: UIContextMenuConfiguration) -> UITargetedPreview {
         let indexPath = configuration.identifier as! IndexPath
         let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
         
-        cell.slider.ShowContextMenuView()
-        
-        let previewView: UIView
-        if !isDismissing {
-            let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
-            previewView = cell.slider
-            currentContextMenuPreview = previewView
-        } else {
-            previewView = currentContextMenuPreview!
-        }
-        
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
-        parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds, cornerRadius: 10)
+        parameters.visiblePath = UIBezierPath(roundedRect: cell.slider.bounds, cornerRadius: 10)
         
-        return UITargetedPreview(view: previewView, parameters: parameters)
+        let target = UIPreviewTarget(container: tableView, center: cell.center)
+        
+        return UITargetedPreview(view: cell.slider, parameters: parameters, target: target)
     }
+    
+    
+    
     
     var scrollDelta: CGFloat {
         return max(0, originalTableContentOffsetY - tableView.contentOffset.y)

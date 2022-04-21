@@ -26,8 +26,6 @@ class TaskSlider: UIView, UITextFieldDelegate {
     var dateLabel: UILabel!
     var calendarIconView: UIImageView!
     
-    var contextMenuView: UIView!
-    
     let sliderHandleWidth: CGFloat
     let sliderHandleOriginX: CGFloat
     let fullSliderWidth: CGFloat
@@ -106,14 +104,11 @@ class TaskSlider: UIView, UITextFieldDelegate {
         sliderHandle.layer.cornerRadius = sliderCornerRadius*0.85
         sliderHandle.isUserInteractionEnabled = false
         
-        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(StartEditing))
+        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(DoubleTap))
         doubleTap.numberOfTapsRequired = 2
         
         addGestureRecognizer(doubleTap)
         
-        contextMenuView = CreateContextMenuPreview()
-        
-        addSubview(contextMenuView)
         addSubview(background)
         addSubview(dateInfoView)
         addSubview(calendarIconView)
@@ -161,7 +156,10 @@ class TaskSlider: UIView, UITextFieldDelegate {
         }
     }
     
-    @objc func StartEditing () {
+    @objc func DoubleTap () {
+        StartEditing()
+    }
+    func StartEditing(focusTextField: Bool = true) {
         if task.isCompleted { return }
         
         isEditing = true
@@ -169,9 +167,11 @@ class TaskSlider: UIView, UITextFieldDelegate {
         dateInfoView.isUserInteractionEnabled = true
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [self] in
-            UIView.animate(withDuration: 0.25) {
-                self.taskNameInputField.becomeFirstResponder()
+        if focusTextField {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [self] in
+                UIView.animate(withDuration: 0.25) {
+                    self.taskNameInputField.becomeFirstResponder()
+                }
             }
         }
         
@@ -302,11 +302,6 @@ class TaskSlider: UIView, UITextFieldDelegate {
         containerView.layer.cornerRadius = sliderCornerRadius
         
         return (containerView)
-    }
-    func ShowContextMenuView() {
-        UIView.animate(withDuration: 0.25) { [self] in
-            contextMenuView.frame.size.height = 100
-        }
     }
     
     

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		370A9DB128106F5D00FC30A7 /* ConfirmationSlideover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370A9DB028106F5D00FC30A7 /* ConfirmationSlideover.swift */; };
+		370A9DB32810CDDE00FC30A7 /* TaskSliderContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370A9DB22810CDDE00FC30A7 /* TaskSliderContextMenu.swift */; };
 		375E5D79280F1AA2001A289E /* UndoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E5D78280F1AA2001A289E /* UndoButton.swift */; };
 		375E5D7B280F7155001A289E /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E5D7A280F7155001A289E /* CalendarView.swift */; };
 		376AD0C32808DC5900986B49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0C22808DC5900986B49 /* AppDelegate.swift */; };
@@ -26,6 +27,7 @@
 
 /* Begin PBXFileReference section */
 		370A9DB028106F5D00FC30A7 /* ConfirmationSlideover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationSlideover.swift; sourceTree = "<group>"; };
+		370A9DB22810CDDE00FC30A7 /* TaskSliderContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSliderContextMenu.swift; sourceTree = "<group>"; };
 		375E5D78280F1AA2001A289E /* UndoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoButton.swift; sourceTree = "<group>"; };
 		375E5D7A280F7155001A289E /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		376AD0BF2808DC5900986B49 /* Finale To-do.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Finale To-do.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -106,6 +108,7 @@
 				375E5D78280F1AA2001A289E /* UndoButton.swift */,
 				375E5D7A280F7155001A289E /* CalendarView.swift */,
 				370A9DB028106F5D00FC30A7 /* ConfirmationSlideover.swift */,
+				370A9DB22810CDDE00FC30A7 /* TaskSliderContextMenu.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";
@@ -186,6 +189,7 @@
 				37E4CE012809AE3F002B4D87 /* SideMenuView.swift in Sources */,
 				376AD0DD2808FD4C00986B49 /* Classes.swift in Sources */,
 				376AD0C32808DC5900986B49 /* AppDelegate.swift in Sources */,
+				370A9DB32810CDDE00FC30A7 /* TaskSliderContextMenu.swift in Sources */,
 				375E5D7B280F7155001A289E /* CalendarView.swift in Sources */,
 				376AD0C52808DC5900986B49 /* SceneDelegate.swift in Sources */,
 				376AD0DB2808EFA300986B49 /* TaskSlider.swift in Sources */,
