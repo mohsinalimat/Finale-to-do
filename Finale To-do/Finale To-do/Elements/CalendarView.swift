@@ -8,10 +8,11 @@
 import Foundation
 import UIKit
 
-class CalendarView: UIView {
+class CalendarView: UIView, UIDynamicTheme {
     
     let padding = 16.0
     
+    var confirmButton: UIButton!
     var containerView: UIView!
     var calendarView: UIDatePicker!
     
@@ -62,7 +63,7 @@ class CalendarView: UIView {
         clearButton.layer.cornerRadius = 10
         clearButton.addTarget(self, action: #selector(Clear), for: .touchUpInside)
         
-        let confirmButton = UIButton(frame: CGRect(x: padding*2+buttonWidth, y: containerView.frame.height - padding - buttonHeight, width: buttonWidth, height: buttonHeight))
+        confirmButton = UIButton(frame: CGRect(x: padding*2+buttonWidth, y: containerView.frame.height - padding - buttonHeight, width: buttonWidth, height: buttonHeight))
         confirmButton.backgroundColor = tintColor
         confirmButton.setTitle(" Assign", for: .normal)
         confirmButton.setTitleColor(.systemGray, for: .highlighted)
@@ -103,7 +104,8 @@ class CalendarView: UIView {
     
     @objc func Confirm () {
         HideView()
-        taskSlider.AddDate(date: calendarView.date)
+        let adjDate = Calendar.current.date(bySettingHour: 23, minute: 59, second: 59, of: calendarView.date)
+        taskSlider.AddDate(date: adjDate!)
     }
     
     @objc func HideViewNoAction () {
@@ -111,7 +113,17 @@ class CalendarView: UIView {
         taskSlider.HideCalendarView()
     }
     
-    
+    func SetThemeColors() {
+        let color: UIColor
+        if App.selectedTaskListIndex == 0 { color = AppColors.actionButtonTaskListColor(taskListColor: .defaultColor) }
+        else if App.selectedTaskListIndex == 1 { color = AppColors.actionButtonTaskListColor(taskListColor: App.mainTaskList.primaryColor) }
+        else { color = AppColors.actionButtonTaskListColor(taskListColor: App.userTaskLists[App.selectedTaskListIndex-2].primaryColor) }
+        
+        UIView.animate(withDuration: 0.25) { [self] in
+            calendarView.tintColor = color
+            confirmButton.backgroundColor = color
+        }
+    }
     
     
     

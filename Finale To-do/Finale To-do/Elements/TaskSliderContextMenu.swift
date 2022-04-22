@@ -38,30 +38,38 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         let titleWidth = "Notification:".size(withAttributes:[.font: UIFont.systemFont(ofSize: fontSize, weight: .bold)]).width
         rowHeight = "Notification:".size(withAttributes:[.font: UIFont.systemFont(ofSize: fontSize, weight: .bold)]).height
         
-        let taskRow = CreateRow(title: "Task", content: slider.task.name, fullFrameWidth: rowWidth-padding*2, prevFrame: sliderView.frame, titleWidth: titleWidth)
+        let row1 = CreateRow(title: "Task", content: taskNameContent, fullFrameWidth: rowWidth-padding*2, prevFrame: sliderView.frame, titleWidth: titleWidth)
         
-        let taskListRow = CreateRow(title: "List", content: listName, fullFrameWidth: rowWidth-padding*2, prevFrame: taskRow.frame, titleWidth: titleWidth)
+        let row2 = CreateRow(title: "List", content: listNameContent, fullFrameWidth: rowWidth-padding*2, prevFrame: row1.frame, titleWidth: titleWidth)
         
-        let dueRow = CreateRow(title: "Due", content: Due, fullFrameWidth: rowWidth-padding*2, prevFrame: taskListRow.frame, titleWidth: titleWidth)
+        let row3 = CreateRow(title: "Priority", content: priorityContent, fullFrameWidth: rowWidth-padding*2, prevFrame: row2.frame, titleWidth: titleWidth)
         
-        let notificationRow = CreateRow(title: "Notification", content: "1 hour before\n1 day before", fullFrameWidth: rowWidth-padding*2, prevFrame: dueRow.frame, titleWidth: titleWidth)
+        let row4 = CreateRow(title: "Due", content: dueContent, fullFrameWidth: rowWidth-padding*2, prevFrame: row3.frame, titleWidth: titleWidth)
         
-        let notesArea = CreateNotesArea(prevFrameMaxY: notificationRow.frame.maxY)
+        let row5: UIView
+        if !slider.task.isCompleted {
+            row5 = CreateRow(title: "Notification", content: notificationContent, fullFrameWidth: rowWidth-padding*2, prevFrame: row4.frame, titleWidth: titleWidth)
+        } else {
+            row5 = CreateRow(title: "Completed", content: completedOnContent, fullFrameWidth: rowWidth-padding*2, prevFrame: row4.frame, titleWidth: titleWidth)
+        }
+        
+        let notesArea = CreateNotesArea(prevFrameMaxY: row5.frame.maxY)
         
         containerView = UIView(frame: CGRect(x: 0, y: 0, width: slider.frame.width, height: notesArea.frame.maxY + padding))
         containerView.layer.cornerRadius = 10
         containerView.addSubview(sliderView)
-        containerView.addSubview(taskRow)
-        containerView.addSubview(taskListRow)
-        containerView.addSubview(dueRow)
-        containerView.addSubview(notificationRow)
+        containerView.addSubview(row1)
+        containerView.addSubview(row2)
+        containerView.addSubview(row3)
+        containerView.addSubview(row4)
+        containerView.addSubview(row5)
         containerView.addSubview(notesArea)
         containerView.backgroundColor = .systemGray4
         
         self.view.addSubview(containerView)
         
         self.preferredContentSize = CGSize(width: slider.frame.width, height: notesArea.frame.maxY + padding)
-        self.view.backgroundColor = .secondarySystemBackground
+        self.view.backgroundColor = .systemGray5
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TapOutside)))
     }
     
@@ -112,7 +120,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
     }
     
     
-    func CreateRow (title: String, content: String, fullFrameWidth: CGFloat, prevFrame: CGRect, titleWidth: CGFloat) -> UIView {
+    func CreateRow (title: String, content: NSMutableAttributedString, fullFrameWidth: CGFloat, prevFrame: CGRect, titleWidth: CGFloat) -> UIView {
         let containerView = UIView()
         
         let titleLabel = CreateTitleLabel(title: title, width: titleWidth)
@@ -136,13 +144,13 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         return label
     }
     
-    func CreateContentLabel (content: String, width: CGFloat, positionX: CGFloat) -> UILabel {
+    func CreateContentLabel (content: NSMutableAttributedString, width: CGFloat, positionX: CGFloat) -> UILabel {
         let label = UILabel(frame: CGRect(x: positionX, y: 0, width: width, height: 0))
         label.font = UIFont.systemFont(ofSize: fontSize)
         label.preferredMaxLayoutWidth = width
         label.numberOfLines = 0
         label.lineBreakMode = .byWordWrapping
-        label.text = content
+        label.attributedText = content
         label.textAlignment = .left
         label.sizeToFit()
         label.frame.size = label.bounds.size
@@ -150,19 +158,25 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         return label
     }
     
-    var listName: String {
-        if slider.task.taskListID == App.mainTaskList.id { return App.mainTaskList.name }
-        
-        for taskList in App.userTaskLists {
-            if slider.task.taskListID == taskList.id { return taskList.name }
-        }
-        
-        return "No list"
+    var taskNameContent: NSMutableAttributedString {
+        return NSMutableAttributedString(string: slider.task.name)
     }
     
-    var Due: String {
+    var listNameContent: NSMutableAttributedString {
+        if slider.task.taskListID == App.mainTaskList.id { return NSMutableAttributedString(string: App.mainTaskList.name) }
+        
+        for taskList in App.userTaskLists {
+            if slider.task.taskListID == taskList.id { return NSMutableAttributedString(string: taskList.name) }
+        }
+        
+        return NSMutableAttributedString(string: "No list")
+    }
+    
+    var dueContent: NSMutableAttributedString {
         if !slider.task.isDateAssigned {
-            return "-"
+            let attString = NSMutableAttributedString(string: "Not set")
+            attString.SetColor(color: .systemGray)
+            return attString
         }
         
         let formatter = DateFormatter()
@@ -170,7 +184,30 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         formatter.timeStyle = slider.task.isNotificationEnabled ? .short : .none
         formatter.dateStyle = .long
         
-        return formatter.string(from: slider.task.dateAssigned)
+        let attString = NSMutableAttributedString(string: formatter.string(from: slider.task.dateAssigned))
+        if slider.task.isOverdue {
+            attString.SetColor(color: AppColors.sliderOverdueLabelColor)
+        }
+        return attString
+    }
+    
+    var priorityContent: NSMutableAttributedString {
+        return NSMutableAttributedString(string: slider.task.priority == .Regular ? "Normal" : "High")
+    }
+    
+    var notificationContent: NSMutableAttributedString {
+        let attString = NSMutableAttributedString(string: "Not set")
+        attString.SetColor(color: .systemGray)
+        return attString
+    }
+    
+    var completedOnContent: NSMutableAttributedString {
+        let formatter = DateFormatter()
+        
+        formatter.timeStyle = slider.task.isNotificationEnabled ? .short : .none
+        formatter.dateStyle = .long
+        
+        return NSMutableAttributedString(string: formatter.string(from: slider.task.dateCompleted))
     }
     
     func PresentFullScreen() {
@@ -204,11 +241,14 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
     
     func Dismiss () {
         SaveChanges()
+        self.modalTransitionStyle = .coverVertical
         self.dismiss(animated: true)
     }
     
     func SaveChanges () {
-        slider.task.notes = inputField.text
+        if inputField.text != notesPlaceholder {
+            slider.task.notes = inputField.text
+        }
     }
     
     

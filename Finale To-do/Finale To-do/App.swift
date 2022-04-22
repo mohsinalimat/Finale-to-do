@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class App: UIViewController {
 
@@ -15,6 +16,8 @@ class App: UIViewController {
     static var userTaskLists: [TaskList] = [TaskList]()
     
     static var selectedTaskListIndex: Int = 0
+    
+    var overviewSortingPreference: SortingPreference!
     
     var lastCompletedTask: Task?
     var lastDeletedTask: Task?
@@ -68,11 +71,7 @@ class App: UIViewController {
     func CreateNewTask() {
         taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true)
         
-        for cell in taskListView.tableView.visibleCells as! [TaskSliderTableCell] {
-            cell.slider.StopEditing()
-            if cell.slider.task.name == "" { DeleteTask(task: cell.slider.task) }
-            taskListView.currentSliderEditing = nil
-        }
+        StopEditingAllTasks()
         
         if App.selectedTaskListIndex == 0 || App.selectedTaskListIndex == 1 {
             App.mainTaskList.upcomingTasks.insert(Task(taskListID: App.mainTaskList.id), at: 0)
@@ -81,7 +80,7 @@ class App: UIViewController {
         }
         
         taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
-        taskListView.ReloadTaskData()
+        taskListView.ReloadTaskData(sortOverviewList: false)
 
         taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: UITableView.RowAnimation.automatic)
         taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
@@ -118,13 +117,13 @@ class App: UIViewController {
         let tableIndex = taskListView.allUpcomingTasks.firstIndex(of: task)!
         
         taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
-        taskListView.ReloadTaskData()
+        taskListView.ReloadTaskData(sortOverviewList: false)
         
         taskListView.tableView.performBatchUpdates({
             taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 0)], with: UITableView.RowAnimation.right)
             taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 1)], with: UITableView.RowAnimation.automatic)
         })
-        if index == 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
+        if index == 0 && taskListView.allUpcomingTasks.count > 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         
         lastCompletedTask = task
         lastDeletedTask = nil
@@ -175,7 +174,7 @@ class App: UIViewController {
         let indexPath = IndexPath(row: isCompleted ? taskListView.allCompletedTasks.firstIndex(of: task)! : taskListView.allUpcomingTasks.firstIndex(of: task)!, section: isCompleted ? 1 : 0)
         
         taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
-        taskListView.ReloadTaskData()
+        taskListView.ReloadTaskData(sortOverviewList: false)
         
         taskListView.tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.right)
         if taskListView.allUpcomingTasks.count > 0 && indexPath.row == 0 {
@@ -189,6 +188,8 @@ class App: UIViewController {
             undoTaskArrayIndex = index
             taskListView.ShowUndoButton()
         }
+        
+        taskListView.currentContextMenuPreview = UIView()
         
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
@@ -222,7 +223,7 @@ class App: UIViewController {
         let tableIndex = taskListView.allCompletedTasks.firstIndex(of: task)!
         
         taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
-        taskListView.ReloadTaskData()
+        taskListView.ReloadTaskData(sortOverviewList: false)
         
         taskListView.tableView.performBatchUpdates({
             taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 1)], with: UITableView.RowAnimation.automatic)
@@ -256,7 +257,7 @@ class App: UIViewController {
         if undoTaskIndexPath == IndexPath(row: 0, section: 0) { taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true) } //Jagged animation fix
         
         taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
-        taskListView.ReloadTaskData()
+        taskListView.ReloadTaskData(sortOverviewList: false)
         
         taskListView.tableView.insertRows(at: [undoTaskIndexPath!], with: UITableView.RowAnimation.right)
         
@@ -292,6 +293,7 @@ class App: UIViewController {
     }
     
     func OpenSideMenu () {
+        StopEditingAllTasks()
         UIView.animate(withDuration: 0.23, delay: 0, options: .curveEaseOut) { [self] in
             taskListView.frame.origin.x = sideMenuWidth
         }
@@ -307,6 +309,7 @@ class App: UIViewController {
     var prevIsOpen = false
     func DragSideMenu (sender: UIPanGestureRecognizer) {
         if sender.state == .began {
+            StopEditingAllTasks()
             originX = taskListView.frame.origin.x
             prevIsOpen = isSideMenuOpen
         } else if sender.state == .changed {
@@ -360,9 +363,12 @@ class App: UIViewController {
         oldTaskList.name = updatedTaskList.name
         oldTaskList.systemIcon = updatedTaskList.systemIcon
         
-        let index = App.userTaskLists.firstIndex(of: oldTaskList)! + 1
+        let index = updatedTaskList.id == App.mainTaskList.id ? 0 : App.userTaskLists.firstIndex(of: oldTaskList)! + 1
         sideMenuView.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
         
+        if App.selectedTaskListIndex == 0 && index == 0 {
+            SelectTaskList(index: index, closeMenu: false)
+        }
         if App.selectedTaskListIndex == index + 1 {
             SelectTaskList(index: index+1, closeMenu: false)
         }
@@ -387,6 +393,7 @@ class App: UIViewController {
     func ZoomOutContainterView () {
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: { [self] in
             containerView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            containerView.frame.origin.y = UIScreen.main.bounds.height * 0.05
             containerView.layer.cornerRadius = 15
             containerView.clipsToBounds = true
         })
@@ -394,6 +401,7 @@ class App: UIViewController {
     func ZoomInContainterView () {
         UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseOut, animations: { [self] in
             containerView.transform = CGAffineTransform(scaleX: 1, y: 1)
+            containerView.frame.origin.y = 0
             containerView.layer.cornerRadius = 0
         }, completion: { [self] _ in
             containerView.clipsToBounds = false
@@ -403,15 +411,11 @@ class App: UIViewController {
 //MARK: Backend functions
     
     func LoadData () {
-        App.mainTaskList.id = UUID(uuidString: UserDefaults.standard.string(forKey: "FINALE_DEV_APP_mainTaskListID") ?? UUID().uuidString ) ?? UUID()
-        if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_mainUpcomingTasks") {
-                if let decoded = try? JSONDecoder().decode([Task].self, from: data) {
-                    App.mainTaskList.upcomingTasks = decoded
-                }
-            }
-        if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_mainCompletedTasks") {
-                if let decoded = try? JSONDecoder().decode([Task].self, from: data) {
-                    App.mainTaskList.completedTasks = decoded
+        overviewSortingPreference = SortingPreference(rawValue: UserDefaults.standard.integer(forKey: "FINALE_DEV_APP_overviewSortingPreference"))
+        if overviewSortingPreference == .Unsorted { overviewSortingPreference = .ByList }
+        if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_mainTaskList") {
+                if let decoded = try? JSONDecoder().decode(TaskList.self, from: data) {
+                    App.mainTaskList = decoded
                 }
             }
         if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_userTaskLists") {
@@ -422,12 +426,9 @@ class App: UIViewController {
     }
     
     func SaveData () {
-        UserDefaults.standard.set(App.mainTaskList.id.uuidString, forKey: "FINALE_DEV_APP_mainTaskListID")
-        if let encoded = try? JSONEncoder().encode(App.mainTaskList.upcomingTasks) {
-            UserDefaults.standard.set(encoded, forKey: "FINALE_DEV_APP_mainUpcomingTasks")
-        }
-        if let encoded = try? JSONEncoder().encode(App.mainTaskList.completedTasks) {
-            UserDefaults.standard.set(encoded, forKey: "FINALE_DEV_APP_mainCompletedTasks")
+        UserDefaults.standard.set(overviewSortingPreference.rawValue, forKey: "FINALE_DEV_APP_overviewSortingPreference")
+        if let encoded = try? JSONEncoder().encode(App.mainTaskList) {
+            UserDefaults.standard.set(encoded, forKey: "FINALE_DEV_APP_mainTaskList")
         }
         if let encoded = try? JSONEncoder().encode(App.userTaskLists) {
             UserDefaults.standard.set(encoded, forKey: "FINALE_DEV_APP_userTaskLists")
@@ -436,6 +437,30 @@ class App: UIViewController {
     
     @objc func AppMovedToBackground() {
         SaveData()
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        SetSubviewColors(of: self.view)
+    }
+    
+    func SetSubviewColors(of view: UIView) {
+        if let dynamicThemeView = view as? UIDynamicTheme  {
+            dynamicThemeView.SetThemeColors()
+        }
+        
+        for subview in view.subviews {
+            SetSubviewColors(of: subview)
+        }
+    }
+    
+    func StopEditingAllTasks () {
+        for cell in taskListView.tableView.visibleCells as! [TaskSliderTableCell] {
+            cell.slider.StopEditing()
+            if cell.slider.task.name == "" { DeleteTask(task: cell.slider.task) }
+            taskListView.currentSliderEditing = nil
+        }
     }
 }
 

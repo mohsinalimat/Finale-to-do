@@ -8,7 +8,7 @@
 import UIKit
 import SwiftUI
 
-class TaskSlider: UIView, UITextFieldDelegate {
+class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
     
     let app: App
     
@@ -19,6 +19,7 @@ class TaskSlider: UIView, UITextFieldDelegate {
     let padding = 8.0
     let sliderCornerRadius = 10.0
     
+    var sliderBackground: UIView!
     var sliderView: UIView!
     var sliderHandle: UIView!
     var taskNameInputField: UITextField!
@@ -47,12 +48,7 @@ class TaskSlider: UIView, UITextFieldDelegate {
         
 
         dateLabel = UILabel()
-        if task.isCompleted {
-            let attributeString: NSMutableAttributedString = NSMutableAttributedString(string: assignedDateTimeString)
-            attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 1, range: NSRange(location: 0, length: attributeString.length))
-            dateLabel.attributedText = attributeString
-        } else { dateLabel.text = assignedDateTimeString }
-        dateLabel.textColor = task.isCompleted ? .systemGray.withAlphaComponent(0.7) : .systemGray
+        dateLabel.attributedText = assignedDateTimeString
         dateLabel.font = UIFont.systemFont(ofSize: 12)
         dateLabel.frame = CGRect(x: 0, y: 0, width: dateLabel.intrinsicContentSize.width, height: frame.height)
         
@@ -78,9 +74,9 @@ class TaskSlider: UIView, UITextFieldDelegate {
         
         sliderHandle = UIView(frame: CGRect(x: sliderHandleOriginX, y: 2.5, width: sliderView.frame.width-5, height: sliderView.frame.height-5))
         
-        let background = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
-        background.layer.cornerRadius = sliderCornerRadius
-        background.backgroundColor = !task.isCompleted ? UIColor.systemGray6 : AppColors().getCompletedSliderColor(taskListColor: sliderColor)
+        sliderBackground = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
+        sliderBackground.layer.cornerRadius = sliderCornerRadius
+        sliderBackground.backgroundColor = sliderBackgroundColor
         
         taskNameInputField.delegate = self
         taskNameInputField.placeholder = placeholders[Int.random(in: 0..<placeholders.count)]
@@ -109,7 +105,7 @@ class TaskSlider: UIView, UITextFieldDelegate {
         
         addGestureRecognizer(doubleTap)
         
-        addSubview(background)
+        addSubview(sliderBackground)
         addSubview(dateInfoView)
         addSubview(calendarIconView)
         addSubview(sliderView)
@@ -126,7 +122,7 @@ class TaskSlider: UIView, UITextFieldDelegate {
             sliderView.frame.size.width = max(sliderHandleWidth, min(sender.translation(in: self).x + sliderHandleWidth, fullSliderWidth))
             sliderHandle.frame.origin.x = max(sliderHandleOriginX, min(sliderHandleOriginX + sender.translation(in: self).x, fullSliderWidth-sliderHandleWidth*0.925))
             
-            let currentProgress = floor(sliderView.frame.size.width*10/fullSliderWidth)/10
+            let currentProgress = floor(sliderView.frame.size.width*6/fullSliderWidth)/6
             if currentProgress != prevProgress {
                 prevProgress = currentProgress
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -180,7 +176,7 @@ class TaskSlider: UIView, UITextFieldDelegate {
         App.instance.taskListView.currentSliderEditing = self
     }
     
-    func StopEditing () {
+    func StopEditing (putInRightPlace: Bool = false) {
         UIView.animate(withDuration: 0.25) {
             self.taskNameInputField.resignFirstResponder()
         }
@@ -192,6 +188,9 @@ class TaskSlider: UIView, UITextFieldDelegate {
         
         if taskNameInputField.text == "" {
             app.DeleteTask(task: task)
+        }
+        if putInRightPlace {
+            App.instance.taskListView.MoveTaskToRightSortedIndexPath(originalIndexPath: IndexPath(row: App.instance.taskListView.allUpcomingTasks.firstIndex(of: task)!, section: 0), task: task)
         }
         
         ToggleCalendarButton()
@@ -220,7 +219,7 @@ class TaskSlider: UIView, UITextFieldDelegate {
     
     
     func UpdateDateLabel () {
-        dateLabel.text = assignedDateTimeString
+        dateLabel.attributedText = assignedDateTimeString
         dateLabel.frame = CGRect(x: 0, y: 0, width: dateLabel.intrinsicContentSize.width, height: dateInfoView.frame.height)
         
         dateInfoView.frame.size.width = dateInfoWidth
@@ -239,7 +238,11 @@ class TaskSlider: UIView, UITextFieldDelegate {
     @objc func ShowCalendarView () {
         taskNameInputField.resignFirstResponder()
         
-        let color = App.selectedTaskListIndex == 0 || App.selectedTaskListIndex == 1 ? UIColor.defaultColor : App.userTaskLists[App.selectedTaskListIndex-2].primaryColor
+        let color: UIColor
+        if App.selectedTaskListIndex == 0 { color = AppColors.actionButtonTaskListColor(taskListColor: .defaultColor) }
+        else if App.selectedTaskListIndex == 1 { color = AppColors.actionButtonTaskListColor(taskListColor: App.mainTaskList.primaryColor) }
+        else { color = AppColors.actionButtonTaskListColor(taskListColor: App.userTaskLists[App.selectedTaskListIndex-2].primaryColor) }
+        
         App.instance.view.addSubview(CalendarView(frameSize: CGSize(width: UIScreen.main.bounds.width*0.8, height: UIScreen.main.bounds.width), tintColor: color, taskSlider: self))
     }
     
@@ -249,13 +252,23 @@ class TaskSlider: UIView, UITextFieldDelegate {
     
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        StopEditing()
+        StopEditing(putInRightPlace: true)
         App.instance.taskListView.currentSliderEditing = nil
         return true
     }
     
     @objc func DetectTextFieldChange() {
         task.name = taskNameInputField.text!
+        if taskNameInputField.text!.contains("!")  {
+            if task.priority != .High { SetTaskPriority(priority: .High) }
+        } else {
+            if task.priority != .Regular { SetTaskPriority(priority: .Regular) }
+        }
+    }
+    
+    func SetTaskPriority (priority: TaskPriority) {
+        task.priority = priority
+        SetThemeColors()
     }
     
     
@@ -273,9 +286,9 @@ class TaskSlider: UIView, UITextFieldDelegate {
         return width
     }
     
-    var assignedDateTimeString: String {
+    var assignedDateTimeString: NSMutableAttributedString {
         if !task.isDateAssigned {
-            return ""
+            return NSMutableAttributedString(string: "")
         }
         
         let formatter = DateFormatter()
@@ -290,18 +303,29 @@ class TaskSlider: UIView, UITextFieldDelegate {
             formatter.timeStyle = task.isNotificationEnabled ? .short : .none
             formatter.dateStyle = .short
         }
-        return formatter.string(from: task.dateAssigned)
+        
+        let attString = NSMutableAttributedString(string: formatter.string(from: task.dateAssigned))
+        if task.isCompleted {
+            attString.SetColor(color: UIColor.systemGray.withAlphaComponent(0.7))
+            attString.Strikethrough()
+        } else {
+            attString.SetColor(color: !task.isOverdue ? UIColor.systemGray : AppColors.sliderOverdueLabelColor)
+        }
+        
+        return attString
+    }
+    
+    var sliderBackgroundColor: UIColor {
+        if task.isCompleted { return AppColors.sliderCompletedBackgroundColor(taskListColor: sliderColor) }
+        
+        return task.priority == .High ? AppColors.sliderHighPriorityBackgroundColor(taskListColor: sliderColor) : AppColors.sliderIncompletedBackgroundColor
     }
     
     
-    
-    
-    func CreateContextMenuPreview() -> UIView {
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: fullSliderWidth, height: sliderView.frame.height))
-        containerView.backgroundColor = .red
-        containerView.layer.cornerRadius = sliderCornerRadius
-        
-        return (containerView)
+    func SetThemeColors() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            sliderBackground.backgroundColor = sliderBackgroundColor
+        }
     }
     
     

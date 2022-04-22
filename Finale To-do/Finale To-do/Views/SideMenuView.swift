@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableViewDragDelegate, UITableViewDropDelegate {
+class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableViewDragDelegate, UITableViewDropDelegate, UIDynamicTheme {
     
     let app: App
     
@@ -27,7 +27,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         super.init(frame: frame)
         
-        self.backgroundColor = AppColors().sidemenuBackgroundColor
+        self.backgroundColor = AppColors.sidemenuBackgroundColor
         
         let homeLabel = UILabel(frame: CGRect(x: padding, y: frame.height*0.2-30, width: frame.width-padding*2, height: 30))
         homeLabel.text = "Home"
@@ -98,8 +98,6 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil) { suggestedActions in
-            if indexPath.row == 0 { return nil }
-                        
             let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
                 let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
                 App.instance.view.addSubview(ConfirmationSlideover(
@@ -118,6 +116,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             
             let Regular = UIMenu(title: "", options: .displayInline, children: [Edit])
             
+            if indexPath.row == 0 { return UIMenu(title: "", children: [Regular]) }
             return UIMenu(title: "", children: [Regular, Delete])
         }
     }
@@ -136,7 +135,14 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let dragPreviewParams = UIDragPreviewParameters()
         let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
         dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.taskListMenuItem.frame, cornerRadius: 10.0)
-        dragPreviewParams.backgroundColor = cell.taskListMenuItem.isSelected ? cell.taskListMenuItem.selectedColor : .clear
+        dragPreviewParams.backgroundColor = cell.taskListMenuItem.isSelected ? AppColors.sidemenuSelectedItemColor : .clear
+        return dragPreviewParams
+    }
+    func tableView(_ tableView: UITableView, dragPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
+        let dragPreviewParams = UIDragPreviewParameters()
+        let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
+        dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.taskListMenuItem.frame, cornerRadius: 10.0)
+        dragPreviewParams.backgroundColor = cell.taskListMenuItem.isSelected ? AppColors.sidemenuSelectedItemColor : .clear
         return dragPreviewParams
     }
     
@@ -149,18 +155,20 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         dragItem.previewProvider = {
             let dragPreviewParams = UIDragPreviewParameters()
             dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.taskListMenuItem.bounds, cornerRadius: 10.0)
-            dragPreviewParams.backgroundColor = cell.taskListMenuItem.selectedColor
+            dragPreviewParams.backgroundColor = AppColors.sidemenuSelectedItemColor
             return UIDragPreview(view: cell.taskListMenuItem, parameters: dragPreviewParams)
         }
         return [dragItem]
     }
     
     func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        if sourceIndexPath.row == 0 { return sourceIndexPath }
         if proposedDestinationIndexPath.row != 0 { return proposedDestinationIndexPath }
         else { return IndexPath(row: 1, section: 0) }
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        if sourceIndexPath.row == 0 { return }
         let mover = App.userTaskLists.remove(at: sourceIndexPath.row-1)
         App.userTaskLists.insert(mover, at: destinationIndexPath.row-1)
         tableView.reloadData()
@@ -180,18 +188,22 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         
         let parameters = UIPreviewParameters()
-        parameters.backgroundColor = indexPath.row == 0 ? .clear : previewView.selectedColor
+        parameters.backgroundColor = AppColors.sidemenuSelectedItemColor
         parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds, cornerRadius: 10)
 
         return UITargetedPreview(view: previewView, parameters: parameters)
     }
     
     
-    
     @objc func OpenAddTaskListView () {
         app.OpenAddTaskListView()
     }
     
+    func SetThemeColors() {
+        UIView.animate(withDuration: 0.25) {
+            self.backgroundColor = AppColors.sidemenuBackgroundColor
+        }
+    }
     
     
     
@@ -203,14 +215,12 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
 }
 
-class TaskListMenuItem: UIView {
+class TaskListMenuItem: UIView, UIDynamicTheme {
     
     let taskList: TaskList
     let padding = 8.0
     let imageWidthProportion = 0.1
     let index: Int
-    
-    let selectedColor: UIColor
     
     var isSelected: Bool {
         get {
@@ -221,10 +231,9 @@ class TaskListMenuItem: UIView {
     init(frame: CGRect, taskList: TaskList, index: Int) {
         self.index = index
         self.taskList = taskList
-        self.selectedColor = AppColors().sidemenuSelectedItemColor
         super.init(frame: frame)
         
-        self.backgroundColor = isSelected ? selectedColor : .clearInteractive
+        self.backgroundColor = isSelected ? AppColors.sidemenuSelectedItemColor : .clearInteractive
         self.layer.cornerRadius = 10
         
         let iconView = UIImageView(frame: CGRect(x: padding*2+1, y: 1, width: (frame.width-padding*2)*imageWidthProportion-2, height: frame.height-2))
@@ -248,8 +257,15 @@ class TaskListMenuItem: UIView {
     }
     
     func ReloadVisuals () {
-        self.backgroundColor = isSelected ? selectedColor : .clearInteractive
+        self.backgroundColor = isSelected ? AppColors.sidemenuSelectedItemColor : .clearInteractive
     }
+    
+    func SetThemeColors() {
+        UIView.animate(withDuration: 0.25) {
+            self.ReloadVisuals()
+        }
+    }
+    
     
     
     required init?(coder: NSCoder) {

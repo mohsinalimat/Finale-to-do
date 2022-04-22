@@ -8,18 +8,17 @@
 import Foundation
 import UIKit
 
-class ConfirmationSlideover: UIView {
+class ConfirmationSlideover: UIView, UIDynamicTheme {
     
     let slideOverHeight = 200.0
     let padding = 16.0
     
     var blackoutView: UIView!
     var containerView: UIView!
+    var confirmButton: UIButton!
     let confirmAction: () -> Void
     
     init(title: String, subTitle: String, confirmActionTitle: String, confirmAction: @escaping () -> Void) {
-        let appConfig = AppConfiguration()
-        let appColors = AppColors()
         self.confirmAction = confirmAction
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
         
@@ -29,8 +28,8 @@ class ConfirmationSlideover: UIView {
         blackoutView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(Cancel)))
         
         containerView = UIView(frame: CGRect(x: 0, y: UIScreen.main.bounds.height+10, width: UIScreen.main.bounds.width, height: slideOverHeight))
-        containerView.backgroundColor = appColors.tintedBackgroundColor
-        containerView.layer.cornerRadius = appConfig.slideoverCornerRadius
+        containerView.backgroundColor = AppColors.tintedBackgroundColor
+        containerView.layer.cornerRadius = AppConfiguration.slideoverCornerRadius
         containerView.AddStandardShadow()
         
         let titleLabel = UILabel(frame: CGRect(x: padding, y: padding, width: UIScreen.main.bounds.width-padding*2, height: 20))
@@ -59,8 +58,8 @@ class ConfirmationSlideover: UIView {
         cancelButton.tintColor = .white
         cancelButton.addTarget(self, action: #selector(Cancel), for: .touchUpInside)
         
-        let confirmButton = UIButton(frame: CGRect(x: padding*2+buttonWidth, y: cancelButton.frame.origin.y, width: buttonWidth, height: buttonHeight))
-        confirmButton.backgroundColor = .red
+        confirmButton = UIButton(frame: CGRect(x: padding*2+buttonWidth, y: cancelButton.frame.origin.y, width: buttonWidth, height: buttonHeight))
+        confirmButton.backgroundColor = AppColors.actionButtonDestructiveColor
         confirmButton.setImage(UIImage(systemName: "trash"), for: .normal)
         confirmButton.setTitle(confirmActionTitle, for: .normal)
         confirmButton.setTitleColor(.systemGray, for: .highlighted)
@@ -104,6 +103,13 @@ class ConfirmationSlideover: UIView {
     @objc func Confirm () {
         confirmAction()
         Dismiss()
+    }
+    
+    func SetThemeColors() {
+        UIView.animate(withDuration: 0.25) { [self] in 
+            containerView.backgroundColor = AppColors.tintedBackgroundColor
+            confirmButton.backgroundColor = AppColors.actionButtonDestructiveColor
+        }
     }
     
     

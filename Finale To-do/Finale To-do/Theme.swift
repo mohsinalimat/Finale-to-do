@@ -12,32 +12,64 @@ class AppColors {
     
 //MARK: Overall colors
     
-    var tintedBackgroundColor: UIColor {
-        return currentTheme == .Light ? .systemGray5 : UIColor.defaultColor.dark3
+    static var tintedBackgroundColor: UIColor {
+        return AppColors.currentTheme == .Light ? UIColor.systemGray4: UIColor.defaultColor.dark3
     }
    
     
 //MARK: Sidemenu colors
     
-    var sidemenuBackgroundColor: UIColor {
-        return currentTheme == .Light ? .defaultColor.dark2 : .defaultColor.dark3
+    static var sidemenuBackgroundColor: UIColor {
+        return AppColors.currentTheme == .Light ? .defaultColor.dark2 : .defaultColor.dark3
     }
     
-    var sidemenuSelectedItemColor: UIColor {
+    static var sidemenuSelectedItemColor: UIColor {
         return .defaultColor.dark
+    }
+    
+//MARK: Tasklist colors
+    
+    static func tasklistHeaderColor (taskList: TaskList) -> UIColor {
+        return App.selectedTaskListIndex == 0 ? .clear : taskList.primaryColor
     }
     
 //MARK: Slider Colors
     
-    func getCompletedSliderColor (taskListColor: UIColor) -> UIColor  {
-        return taskListColor.withAlphaComponent(0.15)
+    static func sliderHighPriorityBackgroundColor (taskListColor: UIColor) -> UIColor {
+        return taskListColor.lerp(second: AppColors.currentTheme == .Light ? .white : .black, percentage: 0.75)
+    }
+    
+    static var sliderIncompletedBackgroundColor: UIColor {
+        return UIColor.systemGray6
+    }
+    
+    static func sliderCompletedBackgroundColor (taskListColor: UIColor) -> UIColor  {
+        return taskListColor.lerp(second: AppColors.currentTheme == .Light ? .white : .black, percentage: 0.85)
     }
 
+    static var sliderOverdueLabelColor: UIColor {
+        return UIColor.red.lerp(second: .black, percentage: 0.2)
+    }
+    
+//MARK: Element colors
+    
+    static var actionButtonPrimaryColor: UIColor {
+        return .defaultColor
+    }
+    
+    static var actionButtonDestructiveColor: UIColor {
+        return .red.lerp(second: .black, percentage: 0.1)
+    }
+    
+    static func actionButtonTaskListColor (taskListColor: UIColor) -> UIColor {
+        return taskListColor
+    }
     
     
     
+//MARK: Misc
     
-    var currentTheme: Theme {
+    static var currentTheme: Theme {
         get {
             return UITraitCollection.current.userInterfaceStyle == .light ? .Light : .Dark
         }
@@ -46,9 +78,9 @@ class AppColors {
 
 class AppConfiguration {
     
-    var slideoverCornerRadius: CGFloat = 20.0
+    static var slideoverCornerRadius: CGFloat = 20.0
     
-    func AddStandardShadow(view: UIView) {
+    static func AddStandardShadow(view: UIView) {
         view.layer.shadowOffset = CGSize.zero
         view.layer.shadowRadius = 7
         view.layer.shadowOpacity = 0.5

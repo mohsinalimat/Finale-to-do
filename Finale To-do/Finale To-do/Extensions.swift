@@ -117,6 +117,18 @@ extension Date {
 extension UIView {
     
     func AddStandardShadow() {
-        AppConfiguration().AddStandardShadow(view: self)
+        AppConfiguration.AddStandardShadow(view: self)
     }
+}
+
+extension NSMutableAttributedString {
+    
+    func SetColor(color: UIColor) {
+        self.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange(location: 0, length: self.length))
+    }
+    
+    func Strikethrough () {
+        self.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 1, range: NSRange(location: 0, length: self.length))
+    }
+    
 }

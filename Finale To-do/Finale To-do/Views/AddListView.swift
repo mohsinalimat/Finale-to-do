@@ -29,13 +29,13 @@ class AddListView: UIView, UITextFieldDelegate {
     let colors: [UIColor] = [UIColor.defaultColor, UIColor.blue, UIColor.red, UIColor.cyan, UIColor.yellow, UIColor.black, UIColor.green, UIColor.white, UIColor.red, UIColor.blue, UIColor.defaultColor, UIColor.cyan, UIColor.yellow, UIColor.black, UIColor.green, UIColor.white]
     
     init(frame: CGRect, taskList: TaskList = TaskList(name: "", primaryColor: .defaultColor, systemIcon: "folder.fill")) {
-        self.newTaskList = taskList
+        self.newTaskList = TaskList(name: taskList.name, primaryColor: taskList.primaryColor, systemIcon: taskList.systemIcon, id: taskList.id)
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
         NotificationCenter.default.addObserver(self, selector: #selector(KeyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         
         contentView = UIView(frame: CGRect(x: 0, y: UIScreen.main.bounds.height+10, width: frame.width, height: frame.height))
         contentView.layer.cornerRadius = 20
-        contentView.backgroundColor = AppColors().tintedBackgroundColor
+        contentView.backgroundColor = AppColors.tintedBackgroundColor
         contentView.AddStandardShadow()
         
         let panelWidth = (frame.width-padding*2)*0.8-padding
@@ -45,7 +45,7 @@ class AddListView: UIView, UITextFieldDelegate {
         let leftPadding = 8.0
         
         let panel = UIView (frame: CGRect(x: padding, y: padding, width: panelWidth, height: rowHeight))
-        panel.backgroundColor = AppColors().sidemenuSelectedItemColor
+        panel.backgroundColor = AppColors.sidemenuSelectedItemColor
         panel.layer.cornerRadius = 10
         
         inputField = UITextField(frame: CGRect(x: iconWidth, y: 0, width: inputFieldWidth-leftPadding*2, height: rowHeight))
@@ -77,7 +77,7 @@ class AddListView: UIView, UITextFieldDelegate {
         createButton = UIButton(frame: CGRect(x: panel.frame.maxX + padding, y: panel.frame.origin.y, width: createButtonWidth, height: rowHeight))
         createButton.layer.cornerRadius = 10
         createButton.isEnabled = inputField.text != ""
-        createButton.backgroundColor = .defaultColor
+        createButton.backgroundColor = AppColors.actionButtonPrimaryColor
         createButton.alpha = createButton.isEnabled ? 1 : 0.5
         createButton.addTarget(self, action: #selector(CreateOrUpdateTaskList), for: .touchUpInside)
         
@@ -142,6 +142,10 @@ class AddListView: UIView, UITextFieldDelegate {
     }
     
     @objc func CreateOrUpdateTaskList(){
+        if newTaskList.id == App.mainTaskList.id {
+            UpdateOldTaskList(oldTaskList: App.mainTaskList)
+            return
+        }
         for taskList in App.userTaskLists {
             if taskList.id == newTaskList.id {
                 UpdateOldTaskList(oldTaskList: taskList)
@@ -243,7 +247,7 @@ class ColorIconPickerView: UIView {
         let newFrame = CGRect(x: frame.origin.x, y: frame.origin.y-(containerHeight*2+padding*4-frame.height), width: frame.width, height: containerHeight*2+padding*4)
         super.init(frame: newFrame)
         
-        self.backgroundColor = AppColors().sidemenuSelectedItemColor
+        self.backgroundColor = AppColors.sidemenuSelectedItemColor
         self.layer.cornerRadius = 10
         
         let colorsContainer = DrawSwatches(prevFrameMaxY: 0, swatchSize: swatchSize, nRows: 2, nColumns: 8, spacing: spacing, containerWidth: containerWidth, containerHeight: containerHeight, color: true)

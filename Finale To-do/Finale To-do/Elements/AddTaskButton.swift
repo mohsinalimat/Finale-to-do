@@ -8,34 +8,36 @@
 import Foundation
 import UIKit
 
-class AddTaskButton: UIView {
+class AddTaskButton: UIView, UIDynamicTheme {
     
     let app: App
     var verticalLine: UIView!
     var horizontalLine: UIView!
     
     let originalSize: CGSize
+    var color: UIColor!
     
     init(frame: CGRect, color: UIColor, app: App) {
         self.app = app
         self.originalSize = frame.size
+        self.color = color
         super.init(frame: frame)
         
         self.layer.cornerRadius = frame.height*0.5
-        self.backgroundColor = color
+        self.backgroundColor = AppColors.actionButtonTaskListColor(taskListColor: color)
         self.layer.shadowRadius = 5
         self.layer.shadowOpacity = 0.5
         self.layer.shadowOffset = CGSize.zero
         
-        let lineWidth = frame.width*0.07
+        let lineWidth = frame.width*0.06
         let lineHeight = frame.height*0.45
         verticalLine = UIView(frame: CGRect(x: 0.5*(frame.width-lineWidth), y: 0.5*(frame.height-lineHeight), width: lineWidth, height: lineHeight))
         verticalLine.layer.cornerRadius = lineWidth*0.5
-        verticalLine.backgroundColor = color.lerp(second: .white, percentage: 0.7)
+        verticalLine.backgroundColor = .white
         
         horizontalLine = UIView(frame: CGRect(x: 0.5*(frame.width-lineHeight), y: 0.5*(frame.height-lineWidth), width: lineHeight, height: lineWidth))
         horizontalLine.layer.cornerRadius = lineWidth*0.5
-        horizontalLine.backgroundColor = color.lerp(second: .white, percentage: 0.7)
+        horizontalLine.backgroundColor = .white
         
         self.addSubview(verticalLine)
         self.addSubview(horizontalLine)
@@ -45,8 +47,6 @@ class AddTaskButton: UIView {
     }
     
     func ReloadVisuals(color: UIColor) {
-        verticalLine.backgroundColor = color.lerp(second: .white, percentage: 0.7)
-        horizontalLine.backgroundColor = color.lerp(second: .white, percentage: 0.7)
         self.backgroundColor = color
     }
     
@@ -61,6 +61,13 @@ class AddTaskButton: UIView {
         })
         app.CreateNewTask()
     }
+    
+    func SetThemeColors() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            self.backgroundColor = AppColors.actionButtonTaskListColor(taskListColor: color)
+        }
+    }
+    
     
     
     required init?(coder: NSCoder) {

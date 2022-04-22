@@ -11,6 +11,7 @@ import UIKit
 class Task: Codable, Equatable {
     
     var name: String
+    var priority: TaskPriority
     var notes: String
     var isCompleted: Bool
     var isDateAssigned: Bool
@@ -22,6 +23,7 @@ class Task: Codable, Equatable {
     
     init () {
         self.name = ""
+        self.priority = .Regular
         self.notes = ""
         self.isCompleted = false
         self.isDateAssigned = false
@@ -32,8 +34,9 @@ class Task: Codable, Equatable {
         self.taskListID = UUID()
     }
     
-    init(name: String = "", notes: String = "", isComleted: Bool = false, isDateAssigned: Bool = false, isNotificationEnabled: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), taskListID: UUID = UUID()) {
+    init(name: String = "", priority: TaskPriority = .Regular, notes: String = "", isComleted: Bool = false, isDateAssigned: Bool = false, isNotificationEnabled: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), taskListID: UUID = UUID()) {
         self.name = name
+        self.priority = priority
         self.notes = notes
         self.isCompleted = isComleted
         self.isDateAssigned = isDateAssigned
@@ -44,9 +47,16 @@ class Task: Codable, Equatable {
         self.taskListID = taskListID
     }
     
+    var isOverdue: Bool {
+        if !isDateAssigned { return false }
+        if isCompleted { return false }
+        return Date.now > dateAssigned
+    }
+    
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: TaskCodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
+        priority = try container.decode(TaskPriority.self, forKey: .priority)
         notes = try container.decode(String.self, forKey: .notes)
         isCompleted = try container.decode(Bool.self, forKey: .isCompleted)
         isDateAssigned = try container.decode(Bool.self, forKey: .isDateAssigned)
@@ -60,6 +70,7 @@ class Task: Codable, Equatable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: TaskCodingKeys.self)
         try container.encode(name, forKey: .name)
+        try container.encode(priority, forKey: .priority)
         try container.encode(notes, forKey: .notes)
         try container.encode(isCompleted, forKey: .isCompleted)
         try container.encode(isDateAssigned, forKey: .isDateAssigned)
@@ -73,6 +84,7 @@ class Task: Codable, Equatable {
     static func == (lhs: Task, rhs: Task) -> Bool {
         return
         lhs.name == rhs.name &&
+        lhs.priority == rhs.priority &&
         lhs.notes == rhs.notes &&
         lhs.isCompleted == rhs.isCompleted &&
         lhs.isDateAssigned == rhs.isDateAssigned &&
@@ -90,13 +102,15 @@ class TaskList: Codable, Equatable {
     var name: String
     var primaryColor: UIColor
     var systemIcon: String
+    var sortingPreference: SortingPreference
     var upcomingTasks: [Task]
     var completedTasks: [Task]
     
-    init(name: String, primaryColor: UIColor = UIColor.defaultColor, systemIcon: String = "folder.fill", upcomingTasks: [Task] = [Task](), completedTasks: [Task] = [Task](), id: UUID = UUID()) {
+    init(name: String, primaryColor: UIColor = UIColor.defaultColor, systemIcon: String = "folder.fill", sortingPreference: SortingPreference = .Unsorted, upcomingTasks: [Task] = [Task](), completedTasks: [Task] = [Task](), id: UUID = UUID()) {
         self.name = name
         self.upcomingTasks = upcomingTasks
         self.systemIcon = systemIcon
+        self.sortingPreference = sortingPreference
         self.completedTasks = completedTasks
         self.primaryColor = primaryColor
         self.id = id
@@ -105,36 +119,54 @@ class TaskList: Codable, Equatable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: TaskListCodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
-        upcomingTasks = try container.decode([Task].self, forKey: .upcomingTasks)
-        systemIcon = try container.decode(String.self, forKey: .systemIcon)
-        completedTasks = try container.decode([Task].self, forKey: .completedTasks)
         primaryColor = try container.decode(Color.self, forKey: .primaryColor).uiColor
+        systemIcon = try container.decode(String.self, forKey: .systemIcon)
+        sortingPreference = try container.decode(SortingPreference.self, forKey: .sortingPreference)
+        upcomingTasks = try container.decode([Task].self, forKey: .upcomingTasks)
+        completedTasks = try container.decode([Task].self, forKey: .completedTasks)
         id = try container.decode(UUID.self, forKey: .id)
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: TaskListCodingKeys.self)
         try container.encode(name, forKey: .name)
-        try container.encode(upcomingTasks, forKey: .upcomingTasks)
-        try container.encode(systemIcon, forKey: .systemIcon)
-        try container.encode(completedTasks, forKey: .completedTasks)
         try container.encode(Color(uiColor: primaryColor), forKey: .primaryColor)
+        try container.encode(sortingPreference, forKey: .sortingPreference)
+        try container.encode(systemIcon, forKey: .systemIcon)
+        try container.encode(upcomingTasks, forKey: .upcomingTasks)
+        try container.encode(completedTasks, forKey: .completedTasks)
         try container.encode(id, forKey: .id)
     }
     
     static func == (lhs: TaskList, rhs: TaskList) -> Bool {
         return
         lhs.name == rhs.name &&
-        lhs.upcomingTasks == rhs.upcomingTasks &&
-        lhs.systemIcon == rhs.systemIcon &&
-        lhs.completedTasks == rhs.completedTasks &&
         lhs.primaryColor == rhs.primaryColor &&
+        lhs.systemIcon == rhs.systemIcon &&
+        lhs.sortingPreference == rhs.sortingPreference &&
+        lhs.upcomingTasks == rhs.upcomingTasks &&
+        lhs.completedTasks == rhs.completedTasks &&
         lhs.id == rhs.id
     }
 }
 
+enum TaskPriority: Int, Codable {
+    case Regular = 0
+    case High = 1
+}
+
+enum SortingPreference: Int, Codable {
+    case Unsorted = 0
+    case ByList = 1
+    case ByTimeCreated = 2
+    case ByTimeDue = 3
+    case ByPriority = 4
+    case ByName = 5
+}
+
 enum TaskCodingKeys: CodingKey {
     case name
+    case priority
     case notes
     case isCompleted
     case isDateAssigned
@@ -147,9 +179,16 @@ enum TaskCodingKeys: CodingKey {
 }
 enum TaskListCodingKeys: CodingKey {
     case name
-    case upcomingTasks
-    case systemIcon
-    case completedTasks
     case primaryColor
+    case systemIcon
+    case sortingPreference
+    case upcomingTasks
+    case completedTasks
     case id
+}
+
+protocol UIDynamicTheme {
+    
+    func SetThemeColors ()
+    
 }

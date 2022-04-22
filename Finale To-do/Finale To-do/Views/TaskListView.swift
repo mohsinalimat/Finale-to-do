@@ -8,7 +8,7 @@
 import UIKit
 import SwiftUI
 
-class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableViewDragDelegate, UITableViewDropDelegate {
+class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableViewDragDelegate, UITableViewDropDelegate, UIDynamicTheme {
 
     let app: App
     
@@ -19,6 +19,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     var blurEffect: UIVisualEffectView!
     var colorPanelHeader: UIView!
     var hamburgerButton: UIButton!
+    var sortButton: UIButton!
     var titleLabel: UILabel!
     var tableView: UITableView!
     var addTaskButton: AddTaskButton!
@@ -33,6 +34,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     var originalHeaderHeight = 0.0
     var originalTitlePositionY = 0.0
     
+    var currentContextMenuPreviewCenter: CGPoint?
+    var currentContextMenuPreview: UIView?
     var currentSliderEditing: TaskSlider?
     
     var undoButton: UndoButton?
@@ -78,6 +81,20 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         hamburgerButton.addTarget(self, action: #selector(ToggleSideMenu), for: .touchUpInside)
         
         header.addSubview(hamburgerButton)
+        
+        let sortButtonSize = hamburgerButtonSize
+        sortButton = UIButton(frame: CGRect(x: frame.width-sortButtonSize-padding, y: hamburgerButton.frame.origin.y, width: sortButtonSize, height: sortButtonSize))
+        sortButton.tintColor = App.selectedTaskListIndex == 0 ? .label : .white
+        sortButton.setImage(UIImage(systemName: "arrow.up.arrow.down"), for: .normal)
+        sortButton.contentVerticalAlignment = .fill
+        sortButton.contentHorizontalAlignment = .fill
+        sortButton.imageEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 0)
+        sortButton.imageView?.contentMode = .scaleAspectFit
+        sortButton.contentHorizontalAlignment = .right
+        sortButton.showsMenuAsPrimaryAction = true
+        sortButton.menu = sortButtonMenu
+        
+        header.addSubview(sortButton)
         
         let titleHeight = header.frame.height*0.3
         let titleWidth = header.frame.width-padding*2
@@ -176,22 +193,28 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             return UIMenu(title: "", children: [Regular, Delete])
         })
     }
-
+    
     func tableView(_ tableView: UITableView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: UIContextMenuInteractionCommitAnimating) {
-        animator.addCompletion {
-            if let preview = animator.previewViewController {
-                let x = preview as! TaskSliderContextMenu
-                x.PresentFullScreen()
-                App.instance.present(preview, animated: true)
+        
+        if let preview = animator.previewViewController {
+            let x = preview as! TaskSliderContextMenu
+            if x.slider.task.isCompleted {
+                animator.preferredCommitStyle = .dismiss
+            } else {
+                animator.addCompletion {
+                    x.PresentFullScreen()
+                    App.instance.present(preview, animated: true)
+                }
             }
         }
+        
     }
     
     func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-        return getSliderPreview(configuration: configuration)
+        return getSliderPreview(configuration: configuration, isDismissing: true)
     }
     func tableView(_ tableView: UITableView, previewForHighlightingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
-        return getSliderPreview(configuration: configuration)
+        return getSliderPreview(configuration: configuration, isDismissing: false)
     }
     
     func tableView(_ tableView: UITableView, dropPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
@@ -217,54 +240,47 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
-        if sourceIndexPath.section == 1 { return sourceIndexPath }
+        if sourceIndexPath.section == 1 || App.selectedTaskListIndex == 0 { return sourceIndexPath }
         if proposedDestinationIndexPath.section == 0 { return proposedDestinationIndexPath }
         else { return IndexPath(row: allUpcomingTasks.count-1, section: 0) }
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        if sourceIndexPath.section == 1 { return }
+        if sourceIndexPath.section == 1 || App.selectedTaskListIndex == 0 { return }
         
         let mover = allUpcomingTasks.remove(at: sourceIndexPath.row)
         allUpcomingTasks.insert(mover, at: destinationIndexPath.row)
         if App.selectedTaskListIndex == 0 {
-            var prevTaskIndex = -1
-            for i in 0..<allUpcomingTasks.count {
-                if allUpcomingTasks[i].taskListID == mover.taskListID {
-                    if i < destinationIndexPath.row {
-                        prevTaskIndex = i
-                    }
-                }
-            }
-            let taskList = app.getTaskList(id: mover.taskListID)
-            let index = taskList.upcomingTasks.firstIndex(of: mover)!
-            taskList.upcomingTasks.remove(at: index)
-            if prevTaskIndex != -1 {
-                let insertIndex = taskList.upcomingTasks.firstIndex(of: allUpcomingTasks[prevTaskIndex])! + 1
-                taskList.upcomingTasks.insert(mover, at: insertIndex)
-            } else {
-                taskList.upcomingTasks.insert(mover, at: 0)
-            }
+            // do nothing
         } else if App.selectedTaskListIndex == 1 {
             App.mainTaskList.upcomingTasks.remove(at: sourceIndexPath.row)
             App.mainTaskList.upcomingTasks.insert(mover, at: destinationIndexPath.row)
+            App.mainTaskList.sortingPreference = .Unsorted
         } else {
             App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.remove(at: sourceIndexPath.row)
             App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.insert(mover, at: destinationIndexPath.row)
+            App.userTaskLists[App.selectedTaskListIndex-2].sortingPreference = .Unsorted
         }
+        sortButton.menu = sortButtonMenu
     }
     
-    func getSliderPreview(configuration: UIContextMenuConfiguration) -> UITargetedPreview {
+    func getSliderPreview(configuration: UIContextMenuConfiguration, isDismissing: Bool = false) -> UITargetedPreview {
         let indexPath = configuration.identifier as! IndexPath
-        let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+        
+        if !isDismissing {
+            let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+            currentContextMenuPreview = cell.slider
+            currentContextMenuPreviewCenter = cell.center
+        }
+        let previewView = currentContextMenuPreview!
         
         let parameters = UIPreviewParameters()
         parameters.backgroundColor = .clear
-        parameters.visiblePath = UIBezierPath(roundedRect: cell.slider.bounds, cornerRadius: 10)
+        parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds, cornerRadius: 10)
         
-        let target = UIPreviewTarget(container: tableView, center: cell.center)
+        let target = UIPreviewTarget(container: tableView, center: currentContextMenuPreviewCenter!)
         
-        return UITargetedPreview(view: cell.slider, parameters: parameters, target: target)
+        return UITargetedPreview(view: previewView, parameters: parameters, target: target)
     }
     
     
@@ -319,7 +335,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         return .purple
     }
     
-    func ReloadTaskData() {
+    func ReloadTaskData(sortOverviewList: Bool = true) {
         allUpcomingTasks.removeAll()
         allCompletedTasks.removeAll()
         for taskList in taskLists {
@@ -327,6 +343,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             allCompletedTasks.append(contentsOf: taskList.completedTasks)
         }
         allCompletedTasks = allCompletedTasks.sorted { $0.dateCompleted > $1.dateCompleted }
+        if App.selectedTaskListIndex == 0 && sortOverviewList { SortUpcomingTasks(sortPreference: App.instance.overviewSortingPreference, animated: false) }
     }
     
     func ReloadView () {
@@ -337,6 +354,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         titleLabel.text = App.selectedTaskListIndex == 0 ? "Hi, Grant" : taskLists[0].name
         titleLabel.textColor = App.selectedTaskListIndex == 0 ? .label : .white
         hamburgerButton.tintColor = App.selectedTaskListIndex == 0 ? .label : .white
+        sortButton.tintColor = App.selectedTaskListIndex == 0 ? .label : .white
+        sortButton.menu = sortButtonMenu
         colorPanelHeader.backgroundColor = App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor
         colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
         colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
@@ -399,10 +418,148 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         currentSliderEditing = nil
     }
     
+    func SetThemeColors() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            colorPanelHeader.backgroundColor = AppColors.tasklistHeaderColor(taskList: taskLists[0])
+            colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
+            colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
+        }
+    }
+    
+    var sortButtonMenu: UIMenu {
+        
+        let unsorted = UIAction(title: "Unsorted", image: UIImage(systemName: "xmark.app"), state: getSortItemState(sortingPreference: .Unsorted)) { [self] _ in
+            SortUpcomingTasks(sortPreference: .Unsorted)
+        }
+        let list = UIAction(title: "By list", image: UIImage(systemName: "equal.square"), state: getSortItemState(sortingPreference: .ByList)) { [self] _ in
+            SortUpcomingTasks(sortPreference: .ByList)
+        }
+        let timeCreated = UIAction(title: "By time created", image: UIImage(systemName: "arrow.uturn.left.square"), state: getSortItemState(sortingPreference: .ByTimeCreated)) { [self] _ in
+            SortUpcomingTasks(sortPreference: .ByTimeCreated)
+        }
+        let timeDue = UIAction(title: "By time due", image: UIImage(systemName: "timer.square"), state: getSortItemState(sortingPreference: .ByTimeDue)) { [self] _ in
+            SortUpcomingTasks(sortPreference: .ByTimeDue)
+        }
+        let priority = UIAction(title: "By priority", image: UIImage(systemName: "exclamationmark.square"), state: getSortItemState(sortingPreference: .ByPriority)) { [self] _ in
+            SortUpcomingTasks(sortPreference: .ByPriority)
+        }
+        let name = UIAction(title: "By name", image: UIImage(systemName: "square.text.square"), state: getSortItemState(sortingPreference: .ByName)) { [self] _ in
+            SortUpcomingTasks(sortPreference: .ByName)
+        }
+        
+        let defaultAction = UIMenu(title: "", options: .displayInline, children: [App.selectedTaskListIndex == 0 ? list : unsorted])
+        return UIMenu(title: "", children: [defaultAction, timeCreated, timeDue, priority, name])
+    }
+    
+    func getSortItemState (sortingPreference: SortingPreference) -> UIMenuElement.State {
+        if App.selectedTaskListIndex == 0 { return sortingPreference == App.instance.overviewSortingPreference ? .on : .off }
+        return sortingPreference == taskLists[0].sortingPreference ? .on : .off
+    }
+    
+    func SortUpcomingTasks(sortPreference: SortingPreference, animated: Bool = true) {
+        if App.selectedTaskListIndex == 0 {
+            App.instance.overviewSortingPreference = sortPreference
+        } else {
+            taskLists[0].sortingPreference = sortPreference
+        }
+        sortButton.menu = sortButtonMenu
+        
+        var beforeSort = [Task]()
+        if animated {
+            beforeSort.append(contentsOf: allUpcomingTasks)
+        }
+        
+        if App.selectedTaskListIndex == 0 {
+            allUpcomingTasks = allUpcomingTasks.sorted { sortBool(task1: $0, task2: $1, sortingPreference: sortPreference) }
+        } else if App.selectedTaskListIndex == 1 {
+            App.mainTaskList.upcomingTasks = App.mainTaskList.upcomingTasks.sorted { sortBool(task1: $0, task2: $1, sortingPreference: sortPreference) }
+        } else {
+            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks = App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.sorted { sortBool(task1: $0, task2: $1, sortingPreference: sortPreference) }
+        }
+        
+        if App.selectedTaskListIndex != 0 {
+            taskLists = App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
+            ReloadTaskData()
+        }
+        
+        if animated {
+            tableView.performBatchUpdates({
+                for i in 0..<allUpcomingTasks.count {
+                    let newRow = allUpcomingTasks.firstIndex(of: beforeSort[i])!
+                    tableView.moveRow(at: IndexPath(row: i, section: 0), to: IndexPath(row: newRow, section: 0))
+                }
+            })
+        } else {
+            if tableView?.window != nil { tableView.reloadData() }
+        }
+        
+        if tableView.cellForRow(at: IndexPath(row: 0, section: 0)) != nil {
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
+        }
+    }
+    
+    func MoveTaskToRightSortedIndexPath (originalIndexPath: IndexPath, task: Task) {
+        let sortPreference: SortingPreference
+        if App.selectedTaskListIndex == 0 {
+            sortPreference = App.instance.overviewSortingPreference
+        } else {
+            sortPreference = taskLists[0].sortingPreference
+        }
+        
+        var dummyArray = [Task]()
+        dummyArray.append(contentsOf: allUpcomingTasks)
+        
+        dummyArray = dummyArray.sorted { sortBool(task1: $0, task2: $1, sortingPreference: sortPreference) }
+        
+        let newIndexPath = IndexPath(row: dummyArray.firstIndex(of: task)!, section: 0)
+        
+        if originalIndexPath == newIndexPath { return }
+        
+        tableView.moveRow(at: originalIndexPath, to: newIndexPath)
+        allUpcomingTasks.remove(at: originalIndexPath.row)
+        allUpcomingTasks.insert(task, at: newIndexPath.row)
+        if App.selectedTaskListIndex == 1 {
+            App.mainTaskList.upcomingTasks.remove(at: originalIndexPath.row)
+            App.mainTaskList.upcomingTasks.insert(task, at: newIndexPath.row)
+        } else if App.selectedTaskListIndex != 0 {
+            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.remove(at: originalIndexPath.row)
+            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.insert(task, at: newIndexPath.row)
+        }
+        
+        if allUpcomingTasks.count > 0 { tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
+    }
+    
+    func sortBool(task1: Task, task2: Task, sortingPreference: SortingPreference) -> Bool {
+        switch sortingPreference {
+            case .Unsorted:
+                return false
+            case .ByList:
+                return getListPosition(listID: task1.taskListID) < getListPosition(listID: task2.taskListID)
+            case .ByTimeCreated:
+                return task1.dateCreated > task2.dateCreated
+            case .ByTimeDue:
+                if task1.isDateAssigned && task2.isDateAssigned {
+                    return task1.dateAssigned < task2.dateAssigned
+                }
+                return task1.isDateAssigned
+            case .ByPriority:
+                if task1.priority.rawValue == task2.priority.rawValue {
+                    return sortBool(task1: task1, task2: task2, sortingPreference: .ByTimeDue)
+                }
+                return task1.priority.rawValue > task2.priority.rawValue
+            case .ByName:
+                return task1.name < task2.name
+        }
+    }
     
     
-    
-    
+    func getListPosition (listID: UUID) -> Int {
+        if listID == App.mainTaskList.id { return 0 }
+        for i in 0..<App.userTaskLists.count {
+            if App.userTaskLists[i].id == listID { return i }
+        }
+        return -1
+    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
