@@ -31,12 +31,12 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         super.init(nibName: nil, bundle: nil)
         
         
-        let sliderView = slider
+        let sliderView = TaskSlider(task: slider.task, frame: slider.frame, sliderColor: slider.sliderColor, app: slider.app)
         sliderView.frame.origin = CGPoint(x: 0, y: 0)
         
         let rowWidth = slider.frame.width
-        let titleWidth = "Notification:".size(withAttributes:[.font: UIFont.systemFont(ofSize: fontSize, weight: .bold)]).width
-        rowHeight = "Notification:".size(withAttributes:[.font: UIFont.systemFont(ofSize: fontSize, weight: .bold)]).height
+        let titleWidth = "Notifications:".size(withAttributes:[.font: UIFont.systemFont(ofSize: fontSize, weight: .bold)]).width
+        rowHeight = "Notifications:".size(withAttributes:[.font: UIFont.systemFont(ofSize: fontSize, weight: .bold)]).height
         
         let row1 = CreateRow(title: "Task", content: taskNameContent, fullFrameWidth: rowWidth-padding*2, prevFrame: sliderView.frame, titleWidth: titleWidth)
         
@@ -48,7 +48,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         
         let row5: UIView
         if !slider.task.isCompleted {
-            row5 = CreateRow(title: "Notification", content: notificationContent, fullFrameWidth: rowWidth-padding*2, prevFrame: row4.frame, titleWidth: titleWidth)
+            row5 = CreateRow(title: "Notifications", content: notificationContent, fullFrameWidth: rowWidth-padding*2, prevFrame: row4.frame, titleWidth: titleWidth)
         } else {
             row5 = CreateRow(title: "Completed", content: completedOnContent, fullFrameWidth: rowWidth-padding*2, prevFrame: row4.frame, titleWidth: titleWidth)
         }
@@ -181,7 +181,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         
         let formatter = DateFormatter()
         
-        formatter.timeStyle = slider.task.isNotificationEnabled ? .short : .none
+        formatter.timeStyle = slider.task.isDueTimeAssigned ? .short : .none
         formatter.dateStyle = .long
         
         let attString = NSMutableAttributedString(string: formatter.string(from: slider.task.dateAssigned))
@@ -196,15 +196,33 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
     }
     
     var notificationContent: NSMutableAttributedString {
-        let attString = NSMutableAttributedString(string: "Not set")
-        attString.SetColor(color: .systemGray)
+        var attString = NSMutableAttributedString(string: "")
+        
+        if slider.task.notifications.count == 0 {
+            attString = NSMutableAttributedString(string: "None")
+            attString.SetColor(color: .systemGray)
+        } else {
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineSpacing = 2
+            
+            let sortedArray = Array(slider.task.notifications.keys).sorted { $0.rawValue < $1.rawValue }
+            
+            for notificationType in sortedArray {
+                attString.append(NSMutableAttributedString(string: "\(notificationType.str)\n"))
+            }
+            
+            attString.deleteCharacters(in: NSRange(attString.length-1..<attString.length))
+            
+            attString.addAttribute(.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attString.length))
+        }
+        
         return attString
     }
     
     var completedOnContent: NSMutableAttributedString {
         let formatter = DateFormatter()
         
-        formatter.timeStyle = slider.task.isNotificationEnabled ? .short : .none
+        formatter.timeStyle = slider.task.isDueTimeAssigned ? .short : .none
         formatter.dateStyle = .long
         
         return NSMutableAttributedString(string: formatter.string(from: slider.task.dateCompleted))
@@ -249,13 +267,6 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         if inputField.text != notesPlaceholder {
             slider.task.notes = inputField.text
         }
-    }
-    
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        
-        App.instance.taskListView.tableView.reloadRows(at: [indexPath], with: .none)
     }
     
     required init?(coder: NSCoder) {

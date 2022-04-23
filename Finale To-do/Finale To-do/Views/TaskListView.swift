@@ -431,7 +431,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let unsorted = UIAction(title: "Unsorted", image: UIImage(systemName: "xmark.app"), state: getSortItemState(sortingPreference: .Unsorted)) { [self] _ in
             SortUpcomingTasks(sortPreference: .Unsorted)
         }
-        let list = UIAction(title: "By list", image: UIImage(systemName: "equal.square"), state: getSortItemState(sortingPreference: .ByList)) { [self] _ in
+        let list = UIAction(title: "By list", image: UIImage(systemName: "square.text.square"), state: getSortItemState(sortingPreference: .ByList)) { [self] _ in
             SortUpcomingTasks(sortPreference: .ByList)
         }
         let timeCreated = UIAction(title: "By time created", image: UIImage(systemName: "arrow.uturn.left.square"), state: getSortItemState(sortingPreference: .ByTimeCreated)) { [self] _ in
@@ -443,7 +443,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let priority = UIAction(title: "By priority", image: UIImage(systemName: "exclamationmark.square"), state: getSortItemState(sortingPreference: .ByPriority)) { [self] _ in
             SortUpcomingTasks(sortPreference: .ByPriority)
         }
-        let name = UIAction(title: "By name", image: UIImage(systemName: "square.text.square"), state: getSortItemState(sortingPreference: .ByName)) { [self] _ in
+        let name = UIAction(title: "By name", image: UIImage(systemName: "equal.square"), state: getSortItemState(sortingPreference: .ByName)) { [self] _ in
             SortUpcomingTasks(sortPreference: .ByName)
         }
         

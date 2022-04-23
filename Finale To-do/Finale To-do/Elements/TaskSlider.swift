@@ -128,7 +128,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
             }
         } else if sender.state == .ended {
-            if sender.velocity(in: self).x > 2000 {
+            if sender.velocity(in: self).x > 1500 {
                 let duration = sender.velocity(in: self).x*0.00006
                 UIView.animate(withDuration: duration) { [self] in
                     sliderView.frame.size.width = fullSliderWidth
@@ -188,8 +188,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         
         if taskNameInputField.text == "" {
             app.DeleteTask(task: task)
-        }
-        if putInRightPlace {
+        } else if putInRightPlace {
             App.instance.taskListView.MoveTaskToRightSortedIndexPath(originalIndexPath: IndexPath(row: App.instance.taskListView.allUpcomingTasks.firstIndex(of: task)!, section: 0), task: task)
         }
         
@@ -208,8 +207,10 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         taskNameInputField.becomeFirstResponder()
     }
     
-    func ClearDate() {
+    func ClearDateAndTime() {
         task.isDateAssigned = false
+        task.isDueTimeAssigned = false
+        task.RemoveAllNotifications()
         calendarIconView.alpha = isEditing ? 1 : 0
         UpdateDateLabel()
         
@@ -243,7 +244,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         else if App.selectedTaskListIndex == 1 { color = AppColors.actionButtonTaskListColor(taskListColor: App.mainTaskList.primaryColor) }
         else { color = AppColors.actionButtonTaskListColor(taskListColor: App.userTaskLists[App.selectedTaskListIndex-2].primaryColor) }
         
-        App.instance.view.addSubview(CalendarView(frameSize: CGSize(width: UIScreen.main.bounds.width*0.8, height: UIScreen.main.bounds.width), tintColor: color, taskSlider: self))
+        App.instance.view.addSubview(CalendarView(tintColor: color, taskSlider: self))
     }
     
     func HideCalendarView () {
@@ -291,20 +292,32 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
             return NSMutableAttributedString(string: "")
         }
         
-        let formatter = DateFormatter()
-        
-        if task.dateAssigned.get(.year) == Date.now.get(.year) { //this year
-            if !task.isNotificationEnabled {
+        var attString = NSMutableAttributedString(string: "")
+        if Calendar.current.isDateInToday(task.dateAssigned) {
+            attString = NSMutableAttributedString(string: "Today")
+        } else if Calendar.current.isDateInTomorrow(task.dateAssigned) {
+            attString = NSMutableAttributedString(string: "Tomorrow")
+        } else if Calendar.current.isDateInYesterday(task.dateAssigned) {
+            attString = NSMutableAttributedString(string: "Yesterday")
+        } else {
+            let formatter = DateFormatter()
+            formatter.timeStyle = .none
+            if task.dateAssigned.get(.year) == Date.now.get(.year) { //this year
                 formatter.setLocalizedDateFormatFromTemplate("MMMd")
-            } else {
-                formatter.setLocalizedDateFormatFromTemplate("MMMd, hh:mm")
+            } else { //other years
+                formatter.dateStyle = .short
             }
-        } else { //other years
-            formatter.timeStyle = task.isNotificationEnabled ? .short : .none
-            formatter.dateStyle = .short
+            
+            attString = NSMutableAttributedString(string: formatter.string(from: task.dateAssigned))
         }
         
-        let attString = NSMutableAttributedString(string: formatter.string(from: task.dateAssigned))
+        if task.isDueTimeAssigned {
+            let formatter2 = DateFormatter()
+            formatter2.timeStyle = .short
+            formatter2.dateFormat = .none
+            attString.append(NSMutableAttributedString(string: ", \(formatter2.string(from: task.dateAssigned))"))
+        }
+        
         if task.isCompleted {
             attString.SetColor(color: UIColor.systemGray.withAlphaComponent(0.7))
             attString.Strikethrough()

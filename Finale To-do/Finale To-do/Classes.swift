@@ -15,10 +15,11 @@ class Task: Codable, Equatable {
     var notes: String
     var isCompleted: Bool
     var isDateAssigned: Bool
-    var isNotificationEnabled: Bool
+    var isDueTimeAssigned: Bool
     var dateAssigned: Date
     var dateCreated: Date
     var dateCompleted: Date
+    var notifications: [NotificationType : String]
     let taskListID: UUID
     
     init () {
@@ -27,23 +28,25 @@ class Task: Codable, Equatable {
         self.notes = ""
         self.isCompleted = false
         self.isDateAssigned = false
-        self.isNotificationEnabled = false
+        self.isDueTimeAssigned = false
         self.dateAssigned = Date(timeIntervalSince1970: 0)
-        self.dateCreated = Date(timeIntervalSince1970: 0)
+        self.dateCreated = Date()
         self.dateCompleted = Date(timeIntervalSince1970: 0)
+        self.notifications = [NotificationType : String]()
         self.taskListID = UUID()
     }
     
-    init(name: String = "", priority: TaskPriority = .Regular, notes: String = "", isComleted: Bool = false, isDateAssigned: Bool = false, isNotificationEnabled: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), taskListID: UUID = UUID()) {
+    init(name: String = "", priority: TaskPriority = .Regular, notes: String = "", isComleted: Bool = false, isDateAssigned: Bool = false, isDueTimeAssigned: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), notifications: [NotificationType : String] = [NotificationType : String](), taskListID: UUID = UUID()) {
         self.name = name
         self.priority = priority
         self.notes = notes
         self.isCompleted = isComleted
         self.isDateAssigned = isDateAssigned
-        self.isNotificationEnabled = isNotificationEnabled
+        self.isDueTimeAssigned = isDueTimeAssigned
         self.dateAssigned = dateAssigned
         self.dateCreated = dateCreated
         self.dateCompleted = dateCompleted
+        self.notifications = notifications
         self.taskListID = taskListID
     }
     
@@ -53,6 +56,39 @@ class Task: Codable, Equatable {
         return Date.now > dateAssigned
     }
     
+    func containsNotification (notificationType: NotificationType) -> Bool {
+        return self.notifications[notificationType] != nil
+    }
+    
+    func AddNotification (notificationType: NotificationType) {
+        if self.containsNotification(notificationType: notificationType) { return }
+        
+        self.notifications[notificationType] = UUID().uuidString
+    }
+    
+    func RemoveNotification (notificationType: NotificationType) {
+        if !containsNotification(notificationType: notificationType) { return }
+        
+        NotificationHelper.CancelNotification(id: self.notifications[notificationType]!)
+        self.notifications.removeValue(forKey: notificationType)
+    }
+    
+    func RemoveAllNotifications () {
+        for (notificationType, _) in self.notifications {
+            RemoveNotification(notificationType: notificationType)
+        }
+    }
+    
+    func CancelAllNotifications () {
+        for (_, id) in self.notifications {
+            NotificationHelper.CancelNotification(id: id)
+        }
+    }
+    
+    func ScheduleAllNotifications () {
+        NotificationHelper.ScheduleNotificationsForTask(task: self)
+    }
+    
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: TaskCodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
@@ -60,10 +96,11 @@ class Task: Codable, Equatable {
         notes = try container.decode(String.self, forKey: .notes)
         isCompleted = try container.decode(Bool.self, forKey: .isCompleted)
         isDateAssigned = try container.decode(Bool.self, forKey: .isDateAssigned)
-        isNotificationEnabled = try container.decode(Bool.self, forKey: .isNotificationEnabled)
+        isDueTimeAssigned = try container.decode(Bool.self, forKey: .isDueTimeAssigned)
         dateAssigned = try container.decode(Date.self, forKey: .dateAssigned)
         dateCreated = try container.decode(Date.self, forKey: .dateCreated)
         dateCompleted = try container.decode(Date.self, forKey: .dateCompleted)
+        notifications = try container.decode([NotificationType : String].self, forKey: .notifications)
         taskListID = try container.decode(UUID.self, forKey: .taskListID)
     }
     
@@ -74,10 +111,11 @@ class Task: Codable, Equatable {
         try container.encode(notes, forKey: .notes)
         try container.encode(isCompleted, forKey: .isCompleted)
         try container.encode(isDateAssigned, forKey: .isDateAssigned)
-        try container.encode(isNotificationEnabled, forKey: .isNotificationEnabled)
+        try container.encode(isDueTimeAssigned, forKey: .isDueTimeAssigned)
         try container.encode(dateAssigned, forKey: .dateAssigned)
         try container.encode(dateCreated, forKey: .dateCreated)
         try container.encode(dateCompleted, forKey: .dateCompleted)
+        try container.encode(notifications, forKey: .notifications)
         try container.encode(taskListID, forKey: .taskListID)
     }
     
@@ -88,10 +126,11 @@ class Task: Codable, Equatable {
         lhs.notes == rhs.notes &&
         lhs.isCompleted == rhs.isCompleted &&
         lhs.isDateAssigned == rhs.isDateAssigned &&
-        lhs.isNotificationEnabled == rhs.isNotificationEnabled &&
+        lhs.isDueTimeAssigned == rhs.isDueTimeAssigned &&
         lhs.dateAssigned == rhs.dateAssigned &&
         lhs.dateCreated == rhs.dateCreated &&
         lhs.dateCompleted == rhs.dateCompleted &&
+        lhs.notifications == rhs.notifications
         lhs.taskListID == rhs.taskListID
     }
 }
@@ -170,11 +209,12 @@ enum TaskCodingKeys: CodingKey {
     case notes
     case isCompleted
     case isDateAssigned
-    case isNotificationEnabled
+    case isDueTimeAssigned
     case dateAssigned
     case dateCreated
     case dateCompleted
     case indexInOverview
+    case notifications
     case taskListID
 }
 enum TaskListCodingKeys: CodingKey {

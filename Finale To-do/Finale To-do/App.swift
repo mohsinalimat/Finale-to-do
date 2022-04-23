@@ -64,6 +64,8 @@ class App: UIViewController {
         self.view.addSubview(containerView)
         
         NotificationCenter.default.addObserver(self, selector: #selector(AppMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in }
     }
     
 //MARK: Task Actions
@@ -130,6 +132,8 @@ class App: UIViewController {
         undoTaskIndexPath = IndexPath(row: tableIndex, section: 0)
         undoTaskArrayIndex = index
         taskListView.ShowUndoButton()
+        
+        task.CancelAllNotifications()
     }
     
     func DeleteTask(task: Task) {
@@ -188,6 +192,7 @@ class App: UIViewController {
             undoTaskArrayIndex = index
             taskListView.ShowUndoButton()
         }
+        task.CancelAllNotifications()
         
         taskListView.currentContextMenuPreview = UIView()
         
@@ -232,6 +237,8 @@ class App: UIViewController {
         if index == 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         
         taskListView.HideUndoButton()
+        
+        task.ScheduleAllNotifications()
     }
     
     func UndoDeletingTask(task: Task) {
@@ -264,6 +271,8 @@ class App: UIViewController {
         if undoTaskIndexPath == IndexPath(row: 0, section: 0) { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         
         taskListView.HideUndoButton()
+        
+        task.ScheduleAllNotifications()
     }
     
     func UndoAction () {
@@ -273,6 +282,7 @@ class App: UIViewController {
             UndoDeletingTask(task: lastDeletedTask!)
         }
     }
+    
     
 //MARK: Sidemenu Actions
 

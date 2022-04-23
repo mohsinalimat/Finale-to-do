@@ -38,7 +38,8 @@ class UndoButton: UIView, UIDynamicTheme {
     }
     
     func ReloadVisuals(color: UIColor) {
-        self.backgroundColor = color
+        self.color = AppColors.actionButtonTaskListColor(taskListColor: color)
+        self.backgroundColor = self.color
     }
     
     @objc func UndoTask(sender: UITapGestureRecognizer) {

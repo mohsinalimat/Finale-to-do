@@ -47,7 +47,8 @@ class AddTaskButton: UIView, UIDynamicTheme {
     }
     
     func ReloadVisuals(color: UIColor) {
-        self.backgroundColor = color
+        self.color = AppColors.actionButtonTaskListColor(taskListColor: color)
+        self.backgroundColor = self.color
     }
     
     @objc func CreateNewTask(sender: UITapGestureRecognizer) {

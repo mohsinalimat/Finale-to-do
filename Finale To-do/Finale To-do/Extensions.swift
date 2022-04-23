@@ -119,6 +119,17 @@ extension UIView {
     func AddStandardShadow() {
         AppConfiguration.AddStandardShadow(view: self)
     }
+    
+    func SubviewsDebugBorder (excluseSelf: Bool = false, parentColor: UIColor = .blue, color: UIColor = .red) {
+        for view in self.subviews { view.SubviewsDebugBorder(parentColor: color) }
+        if !excluseSelf { self.DebugBorder(color: parentColor) }
+    }
+    
+    func DebugBorder(color: UIColor = .red) {
+        self.layer.borderWidth = 1
+        self.layer.borderColor = color.cgColor
+    }
+    
 }
 
 extension NSMutableAttributedString {
