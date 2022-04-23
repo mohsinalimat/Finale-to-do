@@ -82,7 +82,7 @@ class NotificationHelper {
     }
     
     static func CancelNotification(id: String) {
-        print("Canceled id: \(id)")
+        print("Canceled notification with ID: \(id)")
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
     }
     

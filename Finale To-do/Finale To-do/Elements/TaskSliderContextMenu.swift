@@ -119,6 +119,20 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         slider.taskNameInputField.resignFirstResponder()
     }
     
+    func CreateTaskNameRow (title: String, content: NSMutableAttributedString, fullFrameWidth: CGFloat, prevFrame: CGRect, titleWidth: CGFloat) -> UIView {
+        let containerView = UIView()
+        
+        let titleLabel = CreateTitleLabel(title: title, width: titleWidth)
+        
+        let contentLabel = CreateContentLabel(content: content, width: fullFrameWidth-titleLabel.frame.width-padding, positionX: titleLabel.frame.maxX + padding)
+        
+        containerView.frame = CGRect(x: padding, y: prevFrame.maxY+spacing, width: fullFrameWidth, height: max(titleLabel.frame.height, contentLabel.frame.height))
+        
+        containerView.addSubview(titleLabel)
+        containerView.addSubview(contentLabel)
+        
+        return containerView
+    }
     
     func CreateRow (title: String, content: NSMutableAttributedString, fullFrameWidth: CGFloat, prevFrame: CGRect, titleWidth: CGFloat) -> UIView {
         let containerView = UIView()

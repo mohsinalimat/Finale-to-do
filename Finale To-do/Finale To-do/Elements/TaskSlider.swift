@@ -95,6 +95,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         sliderView.backgroundColor = sliderColor
         sliderView.layer.cornerRadius = sliderCornerRadius
         sliderView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(Dragging)))
+        sliderView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TapSlider)))
 
         sliderHandle.backgroundColor = !task.isCompleted ? sliderColor.dark : .clear
         sliderHandle.layer.cornerRadius = sliderCornerRadius*0.85
@@ -149,6 +150,19 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
                     sliderHandle.frame.origin.x = sliderHandleOriginX
                 }
             }
+        }
+    }
+    
+    @objc func TapSlider (sender: UITapGestureRecognizer) {
+        let duration = 0.2
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut) { [self] in
+            sliderView.frame.size.width = fullSliderWidth
+            sliderHandle.frame.origin.x = fullSliderWidth-sliderHandleWidth*0.925
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + duration*0.8) { [self] in
+            app.CompleteTask(task: task)
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
     }
     

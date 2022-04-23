@@ -59,6 +59,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		371D998128146E270060CB34 /* Backend classes */ = {
+			isa = PBXGroup;
+			children = (
+				376AD0DC2808FD4C00986B49 /* Classes.swift */,
+				376AD0DE280901AF00986B49 /* Extensions.swift */,
+				37F837C6280E657E00F2A9C0 /* Theme.swift */,
+				371135F628138CE300B51322 /* NotificationHelper.swift */,
+			);
+			path = "Backend classes";
+			sourceTree = "<group>";
+		};
 		376AD0B62808DC5900986B49 = {
 			isa = PBXGroup;
 			children = (
@@ -78,15 +89,12 @@
 		376AD0C12808DC5900986B49 /* Finale To-do */ = {
 			isa = PBXGroup;
 			children = (
+				371D998128146E270060CB34 /* Backend classes */,
 				376AD0D92808EF9600986B49 /* Elements */,
 				376AD0D82808EF8B00986B49 /* Views */,
 				376AD0C22808DC5900986B49 /* AppDelegate.swift */,
 				376AD0C42808DC5900986B49 /* SceneDelegate.swift */,
 				376AD0C62808DC5900986B49 /* App.swift */,
-				376AD0DC2808FD4C00986B49 /* Classes.swift */,
-				376AD0DE280901AF00986B49 /* Extensions.swift */,
-				37F837C6280E657E00F2A9C0 /* Theme.swift */,
-				371135F628138CE300B51322 /* NotificationHelper.swift */,
 				376AD0D02808DC5A00986B49 /* Info.plist */,
 				376AD0CB2808DC5A00986B49 /* Assets.xcassets */,
 			);

@@ -62,12 +62,12 @@ class CalendarView: UIView, UIDynamicTheme {
         
         calendarView = UIDatePicker()
         calendarView.preferredDatePickerStyle = .inline
-        calendarView.frame = CGRect(x: padding*0.5, y: padding*0.5, width: containerWidth-padding, height: containerWidth-padding)
+        calendarView.frame = CGRect(x: padding*0.5, y: 0, width: containerWidth-padding, height: containerWidth)
         calendarView.tintColor = tintColor
         calendarView.datePickerMode = .date
         if taskSlider.task.isDateAssigned { calendarView.date = taskSlider.task.dateAssigned }
         
-        let timeDueRow = DrawDueTimeRow(prevMaxY: calendarView.frame.maxY, rowWidth: containerWidth-padding*2)
+        let timeDueRow = DrawDueTimeRow(prevMaxY: calendarView.frame.maxY-padding, rowWidth: containerWidth-padding*2)
         notificationRow = DrawNotificationRow(prevMaxY: timeDueRow.frame.maxY, rowWidth: containerWidth)
         
         let buttonHeight = 40.0
@@ -80,6 +80,7 @@ class CalendarView: UIView, UIDynamicTheme {
         clearButton.tintColor = .white
         clearButton.layer.cornerRadius = 10
         clearButton.addTarget(self, action: #selector(Clear), for: .touchUpInside)
+        clearButton.imageView!.layer.borderWidth = 0 // this is a weird fix for image scaling when opening the calendar view
         
         confirmButton = UIButton(frame: CGRect(x: padding*2+buttonWidth, y: clearButton.frame.origin.y, width: buttonWidth, height: buttonHeight))
         confirmButton.backgroundColor = tintColor
@@ -89,6 +90,7 @@ class CalendarView: UIView, UIDynamicTheme {
         confirmButton.tintColor = .white
         confirmButton.layer.cornerRadius = 10
         confirmButton.addTarget(self, action: #selector(Confirm), for: .touchUpInside)
+        confirmButton.imageView!.layer.borderWidth = 0 // this is a weird fix for image scaling when opening the calendar view
         
         let containerHeight = confirmButton.frame.maxY + padding
         containerView.frame = CGRect(x: 0.5*(UIScreen.main.bounds.width-containerWidth), y: 0.5*(UIScreen.main.bounds.height-containerHeight), width: containerWidth, height: containerHeight)

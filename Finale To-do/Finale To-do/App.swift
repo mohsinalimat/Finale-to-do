@@ -64,6 +64,7 @@ class App: UIViewController {
         self.view.addSubview(containerView)
         
         NotificationCenter.default.addObserver(self, selector: #selector(AppMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(AppBecameActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in }
     }
@@ -449,9 +450,12 @@ class App: UIViewController {
         SaveData()
     }
     
+    @objc func AppBecameActive() {
+        taskListView.UpdateAllDateLabels()
+    }
+    
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
-        
         SetSubviewColors(of: self.view)
     }
     

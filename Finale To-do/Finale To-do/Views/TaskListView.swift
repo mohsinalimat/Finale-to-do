@@ -426,6 +426,14 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         }
     }
     
+    func UpdateAllDateLabels () {
+        let allCells = tableView.visibleCells as! [TaskSliderTableCell]
+        
+        for cell in allCells {
+            cell.slider.UpdateDateLabel()
+        }
+    }
+    
     var sortButtonMenu: UIMenu {
         
         let unsorted = UIAction(title: "Unsorted", image: UIImage(systemName: "xmark.app"), state: getSortItemState(sortingPreference: .Unsorted)) { [self] _ in
