@@ -35,6 +35,14 @@ class AppColors {
     
 //MARK: Slider Colors
     
+    static func sliderMainColor (taskListColor: UIColor) -> UIColor {
+        return taskListColor
+    }
+    
+    static func sliderMainHandleColor (taskListColor: UIColor) -> UIColor {
+        return taskListColor.dark
+    }
+    
     static func sliderHighPriorityBackgroundColor (taskListColor: UIColor) -> UIColor {
         return taskListColor.lerp(second: AppColors.currentTheme == .Light ? .white : .black, percentage: 0.75)
     }

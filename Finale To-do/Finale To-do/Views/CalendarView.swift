@@ -28,12 +28,14 @@ class CalendarView: UIView, UIDynamicTheme {
     var notificationStatusLabel: UILabel!
     
     let taskSlider: TaskSlider
+    let taskSliderContextMenu: TaskSliderContextMenu?
     
     var accentColor: UIColor!
     
-    init(tintColor: UIColor, taskSlider: TaskSlider) {
+    init(tintColor: UIColor, taskSlider: TaskSlider, taskSliderContextMenu: TaskSliderContextMenu?) {
         self.taskSlider = taskSlider
         self.accentColor = tintColor
+        self.taskSliderContextMenu = taskSliderContextMenu
         
         self.selectedNotificationTypes = [NotificationType]()
         for (notificationType, _) in taskSlider.task.notifications {
@@ -361,8 +363,9 @@ class CalendarView: UIView, UIDynamicTheme {
     }
     
     @objc func Clear () {
-        HideView()
         taskSlider.ClearDateAndTime()
+        HideView()
+        taskSliderContextMenu?.OnCalendarViewClose()
     }
     
     @objc func Confirm () {
@@ -386,6 +389,7 @@ class CalendarView: UIView, UIDynamicTheme {
         taskSlider.task.ScheduleAllNotifications()
         
         HideView()
+        taskSliderContextMenu?.OnCalendarViewClose()
     }
     
     @objc func HideViewNoAction () {

@@ -27,9 +27,9 @@ class NotificationHelper {
 
             UNUserNotificationCenter.current().add(request, withCompletionHandler: { error in
                 if error == nil {
-                    print("Scheduled notification: \(content.body) on \(trigger)")
+                    print("Scheduled notification with ID: \(id).\nTrigger: \(trigger)")
                 } else {
-                    print("Failed to schedule notification \"\(content.body)\": \(error?.localizedDescription ?? "unknown error")" )
+                    print("Failed to schedule notification with ID: \(id).\nError: \(error?.localizedDescription ?? "unknown error")" )
                 }
             })
         }

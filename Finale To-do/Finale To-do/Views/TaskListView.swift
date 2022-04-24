@@ -156,7 +156,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             task: task,
             sliderSize: CGSize(width: tableView.frame.width-padding*2, height: tableView.rowHeight-padding*0.5),
             cellSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight),
-            sliderColor: getTaskListColor(id: task.taskListID), app: app)
+            taskListColor: getTaskListColor(id: task.taskListID), app: app)
         
         return cell
     }
@@ -181,7 +181,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
                 cell.slider.StartEditing()
             }
             let AssignDate = UIAction(title: cell.slider.task.isDateAssigned ? "Change date" : "Assign date", image: UIImage(systemName: "calendar")) { action in
-                cell.slider.ShowCalendarView()
+                cell.slider.ShowCalendarView(taskSliderContextMenu: nil)
             }
             
             var items = [UIAction]()
@@ -402,7 +402,6 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         lastTaskUndoTimer?.invalidate()
         App.instance.lastDeletedTask = nil
         App.instance.lastCompletedTask = nil
-        App.instance.undoTaskIndexPath = nil
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: { [self] in
             undoButton!.frame.origin.x = -undoButton!.frame.width - 10
         }, completion: { [self] _ in
@@ -498,7 +497,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
                 }
             })
         } else {
-            if tableView?.window != nil { tableView.reloadData() }
+//            if tableView?.window != nil { tableView.reloadData() }
         }
         
         if tableView.cellForRow(at: IndexPath(row: 0, section: 0)) != nil {
@@ -507,19 +506,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func MoveTaskToRightSortedIndexPath (originalIndexPath: IndexPath, task: Task) {
-        let sortPreference: SortingPreference
-        if App.selectedTaskListIndex == 0 {
-            sortPreference = App.instance.overviewSortingPreference
-        } else {
-            sortPreference = taskLists[0].sortingPreference
-        }
-        
-        var dummyArray = [Task]()
-        dummyArray.append(contentsOf: allUpcomingTasks)
-        
-        dummyArray = dummyArray.sorted { sortBool(task1: $0, task2: $1, sortingPreference: sortPreference) }
-        
-        let newIndexPath = IndexPath(row: dummyArray.firstIndex(of: task)!, section: 0)
+        let newIndexPath = GetSortedIndexPath(task: task)
         
         if originalIndexPath == newIndexPath { return }
         
@@ -537,10 +524,50 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         if allUpcomingTasks.count > 0 { tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
     }
     
+    func GetSortedIndexPath (task: Task) -> IndexPath {
+        let sortPreference: SortingPreference
+        if App.selectedTaskListIndex == 0 {
+            sortPreference = App.instance.overviewSortingPreference
+        } else {
+            sortPreference = taskLists[0].sortingPreference
+        }
+        
+        var dummyArray = [Task]()
+        dummyArray.append(contentsOf: allUpcomingTasks)
+        if !dummyArray.contains(task) { dummyArray.append(task) }
+        
+        dummyArray = dummyArray.sorted { sortBool(task1: $0, task2: $1, sortingPreference: sortPreference) }
+        
+        return IndexPath(row: dummyArray.firstIndex(of: task)!, section: 0)
+    }
+    func GetSortedArrayIndex (task: Task) -> Int {
+        var sortPreference = SortingPreference.Unsorted
+        
+        var dummyArray = [Task]()
+        if task.taskListID == App.mainTaskList.id {
+            dummyArray.append(contentsOf: App.mainTaskList.upcomingTasks)
+            sortPreference = App.mainTaskList.sortingPreference
+        } else {
+            for taskList in App.userTaskLists {
+                if taskList.id == task.taskListID {
+                    dummyArray.append(contentsOf: taskList.upcomingTasks)
+                    sortPreference = taskList.sortingPreference
+                    break
+                }
+            }
+        }
+        
+        if !dummyArray.contains(task) { dummyArray.append(task) }
+        
+        dummyArray = dummyArray.sorted { sortBool(task1: $0, task2: $1, sortingPreference: sortPreference) }
+        
+        return dummyArray.firstIndex(of: task)!
+    }
+    
     func sortBool(task1: Task, task2: Task, sortingPreference: SortingPreference) -> Bool {
         switch sortingPreference {
             case .Unsorted:
-                return false
+                return true
             case .ByList:
                 return getListPosition(listID: task1.taskListID) < getListPosition(listID: task2.taskListID)
             case .ByTimeCreated:
@@ -564,7 +591,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     func getListPosition (listID: UUID) -> Int {
         if listID == App.mainTaskList.id { return 0 }
         for i in 0..<App.userTaskLists.count {
-            if App.userTaskLists[i].id == listID { return i }
+            if App.userTaskLists[i].id == listID { return i+1 }
         }
         return -1
     }

@@ -20,11 +20,11 @@ class Task: Codable, Equatable {
     var dateCreated: Date
     var dateCompleted: Date
     var notifications: [NotificationType : String]
-    let taskListID: UUID
+    var taskListID: UUID
     
     init () {
         self.name = ""
-        self.priority = .Regular
+        self.priority = .Normal
         self.notes = ""
         self.isCompleted = false
         self.isDateAssigned = false
@@ -36,7 +36,7 @@ class Task: Codable, Equatable {
         self.taskListID = UUID()
     }
     
-    init(name: String = "", priority: TaskPriority = .Regular, notes: String = "", isComleted: Bool = false, isDateAssigned: Bool = false, isDueTimeAssigned: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), notifications: [NotificationType : String] = [NotificationType : String](), taskListID: UUID = UUID()) {
+    init(name: String = "", priority: TaskPriority = .Normal, notes: String = "", isComleted: Bool = false, isDateAssigned: Bool = false, isDueTimeAssigned: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), notifications: [NotificationType : String] = [NotificationType : String](), taskListID: UUID = UUID()) {
         self.name = name
         self.priority = priority
         self.notes = notes
@@ -189,9 +189,13 @@ class TaskList: Codable, Equatable {
     }
 }
 
-enum TaskPriority: Int, Codable {
-    case Regular = 0
+enum TaskPriority: Int, Codable, CaseIterable {
+    case Normal = 0
     case High = 1
+    
+    var str: String {
+        return self == .Normal ? "Normal" : "High"
+    }
 }
 
 enum SortingPreference: Int, Codable {

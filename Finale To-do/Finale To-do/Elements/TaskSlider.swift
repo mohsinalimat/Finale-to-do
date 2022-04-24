@@ -14,7 +14,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
     
     var task: Task
     var isEditing: Bool = false
-    let sliderColor: UIColor
+    var taskListColor: UIColor
     
     let padding = 8.0
     let sliderCornerRadius = 10.0
@@ -34,10 +34,10 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
     
     let placeholders: [String] = ["Finish annual report", "Create images for the presentation", "Meditate", "Plan holidays with the family", "Help mom with groceries", "Buy new shoes", "Get cat food", "Get dog food", "Brush my corgie", "Say hi to QQ", "Chmok my QQ", "Buy airplane tickets", "Cancel streaming subscription", "Schedule coffee chat", "Schedule work meeting", "Dye my hair", "Download Elden Ring", "Get groceries"]
     
-    init(task: Task, frame: CGRect, sliderColor: UIColor, app: App) {
+    init(task: Task, frame: CGRect, taskListColor: UIColor, app: App) {
         self.task = task
         self.app = app
-        self.sliderColor = sliderColor
+        self.taskListColor = taskListColor
         
         sliderHandleWidth = !task.isCompleted ? frame.width*0.075 : 0
         fullSliderWidth = frame.width
@@ -54,7 +54,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         
         dateInfoView = UIView (frame: CGRect(x: frame.width - dateInfoWidth - padding, y: 0, width: dateInfoWidth, height: frame.height))
         dateInfoView.alpha = task.isDateAssigned ? 1 : 0
-        dateInfoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShowCalendarView)))
+        dateInfoView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(DateTap)))
         dateInfoView.isUserInteractionEnabled = isEditing ? true : false
         
         calendarIconView = UIImageView(frame: CGRect(x: frame.width - padding - calendarIconWidth, y: 0, width: calendarIconWidth, height: frame.height))
@@ -63,7 +63,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         calendarIconView.contentMode = .scaleAspectFit
         calendarIconView.alpha = isEditing && !task.isDateAssigned ? 1 : 0
         calendarIconView.isUserInteractionEnabled = true
-        calendarIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ShowCalendarView)))
+        calendarIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(DateTap)))
         
         dateInfoView.addSubview(dateLabel)
         
@@ -92,12 +92,12 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         taskNameInputField.isEnabled = isEditing
         taskNameInputField.addTarget(self, action: #selector(DetectTextFieldChange), for: .editingChanged)
         
-        sliderView.backgroundColor = sliderColor
+        sliderView.backgroundColor = mainSliderColor
         sliderView.layer.cornerRadius = sliderCornerRadius
         sliderView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(Dragging)))
         sliderView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TapSlider)))
 
-        sliderHandle.backgroundColor = !task.isCompleted ? sliderColor.dark : .clear
+        sliderHandle.backgroundColor = !task.isCompleted ? mainSliderHandleColor : .clear
         sliderHandle.layer.cornerRadius = sliderCornerRadius*0.85
         sliderHandle.isUserInteractionEnabled = false
         
@@ -236,6 +236,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
     func UpdateDateLabel () {
         dateLabel.attributedText = assignedDateTimeString
         dateLabel.frame = CGRect(x: 0, y: 0, width: dateLabel.intrinsicContentSize.width, height: dateInfoView.frame.height)
+        dateInfoView.alpha = task.isDateAssigned ? 1 : 0
         
         dateInfoView.frame.size.width = dateInfoWidth
         dateInfoView.frame.origin.x = frame.width - dateInfoWidth - padding
@@ -250,7 +251,10 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         }
     }
     
-    @objc func ShowCalendarView () {
+    @objc func DateTap () {
+        ShowCalendarView(taskSliderContextMenu: nil)
+    }
+    func ShowCalendarView(taskSliderContextMenu: TaskSliderContextMenu?) {
         taskNameInputField.resignFirstResponder()
         
         let color: UIColor
@@ -258,7 +262,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         else if App.selectedTaskListIndex == 1 { color = AppColors.actionButtonTaskListColor(taskListColor: App.mainTaskList.primaryColor) }
         else { color = AppColors.actionButtonTaskListColor(taskListColor: App.userTaskLists[App.selectedTaskListIndex-2].primaryColor) }
         
-        App.instance.view.addSubview(CalendarView(tintColor: color, taskSlider: self))
+        UIApplication.shared.windows.first!.addSubview(CalendarView(tintColor: color, taskSlider: self, taskSliderContextMenu: taskSliderContextMenu))
     }
     
     func HideCalendarView () {
@@ -275,9 +279,9 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
     @objc func DetectTextFieldChange() {
         task.name = taskNameInputField.text!
         if taskNameInputField.text!.contains("!")  {
-            if task.priority != .High { SetTaskPriority(priority: .High) }
+            SetTaskPriority(priority: .High)
         } else {
-            if task.priority != .Regular { SetTaskPriority(priority: .Regular) }
+            SetTaskPriority(priority: .Normal)
         }
     }
     
@@ -343,14 +347,29 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
     }
     
     var sliderBackgroundColor: UIColor {
-        if task.isCompleted { return AppColors.sliderCompletedBackgroundColor(taskListColor: sliderColor) }
+        if task.isCompleted { return AppColors.sliderCompletedBackgroundColor(taskListColor: taskListColor) }
         
-        return task.priority == .High ? AppColors.sliderHighPriorityBackgroundColor(taskListColor: sliderColor) : AppColors.sliderIncompletedBackgroundColor
+        return task.priority == .High ? AppColors.sliderHighPriorityBackgroundColor(taskListColor: taskListColor) : AppColors.sliderIncompletedBackgroundColor
     }
     
+    var mainSliderColor: UIColor {
+        return AppColors.sliderMainColor(taskListColor: taskListColor)
+    }
+    var mainSliderHandleColor: UIColor {
+        return AppColors.sliderMainHandleColor(taskListColor: taskListColor)
+    }
     
     func SetThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in
+            sliderBackground.backgroundColor = sliderBackgroundColor
+        }
+    }
+    
+    func UpdateTaskListColor (newColor: UIColor) {
+        taskListColor = newColor
+        UIView.animate(withDuration: 0.25) { [self] in
+            sliderView.backgroundColor = mainSliderColor
+            sliderHandle.backgroundColor = !task.isCompleted ? mainSliderHandleColor : .clear
             sliderBackground.backgroundColor = sliderBackgroundColor
         }
     }
@@ -376,14 +395,14 @@ class TaskSliderTableCell: UITableViewCell {
         shouldIndentWhileEditing = false
     }
     
-    func Setup(task: Task, sliderSize: CGSize, cellSize: CGSize, sliderColor: UIColor, app: App) {
+    func Setup(task: Task, sliderSize: CGSize, cellSize: CGSize, taskListColor: UIColor, app: App) {
         for subview in contentView.subviews {
             subview.removeFromSuperview()
         }
         slider = TaskSlider(
             task: task,
             frame: CGRect(x: 0.5*(cellSize.width - sliderSize.width), y: 0.5*(cellSize.height - sliderSize.height), width: sliderSize.width, height: sliderSize.height),
-            sliderColor: sliderColor, app: app)
+            taskListColor: taskListColor, app: app)
         
         contentView.addSubview(slider)
     }

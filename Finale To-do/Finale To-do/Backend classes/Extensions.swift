@@ -130,6 +130,17 @@ extension UIView {
         self.layer.borderColor = color.cgColor
     }
     
+    var parentViewController: UIViewController? {
+        var parentResponder: UIResponder? = self.next
+        while parentResponder != nil {
+            if let viewController = parentResponder as? UIViewController {
+                return viewController
+            }
+            parentResponder = parentResponder?.next
+        }
+        return nil
+    }
+    
 }
 
 extension NSMutableAttributedString {
