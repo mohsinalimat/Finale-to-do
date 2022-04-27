@@ -36,12 +36,12 @@ class CalendarView: UIView, UIDynamicTheme {
         self.taskSlider = taskSlider
         self.accentColor = tintColor
         self.taskSliderContextMenu = taskSliderContextMenu
-        
+
         self.selectedNotificationTypes = [NotificationType]()
         for (notificationType, _) in taskSlider.task.notifications {
             self.selectedNotificationTypes.append(notificationType)
         }
-        
+
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
         SharedInit(tintColor: tintColor, taskSlider: taskSlider)
     }
@@ -150,6 +150,7 @@ class CalendarView: UIView, UIDynamicTheme {
         } else {
             dueTimePicker.setDate(Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date.now)!, animated: false)
         }
+        
         
         let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: rowWidth*0.5, height: rowHeight))
         titleLabel.text = "Due time"
@@ -431,7 +432,7 @@ class NotificationSelectionRow: UIView {
         }
         set {
             _isSelected = newValue
-            imageView.image = UIImage(systemName: _isSelected ? notificationType == nil ? "circle.circle.fill" : "checkmark.circle.fill" :  "circle")
+            imageView.image = UIImage(systemName: _isSelected ? notificationType == nil ? "circle.inset.filled" : "checkmark.circle.fill" :  "circle")
             imageView.tintColor = isSelected ? accentColor : .systemGray
         }
     }

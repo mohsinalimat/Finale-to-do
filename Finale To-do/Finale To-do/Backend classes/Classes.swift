@@ -189,6 +189,16 @@ class TaskList: Codable, Equatable {
     }
 }
 
+struct SettingsConfig: Codable {
+    
+    var userFirstName: String = "Friend"
+    var userLastName: String = ""
+    
+    var maxNumberOfCompletedTasks: Int = 50
+    
+}
+
+
 enum TaskPriority: Int, Codable, CaseIterable {
     case Normal = 0
     case High = 1

@@ -33,6 +33,15 @@ class AppColors {
         return App.selectedTaskListIndex == 0 ? .clear : taskList.primaryColor
     }
     
+    
+    static func tasklistPlaceholderPrimaryColor (color: UIColor) -> UIColor {
+        return color
+    }
+    
+    static func tasklistPlaceholderSecondaryColor (color: UIColor) -> UIColor {
+        return AppColors.currentTheme == .Light ? color.light : color.dark
+    }
+    
 //MARK: Slider Colors
     
     static func sliderMainColor (taskListColor: UIColor) -> UIColor {
@@ -72,8 +81,6 @@ class AppColors {
     static func actionButtonTaskListColor (taskListColor: UIColor) -> UIColor {
         return taskListColor
     }
-    
-    
     
 //MARK: Misc
     

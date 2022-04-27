@@ -12,6 +12,8 @@ class App: UIViewController {
 
     static var instance: App!
     
+    static var settingsConfig: SettingsConfig = SettingsConfig()
+    
     static var mainTaskList: TaskList = TaskList(name: "Main", primaryColor: .defaultColor, systemIcon: "folder.fill")
     static var userTaskLists: [TaskList] = [TaskList]()
     
@@ -65,6 +67,7 @@ class App: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(AppBecameActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in }
+        
     }
     
 //MARK: Task Actions
@@ -428,25 +431,42 @@ class App: UIViewController {
     func LoadData () {
         overviewSortingPreference = SortingPreference(rawValue: UserDefaults.standard.integer(forKey: "FINALE_DEV_APP_overviewSortingPreference"))
         if overviewSortingPreference == .Unsorted { overviewSortingPreference = .ByList }
+        
         if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_mainTaskList") {
-                if let decoded = try? JSONDecoder().decode(TaskList.self, from: data) {
-                    App.mainTaskList = decoded
-                }
+            if let decoded = try? JSONDecoder().decode(TaskList.self, from: data) {
+                App.mainTaskList = decoded
             }
+        }
         if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_userTaskLists") {
-                if let decoded = try? JSONDecoder().decode([TaskList].self, from: data) {
-                    App.userTaskLists = decoded
-                }
+            if let decoded = try? JSONDecoder().decode([TaskList].self, from: data) {
+                App.userTaskLists = decoded
             }
+        }
+        
+        if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_settingsConfig") {
+            if let decoded = try? JSONDecoder().decode(SettingsConfig.self, from: data) {
+                App.settingsConfig = decoded
+            }
+        }
+        RemoveExcessCompletedTasks()
     }
     
     func SaveData () {
         UserDefaults.standard.set(overviewSortingPreference.rawValue, forKey: "FINALE_DEV_APP_overviewSortingPreference")
+        
         if let encoded = try? JSONEncoder().encode(App.mainTaskList) {
             UserDefaults.standard.set(encoded, forKey: "FINALE_DEV_APP_mainTaskList")
         }
         if let encoded = try? JSONEncoder().encode(App.userTaskLists) {
             UserDefaults.standard.set(encoded, forKey: "FINALE_DEV_APP_userTaskLists")
+        }
+        
+        
+    }
+    
+    func SaveSettings () {
+        if let encoded = try? JSONEncoder().encode(App.settingsConfig) {
+            UserDefaults.standard.set(encoded, forKey: "FINALE_DEV_APP_settingsConfig")
         }
     }
     
@@ -478,6 +498,17 @@ class App: UIViewController {
             cell.slider.StopEditing()
             if cell.slider.task.name == "" { DeleteTask(task: cell.slider.task) }
             taskListView.currentSliderEditing = nil
+        }
+    }
+    
+    func RemoveExcessCompletedTasks () {
+        while App.mainTaskList.completedTasks.count > App.settingsConfig.maxNumberOfCompletedTasks {
+            App.mainTaskList.completedTasks.removeLast()
+        }
+        for taskList in App.userTaskLists {
+            while taskList.completedTasks.count > App.settingsConfig.maxNumberOfCompletedTasks {
+                taskList.completedTasks.removeLast()
+            }
         }
     }
     

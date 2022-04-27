@@ -10,7 +10,7 @@ import UIKit
 
 extension UIColor {
     public static var defaultColor: UIColor {
-        return UIColor(hex: "3255CC")
+        return UIColor(hex: "0962E5")
     }
     
     public static var clearInteractive: UIColor {

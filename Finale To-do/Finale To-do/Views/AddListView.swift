@@ -26,7 +26,7 @@ class AddListView: UIView, UITextFieldDelegate {
     
     let icons: [String] = ["folder.fill", "book.closed.fill", "heart.fill", "paperplane.fill", "calendar", "rectangle.fill.on.rectangle.fill", "trash.fill", "alarm.fill", "hourglass", "bolt.fill", "lightbulb.fill", "bag.fill", "tray.full.fill", "archivebox.fill", "graduationcap.fill", "briefcase.fill"]
     
-    let colors: [UIColor] = [UIColor.defaultColor, UIColor.blue, UIColor.red, UIColor.cyan, UIColor.yellow, UIColor.black, UIColor.green, UIColor.white, UIColor.red, UIColor.blue, UIColor.defaultColor, UIColor.cyan, UIColor.yellow, UIColor.black, UIColor.green, UIColor.white]
+    let colors: [UIColor] = [UIColor.defaultColor, UIColor(hex: "5243AA"), UIColor(hex: "87007A"), UIColor(hex: "DE0B0B"), UIColor(hex: "FF991F"), UIColor(hex: "00875A"), UIColor(hex: "008716"), UIColor(hex: "00A3BF")]
     
     init(frame: CGRect, taskList: TaskList = TaskList(name: "", primaryColor: .defaultColor, systemIcon: "folder.fill")) {
         self.newTaskList = TaskList(name: taskList.name, primaryColor: taskList.primaryColor, systemIcon: taskList.systemIcon, id: taskList.id)
@@ -133,7 +133,7 @@ class AddListView: UIView, UITextFieldDelegate {
         }
         let height = rowHeight*3
         let width = (frame.width-padding*2)*0.9
-        colorPickerView = ColorIconPickerView(frame: CGRect(x: padding - width*0.425, y: contentView.frame.minY - height*0.5 + padding*2.3, width: width, height: height), icons: icons, colors: colors, addListView: self)
+        colorPickerView = ColorIconPickerView(frame: CGRect(x: padding - width*0.425, y: contentView.frame.minY - height*0.5, width: width, height: height), icons: icons, colors: colors, addListView: self)
         self.addSubview(colorPickerView)
     }
     @objc func CloseColorIconPicker() {
@@ -237,21 +237,19 @@ class ColorIconPickerView: UIView {
         
         let spacing = 6.0
         
-        let nRows = 2
-        let nColumns = 8
-        
         let containerWidth = frame.width-padding*2
-        let swatchSize = (containerWidth - spacing*CGFloat(nColumns-1) ) / CGFloat(nColumns)
-        let containerHeight = swatchSize*CGFloat(nRows)+spacing
+        let swatchSize = (containerWidth - spacing*CGFloat(7) ) / CGFloat(8)
+        let colorContainerHeight = swatchSize
+        let iconContainerHeight = swatchSize*2+spacing
         
-        let newFrame = CGRect(x: frame.origin.x, y: frame.origin.y-(containerHeight*2+padding*4-frame.height), width: frame.width, height: containerHeight*2+padding*4)
+        let newFrame = CGRect(x: frame.origin.x, y: frame.origin.y-((colorContainerHeight+iconContainerHeight)+padding*4-frame.height), width: frame.width, height: (colorContainerHeight+iconContainerHeight)+padding*4)
         super.init(frame: newFrame)
         
         self.backgroundColor = AppColors.sidemenuSelectedItemColor
         self.layer.cornerRadius = 10
         
-        let colorsContainer = DrawSwatches(prevFrameMaxY: 0, swatchSize: swatchSize, nRows: 2, nColumns: 8, spacing: spacing, containerWidth: containerWidth, containerHeight: containerHeight, color: true)
-        let iconContainer = DrawSwatches(prevFrameMaxY: colorsContainer.frame.maxY+padding, swatchSize: swatchSize, nRows: 2, nColumns: 8, spacing: spacing, containerWidth: containerWidth, containerHeight: containerHeight, icon: true)
+        let colorsContainer = DrawSwatches(prevFrameMaxY: 0, swatchSize: swatchSize, nRows: 1, nColumns: 8, spacing: spacing, containerWidth: containerWidth, containerHeight: colorContainerHeight, color: true)
+        let iconContainer = DrawSwatches(prevFrameMaxY: colorsContainer.frame.maxY+padding, swatchSize: swatchSize, nRows: 2, nColumns: 8, spacing: spacing, containerWidth: containerWidth, containerHeight: iconContainerHeight, icon: true)
         
         self.addSubview(colorsContainer)
         self.addSubview(iconContainer)

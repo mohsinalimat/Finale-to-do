@@ -262,7 +262,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         else if App.selectedTaskListIndex == 1 { color = AppColors.actionButtonTaskListColor(taskListColor: App.mainTaskList.primaryColor) }
         else { color = AppColors.actionButtonTaskListColor(taskListColor: App.userTaskLists[App.selectedTaskListIndex-2].primaryColor) }
         
-        UIApplication.shared.windows.first!.addSubview(CalendarView(tintColor: color, taskSlider: self, taskSliderContextMenu: taskSliderContextMenu))
+        UIApplication.shared.keyWindow!.addSubview(CalendarView(tintColor: color, taskSlider: self, taskSliderContextMenu: taskSliderContextMenu))
     }
     
     func HideCalendarView () {
