@@ -360,7 +360,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         tableView.reloadData()
         tableView.setContentOffset(CGPoint(x: 0, y: tableView.frame.minY), animated: false)
         originalTableContentOffsetY = tableView.contentOffset.y
-        titleLabel.text = App.selectedTaskListIndex == 0 ? "Hi, Grant" : taskLists[0].name
+        titleLabel.text = App.selectedTaskListIndex == 0 ? "Hi, \(App.settingsConfig.userFirstName)" : taskLists[0].name
         titleLabel.textColor = App.selectedTaskListIndex == 0 ? .label : .white
         hamburgerButton.tintColor = App.selectedTaskListIndex == 0 ? .label : .white
         sortButton.tintColor = App.selectedTaskListIndex == 0 ? .label : .white

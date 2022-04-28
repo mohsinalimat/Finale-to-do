@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class CalendarView: UIView, UIDynamicTheme {
+class CalendarViewController: UIViewController, UIDynamicTheme {
     
     let padding = 16.0
     
@@ -41,8 +41,7 @@ class CalendarView: UIView, UIDynamicTheme {
         for (notificationType, _) in taskSlider.task.notifications {
             self.selectedNotificationTypes.append(notificationType)
         }
-
-        super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
+        super.init(nibName: nil, bundle: nil)
         SharedInit(tintColor: tintColor, taskSlider: taskSlider)
     }
     
@@ -52,8 +51,8 @@ class CalendarView: UIView, UIDynamicTheme {
         let blurEffect = UIVisualEffectView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
         blurEffect.effect = UIBlurEffect(style: .systemUltraThinMaterial)
         blurEffect.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(HideViewNoAction)))
-        self.backgroundColor = .black.withAlphaComponent(0.2)
-        self.addSubview(blurEffect)
+        self.view.backgroundColor = .black.withAlphaComponent(0.2)
+        self.view.addSubview(blurEffect)
         
         
         containerView = UIView ()
@@ -122,8 +121,8 @@ class CalendarView: UIView, UIDynamicTheme {
         containerView.addSubview(notificationPageView)
         containerView.addSubview(firstPageView)
         
-        self.addSubview(backgroundView)
-        self.addSubview(containerView)
+        self.view.addSubview(backgroundView)
+        self.view.addSubview(containerView)
         
         ShowView()
     }
@@ -142,7 +141,7 @@ class CalendarView: UIView, UIDynamicTheme {
         
         dueTimePicker = UIDatePicker()
         dueTimePicker.preferredDatePickerStyle = .inline
-        dueTimePicker.tintColor = tintColor
+        dueTimePicker.tintColor = accentColor
         dueTimePicker.datePickerMode = .time
         dueTimePicker.frame = CGRect(x: 0, y: 0.5*(rowHeight-dueTimePicker.frame.height), width: rowWidth - dueTimetoggle.frame.width, height: dueTimePicker.frame.height)
         if taskSlider.task.isDueTimeAssigned {
@@ -264,8 +263,8 @@ class CalendarView: UIView, UIDynamicTheme {
             originX = notificationPageView.frame.origin.x
             originX1 = firstPageView.frame.origin.x
         } else if sender.state == .changed {
-            notificationPageView.frame.origin.x = max(0, min(originX + sender.translation(in: self).x, notificationPageView.frame.width))
-            firstPageView.frame.origin.x = max(-notificationPageView.frame.width, min(originX1 + sender.translation(in: self).x, 0))
+            notificationPageView.frame.origin.x = max(0, min(originX + sender.translation(in: self.view).x, notificationPageView.frame.width))
+            firstPageView.frame.origin.x = max(-notificationPageView.frame.width, min(originX1 + sender.translation(in: self.view).x, 0))
         } else if sender.state == .ended {
             if notificationPageView.frame.origin.x >= notificationPageView.frame.width*0.2 { CloseNotificationSelectionPage() }
             else { OpenNotificationSelectionPage() }
@@ -344,22 +343,24 @@ class CalendarView: UIView, UIDynamicTheme {
     
     
     func ShowView () {
-        self.alpha = 0
+        self.view.alpha = 0
         containerView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         backgroundView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-        UIView.animate(withDuration: 0.2) {
-            self.alpha = 1
-            self.containerView.transform = CGAffineTransform(scaleX: 1, y: 1)
-            self.backgroundView.transform = CGAffineTransform(scaleX: 1, y: 1)
+        DispatchQueue.main.async {
+            UIView.animate(withDuration: 0.2) {
+                self.view.alpha = 1
+                self.containerView.transform = CGAffineTransform(scaleX: 1, y: 1)
+                self.backgroundView.transform = CGAffineTransform(scaleX: 1, y: 1)
+            }
         }
     }
     func HideView () {
         UIView.animate(withDuration: 0.2, animations: {
-            self.alpha = 0
+            self.view.alpha = 0
             self.containerView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
             self.backgroundView.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
         }, completion: {_ in
-            self.removeFromSuperview()
+            self.dismiss(animated: false)
         })
     }
     
@@ -440,13 +441,13 @@ class NotificationSelectionRow: UIView {
     var accentColor: UIColor!
     var notificationType: NotificationType!
     
-    let calendarView: CalendarView
+    let calendarView: CalendarViewController
     
     var imageView: UIImageView!
     
     let padding = 16.0
     
-    init(frame: CGRect, accentColor: UIColor, notificationType: NotificationType?, calendarView: CalendarView) {
+    init(frame: CGRect, accentColor: UIColor, notificationType: NotificationType?, calendarView: CalendarViewController) {
         self.notificationType = notificationType
         self.accentColor = accentColor
         self.calendarView = calendarView

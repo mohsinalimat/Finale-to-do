@@ -194,6 +194,11 @@ struct SettingsConfig: Codable {
     var userFirstName: String = "Friend"
     var userLastName: String = ""
     
+    var defaultFolderID: UUID = UUID()
+    
+    var isMorningUpdateOn: Bool = false
+    var morningUpdateTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date.now)!
+    
     var maxNumberOfCompletedTasks: Int = 50
     
 }

@@ -20,11 +20,13 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     var currentContextMenuView: TaskListMenuItem?
     
+    let settingsNavControllers: SettingsNavigationController
+    
     init(frame: CGRect, app: App) {
         self.app = app
         
         tableView = UITableView()
-        
+        settingsNavControllers = SettingsNavigationController()
         super.init(frame: frame)
         
         self.backgroundColor = AppColors.sidemenuBackgroundColor
@@ -75,6 +77,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let settingsButton = UIButton(frame: CGRect(x: frame.width-padding-25, y: addListButton.frame.origin.y, width: 25, height: 25))
         settingsButton.setImage(UIImage(systemName: "gearshape"), for: .normal)
         settingsButton.tintColor = .white
+        settingsButton.addTarget(self, action: #selector(OpenSettings), for: .touchUpInside)
         
         self.addSubview(settingsButton)
         
@@ -197,6 +200,11 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     @objc func OpenAddTaskListView () {
         app.OpenAddTaskListView()
+    }
+    
+    @objc func OpenSettings () {
+        settingsNavControllers.popToRootViewController(animated: false)
+        App.instance.present(settingsNavControllers, animated: true)
     }
     
     func SetThemeColors() {
