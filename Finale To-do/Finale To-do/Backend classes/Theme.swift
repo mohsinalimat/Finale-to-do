@@ -29,10 +29,13 @@ class AppColors {
     
 //MARK: Tasklist colors
     
-    static func tasklistHeaderColor (taskList: TaskList) -> UIColor {
-        return App.selectedTaskListIndex == 0 ? .clear : taskList.primaryColor
+    static func tasklistHeaderColor (taskListColor: UIColor) -> UIColor {
+        return AppColors.currentTheme == .Light ? taskListColor : taskListColor.dark
     }
     
+    static func tasklistHeaderGradientSecondaryColor (taskListColor: UIColor) -> UIColor {
+        return AppColors.currentTheme == .Light ? taskListColor.light : taskListColor
+    }
     
     static func tasklistPlaceholderPrimaryColor (color: UIColor) -> UIColor {
         return color

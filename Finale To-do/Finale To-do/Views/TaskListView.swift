@@ -71,7 +71,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         header.addSubview(blurEffect)
         
         colorPanelHeader = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
-        colorPanelHeader.backgroundColor = App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor
+//        colorPanelHeader.backgroundColor = AppColors.tasklistHeaderColor(taskListColor: taskLists[0].primaryColor)
+        SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
         colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
         colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
         header.addSubview(colorPanelHeader)
@@ -151,6 +152,17 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         contentView.addSubview(addTaskButton)
         
         addSubview(contentView)
+    }
+    
+    func SetHeaderGradient(color: UIColor) {
+        colorPanelHeader.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+        
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [AppColors.tasklistHeaderColor(taskListColor: color).cgColor, color == UIColor.clear ? color : AppColors.tasklistHeaderGradientSecondaryColor(taskListColor: color).cgColor]
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
+        gradientLayer.endPoint = CGPoint(x: 1.3, y: -0.3)
+        gradientLayer.frame = colorPanelHeader.bounds
+        colorPanelHeader.layer.insertSublayer(gradientLayer, at:0)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -316,7 +328,10 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         titleLabel.transform = CGAffineTransform(scaleX: (1 + maxScrollDelta*0.0005), y: (1 + maxScrollDelta*0.0005) )
         titleLabel.frame.origin.y = originalTitlePositionY + scrollDelta
-        colorPanelHeader.frame.size.height = originalHeaderHeight + scrollDelta
+//        colorPanelHeader.frame.size.height = originalHeaderHeight + scrollDelta
+        CATransaction.setValue(kCFBooleanTrue, forKey:kCATransactionDisableActions)
+        colorPanelHeader.layer.sublayers?[0].frame.size.height = originalHeaderHeight + scrollDelta
+        CATransaction.commit()
         
         blurEffect.frame.size.height = originalHeaderHeight + scrollDelta
     }
@@ -367,7 +382,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         hamburgerButton.tintColor = App.selectedTaskListIndex == 0 ? .label : .white
         sortButton.tintColor = App.selectedTaskListIndex == 0 ? .label : .white
         sortButton.menu = sortButtonMenu
-        colorPanelHeader.backgroundColor = App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor
+//        colorPanelHeader.backgroundColor = AppColors.tasklistHeaderColor(taskListColor: taskLists[0].primaryColor)
+        SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
         colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
         colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
         addTaskButton.ReloadVisuals(color: App.selectedTaskListIndex == 0 ? .defaultColor : taskLists[0].primaryColor)
@@ -430,7 +446,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     func SetThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in
-            colorPanelHeader.backgroundColor = AppColors.tasklistHeaderColor(taskList: taskLists[0])
+            SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
+//            colorPanelHeader.backgroundColor = AppColors.tasklistHeaderColor(taskListColor: taskLists[0].primaryColor)
             colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
             colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
         }

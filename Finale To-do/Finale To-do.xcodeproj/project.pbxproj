@@ -10,6 +10,7 @@
 		370A9DB128106F5D00FC30A7 /* ConfirmationSlideover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370A9DB028106F5D00FC30A7 /* ConfirmationSlideover.swift */; };
 		370A9DB32810CDDE00FC30A7 /* TaskSliderContextMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370A9DB22810CDDE00FC30A7 /* TaskSliderContextMenu.swift */; };
 		371135F728138CE300B51322 /* NotificationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371135F628138CE300B51322 /* NotificationHelper.swift */; };
+		372B89FD281C4DE200117A72 /* MiscSettingsTableRows.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372B89FC281C4DE200117A72 /* MiscSettingsTableRows.swift */; };
 		375E5D79280F1AA2001A289E /* UndoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E5D78280F1AA2001A289E /* UndoButton.swift */; };
 		375E5D7B280F7155001A289E /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E5D7A280F7155001A289E /* CalendarViewController.swift */; };
 		376AD0C32808DC5900986B49 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0C22808DC5900986B49 /* AppDelegate.swift */; };
@@ -32,6 +33,7 @@
 		370A9DB028106F5D00FC30A7 /* ConfirmationSlideover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmationSlideover.swift; sourceTree = "<group>"; };
 		370A9DB22810CDDE00FC30A7 /* TaskSliderContextMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSliderContextMenu.swift; sourceTree = "<group>"; };
 		371135F628138CE300B51322 /* NotificationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationHelper.swift; sourceTree = "<group>"; };
+		372B89FC281C4DE200117A72 /* MiscSettingsTableRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiscSettingsTableRows.swift; sourceTree = "<group>"; };
 		375E5D78280F1AA2001A289E /* UndoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoButton.swift; sourceTree = "<group>"; };
 		375E5D7A280F7155001A289E /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		376AD0BF2808DC5900986B49 /* Finale To-do.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Finale To-do.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -134,6 +136,7 @@
 			children = (
 				37983B8B2819F608007B241A /* SettingsViewController.swift */,
 				377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */,
+				372B89FC281C4DE200117A72 /* MiscSettingsTableRows.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -222,6 +225,7 @@
 				37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */,
 				37F837C7280E657E00F2A9C0 /* Theme.swift in Sources */,
 				375E5D79280F1AA2001A289E /* UndoButton.swift in Sources */,
+				372B89FD281C4DE200117A72 /* MiscSettingsTableRows.swift in Sources */,
 				376AD0DF280901AF00986B49 /* Extensions.swift in Sources */,
 				377C3914281B0F4C006F42BA /* SettingsPageViewController.swift in Sources */,
 				37F837C5280E11BF00F2A9C0 /* AddListView.swift in Sources */,

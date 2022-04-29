@@ -18,7 +18,7 @@ class NotificationHelper {
             content.body = task.name
             content.sound = UNNotificationSound.default
             
-            if task.priority == .High { content.title = "High priority!"}
+            if task.priority == .High { content.title = "Important"}
             
             let notificationDate = GetNotificationDate(taskAssignedDate: task.dateAssigned, notificationType: notificationType)
             
@@ -93,7 +93,7 @@ class NotificationHelper {
             
             if settingsNotificationsPage != nil && success {
                 DispatchQueue.main.async {
-                    settingsNotificationsPage?.ShowDailyUpdateSettings()
+                    settingsNotificationsPage?.ShowAllNotificationSettings()
                     settingsNotificationsPage?.AllowNotificationSuccess()
                 }
             }
@@ -132,7 +132,7 @@ class NotificationHelper {
                     }
                 })
         UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { result in
-            print("Scheduled \(result.count) notification(s).")
+            print("Current pending notifications: \(result.count).")
         })
     }
     
