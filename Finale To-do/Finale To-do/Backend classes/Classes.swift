@@ -196,11 +196,26 @@ struct SettingsConfig: Codable {
     
     var defaultFolderID: UUID = UUID()
     
-    var isMorningUpdateOn: Bool = false
-    var morningUpdateTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date.now)!
+    var _isNotificationsAllowed: Bool = false
+    var isNotificationsAllowed: Bool {
+        get { return _isNotificationsAllowed }
+        set {
+            _isNotificationsAllowed = newValue
+            if !_isNotificationsAllowed {
+                isDailyUpdateOn = false
+                dailyUpdateTime = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date.now)!
+            }
+        }
+    }
+    var isDailyUpdateOn: Bool = false
+    var dailyUpdateTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date.now)!
     
     var maxNumberOfCompletedTasks: Int = 50
     
+    
+    var userFullName: String {
+        return "\(userFirstName) \(userLastName)"
+    }
 }
 
 

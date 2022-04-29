@@ -20,6 +20,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
     let slider: TaskSlider
     
     var containerView: UIView!
+    var notesTextBackgroundView: UIView!
     var notesInputField: UITextView!
     var nameInputField: UITextView!
     var listButton: UIButton!
@@ -101,20 +102,20 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         titleLabel.font = UIFont.systemFont(ofSize: fontSize)
         titleLabel.textAlignment = .left
         
-        let textBackgroundView = UIView(frame: CGRect(x: 0, y: titleLabel.frame.maxY + spacing*0.5, width: containerView.frame.width, height: containerView.frame.height - titleLabel.frame.size.height-spacing*0.5))
-        textBackgroundView.layer.cornerRadius = 10
+        notesTextBackgroundView = UIView(frame: CGRect(x: 0, y: titleLabel.frame.maxY + spacing*0.5, width: containerView.frame.width, height: containerView.frame.height - titleLabel.frame.size.height-spacing*0.5))
+        notesTextBackgroundView.layer.cornerRadius = 10
         
-        notesInputField = UITextView(frame: CGRect(x: spacing, y: 0, width: textBackgroundView.frame.width-spacing*2, height: textBackgroundView.frame.height))
+        notesInputField = UITextView(frame: CGRect(x: spacing, y: 0, width: notesTextBackgroundView.frame.width-spacing*2, height: notesTextBackgroundView.frame.height))
         notesInputField.text = slider.task.notes == "" ? notesPlaceholder : slider.task.notes
         notesInputField.textColor = slider.task.notes == "" ? .systemGray2 : .label
         notesInputField.delegate = self
         notesInputField.font = UIFont.systemFont(ofSize: fontSize)
-        textBackgroundView.backgroundColor = notesInputField.backgroundColor
+        notesTextBackgroundView.backgroundColor = notesInputField.backgroundColor
         
         containerView.addSubview(titleLabel)
-        containerView.addSubview(textBackgroundView)
+        containerView.addSubview(notesTextBackgroundView)
         
-        textBackgroundView.addSubview(notesInputField)
+        notesTextBackgroundView.addSubview(notesInputField)
         
         return containerView
     }
@@ -510,10 +511,14 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         handle.backgroundColor = .systemGray4
         handle.layer.cornerRadius = 2
         
-        UIView.animate(withDuration: 0.25) { [self] in
-            containerView.frame.origin.x = 0.5*(UIScreen.main.bounds.width-view.frame.width)
-            containerView.frame.origin.y = handle.frame.maxY + padding
-        }
+        
+        let notesAreaIncrease = notesArea.frame.height
+        notesTextBackgroundView.frame.size.height += notesAreaIncrease
+        notesInputField.frame.size.height += notesAreaIncrease
+        notesArea.frame.size.height += notesAreaIncrease
+        
+        containerView.frame.origin.x = 0.5*(UIScreen.main.bounds.width-view.frame.width)
+        containerView.frame.origin.y = handle.frame.maxY + padding
         
         closeButton = UIButton(frame: CGRect(x: padding, y: containerView.frame.maxY + padding, width: UIScreen.main.bounds.width-padding*2, height: 40))
         closeButton.backgroundColor = slider.taskListColor
@@ -525,6 +530,8 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         
         self.view.addSubview(closeButton)
         self.view.addSubview(handle)
+        
+        UpdateViewHeight()
     }
     
     @objc func CloseButton () {

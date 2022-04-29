@@ -43,6 +43,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     var lastTaskUndoTimer: Timer?
     var lastTaskUndoTimeThreashold = 3.0
     
+    var taskMovedToTopOriginalIndex: Int?
+    
     init(frame: CGRect, taskLists: [TaskList], app: App) {
         self.app = app
         self.taskLists = taskLists
@@ -584,6 +586,9 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             case .ByTimeDue:
                 if task1.isDateAssigned && task2.isDateAssigned {
                     return task1.dateAssigned < task2.dateAssigned
+                }
+                if task1.dateAssigned == task2.dateAssigned {
+                    return sortBool(task1: task1, task2: task2, sortingPreference: .ByList)
                 }
                 return task1.isDateAssigned
             case .ByPriority:

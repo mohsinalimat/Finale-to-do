@@ -204,6 +204,9 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     @objc func OpenSettings () {
         settingsNavControllers.popToRootViewController(animated: false)
+        let mainPage = settingsNavControllers.topViewController as! SettingsPageViewController
+        mainPage.ReloadSettings()
+        mainPage.tableView.reloadData()
         App.instance.present(settingsNavControllers, animated: true)
     }
     
@@ -213,6 +216,12 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         }
     }
     
+    func UpdateUpcomingTasksCounts () {
+        for cell in tableView.visibleCells {
+            let taskListCell = cell as! TaskListTableCell
+            taskListCell.taskListMenuItem.upcomingTaskCountLabel.text = taskListCell.taskListMenuItem.taskList.upcomingTasks.count.description
+        }
+    }
     
     
     
@@ -229,6 +238,8 @@ class TaskListMenuItem: UIView, UIDynamicTheme {
     let padding = 8.0
     let imageWidthProportion = 0.1
     let index: Int
+    
+    var upcomingTaskCountLabel: UILabel!
     
     var isSelected: Bool {
         get {
@@ -249,15 +260,29 @@ class TaskListMenuItem: UIView, UIDynamicTheme {
         iconView.tintColor = taskList.primaryColor
         iconView.contentMode = .scaleAspectFit
         
-        let titleLabel = UILabel(frame: CGRect(x: (frame.width-padding*2)*imageWidthProportion+padding*3, y: 0, width: (frame.width-padding*3)*(1-imageWidthProportion), height: frame.height))
+        let upcomingTaskCountLabelWidth: CGFloat
+        if index != 0 {
+            upcomingTaskCountLabelWidth = 20
+            upcomingTaskCountLabel = UILabel(frame: CGRect(x: frame.width-padding*2-upcomingTaskCountLabelWidth, y: 0, width: upcomingTaskCountLabelWidth, height: frame.height))
+            upcomingTaskCountLabel.textColor = .lightGray
+            upcomingTaskCountLabel.text = taskList.upcomingTasks.count == 0 ? "" : taskList.upcomingTasks.count.description
+            upcomingTaskCountLabel.adjustsFontSizeToFitWidth = true
+            upcomingTaskCountLabel.font = .preferredFont(forTextStyle: .subheadline)
+            upcomingTaskCountLabel.textAlignment = .right
+            self.addSubview(upcomingTaskCountLabel)
+        } else { upcomingTaskCountLabelWidth = 0 }
+        
+        let titleLabelWidth = (frame.width-padding*3)*(1-imageWidthProportion) - padding*3 - upcomingTaskCountLabelWidth
+        let titleLabel = UILabel(frame: CGRect(x: (frame.width-padding*2)*imageWidthProportion+padding*3, y: 0, width: titleLabelWidth, height: frame.height))
         titleLabel.text = taskList.name
         titleLabel.textColor = .white
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(SelectList))
-        self.addGestureRecognizer(tapGesture)
+        
+        self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SelectList)))
         
         self.addSubview(iconView)
         self.addSubview(titleLabel)
+        
     }
     
     @objc func SelectList () {
@@ -273,8 +298,6 @@ class TaskListMenuItem: UIView, UIDynamicTheme {
             self.ReloadVisuals()
         }
     }
-    
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

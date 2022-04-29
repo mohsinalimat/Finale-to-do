@@ -66,8 +66,7 @@ class App: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(AppMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(AppBecameActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in }
-        
+        NotificationHelper.CheckNotificationPermissionStatus()
     }
     
 //MARK: Task Actions
@@ -77,17 +76,24 @@ class App: UIViewController {
         
         StopEditingAllTasks()
         
-        if App.selectedTaskListIndex == 0 || App.selectedTaskListIndex == 1 {
-            App.mainTaskList.upcomingTasks.insert(Task(taskListID: App.mainTaskList.id), at: 0)
+        let newTask: Task
+        if App.selectedTaskListIndex == 0 {
+            newTask = Task(taskListID: defaultList.id)
+            defaultList.upcomingTasks.insert(newTask, at: 0)
+        } else if App.selectedTaskListIndex == 1 {
+            newTask = Task(taskListID: App.mainTaskList.id)
+            App.mainTaskList.upcomingTasks.insert(newTask, at: 0)
         } else {
-            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.insert(Task(taskListID: App.userTaskLists[App.selectedTaskListIndex-2].id), at: 0)
+            newTask = Task(taskListID: App.userTaskLists[App.selectedTaskListIndex-2].id)
+            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.insert(newTask, at: 0)
         }
         
-        taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
-        taskListView.ReloadTaskData(sortOverviewList: false)
+        taskListView.allUpcomingTasks.insert(newTask, at: 0)
 
         taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: UITableView.RowAnimation.automatic)
         taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
+        
+        DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
     }
     
     func CompleteTask(task: Task) {
@@ -134,6 +140,8 @@ class App: UIViewController {
         taskListView.ShowUndoButton()
         
         task.CancelAllNotifications()
+        
+        DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
     }
     
     func DeleteTask(task: Task) {
@@ -194,6 +202,8 @@ class App: UIViewController {
         
         taskListView.currentContextMenuPreview = UIView()
         
+        DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
+        
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
     
@@ -241,6 +251,8 @@ class App: UIViewController {
         taskListView.HideUndoButton()
         
         task.ScheduleAllNotifications()
+        
+        DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
     }
     
     func UndoDeletingTask(task: Task) {
@@ -281,6 +293,8 @@ class App: UIViewController {
         taskListView.HideUndoButton()
         
         task.ScheduleAllNotifications()
+        
+        DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
     }
     
     func UndoAction () {
@@ -403,6 +417,13 @@ class App: UIViewController {
         if index == App.selectedTaskListIndex-2 {
             SelectTaskList(index: index > 0 ? index+1 : 1, closeMenu: false)
         }
+        
+        if App.settingsConfig.defaultFolderID == taskList.id {
+            App.settingsConfig.defaultFolderID = App.mainTaskList.id
+            DispatchQueue.main.async {
+                App.instance.SaveSettings()
+            }
+        }
     }
     
     
@@ -446,6 +467,7 @@ class App: UIViewController {
         if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_settingsConfig") {
             if let decoded = try? JSONDecoder().decode(SettingsConfig.self, from: data) {
                 App.settingsConfig = decoded
+                App.settingsConfig.isNotificationsAllowed = App.settingsConfig.isNotificationsAllowed
             }
         }
         RemoveExcessCompletedTasks()
@@ -508,6 +530,30 @@ class App: UIViewController {
         for taskList in App.userTaskLists {
             while taskList.completedTasks.count > App.settingsConfig.maxNumberOfCompletedTasks {
                 taskList.completedTasks.removeLast()
+            }
+        }
+    }
+    
+    var defaultList: TaskList {
+        for taskList in App.userTaskLists {
+            if App.settingsConfig.defaultFolderID == taskList.id { return taskList }
+        }
+        
+        return App.mainTaskList
+    }
+    
+    func CancellAllTaskNotifications () {
+        NotificationHelper.CancelAllScheduledNotifications()
+    }
+    func ScheduleAllTaskNotifications () {
+        DispatchQueue.main.async {
+            for task in App.mainTaskList.upcomingTasks {
+                task.ScheduleAllNotifications()
+            }
+            for taskList in App.userTaskLists {
+                for task in taskList.upcomingTasks {
+                    task.ScheduleAllNotifications()
+                }
             }
         }
     }

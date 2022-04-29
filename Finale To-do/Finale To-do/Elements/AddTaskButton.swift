@@ -42,8 +42,7 @@ class AddTaskButton: UIView, UIDynamicTheme {
         self.addSubview(verticalLine)
         self.addSubview(horizontalLine)
         
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(CreateNewTask))
-        self.addGestureRecognizer(tapGesture)
+        self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CreateNewTask)))
     }
     
     func ReloadVisuals(color: UIColor) {

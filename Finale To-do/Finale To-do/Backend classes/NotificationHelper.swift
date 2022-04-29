@@ -7,6 +7,7 @@
 
 import Foundation
 import UserNotifications
+import UIKit
 
 class NotificationHelper {
     
@@ -27,7 +28,7 @@ class NotificationHelper {
 
             UNUserNotificationCenter.current().add(request, withCompletionHandler: { error in
                 if error == nil {
-                    print("Scheduled notification with ID: \(id).\nTrigger: \(trigger)")
+                    print("Scheduled notification with ID: \(id).")
                 } else {
                     print("Failed to schedule notification with ID: \(id).\nError: \(error?.localizedDescription ?? "unknown error")" )
                 }
@@ -84,6 +85,63 @@ class NotificationHelper {
     static func CancelNotification(id: String) {
         print("Canceled notification with ID: \(id)")
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
+    }
+    
+    static func RequestNotificationAccess (uiSwitch: UISwitch? = nil, settingsNotificationsPage: SettingsNotificationsPage? = nil) {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+            App.settingsConfig.isNotificationsAllowed = success
+            
+            if settingsNotificationsPage != nil && success {
+                DispatchQueue.main.async {
+                    settingsNotificationsPage?.ShowDailyUpdateSettings()
+                    settingsNotificationsPage?.AllowNotificationSuccess()
+                }
+            }
+            
+            if uiSwitch != nil && !success {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    if let appSettings = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(appSettings) {
+                        UIApplication.shared.open(appSettings)
+                    }
+                    uiSwitch?.isOn = false
+                }
+            }
+            
+        }
+    }
+    
+    static func CheckNotificationPermissionStatus () {
+        UNUserNotificationCenter.current().getNotificationSettings(completionHandler: { permission in
+                    switch permission.authorizationStatus  {
+                    case .authorized:
+                        print("User granted permission for notification")
+                    case .denied:
+                        if App.settingsConfig.isNotificationsAllowed { App.settingsConfig.isNotificationsAllowed = false }
+                        print("User denied notification permission")
+                    case .notDetermined:
+                        if App.settingsConfig.isNotificationsAllowed { App.settingsConfig.isNotificationsAllowed = false }
+                        print("Notification permission haven't been asked yet")
+                    case .provisional:
+                        // @available(iOS 12.0, *)
+                        print("The application is authorized to post non-interruptive user notifications.")
+                    case .ephemeral:
+                        // @available(iOS 14.0, *)
+                        print("The application is temporarily authorized to post notifications. Only available to app clips.")
+                    @unknown default:
+                        print("Unknow Status")
+                    }
+                })
+        UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { result in
+            print("Scheduled \(result.count) notification(s).")
+        })
+    }
+    
+    static func CancelAllScheduledNotifications () {
+        UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { result in
+            for r in result {
+                CancelNotification(id: r.identifier)
+            }
+        })
     }
     
 }

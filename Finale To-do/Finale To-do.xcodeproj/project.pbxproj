@@ -20,8 +20,8 @@
 		376AD0DB2808EFA300986B49 /* TaskSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DA2808EFA300986B49 /* TaskSlider.swift */; };
 		376AD0DD2808FD4C00986B49 /* Classes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DC2808FD4C00986B49 /* Classes.swift */; };
 		376AD0DF280901AF00986B49 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DE280901AF00986B49 /* Extensions.swift */; };
+		377C3914281B0F4C006F42BA /* SettingsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */; };
 		37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37983B8B2819F608007B241A /* SettingsViewController.swift */; };
-		37B750BE281A40E400164803 /* SettingsAppearanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B750BD281A40E400164803 /* SettingsAppearanceViewController.swift */; };
 		37E4CE012809AE3F002B4D87 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E4CE002809AE3F002B4D87 /* SideMenuView.swift */; };
 		37E4CE032809C9F3002B4D87 /* AddTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E4CE022809C9F3002B4D87 /* AddTaskButton.swift */; };
 		37F837C5280E11BF00F2A9C0 /* AddListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F837C4280E11BF00F2A9C0 /* AddListView.swift */; };
@@ -44,8 +44,8 @@
 		376AD0DA2808EFA300986B49 /* TaskSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskSlider.swift; sourceTree = "<group>"; };
 		376AD0DC2808FD4C00986B49 /* Classes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Classes.swift; sourceTree = "<group>"; };
 		376AD0DE280901AF00986B49 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageViewController.swift; sourceTree = "<group>"; };
 		37983B8B2819F608007B241A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		37B750BD281A40E400164803 /* SettingsAppearanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsAppearanceViewController.swift; sourceTree = "<group>"; };
 		37E4CE002809AE3F002B4D87 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		37E4CE022809C9F3002B4D87 /* AddTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskButton.swift; sourceTree = "<group>"; };
 		37F837C4280E11BF00F2A9C0 /* AddListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListView.swift; sourceTree = "<group>"; };
@@ -133,7 +133,7 @@
 			isa = PBXGroup;
 			children = (
 				37983B8B2819F608007B241A /* SettingsViewController.swift */,
-				37B750BD281A40E400164803 /* SettingsAppearanceViewController.swift */,
+				377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -216,7 +216,6 @@
 				376AD0C32808DC5900986B49 /* AppDelegate.swift in Sources */,
 				370A9DB32810CDDE00FC30A7 /* TaskSliderContextMenu.swift in Sources */,
 				375E5D7B280F7155001A289E /* CalendarViewController.swift in Sources */,
-				37B750BE281A40E400164803 /* SettingsAppearanceViewController.swift in Sources */,
 				376AD0C52808DC5900986B49 /* SceneDelegate.swift in Sources */,
 				371135F728138CE300B51322 /* NotificationHelper.swift in Sources */,
 				376AD0DB2808EFA300986B49 /* TaskSlider.swift in Sources */,
@@ -224,6 +223,7 @@
 				37F837C7280E657E00F2A9C0 /* Theme.swift in Sources */,
 				375E5D79280F1AA2001A289E /* UndoButton.swift in Sources */,
 				376AD0DF280901AF00986B49 /* Extensions.swift in Sources */,
+				377C3914281B0F4C006F42BA /* SettingsPageViewController.swift in Sources */,
 				37F837C5280E11BF00F2A9C0 /* AddListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

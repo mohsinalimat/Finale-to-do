@@ -149,6 +149,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         } else {
             dueTimePicker.setDate(Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date.now)!, animated: false)
         }
+        dueTimePicker.isEnabled = taskSlider.task.isDueTimeAssigned
         
         
         let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: rowWidth*0.5, height: rowHeight))

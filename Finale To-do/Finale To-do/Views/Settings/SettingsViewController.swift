@@ -12,8 +12,21 @@ import SwiftUI
 class SettingsNavigationController: UINavigationController {
     
     init() {
-        super.init(rootViewController: SettingsViewController() )
+        super.init(nibName: nil, bundle: nil)
+        
+        self.setViewControllers([SettingsMainPage()], animated: false)
     }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        if App.selectedTaskListIndex == 0 { App.instance.SelectTaskList(index: 0, closeMenu: false)}
+        DispatchQueue.main.async {
+            App.instance.SaveSettings()
+        }
+    }
+    
+    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -21,136 +34,175 @@ class SettingsNavigationController: UINavigationController {
     
 }
 
-class SettingsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class SettingsMainPage: SettingsPageViewController {
     
-    let padding = 16.0
-    let rowHeight = 46.0
-    
-    var tableView: UITableView!
-    
-    var SettingsSections: [SettingsSection]!
-    
-    
-    init () {
-        super.init(nibName: nil, bundle: nil)
-        self.SettingsSections = GetSetting()
-        self.view.backgroundColor = .systemGray6
-        self.title = "Settings"
-        
-        let viewWidth = self.view.frame.width
-        tableView = UITableView(frame: CGRect(x: 0, y: 0, width: viewWidth, height: rowHeight*30), style: .insetGrouped)
-        tableView.rowHeight = rowHeight
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.register(SettingsTableCell.self, forCellReuseIdentifier: SettingsTableCell.identifier)
-        
-        self.view.addSubview(tableView)
+    override init() {
+        super.init()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(Dismiss))
     }
     
-    
-    
-    
-//MARK: TableView
-    
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return SettingsSections.count
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return SettingsSections[section].options.count
+    @objc func Dismiss () {
+        self.dismiss(animated: true)
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableCell.identifier, for: indexPath) as! SettingsTableCell
-        
-        cell.Setup(settingsOption: SettingsSections[indexPath.section].options[indexPath.row])
-        
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return SettingsSections[section].title
-    }
-    
-    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
-        return SettingsSections[section].footer
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        let model = SettingsSections[indexPath.section].options[indexPath.row]
-        switch model {
-        case .inputFieldCell(let model):
-            model.OnPress()
-            break
-        case .pickerCell(let model):
-            model.OnPress()
-            break
-        case .switchCell(let model):
-            model.OnPress()
-            break
-        case .staitcCell(let model):
-            model.OnPress()
-            break
-        case .timePickerCell(let model):
-            model.OnPress()
-        case .closeButton(let onTap):
-            onTap()
-        }
-    }
-    
-    
-    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.section == 3 || indexPath.section == 4  { return true }
-        return false
-    }
-    
-    var defaultFolderMenu: UIMenu {
-        var items = [UIAction]()
-        
-        let mainTask = UIAction(title: App.mainTaskList.name, state: .off) { [self] _ in  }
-        items.append(mainTask)
-        for taskList in App.userTaskLists {
-            let item = UIAction(title: taskList.name, state: .off) { [self] _ in }
-            items.append(item)
-        }
-        return UIMenu(title: "", children: items.reversed())
-    }
-    
-    
-//MARK: Settings options setup
-    
-    func GetSetting() -> [SettingsSection] {
+    override func GetSettings() -> [SettingsSection] {
         return [
-            SettingsSection(title: "Personal", footer: "Finale uses your name to personalize your experience.", options: [
-                .inputFieldCell(model:
-                    SettingsInputFieldOption(title: "First name", inputFieldText: App.settingsConfig.userFirstName, icon: UIImage(systemName: "person.text.rectangle"), iconBackgroundColor: .systemGreen, OnPress: {})),
-                .inputFieldCell(model:
-                    SettingsInputFieldOption(title: "Last name", inputFieldText: App.settingsConfig.userLastName, icon: UIImage(systemName: "person.text.rectangle"), iconBackgroundColor: .systemRed, OnPress: {}))
+            SettingsSection(title: "Personal", footer: "", options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Name", preview: App.settingsConfig.userFullName, icon: UIImage(systemName: "person.text.rectangle.fill"), iconBackgroundColor: .systemGreen, nextPage: SettingsPersonalPage()))
+            ]),
+            SettingsSection(title: "Preferences", footer: "", options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Default list", preview: defaultFolderPreview, icon: UIImage(systemName: "folder.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsDefaultListPage())),
+                .navigationCell(model: SettingsNavigationOption(title: "Notifications", preview: "", icon: UIImage(systemName: "bell.badge.fill"), iconBackgroundColor: .systemRed, nextPage: SettingsNotificationsPage())),
+                .navigationCell(model: SettingsNavigationOption(title: "Appearance", preview: "", icon: UIImage(systemName: "circle.hexagongrid.circle"), iconBackgroundColor: .systemPurple, nextPage: SettingsPersonalPage()))
             ]),
             
-            SettingsSection(title: "", footer: "Tasks created from the 'overview' page will be added to this folder.", options: [
-                .pickerCell(model:
-                    SettingsPickerOption(title: "Default folder", currentSelection: 0, menu: defaultFolderMenu, icon: UIImage(systemName: "folder.fill"), iconBackgroundColor: .systemBlue, OnPress: {}))
-            ]),
-            
-            SettingsSection(title: "", footer: "Finale will send you a notification in the morning with your outlook for the day.", options: [
-                .switchCell(model:
-                    SettingsSwitchOption(title: "Morning update", isOn: App.settingsConfig.isMorningUpdateOn, icon: UIImage(systemName: "sun.max.fill"), iconBackgroundColor: .systemOrange, OnPress: {})),
-                .timePickerCell(model:
-                    SettingsTimePickerOption(title: "Update time", currentDate: App.settingsConfig.morningUpdateTime, icon: UIImage(systemName: "deskclock.fill"), iconBackgroundColor: .systemCyan, OnPress: {}))
-            ]),
-            
-            SettingsSection(title: "", footer: "", options: [
-                .staitcCell(model: SettingsStaticOption(title: "Appearance", preview: "", icon: UIImage(systemName: "circle.hexagongrid.circle"), iconBackgroundColor: .systemPurple) {
-                    self.show(SettingsAppearanceViewController(), sender: nil)
-                })
-            ]),
-            
-            SettingsSection(title: "", footer: "", options: [
-                .closeButton(onTap: { self.dismiss(animated: true) } )
+            SettingsSection(title: "Help", footer: "", options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Guide", preview: "", icon: UIImage(systemName: "doc.text.image.fill"), iconBackgroundColor: .systemOrange, nextPage: SettingsPersonalPage())),
+                .navigationCell(model: SettingsNavigationOption(title: "About", preview: "Version 1.0.2", icon: UIImage(systemName: "bookmark.fill"), iconBackgroundColor: .systemTeal, nextPage: SettingsPersonalPage())),
+                .navigationCell(model: SettingsNavigationOption(title: "Share", preview: "", icon: UIImage(systemName: "square.and.arrow.up.fill"), iconBackgroundColor: .systemYellow, nextPage: SettingsPersonalPage()))
             ])
         ]
+    }
+    
+    override var PageTitle: String {
+        return "Settings"
+    }
+    
+    var defaultFolderPreview: String {
+        for taskList in App.userTaskLists {
+            if App.settingsConfig.defaultFolderID == taskList.id {
+                return taskList.name
+            }
+        }
+        
+        return App.mainTaskList.name
+    }
+    
+}
+
+class SettingsPersonalPage: SettingsPageViewController {
+    
+    override func GetSettings() -> [SettingsSection] {
+        return [
+            SettingsSection(title: "", footer: "Finale uses your name to personalize your experience.", options: [
+                .inputFieldCell(model: SettingsInputFieldOption(title: "First name", inputFieldText: App.settingsConfig.userFirstName, icon: nil, iconBackgroundColor: .systemGreen) ),
+                .inputFieldCell(model: SettingsInputFieldOption(title: "Last name", inputFieldText: App.settingsConfig.userLastName, icon: nil, iconBackgroundColor: .systemGreen) )
+            ]),
+        ]
+    }
+    
+    override var PageTitle: String {
+        return "Name"
+    }
+    
+}
+
+class SettingsDefaultListPage: SettingsPageViewController {
+    
+    override func GetSettings() -> [SettingsSection] {
+        var options = [SettingsOptionType]()
+        options.append(.selectionCell(model: SettingsSelectionOption(title: App.mainTaskList.name, selectionID: 0, isSelected: App.settingsConfig.defaultFolderID == App.mainTaskList.id) {
+            self.SetDefaultFolder(index: 0)
+        }))
+        
+        for i in 0..<App.userTaskLists.count {
+            options.append(.selectionCell(model: SettingsSelectionOption(title: App.userTaskLists[i].name, selectionID: i, isSelected: App.settingsConfig.defaultFolderID == App.userTaskLists[i].id) {
+                self.SetDefaultFolder(index: i+1)
+            }))
+        }
+        
+        return [ SettingsSection(title: "", footer: "New tasks from the 'overview' page will be added to this list.", options: options) ]
+    }
+    
+    override var PageTitle: String {
+        return "Default list"
+    }
+    
+    func SetDefaultFolder(index: Int) {
+        App.settingsConfig.defaultFolderID = index == 0 ? App.mainTaskList.id : App.userTaskLists[index-1].id
+    }
+    
+}
+
+class SettingsNotificationsPage: SettingsPageViewController {
+    
+    override init() {
+        super.init()
+        
+        if App.settingsConfig.isNotificationsAllowed { ShowDailyUpdateSettings() }
+    }
+    
+    override func GetSettings() -> [SettingsSection] {
+        return [
+            SettingsSection(title: "", footer: "Finale will never send you unnecessary alerts, and will only send notifications that you set yourself.", options: [
+                .switchCell(model: SettingsSwitchOption(title: "Allow notifications", isOn: App.settingsConfig.isNotificationsAllowed) { sender in
+                    if sender.isOn {
+                        NotificationHelper.RequestNotificationAccess(uiSwitch: sender, settingsNotificationsPage: self)
+                    } else {
+                        self.HideDailyUpdateSettings()
+                        App.settingsConfig.isNotificationsAllowed = false
+                        App.instance.CancellAllTaskNotifications()
+                    }
+                })
+            ])
+        ]
+    }
+    
+    func ShowDailyUpdateSettings () {
+        if settingsSections.count > 1 { return }
+        
+        settingsSections.append(GetDailyUpdateSettings())
+        tableView.insertSections(IndexSet(integer: 1), with: .fade)
+        
+        if App.settingsConfig.isDailyUpdateOn { ShowDailyUpdateTime() }
+    }
+    
+    func AllowNotificationSuccess () {
+        App.instance.ScheduleAllTaskNotifications()
+    }
+    
+    func HideDailyUpdateSettings () {
+        if settingsSections.count == 1 { return }
+        
+        settingsSections.removeLast()
+        tableView.deleteSections(IndexSet(integer: 1), with: .fade)
+    }
+    
+    func GetDailyUpdateSettings () -> SettingsSection {
+        return SettingsSection(title: "", footer: "Finale will send you an overview of your tasks for the day", options: [
+            .switchCell(model: SettingsSwitchOption(title: "Daily overview", isOn: App.settingsConfig.isDailyUpdateOn) { sender in
+                App.settingsConfig.isDailyUpdateOn = sender.isOn
+                if App.settingsConfig.isDailyUpdateOn {
+                    self.ShowDailyUpdateTime()
+                } else {
+                    self.HideDailyUpdateTime()
+                }
+            })
+        ])
+    }
+    
+    func ShowDailyUpdateTime () {
+        if settingsSections.count == 1 { return}
+        if settingsSections[1].options.count == 2 { return }
+        
+        settingsSections[1].options.append(.timePickerCell(model: SettingsTimePickerOption(title: "Time", currentDate: App.settingsConfig.dailyUpdateTime)))
+        tableView.insertRows(at: [IndexPath(row: 1, section: 1)], with: .fade)
+    }
+    
+    func HideDailyUpdateTime() {
+        if settingsSections.count == 1 { return}
+        if settingsSections[1].options.count == 1 { return }
+        
+        settingsSections[1].options.removeLast()
+        tableView.deleteRows(at: [IndexPath(row: 1, section: 1)], with: .fade)
+    }
+    
+    @objc func AppBecameActive() {
+        ReloadSettings()
     }
     
     
@@ -161,11 +213,12 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
 }
 
 
+
 class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
     
     static let identifier: String = "SettingsCell"
     
-    let padding = 12.0
+    let padding = 16.0
     
     let titleLabel: UILabel = {
         let label = UILabel()
@@ -216,6 +269,21 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         datePicker.alpha = 0
         return datePicker
     }()
+    let previewLabel: UILabel = {
+        let label = UILabel()
+        label.numberOfLines = 1
+        label.textAlignment = .right
+        label.textColor = .systemGray
+        label.alpha = 0
+        return label
+    }()
+    let selectionImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.tintColor = .defaultColor
+        imageView.contentMode = .scaleAspectFit
+        imageView.alpha = 0
+        return imageView
+    }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: UITableViewCell.CellStyle.default, reuseIdentifier: reuseIdentifier)
@@ -227,6 +295,8 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         self.contentView.addSubview(inputField)
         self.contentView.addSubview(pickerButton)
         self.contentView.addSubview(timePicker)
+        self.contentView.addSubview(previewLabel)
+        self.contentView.addSubview(selectionImageView)
     }
     
     override func layoutSubviews() {
@@ -234,15 +304,15 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         let rowWidth = self.contentView.frame.width
         let rowHeight = self.contentView.frame.height
 
-        let iconContainerSize = contentView.frame.height-padding
-        iconContainer.frame = CGRect(x: padding, y: padding*0.5, width: iconContainerSize, height: iconContainerSize)
+        let iconContainerSize = iconView.image == nil ? 0 : contentView.frame.height-padding*0.9
+        iconContainer.frame = CGRect(x: padding, y: 0.5*(rowHeight-iconContainerSize), width: iconContainerSize, height: iconContainerSize)
         iconView.frame.size = CGSize(width: iconContainerSize*0.7, height: iconContainerSize*0.7)
         iconView.frame.origin = CGPoint(x: 0.5*(iconContainerSize-iconView.frame.width), y: 0.5*(iconContainerSize-iconView.frame.height))
 
         let titleWidth = titleLabel.text!.size(withAttributes:[.font: UIFont.preferredFont(forTextStyle: .body)]).width
-        titleLabel.frame = CGRect(x: iconContainer.frame.maxX + padding, y: 0, width: min(titleWidth, rowWidth-padding-iconContainerSize), height: rowHeight)
+        titleLabel.frame = CGRect(x: iconContainerSize == 0 ? padding : iconContainer.frame.maxX + padding, y: 0, width: min(titleWidth, rowWidth-padding-iconContainerSize), height: rowHeight)
         
-        let functionItemWidth = rowWidth-titleLabel.frame.maxX-padding*2
+        let functionItemWidth = rowWidth-titleLabel.frame.maxX-padding*(self.accessoryType == .none ? 2 : 1.3)
         switchView.frame.origin = CGPoint(x: rowWidth-switchView.frame.width-padding, y: 0.5*(rowHeight-switchView.frame.height))
         inputField.frame = CGRect(x: titleLabel.frame.maxX + padding, y: 0, width: functionItemWidth, height: rowHeight)
         inputField.delegate = self
@@ -250,16 +320,10 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         pickerButton.frame.origin = CGPoint(x: rowWidth-pickerButton.frame.width-padding, y: 0.5*(rowHeight-pickerButton.frame.height))
         timePicker.frame.size = CGSize(width: functionItemWidth+padding*0.7, height: timePicker.frame.height)
         timePicker.frame.origin = CGPoint(x: titleLabel.frame.maxX + padding, y: 0.5*(rowHeight-timePicker.frame.height))
+        previewLabel.frame = CGRect(x: titleLabel.frame.maxX + padding, y: 0, width: functionItemWidth, height: rowHeight)
         
-        
-        if titleLabel.alpha == 0 && iconContainer.alpha == 0 {
-            let closeLabel = UILabel(frame: contentView.frame)
-            closeLabel.text = "Close"
-            closeLabel.textColor = .white
-            closeLabel.textAlignment = .center
-            
-            contentView.addSubview(closeLabel)
-        }
+        let selectionImageSize = contentView.frame.height-padding*1.5
+        selectionImageView.frame = CGRect(x: rowWidth-selectionImageSize-padding, y: 0.5*(rowHeight-selectionImageSize), width: selectionImageSize, height: selectionImageSize)
     }
     
     func Setup(settingsOption: SettingsOptionType) {
@@ -287,30 +351,50 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
             iconContainer.backgroundColor = model.iconBackgroundColor
             switchView.isOn = model.isOn
             switchView.alpha = 1
+            OnSwitchChange = model.OnChange
+            switchView.addTarget(self, action: #selector(OnSwitchChageValueChange), for: .valueChanged)
             self.accessoryType = .none
             break
-        case .staitcCell(let model):
+        case .navigationCell(let model):
             titleLabel.text = model.title
             iconView.image = model.icon
             iconContainer.backgroundColor = model.iconBackgroundColor
+            previewLabel.text = model.preview
+            previewLabel.alpha = 1
             self.accessoryType = .disclosureIndicator
             break
-        case .timePickerCell(model: let model):
+        case .timePickerCell(let model):
             titleLabel.text = model.title
             iconView.image = model.icon
             iconContainer.backgroundColor = model.iconBackgroundColor
             timePicker.date = model.currentDate
             timePicker.alpha = 1
             self.accessoryType = .none
-        case .closeButton:
-            iconContainer.alpha = 0
-            titleLabel.alpha = 0
-            titleLabel.text = ""
-            self.backgroundColor = .defaultColor
-            break
+        case .selectionCell(let model):
+            titleLabel.text = model.title
+            iconView.image = model.icon
+            iconContainer.backgroundColor = model.iconBackgroundColor
+            selectionImageView.image = UIImage(systemName: model.isSelected ? "checkmark" : "")
+            selectionImageView.alpha = 1
         }
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        iconView.image = nil
+        titleLabel.text = ""
+        switchView.alpha = 0
+        inputField.alpha = 0
+        pickerButton.alpha = 0
+        timePicker.alpha = 0
+        previewLabel.alpha = 0
+        selectionImageView.alpha = 0
+    }
+    
+    var OnSwitchChange: ((_ sender: UISwitch) -> Void)!
+    @objc func OnSwitchChageValueChange (sender: UISwitch) {
+        OnSwitchChange(sender)
+    }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
@@ -320,7 +404,6 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         } else {
             App.settingsConfig.userLastName = textField.text!
         }
-        App.instance.SaveSettings()
         
         return true
     }
@@ -361,16 +444,15 @@ enum SettingsOptionType {
     case pickerCell(model: SettingsPickerOption)
     case timePickerCell(model: SettingsTimePickerOption)
     case switchCell(model: SettingsSwitchOption)
-    case staitcCell(model: SettingsStaticOption)
-    case closeButton(onTap: (()->Void))
+    case selectionCell(model: SettingsSelectionOption)
+    case navigationCell(model: SettingsNavigationOption)
 }
 
 struct SettingsInputFieldOption {
     let title: String
     var inputFieldText: String
     let icon: UIImage?
-    let iconBackgroundColor: UIColor
-    let OnPress: ( () -> Void )
+    let iconBackgroundColor: UIColor?
 }
 
 struct SettingsPickerOption {
@@ -378,36 +460,67 @@ struct SettingsPickerOption {
     var currentSelection: Int
     var menu: UIMenu
     let icon: UIImage?
-    let iconBackgroundColor: UIColor
-    let OnPress: ( () -> Void )
+    let iconBackgroundColor: UIColor?
 }
 
 struct SettingsTimePickerOption {
     let title: String
     var currentDate: Date
     let icon: UIImage?
-    let iconBackgroundColor: UIColor
-    let OnPress: ( () -> Void )
+    let iconBackgroundColor: UIColor?
+    
+    init (title: String, currentDate: Date, icon: UIImage? = nil, iconBackground: UIColor? = nil) {
+        self.title = title
+        self.currentDate = currentDate
+        self.icon = icon
+        self.iconBackgroundColor = iconBackground
+    }
 }
 
 struct SettingsSwitchOption {
     let title: String
     var isOn: Bool
     let icon: UIImage?
-    let iconBackgroundColor: UIColor
-    let OnPress: ( () -> Void )
+    let iconBackgroundColor: UIColor?
+    var OnChange: ( (_ sender: UISwitch) -> Void )
+    
+    init (title: String, isOn: Bool, icon: UIImage? = nil, iconBackground: UIColor? = nil, OnChange: @escaping ( (_ sender: UISwitch)->Void )) {
+        self.title = title
+        self.isOn = isOn
+        self.icon = icon
+        self.iconBackgroundColor = iconBackground
+        self.OnChange = OnChange
+    }
 }
 
-struct SettingsStaticOption {
+struct SettingsSelectionOption {
+    let title: String
+    var selectionID: Int
+    var isSelected: Bool
+    let icon: UIImage?
+    let iconBackgroundColor: UIColor?
+    let OnSelect: ( ()->Void )
+    
+    init (title: String, selectionID: Int, isSelected: Bool, icon: UIImage? = nil, iconBackground: UIColor? = nil, OnSelect: @escaping ( ()->Void )) {
+        self.title = title
+        self.selectionID = selectionID
+        self.isSelected = isSelected
+        self.icon = icon
+        self.iconBackgroundColor = iconBackground
+        self.OnSelect = OnSelect
+    }
+}
+
+struct SettingsNavigationOption {
     let title: String
     let preview: String
     let icon: UIImage?
     let iconBackgroundColor: UIColor
-    let OnPress: ( () -> Void )
+    let nextPage: SettingsPageViewController
 }
 
 struct SettingsSection {
     let title: String
     let footer: String?
-    let options: [SettingsOptionType]
+    var options: [SettingsOptionType]
 }
