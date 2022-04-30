@@ -14,6 +14,8 @@ class SettingsNavigationController: UINavigationController {
     init() {
         super.init(nibName: nil, bundle: nil)
         
+        overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        
         self.setViewControllers([SettingsMainPage()], animated: false)
     }
     
@@ -21,9 +23,7 @@ class SettingsNavigationController: UINavigationController {
         super.viewDidDisappear(animated)
         
         if App.selectedTaskListIndex == 0 { App.instance.SelectTaskList(index: 0, closeMenu: false)}
-        DispatchQueue.main.async {
-            App.instance.SaveSettings()
-        }
+        App.instance.SaveSettings()
     }
     
     
@@ -52,18 +52,18 @@ class SettingsMainPage: SettingsPageViewController {
     override func GetSettings() -> [SettingsSection] {
         return [
             SettingsSection(title: "Personal", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Name", preview: App.settingsConfig.userFullName, icon: UIImage(systemName: "person.text.rectangle.fill"), iconBackgroundColor: .systemGreen, nextPage: SettingsPersonalPage()))
+                .navigationCell(model: SettingsNavigationOption(title: "Name", icon: UIImage(systemName: "person.text.rectangle.fill"), iconBackgroundColor: .systemGreen, nextPage: SettingsPersonalPage(), SetPreview: {return App.settingsConfig.userFullName;} ))
             ]),
             SettingsSection(title: "Preferences", footer: "", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Default list", preview: defaultFolderPreview, icon: UIImage(systemName: "folder.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsDefaultListPage())),
-                .navigationCell(model: SettingsNavigationOption(title: "Notifications", preview: "", icon: UIImage(systemName: "bell.badge.fill"), iconBackgroundColor: .systemRed, nextPage: SettingsNotificationsPage())),
-                .navigationCell(model: SettingsNavigationOption(title: "Appearance", preview: "", icon: UIImage(systemName: "circle.hexagongrid.circle"), iconBackgroundColor: .systemPurple, nextPage: SettingsPersonalPage()))
+                .navigationCell(model: SettingsNavigationOption(title: "Default list", icon: UIImage(systemName: "folder.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsDefaultListPage(), SetPreview: { return self.defaultFolderPreview } )),
+                .navigationCell(model: SettingsNavigationOption(title: "Notifications", icon: UIImage(systemName: "bell.badge.fill"), iconBackgroundColor: .systemRed, nextPage: SettingsNotificationsPage(), SetPreview: {return ""})),
+                .navigationCell(model: SettingsNavigationOption(title: "Appearance", icon: UIImage(systemName: "circle.hexagongrid.circle"), iconBackgroundColor: .systemPurple, nextPage: SettingsAppearancePage(), SetPreview: {return ""}))
             ]),
             
             SettingsSection(title: "Help", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Guide", preview: "", icon: UIImage(systemName: "doc.text.image.fill"), iconBackgroundColor: .systemOrange, nextPage: SettingsPersonalPage())),
-                .navigationCell(model: SettingsNavigationOption(title: "About", preview: "Version 1.0.2", icon: UIImage(systemName: "bookmark.fill"), iconBackgroundColor: .systemTeal, nextPage: SettingsPersonalPage())),
-                .navigationCell(model: SettingsNavigationOption(title: "Share", preview: "", icon: UIImage(systemName: "square.and.arrow.up.fill"), iconBackgroundColor: .systemYellow, nextPage: SettingsPersonalPage()))
+                .navigationCell(model: SettingsNavigationOption(title: "Guide", icon: UIImage(systemName: "doc.text.image.fill"), iconBackgroundColor: .systemOrange, nextPage: SettingsPersonalPage(), SetPreview: {return ""})),
+                .navigationCell(model: SettingsNavigationOption(title: "About", icon: UIImage(systemName: "bookmark.fill"), iconBackgroundColor: .systemTeal, nextPage: SettingsPersonalPage(), SetPreview: {return ""})),
+                .navigationCell(model: SettingsNavigationOption(title: "Share", icon: UIImage(systemName: "square.and.arrow.up.fill"), iconBackgroundColor: .systemYellow, nextPage: SettingsPersonalPage(), SetPreview: {return ""}))
             ])
         ]
     }
@@ -120,7 +120,7 @@ class SettingsDefaultListPage: SettingsPageViewController {
     }
     
     override var PageTitle: String {
-        return "Default list"
+        return "Default List"
     }
     
     func SetDefaultFolder(index: Int) {
@@ -147,7 +147,7 @@ class SettingsNotificationsPage: SettingsPageViewController {
                     } else {
                         self.HideAllNotificationSettings()
                         App.settingsConfig.isNotificationsAllowed = false
-                        App.instance.CancellAllTaskNotifications()
+                        NotificationHelper.CancelAllScheduledNotifications()
                     }
                 })
             ])
@@ -155,61 +155,27 @@ class SettingsNotificationsPage: SettingsPageViewController {
     }
     
     func AllowNotificationSuccess () {
-        App.instance.ScheduleAllTaskNotifications()
+        NotificationHelper.ScheduleAllTaskNotifications()
     }
     
     func ShowAllNotificationSettings () {
         if settingsSections.count > 1 { return }
         
         settingsSections.append(contentsOf: GetAllNotificationSettings())
-        tableView.insertSections(IndexSet(1..<3), with: .fade)
-        
-        if App.settingsConfig.isDailyUpdateOn { ShowDailyUpdateTime() }
-        
-        tableView.layoutSubviews()
+        tableView.insertSections(IndexSet(integer: 1), with: .fade)
     }
     
     func HideAllNotificationSettings () {
         if settingsSections.count == 1 { return }
         
         settingsSections.removeLast()
-        settingsSections.removeLast()
-        tableView.deleteSections(IndexSet(1..<3), with: .fade)
+        tableView.deleteSections(IndexSet(integer: 1), with: .fade)
     }
     
     func GetAllNotificationSettings () -> [SettingsSection] {
         return [
-                SettingsSection(footer: "Finale will send you an overview of your tasks for the day", options: [
-                    .switchCell(model: SettingsSwitchOption(title: "Daily overview", isOn: App.settingsConfig.isDailyUpdateOn) { sender in
-                        App.settingsConfig.isDailyUpdateOn = sender.isOn
-                        if App.settingsConfig.isDailyUpdateOn {
-                            self.ShowDailyUpdateTime()
-                        } else {
-                            self.HideDailyUpdateTime()
-                        }
-                    })
-                ]),
-                
-                SettingsSection(options: [
-                    .appBadgeCount(model: SettingsAppBadgeCountView())
-                ], customHeight: SettingsAppBadgeCountView.height)
+            SettingsSection(options: [.customViewCell(model: SettingsAppBadgeCountView())], customHeight: SettingsAppBadgeCountView.height)
         ]
-    }
-    
-    func ShowDailyUpdateTime () {
-        if settingsSections.count == 1 { return}
-        if settingsSections[1].options.count == 2 { return }
-        
-        settingsSections[1].options.append(.timePickerCell(model: SettingsTimePickerOption(title: "Time", currentDate: App.settingsConfig.dailyUpdateTime)))
-        tableView.insertRows(at: [IndexPath(row: 1, section: 1)], with: .fade)
-    }
-    
-    func HideDailyUpdateTime() {
-        if settingsSections.count == 1 { return}
-        if settingsSections[1].options.count == 1 { return }
-        
-        settingsSections[1].options.removeLast()
-        tableView.deleteRows(at: [IndexPath(row: 1, section: 1)], with: .fade)
     }
     
     @objc func AppBecameActive() {
@@ -223,6 +189,47 @@ class SettingsNotificationsPage: SettingsPageViewController {
     
 }
 
+//MARK: Appearance Page
+
+
+class SettingsAppearancePage: SettingsPageViewController {
+    // Interface: System, Light, Dark
+    // Light theme
+    //      Standard, Colored (one primary color)
+    // Dark theme
+    //      Standard, Colored, True Black
+    // App logo
+    
+    override func GetSettings() -> [SettingsSection] {
+        return [
+            
+            SettingsSection(options: [.segmentedControlCell(model: SettingsSegmentedControlOption(title: "Interface", items: [InterfaceMode(rawValue: 0)!.str, InterfaceMode(rawValue: 1)!.str, InterfaceMode(rawValue: 2)!.str], selectedItem: App.settingsConfig.interface.rawValue) { sender in
+                
+                self.SwitchInterface(mode: InterfaceMode(rawValue: sender.selectedSegmentIndex)!)
+                
+            })]),
+            
+            SettingsSection(options: [.customViewCell(model: SettingsAppIconView())], customHeight: SettingsAppIconView.height)
+            
+        ]
+    }
+    
+    func SwitchInterface(mode: InterfaceMode) {
+        App.settingsConfig.interface = mode
+        
+        App.instance.overrideUserInterfaceStyle = mode == .System ? .unspecified : mode == .Light ? .light : .dark
+        navigationController?.overrideUserInterfaceStyle = App.instance.overrideUserInterfaceStyle
+        
+    }
+    
+    override var PageTitle: String {
+        return "Appearance"
+    }
+    
+}
+
+
+
 
 
 
@@ -234,8 +241,9 @@ enum SettingsOptionType {
     case switchCell(model: SettingsSwitchOption)
     case selectionCell(model: SettingsSelectionOption)
     case navigationCell(model: SettingsNavigationOption)
+    case segmentedControlCell(model: SettingsSegmentedControlOption)
     
-    case appBadgeCount(model: SettingsAppBadgeCountView)
+    case customViewCell(model: UIView)
 }
 
 struct SettingsInputFieldOption {
@@ -303,10 +311,28 @@ struct SettingsSelectionOption {
 
 struct SettingsNavigationOption {
     let title: String
-    let preview: String
     let icon: UIImage?
-    let iconBackgroundColor: UIColor
+    let iconBackgroundColor: UIColor?
     let nextPage: SettingsPageViewController
+    var SetPreview: (() -> String)
+}
+
+struct SettingsSegmentedControlOption {
+    let title: String
+    let icon: UIImage?
+    let iconBackgroundColor: UIColor?
+    let items: [String]
+    var selectedItem: Int
+    let OnValueChange: ((_ sender: UISegmentedControl)->Void)
+    
+    init (title: String, icon: UIImage? = nil, iconBackgroundColor: UIColor? = nil, items: [String], selectedItem: Int, OnValueChange: @escaping ((_ sender: UISegmentedControl)->Void)) {
+        self.title = title
+        self.icon = icon
+        self.iconBackgroundColor = iconBackgroundColor
+        self.items = items
+        self.selectedItem = selectedItem
+        self.OnValueChange = OnValueChange
+    }
 }
 
 struct SettingsSection {

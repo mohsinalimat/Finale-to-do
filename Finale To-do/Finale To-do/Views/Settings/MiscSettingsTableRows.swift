@@ -8,9 +8,11 @@
 import Foundation
 import UIKit
 
+//MARK: App Badge Count View
+
 class SettingsAppBadgeCountView: UIView {
     
-    static let height: CGFloat = 406
+    static let height: CGFloat = 356
     let selectionRowHeight = 50.0
     
     let padding = 16.0
@@ -30,7 +32,7 @@ class SettingsAppBadgeCountView: UIView {
         self.rowHeight = SettingsAppBadgeCountView.height
         super.init(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 0, height: rowHeight)))
         
-        titleLabel.text = "App badge number"
+        titleLabel.text = "App Badge Number"
         titleLabel.textColor = .label
         
         subtitleLabel.text = "The number shown on the app's icon."
@@ -80,36 +82,29 @@ class SettingsAppBadgeCountView: UIView {
     func SetupRows () {
         if selectionRows.count != 0 { return }
         
-        var i = 0
-        selectionRows.append(
-            SettingsSelectionRow(frame: CGRect(x: 0, y: Double(i)*selectionRowHeight, width: rowWidth, height: selectionRowHeight), title: "None", index: i, isSelected: true, isNone: true, onSelect: SelectOption, onDeselect: DeselectOption)
-        )
-        i += 1
-        selectionRows.append(
-            SettingsSelectionRow(frame: CGRect(x: 0, y: Double(i)*selectionRowHeight, width: rowWidth, height: selectionRowHeight), title: "Notifications", index: i, isSelected: false, isNone: false, onSelect: SelectOption, onDeselect: DeselectOption)
-        )
-        i += 1
-        selectionRows.append(
-            SettingsSelectionRow(frame: CGRect(x: 0, y: Double(i)*selectionRowHeight, width: rowWidth, height: selectionRowHeight), title: "Tasks today", index: i, isSelected: false, isNone: false, onSelect: SelectOption, onDeselect: DeselectOption)
-        )
-        i += 1
-        selectionRows.append(
-            SettingsSelectionRow(frame: CGRect(x: 0, y: Double(i)*selectionRowHeight, width: rowWidth, height: selectionRowHeight), title: "Overdue tasks", index: i, isSelected: false, isNone: false, onSelect: SelectOption, onDeselect: DeselectOption)
-        )
-        i += 1
-        selectionRows.append(
-            SettingsSelectionRow(frame: CGRect(x: 0, y: Double(i)*selectionRowHeight, width: rowWidth, height: selectionRowHeight), title: "Upcoming tasks", index: i, isSelected: false, isNone: false, onSelect: SelectOption, onDeselect: DeselectOption)
-        )
+        for i in 0..<4 {
+            selectionRows.append(
+                SettingsSelectionRow(frame: CGRect(x: 0, y: Double(i)*selectionRowHeight, width: rowWidth, height: selectionRowHeight), title: AppBadgeNumberType(rawValue: i)!.str, index: i, isSelected: App.settingsConfig.appBadgeNumberTypes.contains(AppBadgeNumberType(rawValue: i)!), isNone: i == 0, onSelect: SelectOption, onDeselect: DeselectOption)
+            )
+        }
     }
     
     func SelectOption(index: Int) {
         selectionRows.first?.isSelected = false
+        if App.settingsConfig.appBadgeNumberTypes.contains(.None) {
+            App.settingsConfig.appBadgeNumberTypes.remove(at: App.settingsConfig.appBadgeNumberTypes.firstIndex(of: .None)!)
+        }
         if index == 0 {
             for selectionRow in selectionRows {
                 selectionRow.isSelected = false
             }
+            App.settingsConfig.appBadgeNumberTypes.removeAll()
         }
         selectionRows[index].isSelected = true
+        
+        if !App.settingsConfig.appBadgeNumberTypes.contains(AppBadgeNumberType(rawValue: index)!) {
+            App.settingsConfig.appBadgeNumberTypes.append(AppBadgeNumberType(rawValue: index)!)
+        }
     }
     
     func DeselectOption (index: Int) {
@@ -118,6 +113,9 @@ class SettingsAppBadgeCountView: UIView {
         for row in selectionRows { nSelected += row.isSelected ? 1 : 0}
         if nSelected == 1 { return }
         selectionRows[index].isSelected = false
+        if App.settingsConfig.appBadgeNumberTypes.contains(AppBadgeNumberType(rawValue: index)!) {
+            App.settingsConfig.appBadgeNumberTypes.remove(at: App.settingsConfig.appBadgeNumberTypes.firstIndex(of: AppBadgeNumberType(rawValue: index)!)!)
+        }
     }
     
     
@@ -132,6 +130,8 @@ class SettingsAppBadgeCountView: UIView {
     
 }
 
+
+//MARK: Settings Selection Row
 
 class SettingsSelectionRow: UIView {
     
@@ -203,6 +203,105 @@ class SettingsSelectionRow: UIView {
     
     
     
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}
+
+
+//MARK: App Icon View
+
+class SettingsAppIconView: UIView {
+    
+    static let height: CGFloat = 152.8
+    
+    let padding = 16.0
+    var rowWidth: CGFloat!
+    let rowHeight: CGFloat
+    
+    let titleLabel = UILabel()
+    
+    init() {
+        self.rowHeight = SettingsAppBadgeCountView.height
+        super.init(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 0, height: rowHeight)))
+        
+        titleLabel.text = "App Icon"
+        titleLabel.textColor = .label
+        
+        self.addSubview(titleLabel)
+    }
+    
+   
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        rowWidth = superview!.frame.width
+        let paddedRowWidth = rowWidth - padding*2
+        self.frame.size.width = rowWidth
+        
+        titleLabel.frame = CGRect(x: padding, y: padding*0.8, width: paddedRowWidth, height: 18)
+        
+        let cellWidth = 100.0
+        let cellHeight = 90.0
+        
+        let scrollView = UIScrollView(frame: CGRect(x: 0, y: titleLabel.frame.maxY+padding, width: rowWidth, height: cellHeight + padding))
+        scrollView.contentSize = CGSize(width: cellWidth * Double(AppIcon.allCases.count), height: scrollView.frame.height)
+        
+        for i in 0..<AppIcon.allCases.count {
+            let cell = AppIconView(
+                frame: CGRect(x: Double(i)*cellWidth, y: 0, width: cellWidth, height: cellHeight),
+                icon: AppIcon.allCases[i]
+            )
+            scrollView.addSubview(cell)
+        }
+        
+        self.addSubview(scrollView)
+        
+    }
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class AppIconView: UIView  {
+    
+    let icon: AppIcon
+    
+    let padding = 16.0
+    
+    init(frame: CGRect, icon: AppIcon) {
+        self.icon = icon
+        super.init(frame: frame)
+        
+        let imageSize = 70.0
+        let imageView = UIImageView(frame: CGRect(x: 0.5*(frame.width-imageSize), y: 0, width: imageSize, height: imageSize))
+        imageView.image = icon.preview
+        imageView.layer.cornerRadius = 16
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.lightGray.cgColor
+        imageView.clipsToBounds = true
+        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(Tap)))
+        imageView.isUserInteractionEnabled = true
+        
+        let label = UILabel(frame: CGRect(x: 0, y: imageView.frame.maxY + padding*0.5, width: frame.width, height: 12))
+        label.text = icon.displayName
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 12)
+        
+        self.addSubview(imageView)
+        self.addSubview(label)
+    }
+    
+    @objc func Tap () {
+        AppIconManager.setIcon(icon)
+    }
     
     
     

@@ -18,6 +18,8 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
     
     var settingsSections: [SettingsSection]!
     
+    var indexPathToUpdate: IndexPath?
+    
     init () {
         super.init(nibName: nil, bundle: nil)
         ReloadSettings()
@@ -77,19 +79,15 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let model =  settingsSections[indexPath.section].options[indexPath.row]
+        
         switch model {
-        case .inputFieldCell(let model):
+        case .inputFieldCell(_):
             let cell = tableView.cellForRow(at: indexPath) as! SettingsTableCell
             cell.inputField.becomeFirstResponder()
             break
-        case .pickerCell(let model):
-            break
-        case .switchCell(let model):
-            break
         case .navigationCell(let model):
             show(model.nextPage, sender: self)
-            break
-        case .timePickerCell(let model):
+            indexPathToUpdate = indexPath
             break
         case .selectionCell(let model):
             model.OnSelect()
@@ -101,8 +99,7 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
             selectedCell.selectionImageView.image = UIImage(systemName: "checkmark")
             navigationController?.popViewController(animated: true)
             break
-        case .appBadgeCount(let model):
-            break
+        default: break
         }
     }
     
@@ -110,6 +107,20 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
         sender.cancelsTouchesInView = false
         tableView.endEditing(false)
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.view.endEditing(true)
+        if self.isMovingFromParent {
+            let prevPage = navigationController?.topViewController as! SettingsPageViewController
+            if prevPage.indexPathToUpdate != nil {
+                let cell = prevPage.tableView.cellForRow(at: prevPage.indexPathToUpdate!) as! SettingsTableCell
+                cell.ReloadPreview()
+            }
+        }
+        
+    }
+    
     
     
     
@@ -193,6 +204,9 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         imageView.alpha = 0
         return imageView
     }()
+    
+    var segmentedControl: UISegmentedControl?
+    
     let customViewContainer: UIView = {
         let view = UIView()
         view.alpha = 0
@@ -212,6 +226,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         self.contentView.addSubview(previewLabel)
         self.contentView.addSubview(selectionImageView)
         self.contentView.addSubview(customViewContainer)
+        
     }
     
     override func layoutSubviews() {
@@ -241,6 +256,8 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         selectionImageView.frame = CGRect(x: rowWidth-selectionImageSize-padding, y: 0.5*(rowHeight-selectionImageSize), width: selectionImageSize, height: selectionImageSize)
         
         customViewContainer.frame = CGRect(x: 0, y: 0, width: rowWidth, height: rowHeight)
+        
+        segmentedControl?.frame = CGRect(x: titleLabel.frame.maxX + padding, y: 0.5*padding, width: functionItemWidth, height: rowHeight-padding)
     }
     
     func Setup(settingsOption: SettingsOptionType) {
@@ -276,8 +293,9 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
             titleLabel.text = model.title
             iconView.image = model.icon
             iconContainer.backgroundColor = model.iconBackgroundColor
-            previewLabel.text = model.preview
+            previewLabel.text = model.SetPreview()
             previewLabel.alpha = 1
+            SetPreview = model.SetPreview
             self.accessoryType = .disclosureIndicator
             break
         case .timePickerCell(let model):
@@ -293,10 +311,19 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
             iconContainer.backgroundColor = model.iconBackgroundColor
             selectionImageView.image = UIImage(systemName: model.isSelected ? "checkmark" : "")
             selectionImageView.alpha = 1
-        case .appBadgeCount(let model):
+        case .customViewCell(let model):
             customViewContainer.addSubview(model)
             customViewContainer.alpha = 1
             selectionStyle = .none
+        case .segmentedControlCell(let model):
+            titleLabel.text = model.title
+            OnSegmentedControlChange = model.OnValueChange
+            segmentedControl = UISegmentedControl(items: model.items)
+            segmentedControl!.alpha = 1
+            segmentedControl?.addTarget(self, action: #selector(OnSegmentedControlValueChange), for: .valueChanged)
+            segmentedControl?.selectedSegmentIndex = model.selectedItem
+            selectionStyle = .none
+            self.contentView.addSubview(segmentedControl!)
         }
     }
     
@@ -311,8 +338,15 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         previewLabel.alpha = 0
         selectionImageView.alpha = 0
         customViewContainer.alpha = 0
+        segmentedControl?.alpha = 0
         self.selectionStyle = .default
         for subview in customViewContainer.subviews { subview.removeFromSuperview() }
+    }
+    
+    var SetPreview: (()->String)!
+    
+    func ReloadPreview () {
+        previewLabel.text = SetPreview()
     }
     
     var OnSwitchChange: ((_ sender: UISwitch) -> Void)!
@@ -320,15 +354,13 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         OnSwitchChange(sender)
     }
     
+    var OnSegmentedControlChange: ((_ sender: UISegmentedControl) -> Void)!
+    @objc func OnSegmentedControlValueChange (sender: UISegmentedControl) {
+        OnSegmentedControlChange(sender)
+    }
+    
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
-        
-        if titleLabel.text == "First name" {
-            App.settingsConfig.userFirstName = textField.text!
-        } else {
-            App.settingsConfig.userLastName = textField.text!
-        }
-        
         return true
     }
     
@@ -339,10 +371,19 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if textField.text?.isEmpty ?? true { return }
+        if textField.text?.isEmpty ?? true {
+            textField.text = titleLabel.text == "First name" ? App.settingsConfig.userFirstName : App.settingsConfig.userLastName
+            return
+        }
         
         if textField.text?.first == " " {
             textField.text?.removeFirst()
+        }
+        
+        if titleLabel.text == "First name" {
+            App.settingsConfig.userFirstName = textField.text!
+        } else {
+            App.settingsConfig.userLastName = textField.text!
         }
     }
     

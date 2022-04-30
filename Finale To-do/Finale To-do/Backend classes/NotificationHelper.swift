@@ -15,7 +15,7 @@ class NotificationHelper {
         
         for (notificationType, id) in task.notifications {
             let content = UNMutableNotificationContent()
-            content.body = task.name
+            content.body = "\(GetNotificationPrefix(notificationType: notificationType))\(task.name)"
             content.sound = UNNotificationSound.default
             
             if task.priority == .High { content.title = "Important"}
@@ -33,6 +33,32 @@ class NotificationHelper {
                     print("Failed to schedule notification with ID: \(id).\nError: \(error?.localizedDescription ?? "unknown error")" )
                 }
             })
+        }
+        
+    }
+    
+    static func GetNotificationPrefix (notificationType: NotificationType) -> String {
+        switch notificationType {
+        case .OnTime:
+            return ""
+        case .FiveMinBefore:
+            return "In 5 minutes: "
+        case .ThirtyMinBefore:
+            return "In 30 minutes: "
+        case .OneHourBefore:
+            return "In an hour: "
+        case .OneDayBefore:
+            return "Tomorrow: "
+        case .MorningOnTheDay:
+            return "Today: "
+        case .MorningOneDayPrior:
+            return "Tomorrow: "
+        case .MorningTwoDaysPrior:
+            return "In 2 days: "
+        case .MorningThreeDaysPrior:
+            return "In 3 days: "
+        case .MorningOneWeekPrior:
+            return "In a week: "
         }
     }
     
@@ -142,6 +168,61 @@ class NotificationHelper {
                 CancelNotification(id: r.identifier)
             }
         })
+    }
+    
+    static func ScheduleAllTaskNotifications () {
+        DispatchQueue.main.async {
+            for task in App.mainTaskList.upcomingTasks {
+                task.ScheduleAllNotifications()
+            }
+            for taskList in App.userTaskLists {
+                for task in taskList.upcomingTasks {
+                    task.ScheduleAllNotifications()
+                }
+            }
+        }
+    }
+    
+    static func UpdateAppBadge() {
+        var badgeNumber = 0
+        if App.settingsConfig.isNotificationsAllowed {
+            for type in App.settingsConfig.appBadgeNumberTypes {
+                switch type {
+                case .None:
+                    badgeNumber = 0
+                    break
+                case .TasksToday:
+                    let tasksToday = App.mainTaskList.upcomingTasks.filter { task in
+                        return task.isDateAssigned && Calendar.current.isDateInToday(task.dateAssigned)
+                    }
+                    badgeNumber += tasksToday.count
+                    for taskList in App.userTaskLists {
+                        let today = taskList.upcomingTasks.filter { task in
+                            return task.isDateAssigned && Calendar.current.isDateInToday(task.dateAssigned)
+                        }
+                        badgeNumber += today.count
+                    }
+                case .OverdueTasks:
+                    let tasksToday = App.mainTaskList.upcomingTasks.filter { task in
+                        return task.isOverdue
+                    }
+                    badgeNumber += tasksToday.count
+                    for taskList in App.userTaskLists {
+                        let today = taskList.upcomingTasks.filter { task in
+                            return task.isOverdue
+                        }
+                        badgeNumber += today.count
+                    }
+                case .UpcomingTasks:
+                    badgeNumber += App.mainTaskList.upcomingTasks.count
+                    for taskList in App.userTaskLists {
+                        badgeNumber += taskList.upcomingTasks.count
+                    }
+                }
+            }
+        }
+        
+        UIApplication.shared.applicationIconBadgeNumber = badgeNumber
     }
     
 }

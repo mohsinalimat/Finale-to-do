@@ -51,6 +51,7 @@ class App: UIViewController {
         App.instance = self
         
         LoadData()
+        SetInterfaceMode()
         
         let sideMenuFrame = CGRect(x: 0, y: 0, width: sideMenuWidth, height: UIScreen.main.bounds.height)
         sideMenuView = SideMenuView(frame: sideMenuFrame, app: self)
@@ -494,6 +495,7 @@ class App: UIViewController {
     
     @objc func AppMovedToBackground() {
         SaveData()
+        NotificationHelper.UpdateAppBadge()
     }
     
     @objc func AppBecameActive() {
@@ -542,20 +544,8 @@ class App: UIViewController {
         return App.mainTaskList
     }
     
-    func CancellAllTaskNotifications () {
-        NotificationHelper.CancelAllScheduledNotifications()
-    }
-    func ScheduleAllTaskNotifications () {
-        DispatchQueue.main.async {
-            for task in App.mainTaskList.upcomingTasks {
-                task.ScheduleAllNotifications()
-            }
-            for taskList in App.userTaskLists {
-                for task in taskList.upcomingTasks {
-                    task.ScheduleAllNotifications()
-                }
-            }
-        }
+    func SetInterfaceMode () {
+        App.instance.overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
     }
     
 }

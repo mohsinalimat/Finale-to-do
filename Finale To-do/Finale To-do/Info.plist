@@ -2,6 +2,40 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleIcons</key>
+	<dict>
+		<key>CFBundleAlternateIcons</key>
+		<dict>
+			<key>classicFilled</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>classicFilled</string>
+				</array>
+			</dict>
+			<key>darkmode</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>darkmode</string>
+				</array>
+			</dict>
+			<key>darkmodeFilled</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>darkmodeFilled</string>
+				</array>
+			</dict>
+		</dict>
+		<key>CFBundlePrimaryIcon</key>
+		<dict>
+			<key>CFBundleIconFiles</key>
+			<array>
+				<string>classic</string>
+			</array>
+		</dict>
+	</dict>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

@@ -196,22 +196,12 @@ struct SettingsConfig: Codable {
     
     var defaultFolderID: UUID = UUID()
     
-    var _isNotificationsAllowed: Bool = false
-    var isNotificationsAllowed: Bool {
-        get { return _isNotificationsAllowed }
-        set {
-            _isNotificationsAllowed = newValue
-            if !_isNotificationsAllowed {
-                isDailyUpdateOn = false
-                dailyUpdateTime = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date.now)!
-            }
-        }
-    }
-    var isDailyUpdateOn: Bool = false
-    var dailyUpdateTime: Date = Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date.now)!
+    var isNotificationsAllowed: Bool = false
+    var appBadgeNumberTypes: [AppBadgeNumberType] = [.OverdueTasks]
+    
+    var interface: InterfaceMode = .System
     
     var maxNumberOfCompletedTasks: Int = 50
-    
     
     var userFullName: String {
         return "\(userFirstName) \(userLastName)"
@@ -235,6 +225,43 @@ enum SortingPreference: Int, Codable {
     case ByTimeDue = 3
     case ByPriority = 4
     case ByName = 5
+}
+
+enum AppBadgeNumberType: Int, Codable {
+    case None = 0
+    case TasksToday = 1
+    case OverdueTasks = 2
+    case UpcomingTasks = 3
+    
+    var str: String {
+        switch self {
+        case .None:
+            return "None"
+        case .TasksToday:
+            return "Tasks today"
+        case .OverdueTasks:
+            return "Overdue tasks"
+        case .UpcomingTasks:
+            return "Upcoming tasks"
+        }
+    }
+}
+
+enum InterfaceMode: Int, Codable {
+    case System = 0
+    case Light = 1
+    case Dark = 2
+    
+    var str: String {
+        switch self {
+        case .System:
+            return "System"
+        case .Light:
+            return "Light"
+        case .Dark:
+            return "Dark"
+        }
+    }
 }
 
 enum TaskCodingKeys: CodingKey {
@@ -264,5 +291,42 @@ enum TaskListCodingKeys: CodingKey {
 protocol UIDynamicTheme {
     
     func SetThemeColors ()
+    
+}
+
+enum AppIcon: CaseIterable {
+   case classic, darkmode, classicFilled, darkmodeFilled
+    
+    var displayName: String {
+        switch self {
+        case .classic: return "Classic"
+        case .classicFilled: return "Classic Filled"
+        case .darkmode: return "Dark"
+        case .darkmodeFilled: return "Dark Filled"
+        }
+    }
+    
+    var name: String? {
+        switch self {
+        case .classic: return nil
+        case .classicFilled: return "classicFilled"
+        case .darkmode: return "darkmode"
+        case .darkmodeFilled: return "darkmodeFilled"
+        }
+    }
+
+    var preview: UIImage {
+        switch self {
+        case .classic:
+            return UIImage(imageLiteralResourceName: "classic@3x.png")
+        case .classicFilled:
+            return UIImage(imageLiteralResourceName: "classicFilled@3x.png")
+        case .darkmode:
+            return UIImage(imageLiteralResourceName: "darkmode@3x.png")
+        case .darkmodeFilled:
+            return UIImage(imageLiteralResourceName: "darkmodeFilled@3x.png")
+        }
+        
+    }
     
 }
