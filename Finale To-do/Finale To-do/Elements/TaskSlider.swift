@@ -92,12 +92,12 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         taskNameInputField.isEnabled = isEditing
         taskNameInputField.addTarget(self, action: #selector(DetectTextFieldChange), for: .editingChanged)
         
-        sliderView.backgroundColor = mainSliderColor
+        sliderView.backgroundColor = taskListColor
         sliderView.layer.cornerRadius = sliderCornerRadius
         sliderView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(Dragging)))
         sliderView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TapSlider)))
 
-        sliderHandle.backgroundColor = !task.isCompleted ? mainSliderHandleColor : .clear
+        sliderHandle.backgroundColor = !task.isCompleted ? taskListColor.dark : .clear
         sliderHandle.layer.cornerRadius = sliderCornerRadius*0.85
         sliderHandle.isUserInteractionEnabled = false
         
@@ -258,9 +258,9 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         taskNameInputField.resignFirstResponder()
         
         let color: UIColor
-        if App.selectedTaskListIndex == 0 { color = AppColors.actionButtonTaskListColor(taskListColor: .defaultColor) }
-        else if App.selectedTaskListIndex == 1 { color = AppColors.actionButtonTaskListColor(taskListColor: App.mainTaskList.primaryColor) }
-        else { color = AppColors.actionButtonTaskListColor(taskListColor: App.userTaskLists[App.selectedTaskListIndex-2].primaryColor) }
+        if App.selectedTaskListIndex == 0 { color = .defaultColor }
+        else if App.selectedTaskListIndex == 1 { color = App.mainTaskList.primaryColor }
+        else { color = App.userTaskLists[App.selectedTaskListIndex-2].primaryColor }
         
         let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
 
@@ -297,7 +297,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
     
     func SetTaskPriority (priority: TaskPriority) {
         task.priority = priority
-        SetThemeColors()
+        ReloadThemeColors()
     }
     
     
@@ -359,17 +359,10 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
     var sliderBackgroundColor: UIColor {
         if task.isCompleted { return AppColors.sliderCompletedBackgroundColor(taskListColor: taskListColor) }
         
-        return task.priority == .High ? AppColors.sliderHighPriorityBackgroundColor(taskListColor: taskListColor) : AppColors.sliderIncompletedBackgroundColor
+        return task.priority == .High ? AppColors.sliderHighPriorityBackgroundColor(taskListColor: taskListColor) : .systemGray6
     }
     
-    var mainSliderColor: UIColor {
-        return AppColors.sliderMainColor(taskListColor: taskListColor)
-    }
-    var mainSliderHandleColor: UIColor {
-        return AppColors.sliderMainHandleColor(taskListColor: taskListColor)
-    }
-    
-    func SetThemeColors() {
+    func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in
             sliderBackground.backgroundColor = sliderBackgroundColor
         }
@@ -378,8 +371,8 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
     func UpdateTaskListColor (newColor: UIColor) {
         taskListColor = newColor
         UIView.animate(withDuration: 0.25) { [self] in
-            sliderView.backgroundColor = mainSliderColor
-            sliderHandle.backgroundColor = !task.isCompleted ? mainSliderHandleColor : .clear
+            sliderView.backgroundColor = taskListColor
+            sliderHandle.backgroundColor = !task.isCompleted ? taskListColor.dark : .clear
             sliderBackground.backgroundColor = sliderBackgroundColor
         }
     }

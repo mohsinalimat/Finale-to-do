@@ -400,11 +400,11 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         taskSlider.HideCalendarView()
     }
     
-    func SetThemeColors() {
+    func ReloadThemeColors() {
         let color: UIColor
-        if App.selectedTaskListIndex == 0 { color = AppColors.actionButtonTaskListColor(taskListColor: .defaultColor) }
-        else if App.selectedTaskListIndex == 1 { color = AppColors.actionButtonTaskListColor(taskListColor: App.mainTaskList.primaryColor) }
-        else { color = AppColors.actionButtonTaskListColor(taskListColor: App.userTaskLists[App.selectedTaskListIndex-2].primaryColor) }
+        if App.selectedTaskListIndex == 0 { color = .defaultColor }
+        else if App.selectedTaskListIndex == 1 { color = App.mainTaskList.primaryColor }
+        else { color = App.userTaskLists[App.selectedTaskListIndex-2].primaryColor }
         accentColor = color
         UIView.animate(withDuration: 0.25) { [self] in
             calendarView.tintColor = accentColor

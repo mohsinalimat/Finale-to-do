@@ -209,7 +209,10 @@ class SettingsAppearancePage: SettingsPageViewController {
                 
             })]),
             
-            SettingsSection(options: [.customViewCell(model: SettingsAppIconView())], customHeight: SettingsAppIconView.height)
+            SettingsSection(title: "Light Theme", options: [.customViewCell(model: SettingsThemeView(type: .Light))], customHeight: SettingsThemeView.height),
+            SettingsSection(title: "Dark Theme", options: [.customViewCell(model: SettingsThemeView(type: .Dark))], customHeight: SettingsThemeView.height),
+            
+            SettingsSection(title: "App Icon", options: [.customViewCell(model: SettingsAppIconView())], customHeight: SettingsAppIconView.height)
             
         ]
     }

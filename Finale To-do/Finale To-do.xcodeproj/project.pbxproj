@@ -52,6 +52,7 @@
 		372B8A27281CE61F00117A72 /* classicFilled@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "classicFilled@3x.png"; sourceTree = "<group>"; };
 		372B8A28281CE61F00117A72 /* darkmode@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "darkmode@3x.png"; sourceTree = "<group>"; };
 		372B8A29281CE61F00117A72 /* darkmode@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "darkmode@2x.png"; sourceTree = "<group>"; };
+		372B8A38281E41E600117A72 /* Finale To-do.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Finale To-do.entitlements"; sourceTree = "<group>"; };
 		375E5D78280F1AA2001A289E /* UndoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoButton.swift; sourceTree = "<group>"; };
 		375E5D7A280F7155001A289E /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		376AD0BF2808DC5900986B49 /* Finale To-do.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Finale To-do.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -129,6 +130,7 @@
 		376AD0C12808DC5900986B49 /* Finale To-do */ = {
 			isa = PBXGroup;
 			children = (
+				372B8A38281E41E600117A72 /* Finale To-do.entitlements */,
 				372B8A21281CE61F00117A72 /* App Icons */,
 				371D998128146E270060CB34 /* Backend classes */,
 				376AD0D92808EF9600986B49 /* Elements */,
@@ -398,6 +400,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Finale To-do/Finale To-do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
@@ -418,7 +421,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -427,6 +430,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Finale To-do/Finale To-do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
@@ -447,7 +451,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

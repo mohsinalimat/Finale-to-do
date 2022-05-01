@@ -176,7 +176,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         let pickerButton = UIButton()
         pickerButton.showsMenuAsPrimaryAction = true
         pickerButton.layer.cornerRadius = 8
-        pickerButton.backgroundColor = AppColors.currentTheme == .Light ? .systemGray5 : .systemGray3
+        pickerButton.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray5 : .systemGray3
         pickerButton.setTitleColor(UIColor.label, for: .normal)
         pickerButton.alpha = 0
         pickerButton.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
@@ -390,7 +390,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
     
     func SetThemeColors() {
         UIView.animate(withDuration: 0.25) {
-            self.pickerButton.backgroundColor = AppColors.currentTheme == .Light ? .systemGray5 : .systemGray3
+            self.pickerButton.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray5 : .systemGray3
         }
     }
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

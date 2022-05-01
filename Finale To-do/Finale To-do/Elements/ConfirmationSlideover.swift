@@ -28,7 +28,7 @@ class ConfirmationSlideover: UIView, UIDynamicTheme {
         blackoutView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(Cancel)))
         
         containerView = UIView(frame: CGRect(x: 0, y: UIScreen.main.bounds.height+10, width: UIScreen.main.bounds.width, height: slideOverHeight))
-        containerView.backgroundColor = AppColors.tintedBackgroundColor
+        containerView.backgroundColor = ThemeManager.currentTheme.tintedBackgroundColor
         containerView.layer.cornerRadius = AppConfiguration.slideoverCornerRadius
         containerView.AddStandardShadow()
         
@@ -105,9 +105,9 @@ class ConfirmationSlideover: UIView, UIDynamicTheme {
         Dismiss()
     }
     
-    func SetThemeColors() {
+    func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in 
-            containerView.backgroundColor = AppColors.tintedBackgroundColor
+            containerView.backgroundColor = ThemeManager.currentTheme.tintedBackgroundColor
             confirmButton.backgroundColor = AppColors.actionButtonDestructiveColor
         }
     }

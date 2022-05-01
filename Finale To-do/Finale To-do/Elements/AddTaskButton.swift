@@ -15,16 +15,16 @@ class AddTaskButton: UIView, UIDynamicTheme {
     var horizontalLine: UIView!
     
     let originalSize: CGSize
-    var color: UIColor!
+    var tasklistColor: UIColor!
     
-    init(frame: CGRect, color: UIColor, app: App) {
+    init(frame: CGRect, tasklistColor: UIColor, app: App) {
         self.app = app
         self.originalSize = frame.size
-        self.color = color
+        self.tasklistColor = tasklistColor
         super.init(frame: frame)
         
         self.layer.cornerRadius = frame.height*0.5
-        self.backgroundColor = AppColors.actionButtonTaskListColor(taskListColor: color)
+        self.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: tasklistColor)
         self.layer.shadowRadius = 5
         self.layer.shadowOpacity = 0.5
         self.layer.shadowOffset = CGSize.zero
@@ -46,8 +46,8 @@ class AddTaskButton: UIView, UIDynamicTheme {
     }
     
     func ReloadVisuals(color: UIColor) {
-        self.color = AppColors.actionButtonTaskListColor(taskListColor: color)
-        self.backgroundColor = self.color
+        self.tasklistColor = color
+        self.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: tasklistColor)
     }
     
     @objc func CreateNewTask(sender: UITapGestureRecognizer) {
@@ -62,9 +62,9 @@ class AddTaskButton: UIView, UIDynamicTheme {
         app.CreateNewTask()
     }
     
-    func SetThemeColors() {
+    func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in
-            self.backgroundColor = AppColors.actionButtonTaskListColor(taskListColor: color)
+            self.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: tasklistColor)
         }
     }
     

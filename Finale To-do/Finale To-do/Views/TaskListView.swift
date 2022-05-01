@@ -18,6 +18,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     var contentView: UIView!
     var blurEffect: UIVisualEffectView!
     var colorPanelHeader: UIView!
+    var headerGradientLayer: CAGradientLayer!
     var hamburgerButton: UIButton!
     var sortButton: UIButton!
     var titleLabel: UILabel!
@@ -71,7 +72,11 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         header.addSubview(blurEffect)
         
         colorPanelHeader = UIView(frame: CGRect(x: 0, y: 0, width: frame.width, height: frame.height))
-//        colorPanelHeader.backgroundColor = AppColors.tasklistHeaderColor(taskListColor: taskLists[0].primaryColor)
+        headerGradientLayer = CAGradientLayer()
+        headerGradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
+        headerGradientLayer.endPoint = CGPoint(x: 1.3, y: -0.3)
+        headerGradientLayer.frame = colorPanelHeader.bounds
+        colorPanelHeader.layer.insertSublayer(headerGradientLayer, at:0)
         SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
         colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
         colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
@@ -80,7 +85,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         let hamburgerButtonSize = frame.width * 0.1
         hamburgerButton = UIButton(frame: CGRect(x: padding, y: frame.height*0.4, width: hamburgerButtonSize, height: hamburgerButtonSize))
-        hamburgerButton.tintColor = App.selectedTaskListIndex == 0 ? .label : .white
+        hamburgerButton.tintColor = headerElementsColor
         hamburgerButton.setImage(UIImage(systemName: "line.3.horizontal"), for: .normal)
         hamburgerButton.imageView?.contentMode = .scaleAspectFit
         hamburgerButton.contentVerticalAlignment = .fill
@@ -91,7 +96,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         let sortButtonSize = hamburgerButtonSize
         sortButton = UIButton(frame: CGRect(x: frame.width-sortButtonSize-padding, y: hamburgerButton.frame.origin.y, width: sortButtonSize, height: sortButtonSize))
-        sortButton.tintColor = App.selectedTaskListIndex == 0 ? .label : .white
+        sortButton.tintColor = headerElementsColor
         sortButton.setImage(UIImage(systemName: "arrow.up.arrow.down"), for: .normal)
         sortButton.contentVerticalAlignment = .fill
         sortButton.contentHorizontalAlignment = .fill
@@ -111,7 +116,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         titleLabel = UILabel(frame: CGRect(x: padding - titleWidth*0.5, y: hamburgerButton.frame.maxY + padding*0.45 + titleHeight*0.5, width: titleWidth, height: titleHeight))
         titleLabel.font = UIFont.systemFont(ofSize: 40, weight: .bold)
         titleLabel.text = App.selectedTaskListIndex == 0 ? "Hi, \(App.settingsConfig.userFirstName)" : taskLists[0].name
-        titleLabel.textColor = App.selectedTaskListIndex == 0 ? .label : .white
+        titleLabel.textColor = headerElementsColor
         titleLabel.adjustsFontSizeToFitWidth = true
         titleLabel.layer.anchorPoint = CGPoint(x: 0, y: 1)
         originalTitlePositionY = titleLabel.frame.origin.y
@@ -138,6 +143,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         tableView.dropDelegate = self
         tableView.dragInteractionEnabled = true
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TouchedTable)))
+        tableView.showsVerticalScrollIndicator = false
         
         contentView.addSubview(tableView)
         
@@ -147,7 +153,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         let addTaskButtonSize = 56.0
         originalAddTaskPositionY = frame.height-addTaskButtonSize-padding*3
-        addTaskButton = AddTaskButton(frame: CGRect(x: frame.width-addTaskButtonSize-padding, y: originalAddTaskPositionY, width: addTaskButtonSize, height: addTaskButtonSize), color: .defaultColor, app: app)
+        addTaskButton = AddTaskButton(frame: CGRect(x: frame.width-addTaskButtonSize-padding, y: originalAddTaskPositionY, width: addTaskButtonSize, height: addTaskButtonSize), tasklistColor: App.selectedTaskListIndex == 0 ? .defaultColor : taskLists[0].primaryColor, app: app)
         
         contentView.addSubview(addTaskButton)
         
@@ -155,14 +161,16 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func SetHeaderGradient(color: UIColor) {
-        colorPanelHeader.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
+        let firstColor = ThemeManager.currentTheme.tasklistHeaderColor(tasklistColor: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
+        let secondColor = ThemeManager.currentTheme.tasklistHeaderGradientSecondaryColor(tasklistColor: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
+        headerGradientLayer.colors = [firstColor.cgColor, secondColor.cgColor]
+    }
+    
+    var headerElementsColor: UIColor {
+        if App.selectedTaskListIndex != 0 { return .white }
         
-        let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [AppColors.tasklistHeaderColor(taskListColor: color).cgColor, color == UIColor.clear ? color : AppColors.tasklistHeaderGradientSecondaryColor(taskListColor: color).cgColor]
-        gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
-        gradientLayer.endPoint = CGPoint(x: 1.3, y: -0.3)
-        gradientLayer.frame = colorPanelHeader.bounds
-        colorPanelHeader.layer.insertSublayer(gradientLayer, at:0)
+        if ThemeManager.currentTheme.usesDynamicColors { return .label }
+        else { return .white }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -378,11 +386,10 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         tableView.setContentOffset(CGPoint(x: 0, y: tableView.frame.minY), animated: false)
         originalTableContentOffsetY = tableView.contentOffset.y
         titleLabel.text = App.selectedTaskListIndex == 0 ? "Hi, \(App.settingsConfig.userFirstName)" : taskLists[0].name
-        titleLabel.textColor = App.selectedTaskListIndex == 0 ? .label : .white
-        hamburgerButton.tintColor = App.selectedTaskListIndex == 0 ? .label : .white
-        sortButton.tintColor = App.selectedTaskListIndex == 0 ? .label : .white
+        titleLabel.textColor = headerElementsColor
+        hamburgerButton.tintColor = headerElementsColor
+        sortButton.tintColor = headerElementsColor
         sortButton.menu = sortButtonMenu
-//        colorPanelHeader.backgroundColor = AppColors.tasklistHeaderColor(taskListColor: taskLists[0].primaryColor)
         SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
         colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
         colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
@@ -414,7 +421,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         if undoButton != nil { return }
         
-        undoButton = UndoButton(frame: CGRect(x: -addTaskButton.frame.width - 10, y: addTaskButton.frame.origin.y, width: addTaskButton.frame.width, height: addTaskButton.frame.height), color: addTaskButton.backgroundColor!)
+        undoButton = UndoButton(frame: CGRect(x: -addTaskButton.frame.width - 10, y: addTaskButton.frame.origin.y, width: addTaskButton.frame.width, height: addTaskButton.frame.height), tasklistColor: addTaskButton.backgroundColor!)
         
         contentView.addSubview(undoButton!)
         
@@ -444,12 +451,14 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         currentSliderEditing = nil
     }
     
-    func SetThemeColors() {
+    func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in
             SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
-//            colorPanelHeader.backgroundColor = AppColors.tasklistHeaderColor(taskListColor: taskLists[0].primaryColor)
             colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
             colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
+            titleLabel.textColor = headerElementsColor
+            hamburgerButton.tintColor = headerElementsColor
+            sortButton.tintColor = headerElementsColor
         }
     }
     
@@ -756,14 +765,14 @@ class ClipboardIcon: UIView, UIDynamicTheme {
     }
     
     func ChangeColor(color: UIColor) {
-        board.backgroundColor = AppColors.tasklistPlaceholderSecondaryColor(color: color)
-        verticalLine.backgroundColor = AppColors.tasklistPlaceholderPrimaryColor(color: color)
-        horizontalLine.backgroundColor = AppColors.tasklistPlaceholderPrimaryColor(color: color)
-        clipper.backgroundColor = AppColors.tasklistPlaceholderPrimaryColor(color: color)
-        clipperCircle.backgroundColor = AppColors.tasklistPlaceholderPrimaryColor(color: color)
+        board.backgroundColor = ThemeManager.currentTheme.interface == .Light ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: color).light : ThemeManager.currentTheme.primaryElementColor(tasklistColor: color).dark
+        verticalLine.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: color)
+        horizontalLine.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: color)
+        clipper.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: color)
+        clipperCircle.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: color)
     }
     
-    func SetThemeColors() {
+    func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in
             ChangeColor(color: color)
             clipperCircleInside.backgroundColor = .systemBackground

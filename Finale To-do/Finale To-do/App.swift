@@ -51,7 +51,8 @@ class App: UIViewController {
         App.instance = self
         
         LoadData()
-        SetInterfaceMode()
+        App.instance.overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
         
         let sideMenuFrame = CGRect(x: 0, y: 0, width: sideMenuWidth, height: UIScreen.main.bounds.height)
         sideMenuView = SideMenuView(frame: sideMenuFrame, app: self)
@@ -314,6 +315,7 @@ class App: UIViewController {
         sideMenuView.overviewMenuItem.ReloadVisuals()
         sideMenuView.tableView.reloadData()
         
+        taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: false)
         taskListView.taskLists = index == 0 ? allTaskLists : index == 1 ? [App.mainTaskList] : [App.userTaskLists[index-2]]
         taskListView.ReloadView()
         
@@ -453,7 +455,7 @@ class App: UIViewController {
     func LoadData () {
         overviewSortingPreference = SortingPreference(rawValue: UserDefaults.standard.integer(forKey: "FINALE_DEV_APP_overviewSortingPreference"))
         if overviewSortingPreference == .Unsorted { overviewSortingPreference = .ByList }
-        
+
         if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_mainTaskList") {
             if let decoded = try? JSONDecoder().decode(TaskList.self, from: data) {
                 App.mainTaskList = decoded
@@ -464,7 +466,7 @@ class App: UIViewController {
                 App.userTaskLists = decoded
             }
         }
-        
+
         if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_settingsConfig") {
             if let decoded = try? JSONDecoder().decode(SettingsConfig.self, from: data) {
                 App.settingsConfig = decoded
@@ -483,8 +485,6 @@ class App: UIViewController {
         if let encoded = try? JSONEncoder().encode(App.userTaskLists) {
             UserDefaults.standard.set(encoded, forKey: "FINALE_DEV_APP_userTaskLists")
         }
-        
-        
     }
     
     func SaveSettings () {
@@ -504,12 +504,13 @@ class App: UIViewController {
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+        ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
         SetSubviewColors(of: self.view)
     }
     
     func SetSubviewColors(of view: UIView) {
         if let dynamicThemeView = view as? UIDynamicTheme  {
-            dynamicThemeView.SetThemeColors()
+            dynamicThemeView.ReloadThemeColors()
         }
         
         for subview in view.subviews {
@@ -542,10 +543,6 @@ class App: UIViewController {
         }
         
         return App.mainTaskList
-    }
-    
-    func SetInterfaceMode () {
-        App.instance.overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
     }
     
 }

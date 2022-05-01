@@ -200,11 +200,22 @@ struct SettingsConfig: Codable {
     var appBadgeNumberTypes: [AppBadgeNumberType] = [.OverdueTasks]
     
     var interface: InterfaceMode = .System
+    var selectedLightThemeIndex: Int = 0
+    var selectedDarkThemeIndex: Int = 0
+    var selectedIcon: AppIcon = .classic
     
     var maxNumberOfCompletedTasks: Int = 50
     
     var userFullName: String {
         return "\(userFirstName) \(userLastName)"
+    }
+    
+    func GetCurrentTheme() -> AppTheme {
+        var mode = interface
+        if mode == .System {
+            mode = UITraitCollection.current.userInterfaceStyle == .light ? .Light : .Dark
+        }
+        return mode == .Light ? ThemeManager.lightThemes[selectedLightThemeIndex] : ThemeManager.darkThemes[selectedDarkThemeIndex]
     }
 }
 
@@ -290,12 +301,15 @@ enum TaskListCodingKeys: CodingKey {
 
 protocol UIDynamicTheme {
     
-    func SetThemeColors ()
+    func ReloadThemeColors ()
     
 }
 
-enum AppIcon: CaseIterable {
-   case classic, darkmode, classicFilled, darkmodeFilled
+enum AppIcon: Int, Codable, CaseIterable {
+    case classic = 0
+    case darkmode = 1
+    case classicFilled = 2
+    case darkmodeFilled = 3
     
     var displayName: String {
         switch self {
@@ -329,4 +343,23 @@ enum AppIcon: CaseIterable {
         
     }
     
+}
+
+
+enum AppThemeEnum: Int, Codable, CaseIterable {
+    case ClassicLight = 0
+    case ColoredLight = 1
+    case ClassicDark = 2
+    case ColoredDark = 3
+    case TrueBlack = 4
+    
+    var str: String {
+        switch self {
+        case .ClassicLight: return "Classic"
+        case .ColoredLight: return "Colored"
+        case .ClassicDark: return "Classic"
+        case .ColoredDark: return "Colored"
+        case .TrueBlack: return "True Black"
+        }
+    }
 }

@@ -35,7 +35,7 @@ class AddListView: UIView, UITextFieldDelegate {
         
         contentView = UIView(frame: CGRect(x: 0, y: UIScreen.main.bounds.height+10, width: frame.width, height: frame.height))
         contentView.layer.cornerRadius = 20
-        contentView.backgroundColor = AppColors.tintedBackgroundColor
+        contentView.backgroundColor = ThemeManager.currentTheme.tintedBackgroundColor
         contentView.AddStandardShadow()
         
         let panelWidth = (frame.width-padding*2)*0.8-padding
@@ -45,7 +45,7 @@ class AddListView: UIView, UITextFieldDelegate {
         let leftPadding = 8.0
         
         let panel = UIView (frame: CGRect(x: padding, y: padding, width: panelWidth, height: rowHeight))
-        panel.backgroundColor = AppColors.sidemenuSelectedItemColor
+        panel.backgroundColor = ThemeManager.currentTheme.sidemenuSelectionColor
         panel.layer.cornerRadius = 10
         
         inputField = UITextField(frame: CGRect(x: iconWidth, y: 0, width: inputFieldWidth-leftPadding*2, height: rowHeight))
@@ -77,7 +77,7 @@ class AddListView: UIView, UITextFieldDelegate {
         createButton = UIButton(frame: CGRect(x: panel.frame.maxX + padding, y: panel.frame.origin.y, width: createButtonWidth, height: rowHeight))
         createButton.layer.cornerRadius = 10
         createButton.isEnabled = inputField.text != ""
-        createButton.backgroundColor = AppColors.actionButtonPrimaryColor
+        createButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: taskList.primaryColor)
         createButton.alpha = createButton.isEnabled ? 1 : 0.5
         createButton.addTarget(self, action: #selector(CreateOrUpdateTaskList), for: .touchUpInside)
         
@@ -245,7 +245,7 @@ class ColorIconPickerView: UIView {
         let newFrame = CGRect(x: frame.origin.x, y: frame.origin.y-((colorContainerHeight+iconContainerHeight)+padding*4-frame.height), width: frame.width, height: (colorContainerHeight+iconContainerHeight)+padding*4)
         super.init(frame: newFrame)
         
-        self.backgroundColor = AppColors.sidemenuSelectedItemColor
+        self.backgroundColor = ThemeManager.currentTheme.sidemenuSelectionColor
         self.layer.cornerRadius = 10
         
         let colorsContainer = DrawSwatches(prevFrameMaxY: 0, swatchSize: swatchSize, nRows: 1, nColumns: 8, spacing: spacing, containerWidth: containerWidth, containerHeight: colorContainerHeight, color: true)

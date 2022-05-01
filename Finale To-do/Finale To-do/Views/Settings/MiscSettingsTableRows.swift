@@ -217,56 +217,62 @@ class SettingsSelectionRow: UIView {
 
 class SettingsAppIconView: UIView {
     
-    static let height: CGFloat = 152.8
+    static let height: CGFloat = 122.0
     
     let padding = 16.0
-    var rowWidth: CGFloat!
-    let rowHeight: CGFloat
+    let cellWidth = 100.0
+    let cellHeight = 90.0
     
-    let titleLabel = UILabel()
+    var rowWidth: CGFloat!
+    var rowHeight: CGFloat!
+    
+    var allIcons = [AppIconView]()
+    var scrollView = UIScrollView()
     
     init() {
-        self.rowHeight = SettingsAppBadgeCountView.height
-        super.init(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 0, height: rowHeight)))
+        super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         
-        titleLabel.text = "App Icon"
-        titleLabel.textColor = .label
+        self.addSubview(scrollView)
         
-        self.addSubview(titleLabel)
-    }
-    
-   
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
         
-        rowWidth = superview!.frame.width
-        let paddedRowWidth = rowWidth - padding*2
-        self.frame.size.width = rowWidth
-        
-        titleLabel.frame = CGRect(x: padding, y: padding*0.8, width: paddedRowWidth, height: 18)
-        
-        let cellWidth = 100.0
-        let cellHeight = 90.0
-        
-        let scrollView = UIScrollView(frame: CGRect(x: 0, y: titleLabel.frame.maxY+padding, width: rowWidth, height: cellHeight + padding))
-        scrollView.contentSize = CGSize(width: cellWidth * Double(AppIcon.allCases.count), height: scrollView.frame.height)
         
         for i in 0..<AppIcon.allCases.count {
             let cell = AppIconView(
                 frame: CGRect(x: Double(i)*cellWidth, y: 0, width: cellWidth, height: cellHeight),
-                icon: AppIcon.allCases[i]
+                icon: AppIcon.allCases[i],
+                isSelected:  App.settingsConfig.selectedIcon == AppIcon.allCases[i],
+                parentView: self
             )
+            allIcons.append(cell)
             scrollView.addSubview(cell)
         }
-        
-        self.addSubview(scrollView)
-        
     }
-    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        rowHeight = SettingsAppBadgeCountView.height
+        rowWidth = superview!.frame.width
+        self.frame.size = CGSize(width: rowWidth, height: rowHeight)
+        
+        
+        scrollView.frame = CGRect(x: 0, y: padding, width: rowWidth, height: cellHeight + padding)
+        scrollView.contentSize = CGSize(width: cellWidth * Double(AppIcon.allCases.count), height: scrollView.frame.height)
+    }
+    
+    func SelectIcon(icon: AppIcon) {
+        AppIconManager.setIcon(icon)
+        App.settingsConfig.selectedIcon = icon
+        App.instance.SaveSettings()
+        
+        for iconCell in allIcons {
+            if iconCell.icon == icon { iconCell.SelectVisuals() }
+            else { iconCell.DeselectVisuals() }
+        }
     }
 }
 
@@ -276,16 +282,30 @@ class AppIconView: UIView  {
     
     let padding = 16.0
     
-    init(frame: CGRect, icon: AppIcon) {
+    var _isSelected: Bool = false
+    var isSelected: Bool {
+        get {
+            return _isSelected
+        }
+        set {
+            _isSelected = newValue
+            if _isSelected { SelectVisuals() }
+            else { DeselectVisuals() }
+        }
+    }
+    
+    let imageView = UIImageView()
+    let parentView: SettingsAppIconView
+    
+    init(frame: CGRect, icon: AppIcon, isSelected: Bool, parentView: SettingsAppIconView) {
         self.icon = icon
+        self.parentView = parentView
         super.init(frame: frame)
         
         let imageSize = 70.0
-        let imageView = UIImageView(frame: CGRect(x: 0.5*(frame.width-imageSize), y: 0, width: imageSize, height: imageSize))
+        imageView.frame = CGRect(x: 0.5*(frame.width-imageSize), y: 0, width: imageSize, height: imageSize)
         imageView.image = icon.preview
         imageView.layer.cornerRadius = 16
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.lightGray.cgColor
         imageView.clipsToBounds = true
         imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(Tap)))
         imageView.isUserInteractionEnabled = true
@@ -297,12 +317,204 @@ class AppIconView: UIView  {
         
         self.addSubview(imageView)
         self.addSubview(label)
+        self.isSelected = isSelected
     }
     
     @objc func Tap () {
-        AppIconManager.setIcon(icon)
+        parentView.SelectIcon(icon: icon)
     }
     
+    func SelectVisuals() {
+        imageView.layer.borderWidth = 3
+        imageView.layer.borderColor = UIColor.defaultColor.cgColor
+    }
+    
+    func DeselectVisuals() {
+        imageView.layer.borderWidth = 1
+        imageView.layer.borderColor = UIColor.lightGray.cgColor
+    }
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}
+
+
+//MARK: Light theme
+
+class SettingsThemeView: UIView {
+    
+    static let height: CGFloat = 122.0
+    
+    let padding = 16.0
+    let cellWidth = 130.0
+    let cellHeight = 90.0
+    
+    var rowWidth: CGFloat!
+    var rowHeight: CGFloat!
+    
+    var themeCells = [AppThemePreviewView]()
+    var scrollView = UIScrollView()
+    
+    let type: InterfaceMode
+    let themes: [AppTheme]
+    
+    init(type: InterfaceMode) {
+        self.type = type
+        self.themes = type == .Dark ? ThemeManager.darkThemes : ThemeManager.lightThemes
+        super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+        
+        self.addSubview(scrollView)
+        
+        for i in 0..<themes.count {
+            let cell = AppThemePreviewView(
+                frame: CGRect(x: Double(i)*cellWidth, y: 0, width: cellWidth, height: cellHeight),
+                theme: themes[i],
+                isSelected: type == .Light ? App.settingsConfig.selectedLightThemeIndex == i : App.settingsConfig.selectedDarkThemeIndex == i,
+                parentView: self)
+            themeCells.append(cell)
+            scrollView.addSubview(cell)
+        }
+    }
+    
+    
+    
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        rowHeight = SettingsAppBadgeCountView.height
+        rowWidth = superview!.frame.width
+        self.frame.size = CGSize(width: rowWidth, height: rowHeight)
+        
+        scrollView.frame = CGRect(x: 0, y: padding, width: rowWidth, height: cellHeight + padding)
+        scrollView.contentSize = CGSize(width: cellWidth * Double(themes.count), height: scrollView.frame.height)
+    }
+    
+    func SelectTheme(theme: AppTheme) {
+        ThemeManager.SetTheme(theme: theme)
+        
+        for themeCell in themeCells {
+            if themeCell.theme == theme { themeCell.SelectVisuals() }
+            else { themeCell.DeselectVisuals() }
+        }
+    }
+    
+    
+    
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+
+class AppThemePreviewView: UIView  {
+    
+    let theme: AppTheme
+    
+    let padding = 16.0
+    
+    var _isSelected: Bool = false
+    var isSelected: Bool {
+        get {
+            return _isSelected
+        }
+        set {
+            _isSelected = newValue
+            if _isSelected { SelectVisuals() }
+            else { DeselectVisuals() }
+        }
+    }
+    
+    let parentView: SettingsThemeView
+    
+    let gradientLayer = CAGradientLayer()
+    let previewBackground = UIView()
+    let previewHeader = UIView()
+    let sidemenuPreview = UIView()
+    let actionButton = UIView()
+    
+    init(frame: CGRect, theme: AppTheme, isSelected: Bool, parentView: SettingsThemeView) {
+        self.parentView = parentView
+        self.theme = theme
+        super.init(frame: frame)
+        
+        let previewWidth = 100.0
+        let previewHeight = 70.0
+        previewBackground.frame = CGRect(x: 0.5*(frame.width-previewWidth), y: 0, width: previewWidth, height: previewHeight)
+        previewBackground.layer.cornerRadius = 16
+        previewBackground.clipsToBounds = true
+        
+        let sidemenuWidth = previewWidth*0.2
+        sidemenuPreview.frame = CGRect(x: 0, y: 0, width: previewWidth*0.2, height: previewHeight)
+        
+        previewHeader.frame = CGRect(x: sidemenuWidth, y: 0, width: previewWidth-sidemenuWidth, height: previewHeight * 0.3)
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
+        gradientLayer.endPoint = CGPoint(x: 1.3, y: -0.3)
+        gradientLayer.frame = previewHeader.bounds
+        previewHeader.layer.insertSublayer(gradientLayer, at:0)
+        
+        let sliderHeight = (previewHeight - previewHeader.frame.height)*0.2
+        let spacing = ((previewHeight - previewHeader.frame.height) - sliderHeight*2.5)/3
+        
+        let upcomingSlider = UIView(frame: CGRect(x: sidemenuWidth + padding*0.75, y: previewHeader.frame.maxY + spacing, width: previewWidth-padding*1.5 - sidemenuWidth, height: sliderHeight))
+        upcomingSlider.layer.cornerRadius = 4
+        upcomingSlider.backgroundColor = theme.interface == .Light ? UIColor(hex: "F2F2F7") : UIColor(hex: "1C1C1E")
+        
+        let upcomingSliderHandle = UIView(frame: CGRect(x: 0, y: 0, width: upcomingSlider.frame.width*0.15, height: sliderHeight))
+        upcomingSliderHandle.layer.cornerRadius = 4
+        upcomingSliderHandle.backgroundColor = .defaultColor
+        
+        upcomingSlider.addSubview(upcomingSliderHandle)
+        
+        let actionButtonSize = sliderHeight*1.5
+        actionButton.frame = CGRect(x: previewBackground.frame.width-padding*0.75-actionButtonSize, y: previewBackground.frame.height-spacing-actionButtonSize, width: actionButtonSize, height: actionButtonSize)
+        actionButton.layer.cornerRadius = actionButtonSize * 0.5
+        
+        let label = UILabel(frame: CGRect(x: 0, y: previewBackground.frame.maxY + padding*0.5, width: frame.width, height: 12))
+        label.text = theme.name
+        label.textAlignment = .center
+        label.font = .systemFont(ofSize: 12)
+        
+        previewBackground.addSubview(previewHeader)
+        previewBackground.addSubview(sidemenuPreview)
+        previewBackground.addSubview(upcomingSlider)
+        previewBackground.addSubview(actionButton)
+        previewBackground.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(Tap)))
+        
+        self.addSubview(previewBackground)
+        self.addSubview(label)
+        
+        self.isSelected = isSelected
+        
+        SetColors(theme: theme)
+    }
+    
+    func SetColors(theme: AppTheme) {
+        gradientLayer.colors = [theme.tasklistHeaderColor(tasklistColor: .defaultColor).cgColor, theme.tasklistHeaderGradientSecondaryColor(tasklistColor: .defaultColor).cgColor]
+        
+        previewBackground.backgroundColor = theme.tasklistBackgroundColor
+        sidemenuPreview.backgroundColor = theme.sidemenuBackgroundColor
+        actionButton.backgroundColor = theme.primaryElementColor(tasklistColor: .defaultColor) ?? UIColor.defaultColor
+    }
+    
+    @objc func Tap () {
+        parentView.SelectTheme(theme: theme)
+    }
+    
+    func SelectVisuals() {
+        previewBackground.layer.borderWidth = 3
+        previewBackground.layer.borderColor = UIColor.defaultColor.cgColor
+    }
+    
+    func DeselectVisuals() {
+        previewBackground.layer.borderWidth = 1
+        previewBackground.layer.borderColor = UIColor.lightGray.cgColor
+    }
     
     
     required init?(coder: NSCoder) {

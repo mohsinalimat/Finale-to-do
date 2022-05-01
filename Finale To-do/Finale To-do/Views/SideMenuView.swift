@@ -29,7 +29,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         settingsNavControllers = SettingsNavigationController()
         super.init(frame: frame)
         
-        self.backgroundColor = AppColors.sidemenuBackgroundColor
+        self.backgroundColor = ThemeManager.currentTheme.sidemenuBackgroundColor
         
         let homeLabel = UILabel(frame: CGRect(x: padding, y: frame.height*0.2-30, width: frame.width-padding*2, height: 30))
         homeLabel.text = "Home"
@@ -138,14 +138,14 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let dragPreviewParams = UIDragPreviewParameters()
         let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
         dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.taskListMenuItem.frame, cornerRadius: 10.0)
-        dragPreviewParams.backgroundColor = cell.taskListMenuItem.isSelected ? AppColors.sidemenuSelectedItemColor : .clear
+        dragPreviewParams.backgroundColor = cell.taskListMenuItem.isSelected ? ThemeManager.currentTheme.sidemenuSelectionColor : .clear
         return dragPreviewParams
     }
     func tableView(_ tableView: UITableView, dragPreviewParametersForRowAt indexPath: IndexPath) -> UIDragPreviewParameters? {
         let dragPreviewParams = UIDragPreviewParameters()
         let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
         dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.taskListMenuItem.frame, cornerRadius: 10.0)
-        dragPreviewParams.backgroundColor = cell.taskListMenuItem.isSelected ? AppColors.sidemenuSelectedItemColor : .clear
+        dragPreviewParams.backgroundColor = cell.taskListMenuItem.isSelected ? ThemeManager.currentTheme.sidemenuSelectionColor : .clear
         return dragPreviewParams
     }
     
@@ -158,7 +158,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         dragItem.previewProvider = {
             let dragPreviewParams = UIDragPreviewParameters()
             dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.taskListMenuItem.bounds, cornerRadius: 10.0)
-            dragPreviewParams.backgroundColor = AppColors.sidemenuSelectedItemColor
+            dragPreviewParams.backgroundColor = ThemeManager.currentTheme.sidemenuSelectionColor
             return UIDragPreview(view: cell.taskListMenuItem, parameters: dragPreviewParams)
         }
         return [dragItem]
@@ -191,7 +191,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         
         let parameters = UIPreviewParameters()
-        parameters.backgroundColor = AppColors.sidemenuSelectedItemColor
+        parameters.backgroundColor = ThemeManager.currentTheme.sidemenuSelectionColor
         parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds, cornerRadius: 10)
 
         return UITargetedPreview(view: previewView, parameters: parameters)
@@ -210,9 +210,9 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         App.instance.present(settingsNavControllers, animated: true)
     }
     
-    func SetThemeColors() {
+    func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) {
-            self.backgroundColor = AppColors.sidemenuBackgroundColor
+            self.backgroundColor = ThemeManager.currentTheme.sidemenuBackgroundColor
         }
     }
     
@@ -252,7 +252,7 @@ class TaskListMenuItem: UIView, UIDynamicTheme {
         self.taskList = taskList
         super.init(frame: frame)
         
-        self.backgroundColor = isSelected ? AppColors.sidemenuSelectedItemColor : .clearInteractive
+        self.backgroundColor = isSelected ? ThemeManager.currentTheme.sidemenuSelectionColor : .clearInteractive
         self.layer.cornerRadius = 10
         
         let iconView = UIImageView(frame: CGRect(x: padding*2+1, y: 1, width: (frame.width-padding*2)*imageWidthProportion-2, height: frame.height-2))
@@ -290,10 +290,10 @@ class TaskListMenuItem: UIView, UIDynamicTheme {
     }
     
     func ReloadVisuals () {
-        self.backgroundColor = isSelected ? AppColors.sidemenuSelectedItemColor : .clearInteractive
+        self.backgroundColor = isSelected ? ThemeManager.currentTheme.sidemenuSelectionColor : .clearInteractive
     }
     
-    func SetThemeColors() {
+    func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) {
             self.ReloadVisuals()
         }
