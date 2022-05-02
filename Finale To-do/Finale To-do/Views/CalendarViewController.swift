@@ -42,6 +42,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
             self.selectedNotificationTypes.append(notificationType)
         }
         super.init(nibName: nil, bundle: nil)
+        overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         SharedInit(tintColor: tintColor, taskSlider: taskSlider)
     }
     
@@ -64,7 +65,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         calendarView = UIDatePicker()
         calendarView.preferredDatePickerStyle = .inline
         calendarView.frame = CGRect(x: padding*0.5, y: 0, width: containerWidth-padding, height: containerWidth)
-        calendarView.tintColor = tintColor
+        calendarView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: tintColor)
         calendarView.datePickerMode = .date
         if taskSlider.task.isDateAssigned { calendarView.date = taskSlider.task.dateAssigned }
         
@@ -84,7 +85,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         clearButton.imageView!.layer.borderWidth = 0 // this is a weird fix for image scaling when opening the calendar view
         
         confirmButton = UIButton(frame: CGRect(x: padding*2+buttonWidth, y: clearButton.frame.origin.y, width: buttonWidth, height: buttonHeight))
-        confirmButton.backgroundColor = tintColor
+        confirmButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: tintColor)
         confirmButton.setTitle(" Assign", for: .normal)
         confirmButton.setTitleColor(.systemGray, for: .highlighted)
         confirmButton.setImage(UIImage(systemName: "calendar"), for: .normal)
@@ -407,14 +408,18 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         else { color = App.userTaskLists[App.selectedTaskListIndex-2].primaryColor }
         accentColor = color
         UIView.animate(withDuration: 0.25) { [self] in
-            calendarView.tintColor = accentColor
-            confirmButton.backgroundColor = accentColor
+            calendarView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
+            confirmButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
             for row in notificationSelectoinRows { row.SetAccentColor(color: accentColor) }
         }
     }
     
-    
-    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
+        ReloadThemeColors()
+        App.instance.SetSubviewColors(of: self.view)
+    }
     
     
     
@@ -435,7 +440,7 @@ class NotificationSelectionRow: UIView {
         set {
             _isSelected = newValue
             imageView.image = UIImage(systemName: _isSelected ? notificationType == nil ? "circle.inset.filled" : "checkmark.circle.fill" :  "circle")
-            imageView.tintColor = isSelected ? accentColor : .systemGray
+            imageView.tintColor = isSelected ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) : .systemGray
         }
     }
     
@@ -495,7 +500,7 @@ class NotificationSelectionRow: UIView {
     
     func SetAccentColor (color: UIColor) {
         accentColor = color
-        imageView.tintColor = accentColor
+        imageView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
     }
     
     

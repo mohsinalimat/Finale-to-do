@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
+class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicTheme {
     
     let indexPath: IndexPath
     
@@ -38,16 +38,16 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
     var row4: UIView!
     var row5: UIView!
     var notesArea: UIView!
-    var closeButton: UIButton!
+    var closeButton: UIButton?
     
     var originalTaskName: String!
     
     init(slider: TaskSlider, indexPath: IndexPath) {
         self.indexPath = indexPath
         self.slider = slider
-        
         super.init(nibName: nil, bundle: nil)
         
+        overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         
         newSlider = TaskSlider(task: slider.task, frame: slider.frame, taskListColor: slider.taskListColor, app: slider.app)
         newSlider.frame.origin = CGPoint(x: 0, y: 0)
@@ -356,7 +356,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         row5.frame.origin.y = row4.frame.maxY + spacing
         notesArea.frame.origin.y = row5.frame.maxY + padding
         containerView.frame.size.height = notesArea.frame.maxY + padding
-        closeButton.frame.origin.y = containerView.frame.maxY + padding
+        closeButton?.frame.origin.y = containerView.frame.maxY + padding
     }
     func UpdateTaskName (name: String) {
         newSlider.taskNameInputField.text = name
@@ -416,7 +416,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         App.instance.taskListView.tableView.reloadData()
         
         UIView.animate(withDuration: 0.25) { [self] in
-            closeButton.backgroundColor = newList.primaryColor
+            closeButton?.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: newList.primaryColor) 
         }
         
     }
@@ -521,14 +521,14 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
         containerView.frame.origin.y = handle.frame.maxY + padding
         
         closeButton = UIButton(frame: CGRect(x: padding, y: containerView.frame.maxY + padding, width: UIScreen.main.bounds.width-padding*2, height: 40))
-        closeButton.backgroundColor = slider.taskListColor
-        closeButton.layer.cornerRadius = 10
-        closeButton.setTitle("Close", for: .normal)
-        closeButton.setTitleColor(.systemGray, for: .highlighted)
-        closeButton.tintColor = .white
-        closeButton.addTarget(self, action: #selector(CloseButton), for: .touchUpInside)
+        closeButton!.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: slider.taskListColor)
+        closeButton!.layer.cornerRadius = 10
+        closeButton!.setTitle("Close", for: .normal)
+        closeButton!.setTitleColor(.systemGray, for: .highlighted)
+        closeButton!.tintColor = .white
+        closeButton!.addTarget(self, action: #selector(CloseButton), for: .touchUpInside)
         
-        self.view.addSubview(closeButton)
+        self.view.addSubview(closeButton!)
         self.view.addSubview(handle)
         
         UpdateViewHeight()
@@ -548,6 +548,23 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate {
             slider.task.notes = notesInputField.text
         }
     }
+    
+    func ReloadThemeColors() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            closeButton?.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: slider.taskListColor)
+        }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
+        ReloadThemeColors()
+        App.instance.SetSubviewColors(of: self.view)
+    }
+    
+    
+    
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

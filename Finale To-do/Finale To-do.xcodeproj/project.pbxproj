@@ -149,6 +149,7 @@
 			children = (
 				37B750BF281A40E900164803 /* Settings */,
 				375E5D7A280F7155001A289E /* CalendarViewController.swift */,
+				370A9DB22810CDDE00FC30A7 /* TaskSliderContextMenu.swift */,
 				376AD0D62808DDEB00986B49 /* TaskListView.swift */,
 				37E4CE002809AE3F002B4D87 /* SideMenuView.swift */,
 				37F837C4280E11BF00F2A9C0 /* AddListView.swift */,
@@ -163,7 +164,6 @@
 				37E4CE022809C9F3002B4D87 /* AddTaskButton.swift */,
 				375E5D78280F1AA2001A289E /* UndoButton.swift */,
 				370A9DB028106F5D00FC30A7 /* ConfirmationSlideover.swift */,
-				370A9DB22810CDDE00FC30A7 /* TaskSliderContextMenu.swift */,
 			);
 			path = Elements;
 			sourceTree = "<group>";

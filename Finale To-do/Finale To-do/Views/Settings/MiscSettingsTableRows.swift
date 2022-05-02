@@ -133,7 +133,8 @@ class SettingsAppBadgeCountView: UIView {
 
 //MARK: Settings Selection Row
 
-class SettingsSelectionRow: UIView {
+class SettingsSelectionRow: UIView, UIDynamicTheme {
+    
     
     let index: Int
     
@@ -148,7 +149,7 @@ class SettingsSelectionRow: UIView {
         set {
             _isSelected = newValue
             imageView.image = UIImage(systemName: _isSelected ? isNone ? "circle.inset.filled" : "checkmark.circle.fill" :  "circle")
-            imageView.tintColor = isSelected ? .defaultColor : .systemGray
+            imageView.tintColor = isSelected ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor) : .systemGray
         }
     }
     
@@ -169,7 +170,7 @@ class SettingsSelectionRow: UIView {
         let imageSize = rowSize.width*0.07
         imageView = UIImageView(frame: CGRect(x: padding, y: 0.5*(rowSize.height-imageSize), width: imageSize, height: imageSize))
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .defaultColor
+        imageView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
 
         let label = UILabel (frame: CGRect(x: imageView.frame.maxX + padding*0.5, y: 0, width: rowSize.width-padding*2.5-imageView.frame.width, height: rowSize.height))
         label.text = title
@@ -198,6 +199,12 @@ class SettingsSelectionRow: UIView {
     
     func Deselect() {
         OnDeselect(index)
+    }
+    
+    func ReloadThemeColors() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            imageView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
+        }
     }
     
     
@@ -270,13 +277,13 @@ class SettingsAppIconView: UIView {
         App.instance.SaveSettings()
         
         for iconCell in allIcons {
-            if iconCell.icon == icon { iconCell.SelectVisuals() }
-            else { iconCell.DeselectVisuals() }
+            if iconCell.icon == icon { iconCell.isSelected = true }
+            else { iconCell.isSelected = false }
         }
     }
 }
 
-class AppIconView: UIView  {
+class AppIconView: UIView, UIDynamicTheme  {
     
     let icon: AppIcon
     
@@ -325,14 +332,23 @@ class AppIconView: UIView  {
     }
     
     func SelectVisuals() {
-        imageView.layer.borderWidth = 3
-        imageView.layer.borderColor = UIColor.defaultColor.cgColor
+        UIView.animate(withDuration: 0.25) { [self] in
+            imageView.layer.borderWidth = 3
+            imageView.layer.borderColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: UIColor.defaultColor).cgColor
+        }
     }
     
     func DeselectVisuals() {
-        imageView.layer.borderWidth = 1
-        imageView.layer.borderColor = UIColor.lightGray.cgColor
+        UIView.animate(withDuration: 0.25) { [self] in
+            imageView.layer.borderWidth = 1
+            imageView.layer.borderColor = UIColor.lightGray.cgColor
+        }
     }
+    
+    func ReloadThemeColors() {
+        isSelected = isSelected
+    }
+    
     
     
     required init?(coder: NSCoder) {
@@ -341,8 +357,7 @@ class AppIconView: UIView  {
     
 }
 
-
-//MARK: Light theme
+//MARK: Theme selection
 
 class SettingsThemeView: UIView {
     
@@ -396,11 +411,13 @@ class SettingsThemeView: UIView {
         ThemeManager.SetTheme(theme: theme)
         
         for themeCell in themeCells {
-            if themeCell.theme == theme { themeCell.SelectVisuals() }
-            else { themeCell.DeselectVisuals() }
+            if themeCell.theme == theme { themeCell.isSelected = true }
+            else { themeCell.isSelected = false }
         }
+        
+        let navController = self.parentViewController?.navigationController as! SettingsNavigationController
+        navController.SetAllViewControllerColors()
     }
-    
     
     
     
@@ -412,7 +429,7 @@ class SettingsThemeView: UIView {
 }
 
 
-class AppThemePreviewView: UIView  {
+class AppThemePreviewView: UIView, UIDynamicTheme  {
     
     let theme: AppTheme
     
@@ -458,6 +475,11 @@ class AppThemePreviewView: UIView  {
         gradientLayer.frame = previewHeader.bounds
         previewHeader.layer.insertSublayer(gradientLayer, at:0)
         
+        let blurEffect = UIView(frame: CGRect(x: 0, y: 0, width: previewHeader.frame.width, height: previewHeader.frame.height))
+        blurEffect.backgroundColor = theme.interface == .Light ? .black : .white
+        blurEffect.alpha = 0.1
+        previewHeader.addSubview(blurEffect)
+        
         let sliderHeight = (previewHeight - previewHeader.frame.height)*0.2
         let spacing = ((previewHeight - previewHeader.frame.height) - sliderHeight*2.5)/3
         
@@ -499,7 +521,7 @@ class AppThemePreviewView: UIView  {
         
         previewBackground.backgroundColor = theme.tasklistBackgroundColor
         sidemenuPreview.backgroundColor = theme.sidemenuBackgroundColor
-        actionButton.backgroundColor = theme.primaryElementColor(tasklistColor: .defaultColor) ?? UIColor.defaultColor
+        actionButton.backgroundColor = theme.primaryElementColor(tasklistColor: .defaultColor)
     }
     
     @objc func Tap () {
@@ -507,14 +529,24 @@ class AppThemePreviewView: UIView  {
     }
     
     func SelectVisuals() {
-        previewBackground.layer.borderWidth = 3
-        previewBackground.layer.borderColor = UIColor.defaultColor.cgColor
+        UIView.animate(withDuration: 0.25) { [self] in
+            previewBackground.layer.borderWidth = 3
+            previewBackground.layer.borderColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: UIColor.defaultColor).cgColor
+        }
     }
     
     func DeselectVisuals() {
-        previewBackground.layer.borderWidth = 1
-        previewBackground.layer.borderColor = UIColor.lightGray.cgColor
+        UIView.animate(withDuration: 0.25) { [self] in
+            previewBackground.layer.borderWidth = 1
+            previewBackground.layer.borderColor = UIColor.lightGray.cgColor
+        }
     }
+    
+    func ReloadThemeColors() {
+        isSelected = isSelected
+    }
+    
+    
     
     
     required init?(coder: NSCoder) {

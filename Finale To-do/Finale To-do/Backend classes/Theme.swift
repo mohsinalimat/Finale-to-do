@@ -67,14 +67,14 @@ struct AppTheme: Equatable {
     var sidemenuBackgroundColor: UIColor { return overrideSidemenuBackgroundColor ?? (self.interface == .Light ? self.primaryColor.dark2 : self.primaryColor.dark3) }
     var sidemenuSelectionColor: UIColor { return overrideSidemenuSelectionColor ?? (self.primaryColor.dark) }
     
-    //Misc colors
+    //Element colors
     func primaryElementColor(tasklistColor: UIColor) -> UIColor {
         if usesDynamicColors { return tasklistColor }
         return overridePrimaryElementColor ?? (self.primaryColor)
     }
-    var tintedBackgroundColor: UIColor { return overrideTintedBackgroundColor ?? (self.interface == .Light ? .systemGray4 : self.primaryColor.dark3) }
     
-    
+    //Background colors
+    var tintedBackgroundColor: UIColor { return overrideTintedBackgroundColor ?? (self.interface == .Light ? self.primaryColor.light : self.primaryColor.dark3) }
     
     //Override Task list colors
     var overrideTasklistBackgroundColor: UIColor? = nil
@@ -85,8 +85,10 @@ struct AppTheme: Equatable {
     var overrideSidemenuBackgroundColor: UIColor? = nil
     var overrideSidemenuSelectionColor: UIColor? = nil
     
-    //Override Misc colors
+    //Override Element colors
     var overridePrimaryElementColor: UIColor? = nil
+    
+    //Override Background colors
     var overrideTintedBackgroundColor: UIColor? = nil
     
     static func == (lhs: AppTheme, rhs: AppTheme) -> Bool {
@@ -101,15 +103,22 @@ class ThemeManager {
     static let lightThemes: [AppTheme] = [
         
         AppTheme(name: "Dynamic", interface: .Light, primaryColor: .defaultColor, usesDynamicColors: true),
-        AppTheme(name: "Red", interface: .Light, primaryColor: UIColor(hex: "DE0B0B"))
+        
+        AppTheme(name: "Violet", interface: .Light, primaryColor: UIColor(hex: "8453AC"), overrideTasklistHeaderColor: .defaultColor.lerp(second: .white, percentage: 0.1), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "FD5E53")),
+        
+        AppTheme(name: "Aqua", interface: .Light, primaryColor: UIColor(hex: "22A0ED"), overrideTasklistHeaderColor: .defaultColor.lerp(second: .white, percentage: 0.1), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "47FCF9")),
     
     ]
     
     static let darkThemes: [AppTheme] = [
         
         AppTheme(name: "Dynamic", interface: .Dark, primaryColor: .defaultColor, usesDynamicColors: true),
-        AppTheme(name: "Red", interface: .Dark, primaryColor: UIColor(hex: "DE0B0B")),
-        AppTheme(name: "True Black", interface: .Dark, primaryColor: UIColor(hex: "1a1a1a"))
+        
+        AppTheme(name: "Violet", interface: .Dark, primaryColor: UIColor(hex: "664C7C"), overrideTasklistHeaderColor: .defaultColor.dark, overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "FD5E53")),
+        
+        AppTheme(name: "Aqua", interface: .Dark, primaryColor: UIColor(hex: "227DB5"), overrideTasklistHeaderColor: .defaultColor.lerp(second: .black, percentage: 0.1), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "47FCF9")),
+        
+        AppTheme(name: "True Black", interface: .Dark, primaryColor: UIColor(hex: "262626"), overrideTasklistHeaderColor: UIColor(hex: "000000"), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "000000"), overridePrimaryElementColor: UIColor(hex: "262626").dark2)
     
     ]
     

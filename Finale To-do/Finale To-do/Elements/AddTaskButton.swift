@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class AddTaskButton: UIView, UIDynamicTheme {
+class AddTaskButton: UIView, UIDynamicTheme, UIContextMenuInteractionDelegate {
     
     let app: App
     var verticalLine: UIView!
@@ -43,6 +43,9 @@ class AddTaskButton: UIView, UIDynamicTheme {
         self.addSubview(horizontalLine)
         
         self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CreateNewTask)))
+        
+        let contextMenu = UIContextMenuInteraction(delegate: self)
+        self.addInteraction(contextMenu)
     }
     
     func ReloadVisuals(color: UIColor) {
@@ -66,6 +69,39 @@ class AddTaskButton: UIView, UIDynamicTheme {
         UIView.animate(withDuration: 0.25) { [self] in
             self.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: tasklistColor)
         }
+    }
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
+        if App.selectedTaskListIndex != 0 { return nil }
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { suggestedActions in
+            var options = [UIAction]()
+            
+            options.append(UIAction(title: App.mainTaskList.name, image: UIImage(systemName: App.mainTaskList.systemIcon)) { action in
+                self.app.CreateNewTask(tasklist: App.mainTaskList)
+            })
+            
+            for tasklist in App.userTaskLists {
+                options.append(UIAction(title: tasklist.name, image: UIImage(systemName: tasklist.systemIcon)) { action in
+                    self.app.CreateNewTask(tasklist: tasklist)
+                })
+            }
+            
+            return UIMenu(title: "", children: options)
+        }
+    }
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        let param = UIPreviewParameters()
+        param.backgroundColor = .clear
+        param.visiblePath = UIBezierPath(roundedRect: CGRect(x: -10, y: -10, width: self.frame.width+20, height: self.frame.height+20), cornerRadius: self.layer.cornerRadius)
+        return UITargetedPreview(view: self, parameters: param)
+    }
+    
+    func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForDismissingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
+        let param = UIPreviewParameters()
+        param.backgroundColor = .clear
+        param.visiblePath = UIBezierPath(roundedRect: CGRect(x: -10, y: -10, width: self.frame.width+20, height: self.frame.height+20), cornerRadius: self.layer.cornerRadius)
+        return UITargetedPreview(view: self, parameters: param)
     }
     
     

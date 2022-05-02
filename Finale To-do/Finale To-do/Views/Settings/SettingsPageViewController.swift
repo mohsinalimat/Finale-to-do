@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class SettingsPageViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class SettingsPageViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UIDynamicTheme {
     
     
     let padding = 16.0
@@ -22,8 +22,9 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
     
     init () {
         super.init(nibName: nil, bundle: nil)
+        self.view.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
+        overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         ReloadSettings()
-        self.view.backgroundColor = .systemGray6
         self.title = PageTitle
         
         let viewWidth = self.view.frame.width
@@ -33,6 +34,7 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
         tableView.register(SettingsTableCell.self, forCellReuseIdentifier: SettingsTableCell.identifier)
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TapOutside)))
         tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: .leastNonzeroMagnitude))
+        tableView.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
         
         self.view.addSubview(tableView)
     }
@@ -96,7 +98,7 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
                 x.selectionImageView.image = UIImage(systemName: "")
             }
             let selectedCell = tableView.cellForRow(at: indexPath) as! SettingsTableCell
-            selectedCell.selectionImageView.image = UIImage(systemName: "checkmark")
+            selectedCell.selectionImageView.image = UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
             navigationController?.popViewController(animated: true)
             break
         default: break
@@ -121,6 +123,27 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
         
     }
     
+    func ReloadThemeColors() {
+        overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        UIView.animate(withDuration: 0.25) { [self] in
+            if tableView != nil {
+                tableView.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
+                for cell in tableView.visibleCells {
+                    let c = cell as! SettingsTableCell
+                    c.ReloadThemeColors()
+                }
+            }
+        }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
+        App.instance.SetSubviewColors(of: self.view)
+        ReloadThemeColors()
+    }
+    
+    
     
     
     
@@ -134,7 +157,7 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
 
 
 
-class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
+class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
     
     static let identifier: String = "SettingsCell"
     
@@ -160,7 +183,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
     }()
     let switchView: UISwitch = {
         let s = UISwitch()
-        s.onTintColor = .defaultColor
+        s.onTintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
         s.alpha = 0
         return s
     }()
@@ -171,16 +194,6 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         textField.textAlignment = .right
         textField.alpha = 0
         return textField
-    }()
-    let pickerButton: UIButton = {
-        let pickerButton = UIButton()
-        pickerButton.showsMenuAsPrimaryAction = true
-        pickerButton.layer.cornerRadius = 8
-        pickerButton.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray5 : .systemGray3
-        pickerButton.setTitleColor(UIColor.label, for: .normal)
-        pickerButton.alpha = 0
-        pickerButton.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
-        return pickerButton
     }()
     let timePicker: UIDatePicker = {
         let datePicker = UIDatePicker()
@@ -199,7 +212,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
     }()
     let selectionImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.tintColor = .defaultColor
+        imageView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
         imageView.contentMode = .scaleAspectFit
         imageView.alpha = 0
         return imageView
@@ -215,13 +228,13 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: UITableViewCell.CellStyle.default, reuseIdentifier: reuseIdentifier)
+        self.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .white : .systemGray6
         
         iconContainer.addSubview(iconView)
         self.contentView.addSubview(iconContainer)
         self.contentView.addSubview(titleLabel)
         self.contentView.addSubview(switchView)
         self.contentView.addSubview(inputField)
-        self.contentView.addSubview(pickerButton)
         self.contentView.addSubview(timePicker)
         self.contentView.addSubview(previewLabel)
         self.contentView.addSubview(selectionImageView)
@@ -246,8 +259,6 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         switchView.frame.origin = CGPoint(x: rowWidth-switchView.frame.width-padding, y: 0.5*(rowHeight-switchView.frame.height))
         inputField.frame = CGRect(x: titleLabel.frame.maxX + padding, y: 0, width: functionItemWidth, height: rowHeight)
         inputField.delegate = self
-        pickerButton.frame.size = CGSize(width: functionItemWidth*0.7, height: rowHeight-padding*1.1)
-        pickerButton.frame.origin = CGPoint(x: rowWidth-pickerButton.frame.width-padding, y: 0.5*(rowHeight-pickerButton.frame.height))
         timePicker.frame.size = CGSize(width: functionItemWidth+padding*0.7, height: timePicker.frame.height)
         timePicker.frame.origin = CGPoint(x: titleLabel.frame.maxX + padding, y: 0.5*(rowHeight-timePicker.frame.height))
         previewLabel.frame = CGRect(x: titleLabel.frame.maxX + padding, y: 0, width: functionItemWidth, height: rowHeight)
@@ -268,15 +279,6 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
             iconContainer.backgroundColor = model.iconBackgroundColor
             inputField.text = model.inputFieldText
             inputField.alpha = 1
-            self.accessoryType = .none
-            break
-        case .pickerCell(let model):
-            titleLabel.text = model.title
-            iconView.image = model.icon
-            iconContainer.backgroundColor = model.iconBackgroundColor
-            pickerButton.setTitle(model.menu.children[model.currentSelection].title, for: .normal)
-            pickerButton.menu = model.menu
-            pickerButton.alpha = 1
             self.accessoryType = .none
             break
         case .switchCell(let model):
@@ -309,7 +311,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
             titleLabel.text = model.title
             iconView.image = model.icon
             iconContainer.backgroundColor = model.iconBackgroundColor
-            selectionImageView.image = UIImage(systemName: model.isSelected ? "checkmark" : "")
+            selectionImageView.image = UIImage(systemName: model.isSelected ? "checkmark" : "", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
             selectionImageView.alpha = 1
         case .customViewCell(let model):
             customViewContainer.addSubview(model)
@@ -333,7 +335,6 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         titleLabel.text = ""
         switchView.alpha = 0
         inputField.alpha = 0
-        pickerButton.alpha = 0
         timePicker.alpha = 0
         previewLabel.alpha = 0
         selectionImageView.alpha = 0
@@ -387,16 +388,17 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate {
         }
     }
     
-    
-    func SetThemeColors() {
-        UIView.animate(withDuration: 0.25) {
-            self.pickerButton.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray5 : .systemGray3
+    func ReloadThemeColors() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            switchView.onTintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
+            selectionImageView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
+            self.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .white : .systemGray6
         }
     }
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        SetThemeColors()
-    }
+    
+    
+    
+    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

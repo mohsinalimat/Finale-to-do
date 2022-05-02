@@ -26,6 +26,26 @@ class SettingsNavigationController: UINavigationController {
         App.instance.SaveSettings()
     }
     
+    func SetAllViewControllerColors() {
+        for viewController in self.viewControllers {
+            if let dynamicTheme = viewController as? UIDynamicTheme { dynamicTheme.ReloadThemeColors() }
+            for subview in viewController.view.subviews {
+                SetSubviewColors(of: subview)
+            }
+        }
+    }
+    
+    func SetSubviewColors(of view: UIView) {
+        if let dynamicThemeView = view as? UIDynamicTheme  {
+            dynamicThemeView.ReloadThemeColors()
+        }
+        
+        for subview in view.subviews {
+            SetSubviewColors(of: subview)
+        }
+    }
+    
+    
     
     
     required init?(coder aDecoder: NSCoder) {
@@ -193,13 +213,6 @@ class SettingsNotificationsPage: SettingsPageViewController {
 
 
 class SettingsAppearancePage: SettingsPageViewController {
-    // Interface: System, Light, Dark
-    // Light theme
-    //      Standard, Colored (one primary color)
-    // Dark theme
-    //      Standard, Colored, True Black
-    // App logo
-    
     override func GetSettings() -> [SettingsSection] {
         return [
             
@@ -223,6 +236,8 @@ class SettingsAppearancePage: SettingsPageViewController {
         App.instance.overrideUserInterfaceStyle = mode == .System ? .unspecified : mode == .Light ? .light : .dark
         navigationController?.overrideUserInterfaceStyle = App.instance.overrideUserInterfaceStyle
         
+        let navController = navigationController as! SettingsNavigationController
+        navController.SetAllViewControllerColors()
     }
     
     override var PageTitle: String {
@@ -239,7 +254,6 @@ class SettingsAppearancePage: SettingsPageViewController {
 //MARK: Enums & Structs
 enum SettingsOptionType {
     case inputFieldCell(model: SettingsInputFieldOption)
-    case pickerCell(model: SettingsPickerOption)
     case timePickerCell(model: SettingsTimePickerOption)
     case switchCell(model: SettingsSwitchOption)
     case selectionCell(model: SettingsSelectionOption)
@@ -252,14 +266,6 @@ enum SettingsOptionType {
 struct SettingsInputFieldOption {
     let title: String
     var inputFieldText: String
-    let icon: UIImage?
-    let iconBackgroundColor: UIColor?
-}
-
-struct SettingsPickerOption {
-    let title: String
-    var currentSelection: Int
-    var menu: UIMenu
     let icon: UIImage?
     let iconBackgroundColor: UIColor?
 }

@@ -45,7 +45,6 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         calendarIconWidth = sliderHandleWidth*0.8
         
         super.init(frame: frame)
-        
 
         dateLabel = UILabel()
         dateLabel.attributedText = assignedDateTimeString
@@ -224,6 +223,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
     func ClearDateAndTime() {
         task.isDateAssigned = false
         task.isDueTimeAssigned = false
+        task.dateAssigned = Date(timeIntervalSince1970: 0)
         task.RemoveAllNotifications()
         calendarIconView.alpha = isEditing ? 1 : 0
         UpdateDateLabel()
@@ -396,6 +396,7 @@ class TaskSliderTableCell: UITableViewCell {
         self.selectionStyle = .none
         isUserInteractionEnabled = true
         shouldIndentWhileEditing = false
+        self.backgroundColor = .clear
     }
     
     func Setup(task: Task, sliderSize: CGSize, cellSize: CGSize, taskListColor: UIColor, app: App) {

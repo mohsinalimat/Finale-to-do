@@ -78,8 +78,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         headerGradientLayer.frame = colorPanelHeader.bounds
         colorPanelHeader.layer.insertSublayer(headerGradientLayer, at:0)
         SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
-        colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
-        colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
+        colorPanelHeader.layer.compositingFilter = ThemeManager.currentTheme.interface == .Light ? "multiplyBlendMode" : "screenBlendMode"
+        colorPanelHeader.layer.opacity = ThemeManager.currentTheme.interface == .Light ? 1 : 0.8
         header.addSubview(colorPanelHeader)
         
         
@@ -131,6 +131,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     func DrawContent(frame: CGRect) {
         contentView?.removeFromSuperview()
         contentView = UIView(frame: frame)
+        contentView.backgroundColor = ThemeManager.currentTheme.tasklistBackgroundColor
         
         tableView = UITableView(frame: CGRect(x: 0, y: -frame.origin.y, width: frame.width, height: frame.height+frame.origin.y))
         tableView.dataSource = self
@@ -144,6 +145,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         tableView.dragInteractionEnabled = true
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TouchedTable)))
         tableView.showsVerticalScrollIndicator = false
+        tableView.backgroundColor = .clear
         
         contentView.addSubview(tableView)
         
@@ -161,9 +163,10 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func SetHeaderGradient(color: UIColor) {
-        let firstColor = ThemeManager.currentTheme.tasklistHeaderColor(tasklistColor: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
-        let secondColor = ThemeManager.currentTheme.tasklistHeaderGradientSecondaryColor(tasklistColor: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
+        let firstColor = ThemeManager.currentTheme.tasklistHeaderColor(tasklistColor: color)
+        let secondColor = ThemeManager.currentTheme.tasklistHeaderGradientSecondaryColor(tasklistColor: color)
         headerGradientLayer.colors = [firstColor.cgColor, secondColor.cgColor]
+        
     }
     
     var headerElementsColor: UIColor {
@@ -336,7 +339,6 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         titleLabel.transform = CGAffineTransform(scaleX: (1 + maxScrollDelta*0.0005), y: (1 + maxScrollDelta*0.0005) )
         titleLabel.frame.origin.y = originalTitlePositionY + scrollDelta
-//        colorPanelHeader.frame.size.height = originalHeaderHeight + scrollDelta
         CATransaction.setValue(kCFBooleanTrue, forKey:kCATransactionDisableActions)
         colorPanelHeader.layer.sublayers?[0].frame.size.height = originalHeaderHeight + scrollDelta
         CATransaction.commit()
@@ -390,9 +392,10 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         hamburgerButton.tintColor = headerElementsColor
         sortButton.tintColor = headerElementsColor
         sortButton.menu = sortButtonMenu
+        contentView.backgroundColor = ThemeManager.currentTheme.tasklistBackgroundColor
         SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
-        colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
-        colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
+        colorPanelHeader.layer.compositingFilter = ThemeManager.currentTheme.interface == .Light ? "multiplyBlendMode" : "screenBlendMode"
+        colorPanelHeader.layer.opacity = ThemeManager.currentTheme.interface == .Light ? 1 : 0.8
         addTaskButton.ReloadVisuals(color: App.selectedTaskListIndex == 0 ? .defaultColor : taskLists[0].primaryColor)
         if undoButton != nil {
             undoButton!.removeFromSuperview()
@@ -453,12 +456,13 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in
+            colorPanelHeader.layer.compositingFilter = ThemeManager.currentTheme.interface == .Light ? "multiplyBlendMode" : "screenBlendMode"
+            colorPanelHeader.layer.opacity = ThemeManager.currentTheme.interface == .Light ? 1 : 0.8
             SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
-            colorPanelHeader.layer.compositingFilter = UITraitCollection.current.userInterfaceStyle == .light ? "multiplyBlendMode" : "screenBlendMode"
-            colorPanelHeader.layer.opacity = UITraitCollection.current.userInterfaceStyle == .light ? 1 : 0.8
             titleLabel.textColor = headerElementsColor
             hamburgerButton.tintColor = headerElementsColor
             sortButton.tintColor = headerElementsColor
+            contentView.backgroundColor = ThemeManager.currentTheme.tasklistBackgroundColor
         }
     }
     
@@ -582,12 +586,12 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         var dummyArray = [Task]()
         if task.taskListID == App.mainTaskList.id {
-            dummyArray.append(contentsOf: App.mainTaskList.upcomingTasks)
+            dummyArray.append(contentsOf: !task.isCompleted ? App.mainTaskList.upcomingTasks : App.mainTaskList.completedTasks)
             sortPreference = App.mainTaskList.sortingPreference
         } else {
             for taskList in App.userTaskLists {
                 if taskList.id == task.taskListID {
-                    dummyArray.append(contentsOf: taskList.upcomingTasks)
+                    dummyArray.append(contentsOf: !task.isCompleted ? taskList.upcomingTasks : taskList.completedTasks)
                     sortPreference = taskList.sortingPreference
                     break
                 }

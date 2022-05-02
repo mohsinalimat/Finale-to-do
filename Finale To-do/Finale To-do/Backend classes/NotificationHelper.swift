@@ -163,6 +163,7 @@ class NotificationHelper {
     }
     
     static func CancelAllScheduledNotifications () {
+//        UNUserNotificationCenter.current().removeAllPendingNotificationRequests() I AM USING THE ONE BELOW CAUSE IT PRINTS INTO THE CONSOLE
         UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { result in
             for r in result {
                 CancelNotification(id: r.identifier)
@@ -184,45 +185,50 @@ class NotificationHelper {
     }
     
     static func UpdateAppBadge() {
-        var badgeNumber = 0
+        var includedTasks = [Task]()
         if App.settingsConfig.isNotificationsAllowed {
             for type in App.settingsConfig.appBadgeNumberTypes {
                 switch type {
                 case .None:
-                    badgeNumber = 0
+                    includedTasks.removeAll()
                     break
                 case .TasksToday:
                     let tasksToday = App.mainTaskList.upcomingTasks.filter { task in
                         return task.isDateAssigned && Calendar.current.isDateInToday(task.dateAssigned)
                     }
-                    badgeNumber += tasksToday.count
+                    for task in tasksToday {
+                        if !includedTasks.contains(task) { includedTasks.append(task) }
+                    }
                     for taskList in App.userTaskLists {
                         let today = taskList.upcomingTasks.filter { task in
                             return task.isDateAssigned && Calendar.current.isDateInToday(task.dateAssigned)
                         }
-                        badgeNumber += today.count
+                        for task in today { if !includedTasks.contains(task) {includedTasks.append(task)} }
                     }
                 case .OverdueTasks:
-                    let tasksToday = App.mainTaskList.upcomingTasks.filter { task in
+                    let overdueTasks = App.mainTaskList.upcomingTasks.filter { task in
                         return task.isOverdue
                     }
-                    badgeNumber += tasksToday.count
+                    for task in overdueTasks { if !includedTasks.contains(task) { includedTasks.append(task) } }
                     for taskList in App.userTaskLists {
-                        let today = taskList.upcomingTasks.filter { task in
+                        let overdue = taskList.upcomingTasks.filter { task in
                             return task.isOverdue
                         }
-                        badgeNumber += today.count
+                        for task in overdue {  if !includedTasks.contains(task) {includedTasks.append(task)} }
                     }
                 case .UpcomingTasks:
-                    badgeNumber += App.mainTaskList.upcomingTasks.count
+                    for task in App.mainTaskList.upcomingTasks { if !includedTasks.contains(task) {includedTasks.append(task)} }
                     for taskList in App.userTaskLists {
-                        badgeNumber += taskList.upcomingTasks.count
+                        for task in taskList.upcomingTasks { if !includedTasks.contains(task) {includedTasks.append(task)} }
                     }
                 }
             }
         }
-        
-        UIApplication.shared.applicationIconBadgeNumber = badgeNumber
+        UIApplication.shared.applicationIconBadgeNumber = includedTasks.count
+    }
+    
+    static func RemoveDeliveredNotifications () {
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
     }
     
 }

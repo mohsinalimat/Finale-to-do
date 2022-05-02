@@ -52,8 +52,7 @@ class App: UIViewController {
         
         LoadData()
         App.instance.overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
-        ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
-        
+
         let sideMenuFrame = CGRect(x: 0, y: 0, width: sideMenuWidth, height: UIScreen.main.bounds.height)
         sideMenuView = SideMenuView(frame: sideMenuFrame, app: self)
         
@@ -73,15 +72,21 @@ class App: UIViewController {
     
 //MARK: Task Actions
     
-    func CreateNewTask() {
+    func CreateNewTask(tasklist: TaskList? = nil) {
         taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true)
         
         StopEditingAllTasks()
         
         let newTask: Task
         if App.selectedTaskListIndex == 0 {
-            newTask = Task(taskListID: defaultList.id)
-            defaultList.upcomingTasks.insert(newTask, at: 0)
+            if tasklist == nil {
+                newTask = Task(taskListID: defaultList.id)
+                defaultList.upcomingTasks.insert(newTask, at: 0)
+            }
+            else {
+                newTask = Task(taskListID: tasklist!.id)
+                tasklist!.upcomingTasks.insert(newTask, at: 0)
+            }
         } else if App.selectedTaskListIndex == 1 {
             newTask = Task(taskListID: App.mainTaskList.id)
             App.mainTaskList.upcomingTasks.insert(newTask, at: 0)
@@ -127,9 +132,8 @@ class App: UIViewController {
         if index == 0 { taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true) } //Jagged animatino glitch fix
         
         let tableIndex = taskListView.allUpcomingTasks.firstIndex(of: task)!
-        
-        taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
-        taskListView.ReloadTaskData(sortOverviewList: false)
+        taskListView.allUpcomingTasks.remove(at: tableIndex)
+        taskListView.allCompletedTasks.insert(task, at: 0)
         
         taskListView.tableView.performBatchUpdates({
             taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 0)], with: UITableView.RowAnimation.right)
@@ -186,9 +190,8 @@ class App: UIViewController {
         if index == -1 { return }
         
         let indexPath = IndexPath(row: isCompleted ? taskListView.allCompletedTasks.firstIndex(of: task)! : taskListView.allUpcomingTasks.firstIndex(of: task)!, section: isCompleted ? 1 : 0)
-        
-        taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
-        taskListView.ReloadTaskData(sortOverviewList: false)
+        if !isCompleted { taskListView.allUpcomingTasks.remove(at: indexPath.row) }
+        else { taskListView.allCompletedTasks.remove(at: indexPath.row) }
         
         taskListView.tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.right)
         if taskListView.allUpcomingTasks.count > 0 && indexPath.row == 0 {
@@ -236,17 +239,16 @@ class App: UIViewController {
         if index == -1 { return }
         
         let tableIndex = taskListView.allCompletedTasks.firstIndex(of: task)!
-        
-        taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
-        taskListView.ReloadTaskData(sortOverviewList: App.selectedTaskListIndex == 0)
+        taskListView.allCompletedTasks.remove(at: tableIndex)
+        taskListView.allUpcomingTasks.insert(task, at: taskListView.GetSortedIndexPath(task: task).row)
         
         let undoIndexPath = taskListView.allUpcomingTasks.firstIndex(of: task)!
         
         if undoIndexPath == 0 { taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true) } //Jagged animation fix
         
         taskListView.tableView.performBatchUpdates({
-            taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 1)], with: UITableView.RowAnimation.bottom)
             taskListView.tableView.insertRows(at: [IndexPath(row: undoIndexPath, section: 0)], with: UITableView.RowAnimation.right)
+            taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 1)], with: UITableView.RowAnimation.right)
         })
         if index == 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         
@@ -283,14 +285,14 @@ class App: UIViewController {
         taskListView.taskLists = App.selectedTaskListIndex == 0 ? allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
         taskListView.ReloadTaskData(sortOverviewList: App.selectedTaskListIndex == 0)
         
-        let undoIndexPath = taskListView.allUpcomingTasks.firstIndex(of: task)!
-        if undoIndexPath == 0 {
+        let undoIndexPath = !task.isCompleted ? IndexPath(row: taskListView.allUpcomingTasks.firstIndex(of: task)!, section: 0)  : IndexPath(row: taskListView.allCompletedTasks.firstIndex(of: task)!, section: 1)
+        if undoIndexPath.row == 0 {
             taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true)
         } //Jagged animation fix
         
-        taskListView.tableView.insertRows(at: [IndexPath(row: undoIndexPath, section: 0)], with: UITableView.RowAnimation.right)
+        taskListView.tableView.insertRows(at: [undoIndexPath], with: UITableView.RowAnimation.right)
         
-        if undoIndexPath == 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
+        if undoIndexPath == IndexPath(row: 0, section: 0) { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         
         taskListView.HideUndoButton()
         
@@ -474,6 +476,7 @@ class App: UIViewController {
             }
         }
         RemoveExcessCompletedTasks()
+        ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
     }
     
     func SaveData () {
@@ -500,6 +503,7 @@ class App: UIViewController {
     
     @objc func AppBecameActive() {
         taskListView.UpdateAllDateLabels()
+        NotificationHelper.RemoveDeliveredNotifications()
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
