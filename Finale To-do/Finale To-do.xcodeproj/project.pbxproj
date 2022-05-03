@@ -32,6 +32,7 @@
 		376AD0DF280901AF00986B49 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DE280901AF00986B49 /* Extensions.swift */; };
 		377C3914281B0F4C006F42BA /* SettingsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */; };
 		37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37983B8B2819F608007B241A /* SettingsViewController.swift */; };
+		37B9998C2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */; };
 		37E4CE012809AE3F002B4D87 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E4CE002809AE3F002B4D87 /* SideMenuView.swift */; };
 		37E4CE032809C9F3002B4D87 /* AddTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E4CE022809C9F3002B4D87 /* AddTaskButton.swift */; };
 		37F837C5280E11BF00F2A9C0 /* AddListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F837C4280E11BF00F2A9C0 /* AddListView.swift */; };
@@ -67,6 +68,7 @@
 		376AD0DE280901AF00986B49 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageViewController.swift; sourceTree = "<group>"; };
 		37983B8B2819F608007B241A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSyncConfirmationViewController.swift; sourceTree = "<group>"; };
 		37E4CE002809AE3F002B4D87 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		37E4CE022809C9F3002B4D87 /* AddTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskButton.swift; sourceTree = "<group>"; };
 		37F837C4280E11BF00F2A9C0 /* AddListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListView.swift; sourceTree = "<group>"; };
@@ -130,7 +132,6 @@
 		376AD0C12808DC5900986B49 /* Finale To-do */ = {
 			isa = PBXGroup;
 			children = (
-				372B8A38281E41E600117A72 /* Finale To-do.entitlements */,
 				372B8A21281CE61F00117A72 /* App Icons */,
 				371D998128146E270060CB34 /* Backend classes */,
 				376AD0D92808EF9600986B49 /* Elements */,
@@ -139,6 +140,7 @@
 				376AD0C42808DC5900986B49 /* SceneDelegate.swift */,
 				376AD0C62808DC5900986B49 /* App.swift */,
 				376AD0D02808DC5A00986B49 /* Info.plist */,
+				372B8A38281E41E600117A72 /* Finale To-do.entitlements */,
 				376AD0CB2808DC5A00986B49 /* Assets.xcassets */,
 			);
 			path = "Finale To-do";
@@ -174,6 +176,7 @@
 				37983B8B2819F608007B241A /* SettingsViewController.swift */,
 				377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */,
 				372B89FC281C4DE200117A72 /* MiscSettingsTableRows.swift */,
+				37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -255,6 +258,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37B9998C2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift in Sources */,
 				370A9DB128106F5D00FC30A7 /* ConfirmationSlideover.swift in Sources */,
 				376AD0C72808DC5900986B49 /* App.swift in Sources */,
 				376AD0D72808DDEB00986B49 /* TaskListView.swift in Sources */,

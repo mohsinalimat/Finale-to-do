@@ -194,6 +194,8 @@ struct SettingsConfig: Codable {
     var userFirstName: String = "Friend"
     var userLastName: String = ""
     
+    var isICloudSyncOn: Bool = false
+    
     var defaultFolderID: UUID = UUID()
     
     var isNotificationsAllowed: Bool = false

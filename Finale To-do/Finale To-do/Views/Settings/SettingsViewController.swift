@@ -75,15 +75,19 @@ class SettingsMainPage: SettingsPageViewController {
                 .navigationCell(model: SettingsNavigationOption(title: "Name", icon: UIImage(systemName: "person.text.rectangle.fill"), iconBackgroundColor: .systemGreen, nextPage: SettingsPersonalPage(), SetPreview: {return App.settingsConfig.userFullName;} ))
             ]),
             SettingsSection(title: "Preferences", footer: "", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Default list", icon: UIImage(systemName: "folder.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsDefaultListPage(), SetPreview: { return self.defaultFolderPreview } )),
-                .navigationCell(model: SettingsNavigationOption(title: "Notifications", icon: UIImage(systemName: "bell.badge.fill"), iconBackgroundColor: .systemRed, nextPage: SettingsNotificationsPage(), SetPreview: {return ""})),
-                .navigationCell(model: SettingsNavigationOption(title: "Appearance", icon: UIImage(systemName: "circle.hexagongrid.circle"), iconBackgroundColor: .systemPurple, nextPage: SettingsAppearancePage(), SetPreview: {return ""}))
+                .navigationCell(model: SettingsNavigationOption(title: "Default List", icon: UIImage(systemName: "folder.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsDefaultListPage(), SetPreview: { return self.defaultFolderPreview } )),
+                .navigationCell(model: SettingsNavigationOption(title: "Notifications", icon: UIImage(systemName: "bell.badge.fill"), iconBackgroundColor: .systemRed, nextPage: SettingsNotificationsPage())),
+                .navigationCell(model: SettingsNavigationOption(title: "Appearance", icon: UIImage(systemName: "circle.hexagongrid.circle"), iconBackgroundColor: .systemPurple, nextPage: SettingsAppearancePage()))
             ]),
             
             SettingsSection(title: "Help", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Guide", icon: UIImage(systemName: "doc.text.image.fill"), iconBackgroundColor: .systemOrange, nextPage: SettingsPersonalPage(), SetPreview: {return ""})),
-                .navigationCell(model: SettingsNavigationOption(title: "About", icon: UIImage(systemName: "bookmark.fill"), iconBackgroundColor: .systemTeal, nextPage: SettingsPersonalPage(), SetPreview: {return ""})),
-                .navigationCell(model: SettingsNavigationOption(title: "Share", icon: UIImage(systemName: "square.and.arrow.up.fill"), iconBackgroundColor: .systemYellow, nextPage: SettingsPersonalPage(), SetPreview: {return ""}))
+                .navigationCell(model: SettingsNavigationOption(title: "Guide", icon: UIImage(systemName: "doc.text.image.fill"), iconBackgroundColor: .systemOrange, nextPage: SettingsPersonalPage())),
+                .navigationCell(model: SettingsNavigationOption(title: "About", icon: UIImage(systemName: "bookmark.fill"), iconBackgroundColor: .systemTeal, nextPage: SettingsAboutPage(), SetPreview: {return self.appVersion })),
+                .navigationCell(model: SettingsNavigationOption(title: "Share", icon: UIImage(systemName: "square.and.arrow.up.fill"), iconBackgroundColor: .systemYellow, OnTap: {
+                    let items = [AppIcon.classic.preview] as [UIImage]
+                    let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+                    self.present(ac, animated: true)
+                }))
             ])
         ]
     }
@@ -102,6 +106,13 @@ class SettingsMainPage: SettingsPageViewController {
         return App.mainTaskList.name
     }
     
+    var appVersion: String {
+        if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+            return "v\(version)"
+        }
+        return ""
+    }
+    
 }
 //MARK: Personal Page
 class SettingsPersonalPage: SettingsPageViewController {
@@ -109,14 +120,84 @@ class SettingsPersonalPage: SettingsPageViewController {
     override func GetSettings() -> [SettingsSection] {
         return [
             SettingsSection(footer: "Finale uses your name to personalize your experience.", options: [
-                .inputFieldCell(model: SettingsInputFieldOption(title: "First name", inputFieldText: App.settingsConfig.userFirstName, icon: nil, iconBackgroundColor: .systemGreen) ),
-                .inputFieldCell(model: SettingsInputFieldOption(title: "Last name", inputFieldText: App.settingsConfig.userLastName, icon: nil, iconBackgroundColor: .systemGreen) )
+                .inputFieldCell(model: SettingsInputFieldOption(title: "First Name", inputFieldText: App.settingsConfig.userFirstName, icon: nil, iconBackgroundColor: .systemGreen) ),
+                .inputFieldCell(model: SettingsInputFieldOption(title: "Last Name", inputFieldText: App.settingsConfig.userLastName, icon: nil, iconBackgroundColor: .systemGreen) )
             ]),
+            
+            SettingsSection(footer: icloudSyncFooter, options: [
+                .switchCell(model: SettingsSwitchOption(title: "iCloud Sync", isOn: App.settingsConfig.isICloudSyncOn, OnChange: { sender in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        self.CheckExistingIcloudSaveFiles(sender: sender)
+                    }
+                }))
+            ]),
+            
         ]
     }
     
+    func CheckExistingIcloudSaveFiles (sender: UISwitch) {
+        if sender.isOn {
+            let keyStore = NSUbiquitousKeyValueStore()
+            
+            if let lastSyncDate = keyStore.object(forKey: App.instance.lastICloudSyncKey) as? Date {
+                let deviceName = keyStore.string(forKey: App.instance.deviceNameKey) ?? "Unknown device"
+                let confirmationVC = ICloudSyncConfirmationViewController(
+                    lastICloudSync: lastSyncDate,
+                    deviceName: deviceName,
+                 OnCancelled: {
+                     sender.setOn(false, animated: true)
+                }, OnConfirm: {
+                    App.settingsConfig.isICloudSyncOn = true
+                    App.instance.LoadICloudData(iCloudKey: NSUbiquitousKeyValueStore())
+                    App.instance.sideMenuView.tableView.reloadData()
+                    App.instance.SelectTaskList(index: 0, closeMenu: false)
+                    ThemeManager.SetTheme(theme: App.settingsConfig.GetCurrentTheme())
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        App.instance.overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+                        
+                        let nc = self.navigationController as! SettingsNavigationController
+                        nc.SetAllViewControllerColors()
+                        nc.overrideUserInterfaceStyle = App.instance.overrideUserInterfaceStyle
+                        
+                        self.ReloadSettings()
+                        self.tableView.reloadData()
+                    }
+                }, OnDecline: {
+                    App.settingsConfig.isICloudSyncOn = true
+                    App.instance.SaveSettings()
+                    App.instance.SaveData()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        self.ReloadSettings()
+                        self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+                    }
+                })
+                if let sheet = confirmationVC.sheetPresentationController {
+                    sheet.detents = [.medium()]
+                }
+                self.present(confirmationVC, animated: true)
+            } else {
+                App.settingsConfig.isICloudSyncOn = true
+                self.ReloadSettings()
+                self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+            }
+        } else {
+            App.instance.RemoveICloudSaveFiles()
+            App.settingsConfig.isICloudSyncOn = false
+            self.ReloadSettings()
+            self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
+        }
+    }
+    
+    
     override var PageTitle: String {
         return "Name"
+    }
+    
+    var icloudSyncFooter: String {
+        return App.settingsConfig.isICloudSyncOn ?
+        "Turn off to stop Finale from synchronizing tasks across your different iOS devices." :
+        "Turn on for Finale to synchronize tasks across your different iOS devices."
     }
     
 }
@@ -161,7 +242,7 @@ class SettingsNotificationsPage: SettingsPageViewController {
     override func GetSettings() -> [SettingsSection] {
         return [
             SettingsSection(footer: "Finale will never send you unnecessary alerts, and will only send notifications that you set yourself.", options: [
-                .switchCell(model: SettingsSwitchOption(title: "Allow notifications", isOn: App.settingsConfig.isNotificationsAllowed) { sender in
+                .switchCell(model: SettingsSwitchOption(title: "Allow Notifications", isOn: App.settingsConfig.isNotificationsAllowed) { sender in
                     if sender.isOn {
                         NotificationHelper.RequestNotificationAccess(uiSwitch: sender, settingsNotificationsPage: self)
                     } else {
@@ -246,7 +327,36 @@ class SettingsAppearancePage: SettingsPageViewController {
     
 }
 
+//MARK: About page
 
+class SettingsAboutPage: SettingsPageViewController {
+    override func GetSettings() -> [SettingsSection] {
+        return [
+            
+            SettingsSection(options: [.customViewCell(model: SettingsAppLogoAndVersionView())], customHeight: SettingsAppLogoAndVersionView.height),
+            
+            SettingsSection(title: "More", options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Visit finale.com", icon: UIImage(systemName: "globe"), iconBackgroundColor: .systemBlue, url: URL(string: "https://app.finale.cc"))),
+                .navigationCell(model: SettingsNavigationOption(title: "Rate App", icon: UIImage(systemName: "star.fill"), iconBackgroundColor: .systemGreen, url: URL(string: "itms-apps:itunes.apple.com/us/app/apple-store/id1546661013?mt=8&action=write-review"))),
+                .navigationCell(model: SettingsNavigationOption(title: "Finale: Daily Habit Tracker", icon: UIImage(named: "Finale: Daily Habit Tracker Icon"), iconBorderWidth: 1, url: URL(string: "https://apps.apple.com/us/app/finale-daily-habit-tracker/id1546661013")))
+            ]),
+            
+            SettingsSection(title: "Help", options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Contact Developer", icon: UIImage(systemName: "message.fill"), iconBackgroundColor: .systemBlue, nextPage: nil, url: URL(string: "https://twitter.com/GrantOgany")))
+            ]),
+            
+            SettingsSection(title: "Legal", options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Privacy Policy", url: URL(string: "http://app.finale.cc/privacy-policy")))
+            ]),
+            
+        ]
+    }
+    
+    override var PageTitle: String {
+        return "About"
+    }
+    
+}
 
 
 
@@ -320,10 +430,13 @@ struct SettingsSelectionOption {
 
 struct SettingsNavigationOption {
     let title: String
-    let icon: UIImage?
-    let iconBackgroundColor: UIColor?
-    let nextPage: SettingsPageViewController
-    var SetPreview: (() -> String)
+    var icon: UIImage? = nil
+    var iconBackgroundColor: UIColor? = nil
+    var iconBorderWidth: CGFloat? = nil
+    var nextPage: SettingsPageViewController? = nil
+    var url: URL? = nil
+    var OnTap: (()->Void)?
+    var SetPreview: (() -> String) = { return "" }
 }
 
 struct SettingsSegmentedControlOption {

@@ -35,12 +35,12 @@ class ConfirmationSlideover: UIView, UIDynamicTheme {
         let titleLabel = UILabel(frame: CGRect(x: padding, y: padding, width: UIScreen.main.bounds.width-padding*2, height: 20))
         titleLabel.text = title
         titleLabel.font = UIFont.preferredFont(forTextStyle: .headline)
-        titleLabel.textColor = .label
+        titleLabel.textColor = .white
         titleLabel.textAlignment = .center
         
         let subtitleLabel = UILabel(frame: CGRect(x: padding, y: titleLabel.frame.maxY+padding*0.5, width: UIScreen.main.bounds.width-padding*2, height: 30))
         subtitleLabel.text = subTitle
-        subtitleLabel.textColor = .systemGray
+        subtitleLabel.textColor = .white
         subtitleLabel.font = UIFont.preferredFont(forTextStyle: .subheadline)
         subtitleLabel.textAlignment = .center
         

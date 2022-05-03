@@ -408,8 +408,8 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         else { color = App.userTaskLists[App.selectedTaskListIndex-2].primaryColor }
         accentColor = color
         UIView.animate(withDuration: 0.25) { [self] in
-            calendarView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
-            confirmButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
+            if calendarView != nil { calendarView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) }
+            if confirmButton != nil { confirmButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) }
             for row in notificationSelectoinRows { row.SetAccentColor(color: accentColor) }
         }
     }

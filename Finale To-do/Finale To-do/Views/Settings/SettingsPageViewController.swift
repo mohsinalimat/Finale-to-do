@@ -88,8 +88,15 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
             cell.inputField.becomeFirstResponder()
             break
         case .navigationCell(let model):
-            show(model.nextPage, sender: self)
-            indexPathToUpdate = indexPath
+            if model.nextPage != nil {
+                show(model.nextPage!, sender: self)
+                indexPathToUpdate = indexPath
+            } else if model.url != nil {
+                UIApplication.shared.open(model.url!)
+            } else if model.OnTap != nil {
+                model.OnTap!()
+            }
+            
             break
         case .selectionCell(let model):
             model.OnSelect()
@@ -173,6 +180,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
     let iconContainer: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
+        view.clipsToBounds = true
         return view
     }()
     let iconView: UIImageView = {
@@ -249,7 +257,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
 
         let iconContainerSize = iconView.image == nil ? 0 : contentView.frame.height-padding*0.9
         iconContainer.frame = CGRect(x: padding, y: 0.5*(rowHeight-iconContainerSize), width: iconContainerSize, height: iconContainerSize)
-        iconView.frame.size = CGSize(width: iconContainerSize*0.7, height: iconContainerSize*0.7)
+        iconView.frame.size = CGSize(width: iconContainer.backgroundColor == nil ? iconContainerSize : iconContainerSize*0.7, height: iconContainer.backgroundColor == nil ? iconContainerSize : iconContainerSize*0.7)
         iconView.frame.origin = CGPoint(x: 0.5*(iconContainerSize-iconView.frame.width), y: 0.5*(iconContainerSize-iconView.frame.height))
 
         let titleWidth = titleLabel.text == nil ? 0 : titleLabel.text!.size(withAttributes:[.font: UIFont.preferredFont(forTextStyle: .body)]).width
@@ -290,6 +298,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
             OnSwitchChange = model.OnChange
             switchView.addTarget(self, action: #selector(OnSwitchChageValueChange), for: .valueChanged)
             self.accessoryType = .none
+            self.selectionStyle = .none
             break
         case .navigationCell(let model):
             titleLabel.text = model.title
@@ -298,6 +307,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
             previewLabel.text = model.SetPreview()
             previewLabel.alpha = 1
             SetPreview = model.SetPreview
+            if model.iconBorderWidth != nil { iconContainer.layer.borderWidth = model.iconBorderWidth!; iconContainer.layer.borderColor = UIColor.systemGray.cgColor; }
             self.accessoryType = .disclosureIndicator
             break
         case .timePickerCell(let model):
@@ -316,7 +326,8 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
         case .customViewCell(let model):
             customViewContainer.addSubview(model)
             customViewContainer.alpha = 1
-            selectionStyle = .none
+            self.accessoryType = .none
+            self.selectionStyle = .none
         case .segmentedControlCell(let model):
             titleLabel.text = model.title
             OnSegmentedControlChange = model.OnValueChange
@@ -373,7 +384,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField.text?.isEmpty ?? true {
-            textField.text = titleLabel.text == "First name" ? App.settingsConfig.userFirstName : App.settingsConfig.userLastName
+            textField.text = titleLabel.text == "First Name" ? App.settingsConfig.userFirstName : App.settingsConfig.userLastName
             return
         }
         
@@ -381,7 +392,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
             textField.text?.removeFirst()
         }
         
-        if titleLabel.text == "First name" {
+        if titleLabel.text == "First Name" {
             App.settingsConfig.userFirstName = textField.text!
         } else {
             App.settingsConfig.userLastName = textField.text!

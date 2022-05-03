@@ -39,7 +39,7 @@ class SettingsAppBadgeCountView: UIView {
         subtitleLabel.textColor = .systemGray
         subtitleLabel.font = .preferredFont(forTextStyle: .footnote)
         
-        appIconView.image = Bundle.main.appIcon
+        appIconView.image = App.settingsConfig.selectedIcon.preview
         appIconView.clipsToBounds = true
         appIconView.layer.cornerRadius = 12
         
@@ -59,6 +59,7 @@ class SettingsAppBadgeCountView: UIView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        
         
         rowWidth = superview!.frame.width
         let paddedRowWidth = rowWidth - padding*2
@@ -240,8 +241,6 @@ class SettingsAppIconView: UIView {
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
         
         self.addSubview(scrollView)
-        
-        
         
         for i in 0..<AppIcon.allCases.count {
             let cell = AppIconView(
@@ -552,5 +551,72 @@ class AppThemePreviewView: UIView, UIDynamicTheme  {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+}
+
+
+
+//MARK: App Logo & Version row
+
+class SettingsAppLogoAndVersionView: UIView, UIDynamicTheme {
+    
+    static var height = 136.0
+    
+    let padding = 16.0
+    
+    let appIcon = UIImageView()
+    let versionLabel = UILabel()
+    
+    init() {
+        super.init(frame: CGRect.zero)
+        backgroundColor = .red
+        
+        self.addSubview(appIcon)
+        self.addSubview(versionLabel)
+    }
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        
+        let rowWidth = superview!.frame.width
+        self.frame.size = CGSize(width: rowWidth, height: SettingsAppLogoAndVersionView.height)
+        
+        let iconSize = 80.0
+        appIcon.frame = CGRect(x: 0.5*(rowWidth-iconSize), y: 20, width: iconSize, height: iconSize)
+        appIcon.image = AppIcon.classic.preview
+        appIcon.layer.cornerRadius = 16
+        appIcon.clipsToBounds = true
+        
+        versionLabel.frame = CGRect(x: 0, y: appIcon.frame.maxY + padding, width: rowWidth, height: 20)
+        versionLabel.textAlignment = .center
+        versionLabel.textColor = .systemGray
+        versionLabel.text = appVersion
+        
+        self.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
+    }
+    
+    func ReloadThemeColors() {
+        backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
+    }
+    
+    var appVersion: String {
+        if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+            return "Version: \(version)"
+        }
+        return ""
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
     
 }

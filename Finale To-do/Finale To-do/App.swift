@@ -452,49 +452,148 @@ class App: UIViewController {
         })
     }
     
-//MARK: Backend functions
+//MARK: Saving and Loading
+    
+    let settingsKey = "FINALE_DEV_APP_settingsConfig"
+    let overviewSortingPrefKey = "FINALE_DEV_APP_overviewSortingPreference"
+    let mainTaskListKey = "FINALE_DEV_APP_mainTaskList"
+    let userTaskListKey = "FINALE_DEV_APP_userTaskLists"
+    let lastICloudSyncKey = "FINALE_DEV_APP_lastICloudSyncDate"
+    let lastLocalSaveKey = "FINALE_DEV_APP_lastICloudSaveDate"
+    let deviceNameKey = "FINALE_DEV_APP_deviceName"
     
     func LoadData () {
-        overviewSortingPreference = SortingPreference(rawValue: UserDefaults.standard.integer(forKey: "FINALE_DEV_APP_overviewSortingPreference"))
+        if let data = UserDefaults.standard.data(forKey: settingsKey) {
+            if let decoded = try? JSONDecoder().decode(SettingsConfig.self, from: data) {
+                App.settingsConfig = decoded
+                App.settingsConfig.isNotificationsAllowed = App.settingsConfig.isNotificationsAllowed
+            }
+        } else {
+            if let data = NSUbiquitousKeyValueStore().data(forKey: settingsKey) {
+                if let decoded = try? JSONDecoder().decode(SettingsConfig.self, from: data) {
+                    App.settingsConfig = decoded
+                    App.settingsConfig.isNotificationsAllowed = App.settingsConfig.isNotificationsAllowed
+                }
+            }
+        }
+        
+        let keyStore = App.settingsConfig.isICloudSyncOn ? NSUbiquitousKeyValueStore() : nil
+        
+        if App.settingsConfig.isICloudSyncOn {
+            let lastICloudSync = keyStore?.object(forKey: lastICloudSyncKey) as? Date
+            let lastLocalSync = UserDefaults.standard.value(forKey: lastLocalSaveKey) as? Date
+            
+            if lastLocalSync != nil && lastICloudSync != nil {
+                if lastLocalSync! > lastICloudSync! {
+                    LoadLocalData()
+                } else {
+                    LoadICloudData(iCloudKey: keyStore!)
+                }
+            } else if lastICloudSync != nil && lastLocalSync == nil {
+                LoadICloudData(iCloudKey: keyStore!)
+            } else {
+                LoadLocalData()
+            }
+        } else {
+            LoadLocalData()
+        }
+        
+        RemoveExcessCompletedTasks()
+        ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
+    }
+    
+    func LoadLocalData () {
+        overviewSortingPreference = SortingPreference(rawValue: UserDefaults.standard.integer(forKey: overviewSortingPrefKey))
         if overviewSortingPreference == .Unsorted { overviewSortingPreference = .ByList }
 
-        if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_mainTaskList") {
+        if let data = UserDefaults.standard.data(forKey: mainTaskListKey) {
             if let decoded = try? JSONDecoder().decode(TaskList.self, from: data) {
                 App.mainTaskList = decoded
             }
         }
-        if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_userTaskLists") {
+        if let data = UserDefaults.standard.data(forKey: userTaskListKey) {
             if let decoded = try? JSONDecoder().decode([TaskList].self, from: data) {
                 App.userTaskLists = decoded
             }
         }
-
-        if let data = UserDefaults.standard.data(forKey: "FINALE_DEV_APP_settingsConfig") {
+    }
+    
+    func LoadICloudData (iCloudKey: NSUbiquitousKeyValueStore) {
+        if let data = iCloudKey.data(forKey: settingsKey) {
             if let decoded = try? JSONDecoder().decode(SettingsConfig.self, from: data) {
                 App.settingsConfig = decoded
                 App.settingsConfig.isNotificationsAllowed = App.settingsConfig.isNotificationsAllowed
             }
         }
-        RemoveExcessCompletedTasks()
-        ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
+        
+        if let osp = iCloudKey.object(forKey: overviewSortingPrefKey) as? Int {
+            overviewSortingPreference = SortingPreference(rawValue: osp)
+            if overviewSortingPreference == .Unsorted { overviewSortingPreference = .ByList }
+        } else {
+            overviewSortingPreference = .ByList
+        }
+
+        if let data = iCloudKey.data(forKey: mainTaskListKey) {
+            if let decoded = try? JSONDecoder().decode(TaskList.self, from: data) {
+                App.mainTaskList = decoded
+            }
+        }
+        if let data = iCloudKey.data(forKey: userTaskListKey) {
+            if let decoded = try? JSONDecoder().decode([TaskList].self, from: data) {
+                App.userTaskLists = decoded
+            }
+        }
     }
     
     func SaveData () {
-        UserDefaults.standard.set(overviewSortingPreference.rawValue, forKey: "FINALE_DEV_APP_overviewSortingPreference")
+        let keyStore = App.settingsConfig.isICloudSyncOn ? NSUbiquitousKeyValueStore() : nil
+        
+        SaveValue(value: overviewSortingPreference.rawValue, forKey: overviewSortingPrefKey, iCloudKey: keyStore)
         
         if let encoded = try? JSONEncoder().encode(App.mainTaskList) {
-            UserDefaults.standard.set(encoded, forKey: "FINALE_DEV_APP_mainTaskList")
+            SaveValue(value: encoded, forKey: mainTaskListKey, iCloudKey: keyStore)
         }
         if let encoded = try? JSONEncoder().encode(App.userTaskLists) {
-            UserDefaults.standard.set(encoded, forKey: "FINALE_DEV_APP_userTaskLists")
+            SaveValue(value: encoded, forKey: userTaskListKey, iCloudKey: keyStore)
         }
+        
+        UserDefaults.standard.set(Date.now, forKey: lastLocalSaveKey)
+        keyStore?.set(Calendar.current.date(byAdding: .minute, value: -1, to: Date.now), forKey: lastICloudSyncKey)
+        keyStore?.set(UIDevice.current.name, forKey: deviceNameKey)
+        keyStore?.synchronize()
     }
     
     func SaveSettings () {
+        let keyStore = App.settingsConfig.isICloudSyncOn ? NSUbiquitousKeyValueStore() : nil
+        
         if let encoded = try? JSONEncoder().encode(App.settingsConfig) {
-            UserDefaults.standard.set(encoded, forKey: "FINALE_DEV_APP_settingsConfig")
+            SaveValue(value: encoded, forKey: settingsKey, iCloudKey: keyStore)
+        }
+        
+        keyStore?.synchronize()
+    }
+    
+    func SaveValue(value: Any, forKey: String, iCloudKey: NSUbiquitousKeyValueStore? = nil) {
+        UserDefaults.standard.set(value, forKey: forKey)
+        iCloudKey?.set(value, forKey: forKey)
+    }
+    
+    func RemoveICloudSaveFiles () {
+        let keyStore = NSUbiquitousKeyValueStore()
+        
+        if ((keyStore.object(forKey: lastICloudSyncKey) as? Date) != nil) {
+            keyStore.removeObject(forKey: settingsKey)
+            keyStore.removeObject(forKey: overviewSortingPrefKey)
+            keyStore.removeObject(forKey: mainTaskListKey)
+            keyStore.removeObject(forKey: userTaskListKey)
+            keyStore.removeObject(forKey: lastICloudSyncKey)
+            keyStore.removeObject(forKey: lastLocalSaveKey)
+            keyStore.removeObject(forKey: deviceNameKey)
+            keyStore.synchronize()
         }
     }
+    
+//MARK: Backend functions
     
     @objc func AppMovedToBackground() {
         SaveData()

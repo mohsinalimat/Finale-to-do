@@ -381,9 +381,9 @@ class Swatch: UIView {
     }
     
     func SetColors () {
-        self.backgroundColor = isSelected ? .white : color == .clearInteractive ? .defaultColor : color
-        insideCircle.backgroundColor = isSelected ? .defaultColor.dark : .clear
-        colorCircle.backgroundColor = color == .clearInteractive ? .defaultColor : color
+        self.backgroundColor = isSelected ? .white : color == .clearInteractive ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor) : color
+        insideCircle.backgroundColor = isSelected ? ThemeManager.currentTheme.sidemenuSelectionColor : .clear
+        colorCircle.backgroundColor = color == .clearInteractive ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor) : color
     }
     
     @objc func Select() {
