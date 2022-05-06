@@ -13,11 +13,11 @@
 					<string>classicFilled</string>
 				</array>
 			</dict>
-			<key>darkmode</key>
+			<key>dark</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
 				<array>
-					<string>darkmode</string>
+					<string>dark</string>
 				</array>
 			</dict>
 			<key>darkmodeFilled</key>
@@ -25,6 +25,62 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>darkmodeFilled</string>
+				</array>
+			</dict>
+			<key>black</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>black</string>
+				</array>
+			</dict>
+			<key>blackFilled</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>blackFilled</string>
+				</array>
+			</dict>
+			<key>orange</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>orange</string>
+				</array>
+			</dict>
+			<key>orangeFilled</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>orangeFilled</string>
+				</array>
+			</dict>
+			<key>purple</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>purple</string>
+				</array>
+			</dict>
+			<key>purpleFilled</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>purpleFilled</string>
+				</array>
+			</dict>
+			<key>red</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>red</string>
+				</array>
+			</dict>
+			<key>redFilled</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>redFilled</string>
 				</array>
 			</dict>
 		</dict>

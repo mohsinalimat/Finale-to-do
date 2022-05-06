@@ -214,7 +214,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     func UpdateUpcomingTasksCounts () {
         for cell in tableView.visibleCells {
             let taskListCell = cell as! TaskListTableCell
-            taskListCell.taskListMenuItem.upcomingTaskCountLabel.text = taskListCell.taskListMenuItem.taskList.upcomingTasks.count.description
+            taskListCell.taskListMenuItem.upcomingTaskCountLabel.text = taskListCell.taskListMenuItem.taskList.upcomingTasks.count == 0 ? "" :  taskListCell.taskListMenuItem.taskList.upcomingTasks.count.description
         }
     }
     

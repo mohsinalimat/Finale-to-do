@@ -125,7 +125,11 @@ class ThemeManager {
         
         AppTheme(name: "Aqua", interface: .Dark, primaryColor: UIColor(hex: "227DB5"), overrideTasklistHeaderColor: .defaultColor.dark, overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "3DD9D6")),
         
-        AppTheme(name: "True Black", interface: .Dark, primaryColor: UIColor(hex: "262626"), overrideTasklistHeaderColor: UIColor(hex: "000000"), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "000000"), overridePrimaryElementColor: UIColor(hex: "262626").lerp(second: .white, percentage: 0.05))
+        AppTheme(name: "True Black", interface: .Dark, primaryColor: UIColor(hex: "4D4D4D"),
+                 overrideTasklistHeaderColor: UIColor(hex: "000000"),
+                 overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "000000"),
+                 overrideSidemenuBackgroundColor: UIColor(hex: "121212"),
+                 overrideSidemenuSelectionColor: UIColor(hex: "1F1F1F"))
     
     ]
     
@@ -139,7 +143,4 @@ class ThemeManager {
         ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
         App.instance.SetSubviewColors(of: App.instance.view)
     }
-    
-    
-    
 }

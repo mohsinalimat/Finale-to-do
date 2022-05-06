@@ -334,8 +334,8 @@ class BadgeGroupViewController: UIViewController, UIScrollViewDelegate {
         let nBadges = badgeGroup.numberOfBadges
         let cellWidth = width*0.7
         let cellHeight = cellWidth
-        
-        let scrollView = UIScrollView(frame: CGRect(x: 0.5*(width-cellWidth), y: 0.3*(UIScreen.main.bounds.height-cellHeight), width: cellWidth, height: cellHeight))
+        let fullHeight = cellHeight+padding*4+70
+        let scrollView = UIScrollView(frame: CGRect(x: 0.5*(width-cellWidth), y: 0.4*(UIScreen.main.bounds.height-fullHeight), width: cellWidth, height: cellHeight))
         scrollView.contentSize.width = cellWidth*Double(nBadges)
         scrollView.isPagingEnabled = true
         scrollView.clipsToBounds = false
