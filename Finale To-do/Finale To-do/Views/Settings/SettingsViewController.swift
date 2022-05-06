@@ -22,8 +22,16 @@ class SettingsNavigationController: UINavigationController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        if App.selectedTaskListIndex == 0 { App.instance.SelectTaskList(index: 0, closeMenu: false)}
         App.instance.SaveSettings()
+        
+        self.popToRootViewController(animated: false)
+        let settingsVC = topViewController as! SettingsPageViewController
+        
+        settingsVC.ReloadSettings()
+        for cell in settingsVC.tableView.visibleCells {
+            let x = cell as! SettingsTableCell
+            x.ReloadPreview()
+        }
     }
     
     func SetAllViewControllerColors() {

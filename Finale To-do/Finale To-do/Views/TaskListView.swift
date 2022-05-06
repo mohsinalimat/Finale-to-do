@@ -97,7 +97,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let sortButtonSize = hamburgerButtonSize
         sortButton = UIButton(frame: CGRect(x: frame.width-sortButtonSize-padding, y: hamburgerButton.frame.origin.y, width: sortButtonSize, height: sortButtonSize))
         sortButton.tintColor = headerElementsColor
-        sortButton.setImage(UIImage(systemName: "arrow.up.arrow.down"), for: .normal)
+        sortButton.setImage(UIImage(systemName: "arrow.up.arrow.down", withConfiguration: UIImage.SymbolConfiguration.init(weight: .semibold)), for: .normal)
         sortButton.contentVerticalAlignment = .fill
         sortButton.contentHorizontalAlignment = .fill
         sortButton.imageEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 0)
@@ -450,7 +450,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     @objc func TouchedTable (sender: UITapGestureRecognizer) {
         sender.cancelsTouchesInView = false
         
-        currentSliderEditing?.StopEditing()
+        currentSliderEditing?.StopEditing(putInRightPlace: true)
         currentSliderEditing = nil
     }
     
@@ -546,9 +546,9 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         }
     }
     
-    func MoveTaskToRightSortedIndexPath (originalIndexPath: IndexPath, task: Task) {
+    func MoveTaskToRightSortedIndexPath (task: Task) {
         let newIndexPath = GetSortedIndexPath(task: task)
-        
+        let originalIndexPath = IndexPath(row: task.isCompleted ? App.instance.taskListView.allCompletedTasks.firstIndex(of: task)! : App.instance.taskListView.allUpcomingTasks.firstIndex(of: task)!, section: task.isCompleted ? 1 : 0)
         if originalIndexPath == newIndexPath { return }
         
         tableView.moveRow(at: originalIndexPath, to: newIndexPath)

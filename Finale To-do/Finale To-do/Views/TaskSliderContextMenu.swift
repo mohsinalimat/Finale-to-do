@@ -562,6 +562,12 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
         App.instance.SetSubviewColors(of: self.view)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if closeButton != nil {
+            App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: slider.task)
+        }
+    }
     
     
     

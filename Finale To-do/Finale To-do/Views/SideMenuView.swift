@@ -16,6 +16,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     let menuItemHeight = 50.0
     
     let tableView: UITableView
+    var userPanel: UserPanel!
     var overviewMenuItem: TaskListMenuItem!
     
     var currentContextMenuView: TaskListMenuItem?
@@ -31,14 +32,12 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         self.backgroundColor = ThemeManager.currentTheme.sidemenuBackgroundColor
         
-        let homeLabel = UILabel(frame: CGRect(x: padding, y: frame.height*0.2-30, width: frame.width-padding*2, height: 30))
-        homeLabel.text = "Home"
-        homeLabel.font = UIFont.systemFont(ofSize: 22, weight: .bold)
-        homeLabel.textColor = .white
+        let userPanelHeight = (frame.width-padding)*0.1+padding-2 //55.0
+        userPanel = UserPanel(frame: CGRect(x: padding*0.5, y: frame.height*0.2-userPanelHeight, width: frame.width-padding, height: userPanelHeight))
         
-        self.addSubview(homeLabel)
+        self.addSubview(userPanel)
         
-        overviewMenuItem = TaskListMenuItem(frame: CGRect(x: padding*0.5, y: homeLabel.frame.maxY+padding*0.5, width: frame.width-padding, height: menuItemHeight), taskList: TaskList(name: "Overview", primaryColor: .defaultColor, systemIcon: "tray.full.fill"), index: 0)
+        overviewMenuItem = TaskListMenuItem(frame: CGRect(x: padding*0.5, y: userPanel.frame.maxY+padding*0.5, width: frame.width-padding, height: menuItemHeight), taskList: TaskList(name: "Overview", primaryColor: .defaultColor, systemIcon: "tray.full.fill"), index: 0)
         
         self.addSubview(overviewMenuItem)
         
@@ -203,10 +202,6 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     @objc func OpenSettings () {
-        settingsNavControllers.popToRootViewController(animated: false)
-        let mainPage = settingsNavControllers.topViewController as! SettingsPageViewController
-        mainPage.ReloadSettings()
-        mainPage.tableView.reloadData()
         App.instance.present(settingsNavControllers, animated: true)
     }
     
@@ -221,6 +216,10 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             let taskListCell = cell as! TaskListTableCell
             taskListCell.taskListMenuItem.upcomingTaskCountLabel.text = taskListCell.taskListMenuItem.taskList.upcomingTasks.count.description
         }
+    }
+    
+    func OpenUserOverview () {
+        self.parentViewController?.show(UserProfileNavigationController(), sender: self)
     }
     
     
@@ -254,6 +253,7 @@ class TaskListMenuItem: UIView, UIDynamicTheme {
         
         self.backgroundColor = isSelected ? ThemeManager.currentTheme.sidemenuSelectionColor : .clearInteractive
         self.layer.cornerRadius = 10
+        self.tintAdjustmentMode = .normal
         
         let iconView = UIImageView(frame: CGRect(x: padding*2+1, y: 1, width: (frame.width-padding*2)*imageWidthProportion-2, height: frame.height-2))
         iconView.image = UIImage(systemName: taskList.systemIcon)
@@ -276,7 +276,6 @@ class TaskListMenuItem: UIView, UIDynamicTheme {
         let titleLabel = UILabel(frame: CGRect(x: (frame.width-padding*2)*imageWidthProportion+padding*3, y: 0, width: titleLabelWidth, height: frame.height))
         titleLabel.text = taskList.name
         titleLabel.textColor = .white
-        
         
         self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(SelectList)))
         
@@ -332,4 +331,159 @@ class TaskListTableCell: UITableViewCell {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
+
+class UserPanel: UIView, UIDynamicTheme {
+    
+    let padding = 16.0
+    
+    var levelFrame: LevelFrame!
+    let usernameLabel = UILabel()
+    var progressBar: ProgressBar!
+    
+    
+    override init(frame: CGRect){
+        super.init(frame: frame)
+        
+        let levelIconSize = frame.height
+        levelFrame = LevelFrame(frame: CGRect(x: 0, y: 0, width: levelIconSize, height: levelIconSize))
+        
+        let usernameWidth = frame.width - levelIconSize - padding*0.5
+        let usernameHeight = 20.0
+        usernameLabel.frame = CGRect(x: levelFrame.frame.maxX+padding*0.45, y: 0.3*(levelIconSize-usernameHeight), width: usernameWidth, height: usernameHeight)
+        usernameLabel.textColor = .white
+        ReloadName()
+        
+        progressBar = ProgressBar(frame: CGRect(x: usernameLabel.frame.origin.x, y: usernameLabel.frame.maxY + padding*0.5, width: usernameWidth-padding, height: 3))
+        
+        self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(Tap)))
+        
+        progressBar.UpdateProgress(progress: StatsManager.levelProgress)
+        
+        self.addSubview(levelFrame)
+        self.addSubview(usernameLabel)
+        self.addSubview(progressBar)
+    }
+    
+    
+    
+    func ReloadThemeColors() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            levelFrame.UpdateColor(color: ThemeManager.currentTheme.primaryElementColor())
+        }
+        progressBar.ReloadColors()
+    }
+    
+    func ReloadName () {
+        usernameLabel.text = App.settingsConfig.userFullName
+    }
+    
+    func ReloadPanel () {
+        progressBar.UpdateProgress(progress: StatsManager.levelProgress)
+        levelFrame.UpdateLevel(level: StatsManager.stats.level)
+    }
+    
+    @objc func Tap () {
+        App.instance.sideMenuView.OpenUserOverview()
+    }
+    
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}
+
+class LevelFrame: UIView {
+    
+    let levelIcon = UIImageView()
+    let levelLabel = UILabel()
+    let colorLayer = UIView()
+    
+    override init (frame: CGRect) {
+        
+        super.init(frame: frame)
+        
+        let iconSize = frame.width * 0.95
+        levelIcon.frame = CGRect(x: 0.5*(frame.width-iconSize), y: 0.5*(frame.height-iconSize), width: iconSize, height: iconSize)
+        levelIcon.image = UIImage(named: "Level Frame")
+        levelIcon.contentMode = .scaleAspectFit
+        colorLayer.frame = levelIcon.frame
+        colorLayer.layer.compositingFilter = "multiplyBlendMode"
+        let mask = UIImageView(image: UIImage(named: "Level Frame"))
+        mask.frame = CGRect(x: -0.5, y: -0.5, width: iconSize+1, height: iconSize+1)
+        mask.contentMode = .scaleAspectFit
+        colorLayer.mask = mask
+        
+        levelLabel.frame = levelIcon.frame
+        levelLabel.frame.origin.y -= frame.width/57
+        levelLabel.textColor = .white
+        levelLabel.textAlignment = .center
+        levelLabel.font = .systemFont(ofSize: 20*(frame.width/57), weight: .semibold)
+        
+        self.addSubview(levelIcon)
+        self.addSubview(colorLayer)
+        self.addSubview(levelLabel)
+        
+        UpdateLevel(level: StatsManager.stats.level)
+        UpdateColor(color: ThemeManager.currentTheme.primaryElementColor())
+    }
+    
+    func UpdateLevel(level: Int) {
+        levelLabel.text = level.description
+    }
+    
+    func UpdateColor(color: UIColor) {
+        colorLayer.backgroundColor = color
+    }
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}
+
+
+class ProgressBar: UIView {
+ 
+    
+    let progressbarBackground = UIView()
+    let progressbarForeground = UIView()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        progressbarBackground.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        progressbarBackground.backgroundColor = ThemeManager.currentTheme.sidemenuSelectionColor
+        progressbarBackground.layer.cornerRadius = progressbarBackground.frame.height*0.5
+        
+        progressbarForeground.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        progressbarForeground.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
+        progressbarForeground.layer.cornerRadius = progressbarForeground.frame.height*0.5
+        
+        self.addSubview(progressbarBackground)
+        self.addSubview(progressbarForeground)
+    }
+    
+    func UpdateProgress (progress: CGFloat) {
+        progressbarForeground.frame.size.width = progressbarBackground.frame.width * progress
+    }
+    
+    func ReloadColors() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            progressbarBackground.backgroundColor = ThemeManager.currentTheme.sidemenuSelectionColor
+            progressbarForeground.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
+        }
+    }
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
 }

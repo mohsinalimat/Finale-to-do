@@ -69,7 +69,6 @@ class Task: Codable, Equatable {
     func RemoveNotification (notificationType: NotificationType) {
         if !containsNotification(notificationType: notificationType) { return }
         
-        NotificationHelper.CancelNotification(id: self.notifications[notificationType]!)
         self.notifications.removeValue(forKey: notificationType)
     }
     

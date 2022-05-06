@@ -120,12 +120,12 @@ extension UIView {
         AppConfiguration.AddStandardShadow(view: self)
     }
     
-    func SubviewsDebugBorder (excluseSelf: Bool = false, parentColor: UIColor = .blue, color: UIColor = .red) {
-        for view in self.subviews { view.SubviewsDebugBorder(parentColor: color) }
-        if !excluseSelf { self.DebugBorder(color: parentColor) }
+    func DebugSubviews (excluseSelf: Bool = false, parentColor: UIColor = .blue, color: UIColor = .red) {
+        for view in self.subviews { view.DebugSubviews(parentColor: color) }
+        if !excluseSelf { self.Debug(color: parentColor) }
     }
     
-    func DebugBorder(color: UIColor = .red) {
+    func Debug(color: UIColor = .red) {
         self.layer.borderWidth = 1
         self.layer.borderColor = color.cgColor
     }
@@ -153,4 +153,15 @@ extension NSMutableAttributedString {
         self.addAttribute(NSAttributedString.Key.strikethroughStyle, value: 1, range: NSRange(location: 0, length: self.length))
     }
     
+}
+
+
+extension Calendar {
+    func daysBetween(_ from: Date, and to: Date) -> Int {
+        let fromDate = startOfDay(for: from) // <1>
+        let toDate = startOfDay(for: to) // <2>
+        let numberOfDays = dateComponents([.day], from: fromDate, to: toDate) // <3>
+        
+        return numberOfDays.day!
+    }
 }

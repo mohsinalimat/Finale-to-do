@@ -202,7 +202,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         if taskNameInputField.text == "" {
             app.DeleteTask(task: task)
         } else if putInRightPlace {
-            App.instance.taskListView.MoveTaskToRightSortedIndexPath(originalIndexPath: IndexPath(row: App.instance.taskListView.allUpcomingTasks.firstIndex(of: task)!, section: 0), task: task)
+            App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: task)
         }
         
         ToggleCalendarButton()

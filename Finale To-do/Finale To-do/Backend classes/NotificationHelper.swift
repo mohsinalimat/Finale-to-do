@@ -163,7 +163,6 @@ class NotificationHelper {
     }
     
     static func CancelAllScheduledNotifications () {
-//        UNUserNotificationCenter.current().removeAllPendingNotificationRequests() I AM USING THE ONE BELOW CAUSE IT PRINTS INTO THE CONSOLE
         UNUserNotificationCenter.current().getPendingNotificationRequests(completionHandler: { result in
             for r in result {
                 CancelNotification(id: r.identifier)

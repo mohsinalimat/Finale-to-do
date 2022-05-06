@@ -64,7 +64,7 @@ class App: UIViewController {
         
         self.view.addSubview(containerView)
         
-        NotificationCenter.default.addObserver(self, selector: #selector(AppMovedToBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(AppMovedToBackground), name: UIApplication.willResignActiveNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(AppBecameActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         NotificationHelper.CheckNotificationPermissionStatus()
@@ -145,9 +145,9 @@ class App: UIViewController {
         lastDeletedTask = nil
         taskListView.ShowUndoButton()
         
-        task.CancelAllNotifications()
-        
         DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
+        
+        StatsManager.EarnPointsForTask(task: task)
     }
     
     func DeleteTask(task: Task) {
@@ -203,7 +203,6 @@ class App: UIViewController {
             lastDeletedTask = task
             taskListView.ShowUndoButton()
         }
-        task.CancelAllNotifications()
         
         taskListView.currentContextMenuPreview = UIView()
         
@@ -215,10 +214,11 @@ class App: UIViewController {
     func UndoCompletingTask(task: Task) {
         if !task.isCompleted { return }
         
+        task.isCompleted = false
+        
         let arrayIndex = taskListView.GetSortedArrayIndex(task: task)
         
         var index = -1
-        task.isCompleted = false
         
         if App.mainTaskList.completedTasks.contains(task) {
             index = App.mainTaskList.completedTasks.firstIndex(of: task)!
@@ -253,8 +253,6 @@ class App: UIViewController {
         if index == 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         
         taskListView.HideUndoButton()
-        
-        task.ScheduleAllNotifications()
         
         DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
     }
@@ -296,13 +294,12 @@ class App: UIViewController {
         
         taskListView.HideUndoButton()
         
-        task.ScheduleAllNotifications()
-        
         DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
     }
     
     func UndoAction () {
         if lastCompletedTask != nil {
+            StatsManager.DeductPointsForTask(task: lastCompletedTask!)
             UndoCompletingTask(task: lastCompletedTask!)
         } else if lastDeletedTask != nil {
             UndoDeletingTask(task: lastDeletedTask!)
@@ -425,9 +422,11 @@ class App: UIViewController {
         
         if App.settingsConfig.defaultFolderID == taskList.id {
             App.settingsConfig.defaultFolderID = App.mainTaskList.id
-            DispatchQueue.main.async {
-                App.instance.SaveSettings()
-            }
+            App.instance.SaveSettings()
+        }
+        
+        if App.selectedTaskListIndex == 0 {
+            SelectTaskList(index: 0, closeMenu: false)
         }
     }
     
@@ -458,6 +457,7 @@ class App: UIViewController {
     let overviewSortingPrefKey = "FINALE_DEV_APP_overviewSortingPreference"
     let mainTaskListKey = "FINALE_DEV_APP_mainTaskList"
     let userTaskListKey = "FINALE_DEV_APP_userTaskLists"
+    let statsKey = "FINALE_DEV_APP_stats"
     let lastICloudSyncKey = "FINALE_DEV_APP_lastICloudSyncDate"
     let lastLocalSaveKey = "FINALE_DEV_APP_lastICloudSaveDate"
     let deviceNameKey = "FINALE_DEV_APP_deviceName"
@@ -516,6 +516,11 @@ class App: UIViewController {
                 App.userTaskLists = decoded
             }
         }
+        if let data = UserDefaults.standard.data(forKey: statsKey) {
+            if let decoded = try? JSONDecoder().decode(StatsConfig.self, from: data) {
+                StatsManager.stats = decoded
+            }
+        }
     }
     
     func LoadICloudData (iCloudKey: NSUbiquitousKeyValueStore) {
@@ -543,6 +548,11 @@ class App: UIViewController {
                 App.userTaskLists = decoded
             }
         }
+        if let data = iCloudKey.data(forKey: statsKey) {
+            if let decoded = try? JSONDecoder().decode(StatsConfig.self, from: data) {
+                StatsManager.stats = decoded
+            }
+        }
     }
     
     func SaveData () {
@@ -555,6 +565,9 @@ class App: UIViewController {
         }
         if let encoded = try? JSONEncoder().encode(App.userTaskLists) {
             SaveValue(value: encoded, forKey: userTaskListKey, iCloudKey: keyStore)
+        }
+        if let encoded = try? JSONEncoder().encode(StatsManager.stats) {
+            SaveValue(value: encoded, forKey: statsKey, iCloudKey: keyStore)
         }
         
         UserDefaults.standard.set(Date.now, forKey: lastLocalSaveKey)
@@ -586,6 +599,7 @@ class App: UIViewController {
             keyStore.removeObject(forKey: overviewSortingPrefKey)
             keyStore.removeObject(forKey: mainTaskListKey)
             keyStore.removeObject(forKey: userTaskListKey)
+            keyStore.removeObject(forKey: statsKey)
             keyStore.removeObject(forKey: lastICloudSyncKey)
             keyStore.removeObject(forKey: lastLocalSaveKey)
             keyStore.removeObject(forKey: deviceNameKey)
@@ -593,16 +607,29 @@ class App: UIViewController {
         }
     }
     
+//MARK: Level functions
+    
+    func ShowLevelUpNotification (level: Int){
+        self.view.addSubview(NotificationView(level: level))
+    }
+    
+    func ShowBadgeNotification (badgeGroup: AchievementBadgeGroup) {
+        self.view.addSubview(NotificationView(badgeGroup: badgeGroup))
+    }
+    
+    
 //MARK: Backend functions
     
     @objc func AppMovedToBackground() {
         SaveData()
         NotificationHelper.UpdateAppBadge()
+        NotificationHelper.ScheduleAllTaskNotifications()
     }
     
     @objc func AppBecameActive() {
         taskListView.UpdateAllDateLabels()
         NotificationHelper.RemoveDeliveredNotifications()
+        NotificationHelper.CancelAllScheduledNotifications()
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -650,3 +677,128 @@ class App: UIViewController {
     
 }
 
+
+
+class NotificationView: UIView {
+    
+    let padding = 16.0
+    let height = 60.0
+    
+    var timer: Timer?
+    
+    init (level: Int? = nil, badgeGroup: AchievementBadgeGroup? = nil) {
+        
+        let width = UIScreen.main.bounds.width - padding*2
+        
+        super.init(frame: CGRect(x: padding, y: -height-padding, width: width, height: height))
+        
+        self.layer.cornerRadius = 12
+        
+        let blurEffect = UIVisualEffectView(frame: CGRect(x: 0, y: 0, width: self.frame.width, height: self.frame.height))
+        blurEffect.effect = UIBlurEffect(style: .systemUltraThinMaterial)
+        let shapeLayer = CAShapeLayer()
+        shapeLayer.path = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+        blurEffect.layer.mask = shapeLayer
+        self.addSubview(blurEffect)
+        self.layer.shadowOffset = CGSize.zero
+        self.layer.shadowRadius = 15
+        self.layer.shadowOpacity = 0.3
+        
+        let titleLabel = UILabel()
+        titleLabel.font = .preferredFont(forTextStyle: .headline)
+        titleLabel.isUserInteractionEnabled = false
+        if level != nil {
+            titleLabel.frame = CGRect(x: padding, y: padding*0.7, width: width-padding*2, height: 20)
+            titleLabel.text = "Gained Level \(level!.description)!"
+            titleLabel.textAlignment = .center
+            
+            let subtitleLabel = UILabel()
+            subtitleLabel.frame = CGRect(x: padding, y: height-padding*0.7-16, width: width-padding*2, height: 16)
+            subtitleLabel.text = "Unlocked: True Black Theme"
+            subtitleLabel.textAlignment = .center
+            subtitleLabel.font = .systemFont(ofSize: 14)
+            subtitleLabel.textColor = .white
+            
+            self.addSubview(subtitleLabel)
+        } else if badgeGroup != nil {
+            let iconSize = height - padding*0.6
+            let badgeIcon = UIImageView(frame: CGRect(x: 0, y: padding*0.3, width: iconSize, height: iconSize))
+            badgeIcon.image = badgeGroup?.getIcon(index: StatsManager.stats.lastUnlockedBadgeIndex(badgeGroupID: badgeGroup!.groupID))
+            badgeIcon.contentMode = .scaleAspectFit
+            badgeIcon.layer.shadowRadius = 4
+            badgeIcon.layer.shadowOffset = CGSize.zero
+            badgeIcon.layer.shadowColor = UIColor.black.cgColor
+            badgeIcon.layer.shadowOpacity = ThemeManager.currentTheme.interface == .Light ? 0.3 : 0.7
+            
+            titleLabel.text = badgeGroup?.getName(index: StatsManager.stats.lastUnlockedBadgeIndex(badgeGroupID: badgeGroup!.groupID))
+            let titleWidth = titleLabel.text!.size(withAttributes:[.font: titleLabel.font]).width
+            titleLabel.textAlignment = .center
+            titleLabel.sizeToFit()
+            titleLabel.frame = CGRect(x:0, y: badgeIcon.frame.origin.y + 0.5*(badgeIcon.frame.height - 20), width: titleWidth, height: 20)
+            
+            badgeIcon.frame.origin.x = 0.5*(width - iconSize - padding*0.5 - titleWidth)
+            titleLabel.frame.origin.x = badgeIcon.frame.maxX + padding*0.5
+            
+            self.addSubview(badgeIcon)
+        }
+        
+        
+        self.addSubview(titleLabel)
+        
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+            self.frame.origin.y = UIApplication.shared.windows.first!.safeAreaInsets.top + self.padding
+        })
+        
+        timer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(DismissTimer), userInfo: nil, repeats: false)
+        
+        self.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(PanGesture)))
+        self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(Tap)))
+    }
+    
+    var originY: CGFloat = 0
+    @objc func PanGesture (sender: UIPanGestureRecognizer) {
+        
+        if sender.state == .began {
+            originY = self.frame.origin.y
+        } else if sender.state == .changed {
+            self.frame.origin.y = min(originY, originY + sender.translation(in: self).y)
+        } else if sender.state == .ended {
+            if self.frame.origin.y <= originY*0.7 {
+                Dismiss()
+            } else {
+                UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+                    self.frame.origin.y = UIApplication.shared.windows.first!.safeAreaInsets.top + self.padding
+                })
+            }
+        }
+        
+    }
+    
+    func Dismiss () {
+        timer?.invalidate()
+        UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
+            self.frame.origin.y = -self.height-self.padding
+        }, completion: { _ in
+            self.removeFromSuperview()
+        })
+    }
+    
+    
+    @objc func Tap () {
+        Dismiss()
+        App.instance.sideMenuView.OpenUserOverview()
+    }
+    
+    @objc func DismissTimer() {
+        Dismiss()
+    }
+    
+    
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}

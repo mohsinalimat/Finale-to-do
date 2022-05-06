@@ -368,8 +368,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
     
     @objc func Clear () {
         taskSlider.ClearDateAndTime()
-        HideView()
-        taskSliderContextMenu?.OnCalendarViewClose()
+        OnCalendarClose()
     }
     
     @objc func Confirm () {
@@ -390,10 +389,16 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
             taskSlider.task.AddNotification(notificationType: notificationType)
         }
         
-        taskSlider.task.ScheduleAllNotifications()
-        
+        OnCalendarClose()
+    }
+    
+    func OnCalendarClose () {
         HideView()
         taskSliderContextMenu?.OnCalendarViewClose()
+        
+        if taskSliderContextMenu == nil && !taskSlider.isEditing {
+            App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: taskSlider.task)
+        }
     }
     
     @objc func HideViewNoAction () {

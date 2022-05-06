@@ -68,8 +68,8 @@ struct AppTheme: Equatable {
     var sidemenuSelectionColor: UIColor { return overrideSidemenuSelectionColor ?? (self.primaryColor.dark) }
     
     //Element colors
-    func primaryElementColor(tasklistColor: UIColor) -> UIColor {
-        if usesDynamicColors { return tasklistColor }
+    func primaryElementColor(tasklistColor: UIColor? = nil) -> UIColor {
+        if usesDynamicColors && tasklistColor != nil { return tasklistColor! }
         return overridePrimaryElementColor ?? (self.primaryColor)
     }
     
@@ -94,6 +94,13 @@ struct AppTheme: Equatable {
     static func == (lhs: AppTheme, rhs: AppTheme) -> Bool {
         return lhs.name == rhs.name
     }
+    
+    var settingsBackgroundColor: UIColor {
+        return ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
+    }
+    var settingsRowBackgroundColor: UIColor {
+        return ThemeManager.currentTheme.interface == .Light ? .white : .systemGray6
+    }
 }
 
 class ThemeManager {
@@ -116,9 +123,9 @@ class ThemeManager {
         
         AppTheme(name: "Violet", interface: .Dark, primaryColor: UIColor(hex: "664C7C"), overrideTasklistHeaderColor: .defaultColor.dark, overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "FD5E53")),
         
-        AppTheme(name: "Aqua", interface: .Dark, primaryColor: UIColor(hex: "227DB5"), overrideTasklistHeaderColor: .defaultColor.lerp(second: .black, percentage: 0.1), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "47FCF9")),
+        AppTheme(name: "Aqua", interface: .Dark, primaryColor: UIColor(hex: "227DB5"), overrideTasklistHeaderColor: .defaultColor.dark, overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "3DD9D6")),
         
-        AppTheme(name: "True Black", interface: .Dark, primaryColor: UIColor(hex: "262626"), overrideTasklistHeaderColor: UIColor(hex: "000000"), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "000000"), overridePrimaryElementColor: UIColor(hex: "262626").dark2)
+        AppTheme(name: "True Black", interface: .Dark, primaryColor: UIColor(hex: "262626"), overrideTasklistHeaderColor: UIColor(hex: "000000"), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "000000"), overridePrimaryElementColor: UIColor(hex: "262626").lerp(second: .white, percentage: 0.05))
     
     ]
     
@@ -132,5 +139,7 @@ class ThemeManager {
         ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
         App.instance.SetSubviewColors(of: App.instance.view)
     }
+    
+    
     
 }

@@ -22,7 +22,7 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
     
     init () {
         super.init(nibName: nil, bundle: nil)
-        self.view.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
+        self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         ReloadSettings()
         self.title = PageTitle
@@ -394,8 +394,12 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
         
         if titleLabel.text == "First Name" {
             App.settingsConfig.userFirstName = textField.text!
+            if App.selectedTaskListIndex == 0 { App.instance.SelectTaskList(index: 0, closeMenu: false)}
+            App.instance.sideMenuView.userPanel.ReloadName()
         } else {
             App.settingsConfig.userLastName = textField.text!
+            if App.selectedTaskListIndex == 0 { App.instance.SelectTaskList(index: 0, closeMenu: false)}
+            App.instance.sideMenuView.userPanel.ReloadName()
         }
     }
     
