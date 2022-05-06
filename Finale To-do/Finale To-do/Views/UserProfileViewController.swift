@@ -359,7 +359,7 @@ class BadgeGroupViewController: UIViewController, UIScrollViewDelegate {
         titleLabel.adjustsFontSizeToFitWidth = true
         
         descriptionLabel.frame = CGRect(x: padding, y: titleLabel.frame.maxY+padding, width: width-padding*2, height: 20)
-        descriptionLabel.text = "\(badgeGroup.getDescription(index: currentPage)) (\(badgeGroup.relatedStat)/\(badgeGroup.unlockStatValue[currentPage]))"
+        descriptionLabel.text = getDescription(index: currentPage)
         descriptionLabel.font = .systemFont(ofSize: 18)
         descriptionLabel.textColor = .systemGray
         descriptionLabel.textAlignment = .center
@@ -404,7 +404,7 @@ class BadgeGroupViewController: UIViewController, UIScrollViewDelegate {
     func getDescription (index: Int) -> String {
         if index <= StatsManager.stats.lastUnlockedBadgeIndex(badgeGroupID: badgeGroup.groupID) { return badgeGroup.getDescription(index: currentPage) }
         
-        return "\(badgeGroup.getDescription(index: currentPage)) (\(badgeGroup.relatedStat)/\(badgeGroup.unlockStatValue[currentPage]))"
+        return "\(badgeGroup.getDescription(index: currentPage)) (\(badgeGroup.relatedStat())/\(badgeGroup.unlockStatValue[currentPage]))"
     }
     
     

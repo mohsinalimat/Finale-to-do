@@ -90,6 +90,7 @@ class SettingsMainPage: SettingsPageViewController {
             
             SettingsSection(title: "Help", options: [
                 .navigationCell(model: SettingsNavigationOption(title: "Guide", icon: UIImage(systemName: "doc.text.image.fill"), iconBackgroundColor: .systemOrange, nextPage: SettingsPersonalPage())),
+                .navigationCell(model: SettingsNavigationOption(title: "Statistics", icon: UIImage(systemName: "chart.bar.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsStatisticsPage())),
                 .navigationCell(model: SettingsNavigationOption(title: "About", icon: UIImage(systemName: "bookmark.fill"), iconBackgroundColor: .systemTeal, nextPage: SettingsAboutPage(), SetPreview: {return self.appVersion })),
                 .navigationCell(model: SettingsNavigationOption(title: "Share", icon: UIImage(systemName: "square.and.arrow.up.fill"), iconBackgroundColor: .systemYellow, OnTap: {
                     let items = [AppIcon.classic.preview] as [UIImage]
@@ -367,6 +368,45 @@ class SettingsAboutPage: SettingsPageViewController {
 }
 
 
+//MARK: Statistics mage
+class SettingsStatisticsPage: SettingsPageViewController {
+    override func GetSettings() -> [SettingsSection] {
+        return [
+            
+            SettingsSection(options: [
+                .staticCell(model: SettingsStaticOption(title: "Level", SetPreview: { return StatsManager.stats.level.description } )),
+                .staticCell(model: SettingsStaticOption(title: "Points", SetPreview: { return StatsManager.stats.points.description } )),
+                .staticCell(model: SettingsStaticOption(title: "Badges", SetPreview: { return StatsManager.stats.numberOfUnlockedBadges.description } ))
+            ]),
+            
+            SettingsSection(options: [
+                .staticCell(model: SettingsStaticOption(title: "Completed Tasks", SetPreview: { return StatsManager.stats.totalCompletedTasks.description } )),
+                .staticCell(model: SettingsStaticOption(title: "Completed High Priority Tasks", SetPreview: { return StatsManager.stats.totalCompletedHighPriorityTasks.description } ))
+            ]),
+            
+            SettingsSection(options: [
+                .staticCell(model: SettingsStaticOption(title: "Total Days Active", SetPreview: { return StatsManager.stats.totalDaysActive.description } )),
+                .staticCell(model: SettingsStaticOption(title: "Streak Days Active", SetPreview: { return StatsManager.stats.consecutiveDaysActive.description } )),
+                .staticCell(model: SettingsStaticOption(title: "Streak Without Overdue Tasks", SetPreview: { return StatsManager.stats.consecutiveDaysWithoutOverdueTasks.description } ))
+            ]),
+            
+            SettingsSection(options: [
+                .staticCell(model: SettingsStaticOption(title: "Times Shared Finale", SetPreview: { return StatsManager.stats.timesSharedProgress.description } ))
+            ]),
+            
+            SettingsSection(options: [
+                .staticCell(model: SettingsStaticOption(title: "Joined Finale", SetPreview: { return StatsManager.stats.dateJoinedApp.formatted(date: .long, time: .omitted) } ))
+            ])
+            
+        ]
+    }
+    
+    override var PageTitle: String {
+        return "Statistics"
+    }
+}
+
+
 
 
 //MARK: Enums & Structs
@@ -377,6 +417,7 @@ enum SettingsOptionType {
     case selectionCell(model: SettingsSelectionOption)
     case navigationCell(model: SettingsNavigationOption)
     case segmentedControlCell(model: SettingsSegmentedControlOption)
+    case staticCell(model: SettingsStaticOption)
     
     case customViewCell(model: UIView)
 }
@@ -463,6 +504,13 @@ struct SettingsSegmentedControlOption {
         self.selectedItem = selectedItem
         self.OnValueChange = OnValueChange
     }
+}
+
+struct SettingsStaticOption {
+    let title: String
+    var icon: UIImage? = nil
+    var iconBackgroundColor: UIColor? = nil
+    var SetPreview: (() -> String) = { return "" }
 }
 
 struct SettingsSection {

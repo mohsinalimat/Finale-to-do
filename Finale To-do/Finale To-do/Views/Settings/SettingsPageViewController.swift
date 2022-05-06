@@ -337,6 +337,15 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
             segmentedControl?.selectedSegmentIndex = model.selectedItem
             selectionStyle = .none
             self.contentView.addSubview(segmentedControl!)
+        case .staticCell(let model):
+            titleLabel.text = model.title
+            iconView.image = model.icon
+            iconContainer.backgroundColor = model.iconBackgroundColor
+            previewLabel.text = model.SetPreview()
+            SetPreview = model.SetPreview
+            previewLabel.alpha = 1
+            selectionStyle = .none
+            self.accessoryType = .none
         }
     }
     

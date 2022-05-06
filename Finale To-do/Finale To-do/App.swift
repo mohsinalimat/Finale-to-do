@@ -41,6 +41,7 @@ class App: UIViewController {
     var sideMenuView: SideMenuView!
     
     var containerView: UIView!
+    var notificationView: NotificationView?
     
     let sideMenuWidth = UIScreen.main.bounds.width*0.8
     
@@ -147,7 +148,7 @@ class App: UIViewController {
         
         DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
         
-        StatsManager.EarnPointsForTask(task: task)
+        StatsManager.OnTaskComplete(task: task)
     }
     
     func DeleteTask(task: Task) {
@@ -255,6 +256,12 @@ class App: UIViewController {
         taskListView.HideUndoButton()
         
         DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
+        
+        
+        StatsManager.stats.totalCompletedTasks -= 1
+        StatsManager.stats.totalCompletedHighPriorityTasks -= task.priority == .High ? 1 : 0
+        if StatsManager.stats.totalCompletedTasks < 0 { StatsManager.stats.totalCompletedTasks = 0}
+        if StatsManager.stats.totalCompletedHighPriorityTasks < 0 { StatsManager.stats.totalCompletedHighPriorityTasks = 0}
     }
     
     func UndoDeletingTask(task: Task) {
@@ -609,12 +616,25 @@ class App: UIViewController {
     
 //MARK: Level functions
     
+    func ReachLevel(level: Int) {
+        ShowLevelUpNotification(level: level)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            StatsManager.CheckUnlockedBadge(groupID: 6)
+        }
+    }
+    
     func ShowLevelUpNotification (level: Int){
-        self.view.addSubview(NotificationView(level: level))
+        if notificationView == nil {
+            notificationView = NotificationView(level: level)
+            self.view.addSubview(notificationView!)
+        }
     }
     
     func ShowBadgeNotification (badgeGroup: AchievementBadgeGroup) {
-        self.view.addSubview(NotificationView(badgeGroup: badgeGroup))
+        if notificationView == nil {
+            notificationView = NotificationView(badgeGroup: badgeGroup)
+            self.view.addSubview(notificationView!)
+        }
     }
     
     
@@ -630,6 +650,25 @@ class App: UIViewController {
         taskListView.UpdateAllDateLabels()
         NotificationHelper.RemoveDeliveredNotifications()
         NotificationHelper.CancelAllScheduledNotifications()
+        StatsManager.DetectNewDay()
+        DetectIfAnyTaskIsOverdue()
+    }
+    
+    func DetectIfAnyTaskIsOverdue () {
+        for task in App.mainTaskList.upcomingTasks {
+            if task.isOverdue {
+                StatsManager.stats.consecutiveDaysWithoutOverdueTasks = 0
+                return
+            }
+        }
+        for taskList in App.userTaskLists {
+            for task in taskList.upcomingTasks {
+                if task.isOverdue {
+                    StatsManager.stats.consecutiveDaysWithoutOverdueTasks = 0
+                    return
+                }
+            }
+        }
     }
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -686,9 +725,15 @@ class NotificationView: UIView {
     
     var timer: Timer?
     
-    init (level: Int? = nil, badgeGroup: AchievementBadgeGroup? = nil) {
+    let titleLabel = UILabel()
+    let subtitleLabel = UILabel()
+    let iconView = UIImageView()
+    
+    let width: CGFloat
+    
+    init (badgeGroup: AchievementBadgeGroup? = nil, level: Int? = nil) {
         
-        let width = UIScreen.main.bounds.width - padding*2
+        width = UIScreen.main.bounds.width - padding*2
         
         super.init(frame: CGRect(x: padding, y: -height-padding, width: width, height: height))
         
@@ -704,46 +749,41 @@ class NotificationView: UIView {
         self.layer.shadowRadius = 15
         self.layer.shadowOpacity = 0.3
         
-        let titleLabel = UILabel()
         titleLabel.font = .preferredFont(forTextStyle: .headline)
         titleLabel.isUserInteractionEnabled = false
+        titleLabel.textAlignment = .center
+        
+        subtitleLabel.textAlignment = .center
+        subtitleLabel.font = .systemFont(ofSize: 14)
+        
+        iconView.contentMode = .scaleAspectFit
+        iconView.layer.shadowRadius = 4
+        iconView.layer.shadowOffset = CGSize.zero
+        iconView.layer.shadowColor = UIColor.black.cgColor
+        iconView.layer.shadowOpacity = ThemeManager.currentTheme.interface == .Light ? 0.3 : 0.7
+        
         if level != nil {
             titleLabel.frame = CGRect(x: padding, y: padding*0.7, width: width-padding*2, height: 20)
             titleLabel.text = "Gained Level \(level!.description)!"
-            titleLabel.textAlignment = .center
             
-            let subtitleLabel = UILabel()
             subtitleLabel.frame = CGRect(x: padding, y: height-padding*0.7-16, width: width-padding*2, height: 16)
             subtitleLabel.text = "Unlocked: True Black Theme"
-            subtitleLabel.textAlignment = .center
-            subtitleLabel.font = .systemFont(ofSize: 14)
-            subtitleLabel.textColor = .white
-            
-            self.addSubview(subtitleLabel)
         } else if badgeGroup != nil {
             let iconSize = height - padding*0.6
-            let badgeIcon = UIImageView(frame: CGRect(x: 0, y: padding*0.3, width: iconSize, height: iconSize))
-            badgeIcon.image = badgeGroup?.getIcon(index: StatsManager.stats.lastUnlockedBadgeIndex(badgeGroupID: badgeGroup!.groupID))
-            badgeIcon.contentMode = .scaleAspectFit
-            badgeIcon.layer.shadowRadius = 4
-            badgeIcon.layer.shadowOffset = CGSize.zero
-            badgeIcon.layer.shadowColor = UIColor.black.cgColor
-            badgeIcon.layer.shadowOpacity = ThemeManager.currentTheme.interface == .Light ? 0.3 : 0.7
+            iconView.frame = CGRect(x: 0, y: padding*0.3, width: iconSize, height: iconSize)
+            iconView.image = badgeGroup?.getIcon(index: StatsManager.stats.lastUnlockedBadgeIndex(badgeGroupID: badgeGroup!.groupID))
             
             titleLabel.text = badgeGroup?.getName(index: StatsManager.stats.lastUnlockedBadgeIndex(badgeGroupID: badgeGroup!.groupID))
             let titleWidth = titleLabel.text!.size(withAttributes:[.font: titleLabel.font]).width
-            titleLabel.textAlignment = .center
-            titleLabel.sizeToFit()
-            titleLabel.frame = CGRect(x:0, y: badgeIcon.frame.origin.y + 0.5*(badgeIcon.frame.height - 20), width: titleWidth, height: 20)
+            titleLabel.frame = CGRect(x:0, y: iconView.frame.origin.y + 0.5*(iconView.frame.height - 20), width: titleWidth, height: 20)
             
-            badgeIcon.frame.origin.x = 0.5*(width - iconSize - padding*0.5 - titleWidth)
-            titleLabel.frame.origin.x = badgeIcon.frame.maxX + padding*0.5
-            
-            self.addSubview(badgeIcon)
+            iconView.frame.origin.x = 0.5*(width - iconSize - padding*0.5 - titleWidth)
+            titleLabel.frame.origin.x = iconView.frame.maxX + padding*0.5
         }
         
-        
         self.addSubview(titleLabel)
+        self.addSubview(subtitleLabel)
+        self.addSubview(iconView)
         
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut, animations: {
             self.frame.origin.y = UIApplication.shared.windows.first!.safeAreaInsets.top + self.padding
@@ -780,6 +820,7 @@ class NotificationView: UIView {
             self.frame.origin.y = -self.height-self.padding
         }, completion: { _ in
             self.removeFromSuperview()
+            App.instance.notificationView = nil
         })
     }
     
