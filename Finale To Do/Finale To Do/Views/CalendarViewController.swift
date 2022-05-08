@@ -327,14 +327,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         taskSlider.task.isDueTimeAssigned = sender.isOn
         dueTimePicker.isEnabled = sender.isOn
         
-        let allowedRange = taskSlider.task.isDueTimeAssigned ? 0..<5 : 5..<10
-        for (notificationType, _) in taskSlider.task.notifications {
-            if !allowedRange.contains(notificationType.rawValue) {
-                if selectedNotificationTypes.contains(notificationType) {
-                    selectedNotificationTypes.remove(at: selectedNotificationTypes.firstIndex(of: notificationType)!)
-                }
-            }
-        }
+        selectedNotificationTypes.removeAll()
         
         notificationPageView.removeFromSuperview()
         notificationPageView = DrawNotificationSelectionPage(size: containerView.frame.size)
@@ -388,6 +381,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         for notificationType in selectedNotificationTypes {
             taskSlider.task.AddNotification(notificationType: notificationType)
         }
+        for (notificationType, _) in taskSlider.task.notifications { print(notificationType) }
         
         OnCalendarClose()
     }

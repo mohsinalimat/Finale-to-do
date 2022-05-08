@@ -419,6 +419,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
             closeButton?.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: newList.primaryColor) 
         }
         
+        App.instance.sideMenuView.UpdateUpcomingTasksCounts()
     }
     
     @objc func OpenCalendarView () {
@@ -565,7 +566,18 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if closeButton != nil {
-            App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: slider.task)
+            if App.selectedTaskListIndex == 0 {
+                App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: slider.task)
+            } else if App.selectedTaskListIndex == 1 {
+                if slider.task.taskListID == App.mainTaskList.id {
+                    App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: slider.task)
+                }
+            } else {
+                if slider.task.taskListID == App.userTaskLists[App.selectedTaskListIndex].id {
+                    App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: slider.task)
+                }
+            }
+            
         }
     }
     

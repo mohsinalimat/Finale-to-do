@@ -140,9 +140,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
                 }
             } else if sliderView.frame.size.width == fullSliderWidth {
                 UINotificationFeedbackGenerator().notificationOccurred(.success)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [self] in
-                    app.CompleteTask(task: task)
-                }
+                app.CompleteTask(task: task)
             } else {
                 UIView.animate(withDuration: 0.25) { [self] in
                     sliderView.frame.size.width = sliderHandleWidth

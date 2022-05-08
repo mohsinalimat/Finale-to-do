@@ -6,6 +6,20 @@
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
+			<key>black</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>black</string>
+				</array>
+			</dict>
+			<key>blackFilled</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>blackFilled</string>
+				</array>
+			</dict>
 			<key>classicFilled</key>
 			<dict>
 				<key>CFBundleIconFiles</key>
@@ -25,20 +39,6 @@
 				<key>CFBundleIconFiles</key>
 				<array>
 					<string>darkmodeFilled</string>
-				</array>
-			</dict>
-			<key>black</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>black</string>
-				</array>
-			</dict>
-			<key>blackFilled</key>
-			<dict>
-				<key>CFBundleIconFiles</key>
-				<array>
-					<string>blackFilled</string>
 				</array>
 			</dict>
 			<key>orange</key>
