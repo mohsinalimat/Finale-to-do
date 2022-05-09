@@ -50,6 +50,7 @@ class SettingsAppBadgeCountView: UIView {
         badgeNumberLabel.text = NotificationHelper.GetAppBadgeNumber().description
         badgeNumberLabel.textAlignment = .center
         badgeNumberLabel.font = .systemFont(ofSize: 15)
+        badgeNumberLabel.adjustsFontSizeToFitWidth = true
         
         SetBadgeNumber()
         
@@ -186,7 +187,6 @@ class SettingsSelectionRow: UIView, UIDynamicTheme {
         let imageSize = rowSize.width*0.07
         imageView = UIImageView(frame: CGRect(x: padding, y: 0.5*(rowSize.height-imageSize), width: imageSize, height: imageSize))
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
 
         let label = UILabel (frame: CGRect(x: imageView.frame.maxX + padding*0.5, y: 0, width: rowSize.width-padding*2.5-imageView.frame.width, height: rowSize.height))
         label.text = title
@@ -219,7 +219,7 @@ class SettingsSelectionRow: UIView, UIDynamicTheme {
     
     func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in
-            imageView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
+            imageView.tintColor = isSelected ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor) : .systemGray
         }
     }
     
