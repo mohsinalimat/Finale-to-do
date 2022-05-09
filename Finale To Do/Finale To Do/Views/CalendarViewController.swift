@@ -381,7 +381,6 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         for notificationType in selectedNotificationTypes {
             taskSlider.task.AddNotification(notificationType: notificationType)
         }
-        for (notificationType, _) in taskSlider.task.notifications { print(notificationType) }
         
         OnCalendarClose()
     }

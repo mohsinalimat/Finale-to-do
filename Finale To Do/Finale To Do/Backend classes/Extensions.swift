@@ -120,6 +120,13 @@ extension UIView {
         AppConfiguration.AddStandardShadow(view: self)
     }
     
+    func Shadow(radius: CGFloat, opacity: Float) {
+        self.layer.shadowColor = UIColor.black.cgColor
+        self.layer.shadowOffset = CGSize.zero
+        self.layer.shadowRadius = radius
+        self.layer.shadowOpacity = opacity
+    }
+    
     func DebugSubviews (excluseSelf: Bool = false, parentColor: UIColor = .blue, color: UIColor = .red) {
         for view in self.subviews { view.DebugSubviews(parentColor: color) }
         if !excluseSelf { self.Debug(color: parentColor) }

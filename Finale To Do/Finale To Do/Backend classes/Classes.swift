@@ -242,8 +242,9 @@ enum SortingPreference: Int, Codable {
 enum AppBadgeNumberType: Int, Codable {
     case None = 0
     case TasksToday = 1
-    case OverdueTasks = 2
-    case UpcomingTasks = 3
+    case TasksTomorrow = 2
+    case OverdueTasks = 3
+    case UpcomingTasks = 4
     
     var str: String {
         switch self {
@@ -251,6 +252,8 @@ enum AppBadgeNumberType: Int, Codable {
             return "None"
         case .TasksToday:
             return "Tasks today"
+        case .TasksTomorrow:
+            return "Tasks tomorrow"
         case .OverdueTasks:
             return "Overdue tasks"
         case .UpcomingTasks:

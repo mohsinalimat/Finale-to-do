@@ -191,11 +191,11 @@ struct AchievementBadgeGroup {
     var unlockStatValue: [Int]
     
     func getIcon(index: Int) -> UIImage {
-        return UIImage(named: "Connoisseur I")!
+        return UIImage(named: "Badge")!
     }
     
     func getPlaceholder(index: Int) -> UIImage {
-        return UIImage(named: "Connoisseur I Placeholder")!
+        return UIImage(named: "Badge Placeholder")!
     }
     
     func getName(index: Int) -> String {
@@ -228,7 +228,7 @@ extension StatsManager {
             groupID: 0,
             name: "Companion (x)",
             description: "Join Finale (x) days ago",
-            relatedStat: { return Calendar.current.daysBetween(Date.now, and: stats.dateJoinedApp) },
+            relatedStat: { return Calendar.current.daysBetween(stats.dateJoinedApp, and: Date.now) },
             unlockStatValue: [10, 30, 180, 360, 1000]),
         
         AchievementBadgeGroup(

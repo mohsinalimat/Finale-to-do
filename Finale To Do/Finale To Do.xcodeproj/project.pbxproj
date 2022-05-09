@@ -34,13 +34,9 @@
 		378922B128232F2600AA3B1B /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B028232F2600AA3B1B /* UserProfileViewController.swift */; };
 		378922B32823645200AA3B1B /* StatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B22823645200AA3B1B /* StatsManager.swift */; };
 		37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37983B8B2819F608007B241A /* SettingsViewController.swift */; };
+		379998FF282985DD00A42F32 /* Badge.png in Resources */ = {isa = PBXBuildFile; fileRef = 379998FD282985DD00A42F32 /* Badge.png */; };
+		37999900282985DD00A42F32 /* Badge Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 379998FE282985DD00A42F32 /* Badge Placeholder.png */; };
 		37B9998C2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */; };
-		37BFC1BC2824900100BCF3FF /* Connoisseur I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37BFC1BB2824900100BCF3FF /* Connoisseur I.png */; };
-		37BFC1BE282490EB00BCF3FF /* Connoisseur I Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 37BFC1BD282490EB00BCF3FF /* Connoisseur I Placeholder.png */; };
-		37BFC1C12824910E00BCF3FF /* Companion I Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 37BFC1BF2824910E00BCF3FF /* Companion I Placeholder.png */; };
-		37BFC1C22824910E00BCF3FF /* Companion I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37BFC1C02824910E00BCF3FF /* Companion I.png */; };
-		37BFC1C52824912E00BCF3FF /* Patron I Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 37BFC1C32824912E00BCF3FF /* Patron I Placeholder.png */; };
-		37BFC1C62824912E00BCF3FF /* Patron I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37BFC1C42824912E00BCF3FF /* Patron I.png */; };
 		37D542672825888E00373987 /* orangeFilled@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542572825888C00373987 /* orangeFilled@3x.png */; };
 		37D542682825888E00373987 /* black@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542582825888C00373987 /* black@3x.png */; };
 		37D542692825888E00373987 /* orange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542592825888C00373987 /* orange@2x.png */; };
@@ -94,13 +90,9 @@
 		378922B028232F2600AA3B1B /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		378922B22823645200AA3B1B /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
 		37983B8B2819F608007B241A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		379998FD282985DD00A42F32 /* Badge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Badge.png; sourceTree = "<group>"; };
+		379998FE282985DD00A42F32 /* Badge Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Badge Placeholder.png"; sourceTree = "<group>"; };
 		37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSyncConfirmationViewController.swift; sourceTree = "<group>"; };
-		37BFC1BB2824900100BCF3FF /* Connoisseur I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur I.png"; sourceTree = "<group>"; };
-		37BFC1BD282490EB00BCF3FF /* Connoisseur I Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur I Placeholder.png"; sourceTree = "<group>"; };
-		37BFC1BF2824910E00BCF3FF /* Companion I Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion I Placeholder.png"; sourceTree = "<group>"; };
-		37BFC1C02824910E00BCF3FF /* Companion I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion I.png"; sourceTree = "<group>"; };
-		37BFC1C32824912E00BCF3FF /* Patron I Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron I Placeholder.png"; sourceTree = "<group>"; };
-		37BFC1C42824912E00BCF3FF /* Patron I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron I.png"; sourceTree = "<group>"; };
 		37D542572825888C00373987 /* orangeFilled@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "orangeFilled@3x.png"; sourceTree = "<group>"; };
 		37D542582825888C00373987 /* black@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "black@3x.png"; sourceTree = "<group>"; };
 		37D542592825888C00373987 /* orange@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "orange@2x.png"; sourceTree = "<group>"; };
@@ -251,12 +243,8 @@
 		37BFC1BA28248F7200BCF3FF /* Badges Icons */ = {
 			isa = PBXGroup;
 			children = (
-				37BFC1BB2824900100BCF3FF /* Connoisseur I.png */,
-				37BFC1BD282490EB00BCF3FF /* Connoisseur I Placeholder.png */,
-				37BFC1C02824910E00BCF3FF /* Companion I.png */,
-				37BFC1BF2824910E00BCF3FF /* Companion I Placeholder.png */,
-				37BFC1C42824912E00BCF3FF /* Patron I.png */,
-				37BFC1C32824912E00BCF3FF /* Patron I Placeholder.png */,
+				379998FD282985DD00A42F32 /* Badge.png */,
+				379998FE282985DD00A42F32 /* Badge Placeholder.png */,
 			);
 			path = "Badges Icons";
 			sourceTree = "<group>";
@@ -325,25 +313,21 @@
 				37D542762825888E00373987 /* redFilled@3x.png in Resources */,
 				37D5426C2825888E00373987 /* purple@3x.png in Resources */,
 				372B8A2A281CE61F00117A72 /* classicFilled@2x.png in Resources */,
-				37BFC1BE282490EB00BCF3FF /* Connoisseur I Placeholder.png in Resources */,
 				372B8A2E281CE61F00117A72 /* classic@2x.png in Resources */,
 				372B8A31281CE61F00117A72 /* dark@2x.png in Resources */,
 				376AD0CC2808DC5A00986B49 /* Assets.xcassets in Resources */,
 				372B8A2C281CE61F00117A72 /* darkmodeFilled@3x.png in Resources */,
-				37BFC1C22824910E00BCF3FF /* Companion I.png in Resources */,
 				37D5426D2825888E00373987 /* purpleFilled@2x.png in Resources */,
+				37999900282985DD00A42F32 /* Badge Placeholder.png in Resources */,
 				37D542702825888E00373987 /* red@2x.png in Resources */,
 				37D542732825888E00373987 /* blackFilled@2x.png in Resources */,
 				37D542682825888E00373987 /* black@3x.png in Resources */,
 				37D542692825888E00373987 /* orange@2x.png in Resources */,
-				37BFC1C12824910E00BCF3FF /* Companion I Placeholder.png in Resources */,
 				37D5426F2825888E00373987 /* blackFilled@3x.png in Resources */,
-				37BFC1BC2824900100BCF3FF /* Connoisseur I.png in Resources */,
 				372B8A30281CE61F00117A72 /* dark@3x.png in Resources */,
 				37D542712825888E00373987 /* red@3x.png in Resources */,
-				37BFC1C62824912E00BCF3FF /* Patron I.png in Resources */,
 				37D5426A2825888E00373987 /* purpleFilled@3x.png in Resources */,
-				37BFC1C52824912E00BCF3FF /* Patron I Placeholder.png in Resources */,
+				379998FF282985DD00A42F32 /* Badge.png in Resources */,
 				372B8A2D281CE61F00117A72 /* darkmodeFilled@2x.png in Resources */,
 				37D5426B2825888E00373987 /* orangeFilled@2x.png in Resources */,
 				37D542672825888E00373987 /* orangeFilled@3x.png in Resources */,

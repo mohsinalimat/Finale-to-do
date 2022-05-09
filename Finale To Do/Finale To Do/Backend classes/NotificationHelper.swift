@@ -184,6 +184,10 @@ class NotificationHelper {
     }
     
     static func UpdateAppBadge() {
+        UIApplication.shared.applicationIconBadgeNumber = GetAppBadgeNumber()
+    }
+    
+    static func GetAppBadgeNumber() -> Int {
         var includedTasks = [Task]()
         if App.settingsConfig.isNotificationsAllowed {
             for type in App.settingsConfig.appBadgeNumberTypes {
@@ -204,6 +208,19 @@ class NotificationHelper {
                         }
                         for task in today { if !includedTasks.contains(task) {includedTasks.append(task)} }
                     }
+                case .TasksTomorrow:
+                    let tasksTomorrow = App.mainTaskList.upcomingTasks.filter { task in
+                        return task.isDateAssigned && Calendar.current.isDateInTomorrow(task.dateAssigned)
+                    }
+                    for task in tasksTomorrow {
+                        if !includedTasks.contains(task) { includedTasks.append(task) }
+                    }
+                    for taskList in App.userTaskLists {
+                        let tomorrow = taskList.upcomingTasks.filter { task in
+                            return task.isDateAssigned && Calendar.current.isDateInTomorrow(task.dateAssigned)
+                        }
+                        for task in tomorrow { if !includedTasks.contains(task) {includedTasks.append(task)} }
+                    }
                 case .OverdueTasks:
                     let overdueTasks = App.mainTaskList.upcomingTasks.filter { task in
                         return task.isOverdue
@@ -223,7 +240,7 @@ class NotificationHelper {
                 }
             }
         }
-        UIApplication.shared.applicationIconBadgeNumber = includedTasks.count
+        return includedTasks.count
     }
     
     static func RemoveDeliveredNotifications () {

@@ -175,6 +175,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
         label.numberOfLines = 1
         label.textAlignment = .left
         label.textColor = .label
+        label.font = .preferredFont(forTextStyle: .body)
         return label
     }()
     let iconContainer: UIView = {
@@ -260,7 +261,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
         iconView.frame.size = CGSize(width: iconContainer.backgroundColor == nil ? iconContainerSize : iconContainerSize*0.7, height: iconContainer.backgroundColor == nil ? iconContainerSize : iconContainerSize*0.7)
         iconView.frame.origin = CGPoint(x: 0.5*(iconContainerSize-iconView.frame.width), y: 0.5*(iconContainerSize-iconView.frame.height))
 
-        let titleWidth = titleLabel.text == nil ? 0 : titleLabel.text!.size(withAttributes:[.font: UIFont.preferredFont(forTextStyle: .body)]).width
+        let titleWidth = titleLabel.text == nil ? 0 : titleLabel.text!.size(withAttributes:[.font: titleLabel.font]).width
         titleLabel.frame = CGRect(x: iconContainerSize == 0 ? padding : iconContainer.frame.maxX + padding, y: 0, width: min(titleWidth, rowWidth-padding-iconContainerSize), height: rowHeight)
         
         let functionItemWidth = rowWidth-titleLabel.frame.maxX-padding*(self.accessoryType == .none ? 2 : 1.3)

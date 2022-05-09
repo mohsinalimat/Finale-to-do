@@ -12,7 +12,7 @@ import UIKit
 
 class SettingsAppBadgeCountView: UIView {
     
-    static let height: CGFloat = 356
+    static let height: CGFloat = 406
     let selectionRowHeight = 50.0
     
     let padding = 16.0
@@ -42,12 +42,16 @@ class SettingsAppBadgeCountView: UIView {
         appIconView.image = App.settingsConfig.selectedIcon.preview
         appIconView.clipsToBounds = true
         appIconView.layer.cornerRadius = 12
+        appIconView.layer.borderColor = UIColor.systemGray4.cgColor
+        appIconView.layer.borderWidth = 1
         
         iconBadgeView.backgroundColor = .systemRed
         badgeNumberLabel.textColor = .white
-        badgeNumberLabel.text = "7"
+        badgeNumberLabel.text = NotificationHelper.GetAppBadgeNumber().description
         badgeNumberLabel.textAlignment = .center
         badgeNumberLabel.font = .systemFont(ofSize: 15)
+        
+        SetBadgeNumber()
         
         self.addSubview(titleLabel)
         self.addSubview(subtitleLabel)
@@ -55,6 +59,14 @@ class SettingsAppBadgeCountView: UIView {
         self.addSubview(iconBadgeView)
         iconBadgeView.addSubview(badgeNumberLabel)
         self.addSubview(rowsContainer)
+    }
+    
+    func SetBadgeNumber () {
+        UIView.animate(withDuration: 0.25) { [self] in
+            let number = NotificationHelper.GetAppBadgeNumber()
+            badgeNumberLabel.text = number == 0 ? "" : number.description
+            iconBadgeView.alpha = badgeNumberLabel.text == "" ? 0 : 1
+        }
     }
     
     override func layoutSubviews() {
@@ -83,7 +95,7 @@ class SettingsAppBadgeCountView: UIView {
     func SetupRows () {
         if selectionRows.count != 0 { return }
         
-        for i in 0..<4 {
+        for i in 0..<5 {
             selectionRows.append(
                 SettingsSelectionRow(frame: CGRect(x: 0, y: Double(i)*selectionRowHeight, width: rowWidth, height: selectionRowHeight), title: AppBadgeNumberType(rawValue: i)!.str, index: i, isSelected: App.settingsConfig.appBadgeNumberTypes.contains(AppBadgeNumberType(rawValue: i)!), isNone: i == 0, onSelect: SelectOption, onDeselect: DeselectOption)
             )
@@ -106,6 +118,8 @@ class SettingsAppBadgeCountView: UIView {
         if !App.settingsConfig.appBadgeNumberTypes.contains(AppBadgeNumberType(rawValue: index)!) {
             App.settingsConfig.appBadgeNumberTypes.append(AppBadgeNumberType(rawValue: index)!)
         }
+        
+        SetBadgeNumber()
     }
     
     func DeselectOption (index: Int) {
@@ -117,8 +131,9 @@ class SettingsAppBadgeCountView: UIView {
         if App.settingsConfig.appBadgeNumberTypes.contains(AppBadgeNumberType(rawValue: index)!) {
             App.settingsConfig.appBadgeNumberTypes.remove(at: App.settingsConfig.appBadgeNumberTypes.firstIndex(of: AppBadgeNumberType(rawValue: index)!)!)
         }
+        
+        SetBadgeNumber()
     }
-    
     
     
     
