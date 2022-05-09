@@ -8,7 +8,7 @@
 import UIKit
 import SwiftUI
 
-class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
+class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecognizerDelegate {
     
     let app: App
     
@@ -22,6 +22,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
     var sliderBackground: UIView!
     var sliderView: UIView!
     var sliderHandle: UIView!
+    var dragHandleDummy: UIView!
     var taskNameInputField: UITextField!
     var dateInfoView: UIView!
     var dateLabel: UILabel!
@@ -93,12 +94,18 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         
         sliderView.backgroundColor = taskListColor
         sliderView.layer.cornerRadius = sliderCornerRadius
-        sliderView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(Dragging)))
+//        sliderView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(Dragging)))
         sliderView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TapSlider)))
 
         sliderHandle.backgroundColor = !task.isCompleted ? taskListColor.dark : .clear
         sliderHandle.layer.cornerRadius = sliderCornerRadius*0.85
         sliderHandle.isUserInteractionEnabled = false
+        
+        dragHandleDummy = UIView(frame: CGRect(x: sliderHandleWidth*0.3, y: 0, width: sliderHandleWidth*2, height: frame.height))
+        dragHandleDummy.backgroundColor = .clear
+        let dragGesture = UIPanGestureRecognizer(target: self, action: #selector(Dragging))
+        dragGesture.delegate = self
+        dragHandleDummy.addGestureRecognizer(dragGesture)
         
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(DoubleTap))
         doubleTap.numberOfTapsRequired = 2
@@ -110,17 +117,28 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
         addSubview(calendarIconView)
         addSubview(sliderView)
         addSubview(sliderHandle)
+        addSubview(dragHandleDummy)
         addSubview(taskNameInputField)
     }
     
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return !App.instance.isSideMenuOpen
+    }
+    
     var prevProgress = 0.0
+    var originX = 0.0
     @objc func Dragging(sender: UIPanGestureRecognizer) {
         if taskNameInputField.text == "" { return }
         if sender.state == .began {
             self.endEditing(true)
+            originX = sender.location(in: self).x - sliderHandleWidth*0.5
+            UIView.animate(withDuration: 0.1) { [self] in
+                sliderView.frame.size.width = max(sliderHandleWidth, min(sender.translation(in: self).x + sliderHandleWidth + originX, fullSliderWidth))
+                sliderHandle.frame.origin.x = max(sliderHandleOriginX, min(sliderHandleOriginX + sender.translation(in: self).x + originX, fullSliderWidth-sliderHandleWidth*0.925))
+            }
         } else if sender.state == .changed {
-            sliderView.frame.size.width = max(sliderHandleWidth, min(sender.translation(in: self).x + sliderHandleWidth, fullSliderWidth))
-            sliderHandle.frame.origin.x = max(sliderHandleOriginX, min(sliderHandleOriginX + sender.translation(in: self).x, fullSliderWidth-sliderHandleWidth*0.925))
+            sliderView.frame.size.width = max(sliderHandleWidth, min(sender.translation(in: self).x + sliderHandleWidth + originX, fullSliderWidth))
+            sliderHandle.frame.origin.x = max(sliderHandleOriginX, min(sliderHandleOriginX + sender.translation(in: self).x + originX, fullSliderWidth-sliderHandleWidth*0.925))
             
             let currentProgress = floor(sliderView.frame.size.width*6/fullSliderWidth)/6
             if currentProgress != prevProgress {
@@ -129,7 +147,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme {
             }
         } else if sender.state == .ended {
             if sender.velocity(in: self).x > 1500 {
-                let duration = sender.velocity(in: self).x*0.00006
+                let duration = sender.velocity(in: self).x*0.00005
                 UIView.animate(withDuration: duration) { [self] in
                     sliderView.frame.size.width = fullSliderWidth
                     sliderHandle.frame.origin.x = fullSliderWidth-sliderHandleWidth*0.925
