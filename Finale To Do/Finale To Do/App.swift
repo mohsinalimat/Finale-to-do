@@ -69,6 +69,11 @@ class App: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(AppBecameActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         NotificationHelper.CheckNotificationPermissionStatus()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.present(WelcomeScreenNavController(), animated: true)
+        }
+        
     }
     
 //MARK: Task Actions

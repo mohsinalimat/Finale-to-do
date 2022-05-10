@@ -21,13 +21,10 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     var currentContextMenuView: TaskListMenuItem?
     
-    let settingsNavControllers: SettingsNavigationController
-    
     init(frame: CGRect, app: App) {
         self.app = app
         
         tableView = UITableView()
-        settingsNavControllers = SettingsNavigationController()
         super.init(frame: frame)
         
         self.backgroundColor = ThemeManager.currentTheme.sidemenuBackgroundColor
@@ -202,7 +199,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     @objc func OpenSettings () {
-        App.instance.present(settingsNavControllers, animated: true)
+        App.instance.present(SettingsNavigationController(), animated: true)
     }
     
     func ReloadThemeColors() {
@@ -375,7 +372,7 @@ class UserPanel: UIView, UIDynamicTheme {
     }
     
     func ReloadName () {
-        usernameLabel.text = App.settingsConfig.userFullName
+        usernameLabel.text = App.settingsConfig.userFullName == " " ? "User" : App.settingsConfig.userFullName
     }
     
     func ReloadPanel () {

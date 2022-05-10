@@ -74,7 +74,7 @@ struct AppTheme: Equatable {
     }
     
     //Background colors
-    var tintedBackgroundColor: UIColor { return overrideTintedBackgroundColor ?? (self.interface == .Light ? self.primaryColor.light : self.primaryColor.dark3) }
+    var tintedBackgroundColor: UIColor { return overrideTintedBackgroundColor ?? (self.interface == .Light ? self.primaryColor.dark2 : self.primaryColor.dark3) }
     
     //Override Task list colors
     var overrideTasklistBackgroundColor: UIColor? = nil

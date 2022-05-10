@@ -113,7 +113,7 @@ class NotificationHelper {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [id])
     }
     
-    static func RequestNotificationAccess (uiSwitch: UISwitch? = nil, settingsNotificationsPage: SettingsNotificationsPage? = nil) {
+    static func RequestNotificationAccess (uiSwitch: UISwitch? = nil, settingsNotificationsPage: SettingsNotificationsPage? = nil, completion: (()->Void)? = nil) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
             App.settingsConfig.isNotificationsAllowed = success
             
@@ -132,7 +132,9 @@ class NotificationHelper {
                     uiSwitch?.isOn = false
                 }
             }
-            
+            DispatchQueue.main.async {
+                completion?()
+            }
         }
     }
     

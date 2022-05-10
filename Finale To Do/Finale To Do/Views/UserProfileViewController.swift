@@ -82,7 +82,7 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         levelFrame.UpdateLevel(level: StatsManager.stats.level)
         
         let nameLabel = UILabel(frame: CGRect(x: padding, y: levelFrame.frame.maxY+padding*1, width: frameWidth-padding*2, height: 50))
-        nameLabel.text = App.settingsConfig.userFullName
+        nameLabel.text = App.settingsConfig.userFullName == " " ? "User" : App.settingsConfig.userFullName
         nameLabel.textAlignment = .center
         nameLabel.font = .systemFont(ofSize: 40)
         nameLabel.adjustsFontSizeToFitWidth = true

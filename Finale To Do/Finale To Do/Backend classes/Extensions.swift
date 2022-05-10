@@ -172,3 +172,25 @@ extension Calendar {
         return numberOfDays.day!
     }
 }
+
+
+extension UIFont {
+    //Family: Rubik Font names: ["RubikRoman-Regular", "Rubik-Light", "RubikRoman-Medium", "RubikRoman-SemiBold", "RubikRoman-Bold", "RubikRoman-ExtraBold", "RubikRoman-Black"]
+    
+    static func Rubik (weight: UIFont.Weight = .regular, size: CGFloat) -> UIFont {
+        switch weight {
+        case .regular: return UIFont(name: "RubikRoman-Regular", size: size)!
+        case .light: return UIFont(name: "Rubik-Light", size: size)!
+        case .medium: return UIFont(name: "RubikRoman-Medium", size: size)!
+        case .semibold: return UIFont(name: "RubikRoman-SemiBold", size: size)!
+        case .bold: return UIFont(name: "RubikRoman-Bold", size: size)!
+        case .black: return UIFont(name: "RubikRoman-Black", size: size)!
+        default: return UIFont(name: "RubikRoman-Regular", size: size)!
+        }
+    }
+    
+    static var Rubik: UIFont {
+        return Rubik(size: 17)
+    }
+    
+}

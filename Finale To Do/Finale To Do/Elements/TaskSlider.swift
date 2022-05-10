@@ -132,7 +132,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
         if sender.state == .began {
             self.endEditing(true)
             originX = sender.location(in: self).x - sliderHandleWidth*0.5
-            UIView.animate(withDuration: 0.1) { [self] in
+            UIView.animate(withDuration: 0.15) { [self] in
                 sliderView.frame.size.width = max(sliderHandleWidth, min(sender.translation(in: self).x + sliderHandleWidth + originX, fullSliderWidth))
                 sliderHandle.frame.origin.x = max(sliderHandleOriginX, min(sliderHandleOriginX + sender.translation(in: self).x + originX, fullSliderWidth-sliderHandleWidth*0.925))
             }

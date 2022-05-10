@@ -190,7 +190,7 @@ class TaskList: Codable, Equatable {
 
 struct SettingsConfig: Codable {
     
-    var userFirstName: String = "Friend"
+    var userFirstName: String = ""
     var userLastName: String = ""
     
     var isICloudSyncOn: Bool = false

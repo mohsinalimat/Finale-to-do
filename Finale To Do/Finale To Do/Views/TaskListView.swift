@@ -115,7 +115,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let titleWidth = header.frame.width-padding*2
         titleLabel = UILabel(frame: CGRect(x: padding - titleWidth*0.5, y: hamburgerButton.frame.maxY + padding*0.45 + titleHeight*0.5, width: titleWidth, height: titleHeight))
         titleLabel.font = UIFont.systemFont(ofSize: 40, weight: .bold)
-        titleLabel.text = App.selectedTaskListIndex == 0 ? "Hi, \(App.settingsConfig.userFirstName)" : taskLists[0].name
+        titleLabel.text = App.selectedTaskListIndex == 0 ? App.settingsConfig.userFirstName == "" ? "Overview" : "Hi, \(App.settingsConfig.userFirstName)" : taskLists[0].name
         titleLabel.textColor = headerElementsColor
         titleLabel.adjustsFontSizeToFitWidth = true
         titleLabel.layer.anchorPoint = CGPoint(x: 0, y: 1)
@@ -387,7 +387,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         tableView.reloadData()
         tableView.setContentOffset(CGPoint(x: 0, y: tableView.frame.minY), animated: false)
         originalTableContentOffsetY = tableView.contentOffset.y
-        titleLabel.text = App.selectedTaskListIndex == 0 ? "Hi, \(App.settingsConfig.userFirstName)" : taskLists[0].name
+        titleLabel.text = App.selectedTaskListIndex == 0 ? App.settingsConfig.userFirstName == "" ? "Overview" : "Hi, \(App.settingsConfig.userFirstName)" : taskLists[0].name
         titleLabel.textColor = headerElementsColor
         hamburgerButton.tintColor = headerElementsColor
         sortButton.tintColor = headerElementsColor
