@@ -69,11 +69,6 @@ class App: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(AppBecameActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         
         NotificationHelper.CheckNotificationPermissionStatus()
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.present(WelcomeScreenNavController(), animated: true)
-        }
-        
     }
     
 //MARK: Task Actions
@@ -432,8 +427,8 @@ class App: UIViewController {
             SelectTaskList(index: index > 0 ? index+1 : 1, closeMenu: false)
         }
         
-        if App.settingsConfig.defaultFolderID == taskList.id {
-            App.settingsConfig.defaultFolderID = App.mainTaskList.id
+        if App.settingsConfig.defaultListID == taskList.id {
+            App.settingsConfig.defaultListID = App.mainTaskList.id
             App.instance.SaveSettings()
         }
         
@@ -510,8 +505,26 @@ class App: UIViewController {
             LoadLocalData()
         }
         
+        var isDefaultListSet = false
+        if App.settingsConfig.defaultListID == App.mainTaskList.id { isDefaultListSet = true }
+        if !isDefaultListSet {
+            for taskList in App.userTaskLists {
+                if taskList.id == App.settingsConfig.defaultListID {
+                    isDefaultListSet = true
+                    break
+                }
+            }
+        }
+        if !isDefaultListSet { App.settingsConfig.defaultListID = App.mainTaskList.id }
+        
         RemoveExcessCompletedTasks()
         ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
+        
+        if !App.settingsConfig.completedInitialSetup {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                self.present(WelcomeScreenNavController(), animated: true)
+            }
+        }
     }
     
     func LoadLocalData () {
@@ -713,7 +726,7 @@ class App: UIViewController {
     
     var defaultList: TaskList {
         for taskList in App.userTaskLists {
-            if App.settingsConfig.defaultFolderID == taskList.id { return taskList }
+            if App.settingsConfig.defaultListID == taskList.id { return taskList }
         }
         
         return App.mainTaskList

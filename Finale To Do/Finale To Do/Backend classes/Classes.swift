@@ -195,7 +195,7 @@ struct SettingsConfig: Codable {
     
     var isICloudSyncOn: Bool = false
     
-    var defaultFolderID: UUID = UUID()
+    var defaultListID: UUID = UUID()
     
     var isNotificationsAllowed: Bool = false
     var appBadgeNumberTypes: [AppBadgeNumberType] = [.OverdueTasks]
@@ -206,6 +206,8 @@ struct SettingsConfig: Codable {
     var selectedIcon: AppIcon = .classic
     
     var maxNumberOfCompletedTasks: Int = 50
+    
+    var completedInitialSetup: Bool = false
     
     var userFullName: String {
         return "\(userFirstName) \(userLastName)"

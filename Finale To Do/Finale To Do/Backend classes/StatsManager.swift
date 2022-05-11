@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import StoreKit
 
 
 class StatsManager {
@@ -123,6 +124,10 @@ class StatsManager {
         if stats.totalCompletedHighPriorityTasks < 0 { StatsManager.stats.totalCompletedHighPriorityTasks = 0}
         CheckUnlockedBadge(groupID: 3)
         CheckUnlockedBadge(groupID: 4)
+        
+        if stats.totalDaysActive >= 2 && stats.totalCompletedTasks >= 3 {
+//            SKStoreReviewController.requestReviewInCurrentScene()
+        }
     }
 }
 

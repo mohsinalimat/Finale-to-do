@@ -82,14 +82,15 @@ class SettingsMainPage: SettingsPageViewController {
             SettingsSection(title: "Personal", options: [
                 .navigationCell(model: SettingsNavigationOption(title: "Name", icon: UIImage(systemName: "person.text.rectangle.fill"), iconBackgroundColor: .systemGreen, nextPage: SettingsPersonalPage(), SetPreview: {return App.settingsConfig.userFullName;} ))
             ]),
+            
             SettingsSection(title: "Preferences", footer: "", options: [
                 .navigationCell(model: SettingsNavigationOption(title: "Default List", icon: UIImage(systemName: "folder.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsDefaultListPage(), SetPreview: { return self.defaultFolderPreview } )),
                 .navigationCell(model: SettingsNavigationOption(title: "Notifications", icon: UIImage(systemName: "bell.badge.fill"), iconBackgroundColor: .systemRed, nextPage: SettingsNotificationsPage())),
                 .navigationCell(model: SettingsNavigationOption(title: "Appearance", icon: UIImage(systemName: "circle.hexagongrid.circle"), iconBackgroundColor: .systemPurple, nextPage: SettingsAppearancePage()))
             ]),
-            
+
             SettingsSection(title: "Help", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Guide", icon: UIImage(systemName: "doc.text.image.fill"), iconBackgroundColor: .systemOrange, nextPage: SettingsPersonalPage())),
+                .navigationCell(model: SettingsNavigationOption(title: "Guide", icon: UIImage(systemName: "doc.text.image.fill"), iconBackgroundColor: .systemOrange, nextPage: SettingsGuidePage())),
                 .navigationCell(model: SettingsNavigationOption(title: "Statistics", icon: UIImage(systemName: "chart.bar.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsStatisticsPage())),
                 .navigationCell(model: SettingsNavigationOption(title: "About", icon: UIImage(systemName: "bookmark.fill"), iconBackgroundColor: .systemTeal, nextPage: SettingsAboutPage(), SetPreview: {return self.appVersion })),
                 .navigationCell(model: SettingsNavigationOption(title: "Share", icon: UIImage(systemName: "square.and.arrow.up.fill"), iconBackgroundColor: .systemYellow, OnTap: {
@@ -107,7 +108,7 @@ class SettingsMainPage: SettingsPageViewController {
     
     var defaultFolderPreview: String {
         for taskList in App.userTaskLists {
-            if App.settingsConfig.defaultFolderID == taskList.id {
+            if App.settingsConfig.defaultListID == taskList.id {
                 return taskList.name
             }
         }
@@ -129,8 +130,8 @@ class SettingsPersonalPage: SettingsPageViewController {
     override func GetSettings() -> [SettingsSection] {
         return [
             SettingsSection(footer: "Finale uses your name to personalize your experience.", options: [
-                .inputFieldCell(model: SettingsInputFieldOption(title: "First Name", inputFieldText: App.settingsConfig.userFirstName, icon: nil, iconBackgroundColor: .systemGreen) ),
-                .inputFieldCell(model: SettingsInputFieldOption(title: "Last Name", inputFieldText: App.settingsConfig.userLastName, icon: nil, iconBackgroundColor: .systemGreen) )
+                .inputFieldCell(model: SettingsInputFieldOption(title: "First Name", inputFieldText: App.settingsConfig.userFirstName)),
+                .inputFieldCell(model: SettingsInputFieldOption(title: "Last Name", inputFieldText: App.settingsConfig.userLastName))
             ]),
             
             SettingsSection(footer: icloudSyncFooter, options: [
@@ -216,12 +217,12 @@ class SettingsDefaultListPage: SettingsPageViewController {
     
     override func GetSettings() -> [SettingsSection] {
         var options = [SettingsOptionType]()
-        options.append(.selectionCell(model: SettingsSelectionOption(title: App.mainTaskList.name, selectionID: 0, isSelected: App.settingsConfig.defaultFolderID == App.mainTaskList.id) {
+        options.append(.selectionCell(model: SettingsSelectionOption(title: App.mainTaskList.name, selectionID: 0, isSelected: App.settingsConfig.defaultListID == App.mainTaskList.id) {
             self.SetDefaultFolder(index: 0)
         }))
         
         for i in 0..<App.userTaskLists.count {
-            options.append(.selectionCell(model: SettingsSelectionOption(title: App.userTaskLists[i].name, selectionID: i, isSelected: App.settingsConfig.defaultFolderID == App.userTaskLists[i].id) {
+            options.append(.selectionCell(model: SettingsSelectionOption(title: App.userTaskLists[i].name, selectionID: i, isSelected: App.settingsConfig.defaultListID == App.userTaskLists[i].id) {
                 self.SetDefaultFolder(index: i+1)
             }))
         }
@@ -234,7 +235,7 @@ class SettingsDefaultListPage: SettingsPageViewController {
     }
     
     func SetDefaultFolder(index: Int) {
-        App.settingsConfig.defaultFolderID = index == 0 ? App.mainTaskList.id : App.userTaskLists[index-1].id
+        App.settingsConfig.defaultListID = index == 0 ? App.mainTaskList.id : App.userTaskLists[index-1].id
     }
     
 }
@@ -345,7 +346,7 @@ class SettingsAboutPage: SettingsPageViewController {
             SettingsSection(options: [.customViewCell(model: SettingsAppLogoAndVersionView())], customHeight: SettingsAppLogoAndVersionView.height),
             
             SettingsSection(title: "More", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Visit finale.com", icon: UIImage(systemName: "globe"), iconBackgroundColor: .systemBlue, url: URL(string: "https://app.finale.cc"))),
+                .navigationCell(model: SettingsNavigationOption(title: "Visit FinaleToDo.com", icon: UIImage(systemName: "globe"), iconBackgroundColor: .systemBlue, url: URL(string: "https://finaletodo.com"))),
                 .navigationCell(model: SettingsNavigationOption(title: "Rate App", icon: UIImage(systemName: "star.fill"), iconBackgroundColor: .systemGreen, url: URL(string: "itms-apps:itunes.apple.com/us/app/apple-store/id1546661013?mt=8&action=write-review"))),
                 .navigationCell(model: SettingsNavigationOption(title: "Finale: Daily Habit Tracker", icon: UIImage(named: "Finale: Daily Habit Tracker Icon"), iconBorderWidth: 1, url: URL(string: "https://apps.apple.com/us/app/finale-daily-habit-tracker/id1546661013")))
             ]),
@@ -406,13 +407,62 @@ class SettingsStatisticsPage: SettingsPageViewController {
     }
 }
 
+//MARK: Guide page
+class SettingsGuidePage: SettingsPageViewController {
+    override func GetSettings() -> [SettingsSection] {
+        return [
+        
+            SettingsSection(title: "Tasks", options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Create", nextPage: GuidePageViewController(
+                    titleText: "Create task",
+                    descriptionText: "Tap the + button to create a new task. New tasks will be added to the list that is currently open."))),
+                .navigationCell(model: SettingsNavigationOption(title: "Edit", nextPage: GuidePageViewController(
+                    titleText: "Edit task",
+                    descriptionText: "Double tap on the task to quickly change its name and date. Tap anowhere on the screen to stop editing the task."))),
+                .navigationCell(model: SettingsNavigationOption(title: "Change details", nextPage: GuidePageViewController(
+                    titleText: "Change task details",
+                    descriptionText: "Long press on the task to peak its details. Tap inside to expand the view and edit the task."))),
+                .navigationCell(model: SettingsNavigationOption(title: "Complete", nextPage: GuidePageViewController(
+                    titleText: "Complete task",
+                    descriptionText: "Tap on the colored handle to complete the task. Alternatively, you can slide the handle all the way to the right."))),
+                .navigationCell(model: SettingsNavigationOption(title: "Reorder", nextPage: GuidePageViewController(
+                    titleText: "Reorder tasks",
+                    descriptionText: "Drag and drop tasks to reorder them within the list. The 'Overview' page will respect each list's order."))),
+            ]),
+            
+            SettingsSection(title: "Lists", options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Create", nextPage: GuidePageViewController(
+                    titleText: "Create list",
+                    descriptionText: "Tap the '+ Create List' button to create a new list. You can change the list's style by tapping on its icon."))),
+                .navigationCell(model: SettingsNavigationOption(title: "Edit", nextPage: GuidePageViewController(
+                    titleText: "Edit list",
+                    descriptionText: "Long press on the list and tap 'Edit' to change the list's name a style."))),
+                .navigationCell(model: SettingsNavigationOption(title: "Reorder", nextPage: GuidePageViewController(
+                    titleText: "Reorder lists",
+                    descriptionText: "Drag and drop lists to reorder them within the side menu."))),
+                .navigationCell(model: SettingsNavigationOption(title: "Task Sorting", nextPage: GuidePageViewController(
+                    titleText: "Task Sorting",
+                    descriptionText: "Tap the 'Sort' button in the top right corner to select sorting preference for the specific list."))),
+            ]),
+            
+            SettingsSection(title: "Personal", options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Levels", nextPage: GuidePageViewController(
+                    titleText: "Level",
+                    descriptionText: "By completing tasks you gain points that are used to increase your level. You get more points for tasks completed on time, and less points for overdue tasks. Reaching certain levels will grant you rewards, so don't forget to check in on your profile page every once in a while.\n\nYou can earn up to \(StatsManager.dailyPointsCap) points per day."))),
+                .navigationCell(model: SettingsNavigationOption(title: "Badges", nextPage: GuidePageViewController(
+                    titleText: "Badges",
+                    descriptionText: "You can recieve honor badges when reaching certain milestones within Finale. You can check each badge progress and your collection on your profile page.")))
+            ])
+        
+        ]
+    }
+}
 
 
 
 //MARK: Enums & Structs
 enum SettingsOptionType {
     case inputFieldCell(model: SettingsInputFieldOption)
-    case timePickerCell(model: SettingsTimePickerOption)
     case switchCell(model: SettingsSwitchOption)
     case selectionCell(model: SettingsSelectionOption)
     case navigationCell(model: SettingsNavigationOption)
@@ -425,36 +475,16 @@ enum SettingsOptionType {
 struct SettingsInputFieldOption {
     let title: String
     var inputFieldText: String
-    let icon: UIImage?
-    let iconBackgroundColor: UIColor?
-}
-
-struct SettingsTimePickerOption {
-    let title: String
-    var currentDate: Date
-    let icon: UIImage?
-    let iconBackgroundColor: UIColor?
-    
-    init (title: String, currentDate: Date, icon: UIImage? = nil, iconBackground: UIColor? = nil) {
-        self.title = title
-        self.currentDate = currentDate
-        self.icon = icon
-        self.iconBackgroundColor = iconBackground
-    }
 }
 
 struct SettingsSwitchOption {
     let title: String
     var isOn: Bool
-    let icon: UIImage?
-    let iconBackgroundColor: UIColor?
     var OnChange: ( (_ sender: UISwitch) -> Void )
     
-    init (title: String, isOn: Bool, icon: UIImage? = nil, iconBackground: UIColor? = nil, OnChange: @escaping ( (_ sender: UISwitch)->Void )) {
+    init (title: String, isOn: Bool, OnChange: @escaping ( (_ sender: UISwitch)->Void )) {
         self.title = title
         self.isOn = isOn
-        self.icon = icon
-        self.iconBackgroundColor = iconBackground
         self.OnChange = OnChange
     }
 }
@@ -463,16 +493,12 @@ struct SettingsSelectionOption {
     let title: String
     var selectionID: Int
     var isSelected: Bool
-    let icon: UIImage?
-    let iconBackgroundColor: UIColor?
     let OnSelect: ( ()->Void )
     
-    init (title: String, selectionID: Int, isSelected: Bool, icon: UIImage? = nil, iconBackground: UIColor? = nil, OnSelect: @escaping ( ()->Void )) {
+    init (title: String, selectionID: Int, isSelected: Bool, OnSelect: @escaping ( ()->Void )) {
         self.title = title
         self.selectionID = selectionID
         self.isSelected = isSelected
-        self.icon = icon
-        self.iconBackgroundColor = iconBackground
         self.OnSelect = OnSelect
     }
 }
@@ -482,7 +508,7 @@ struct SettingsNavigationOption {
     var icon: UIImage? = nil
     var iconBackgroundColor: UIColor? = nil
     var iconBorderWidth: CGFloat? = nil
-    var nextPage: SettingsPageViewController? = nil
+    var nextPage: UIViewController? = nil
     var url: URL? = nil
     var OnTap: (()->Void)?
     var SetPreview: (() -> String) = { return "" }
@@ -490,16 +516,12 @@ struct SettingsNavigationOption {
 
 struct SettingsSegmentedControlOption {
     let title: String
-    let icon: UIImage?
-    let iconBackgroundColor: UIColor?
     let items: [String]
     var selectedItem: Int
     let OnValueChange: ((_ sender: UISegmentedControl)->Void)
     
-    init (title: String, icon: UIImage? = nil, iconBackgroundColor: UIColor? = nil, items: [String], selectedItem: Int, OnValueChange: @escaping ((_ sender: UISegmentedControl)->Void)) {
+    init (title: String, items: [String], selectedItem: Int, OnValueChange: @escaping ((_ sender: UISegmentedControl)->Void)) {
         self.title = title
-        self.icon = icon
-        self.iconBackgroundColor = iconBackgroundColor
         self.items = items
         self.selectedItem = selectedItem
         self.OnValueChange = OnValueChange

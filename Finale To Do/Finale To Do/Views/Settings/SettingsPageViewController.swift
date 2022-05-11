@@ -22,6 +22,7 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
     
     init () {
         super.init(nibName: nil, bundle: nil)
+        
         self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         ReloadSettings()
@@ -31,7 +32,7 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
         tableView = UITableView(frame: CGRect(x: 0, y: 0, width: viewWidth, height: self.view.frame.height), style: .insetGrouped)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(SettingsTableCell.self, forCellReuseIdentifier: SettingsTableCell.identifier)
+//        tableView.register(SettingsTableCell.self, forCellReuseIdentifier: SettingsTableCell.identifier)
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TapOutside)))
         tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: .leastNonzeroMagnitude))
         tableView.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
@@ -59,8 +60,8 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableCell.identifier, for: indexPath) as! SettingsTableCell
-        
+//        let cell = tableView.dequeueReusableCell(withIdentifier: SettingsTableCell.identifier, for: indexPath) as! SettingsTableCell
+        let cell = SettingsTableCell()
         cell.Setup(settingsOption:  settingsSections[indexPath.section].options[indexPath.row])
         
         return cell
@@ -80,12 +81,12 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let model =  settingsSections[indexPath.section].options[indexPath.row]
+        let model = settingsSections[indexPath.section].options[indexPath.row]
         
         switch model {
         case .inputFieldCell(_):
             let cell = tableView.cellForRow(at: indexPath) as! SettingsTableCell
-            cell.inputField.becomeFirstResponder()
+            cell.inputField!.becomeFirstResponder()
             break
         case .navigationCell(let model):
             if model.nextPage != nil {
@@ -102,10 +103,10 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
             model.OnSelect()
             for cell in tableView.visibleCells {
                 let x = cell as! SettingsTableCell
-                x.selectionImageView.image = UIImage(systemName: "")
+                x.selectionImageView!.image = UIImage(systemName: "")
             }
             let selectedCell = tableView.cellForRow(at: indexPath) as! SettingsTableCell
-            selectedCell.selectionImageView.image = UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
+            selectedCell.selectionImageView!.image = UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
             navigationController?.popViewController(animated: true)
             break
         default: break
@@ -170,205 +171,176 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
     
     let padding = 16.0
     
-    let titleLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 1
-        label.textAlignment = .left
-        label.textColor = .label
-        label.font = .preferredFont(forTextStyle: .body)
-        return label
-    }()
-    let iconContainer: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = 8
-        view.clipsToBounds = true
-        return view
-    }()
-    let iconView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.tintColor = .white
-        imageView.contentMode = .scaleAspectFit
-        return imageView
-    }()
-    let switchView: UISwitch = {
-        let s = UISwitch()
-        s.onTintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
-        s.alpha = 0
-        return s
-    }()
-    let inputField: UITextField = {
-        let textField = UITextField()
-        textField.textColor = .label
-        textField.textColor = .systemGray
-        textField.textAlignment = .right
-        textField.alpha = 0
-        return textField
-    }()
-    let timePicker: UIDatePicker = {
-        let datePicker = UIDatePicker()
-        datePicker.preferredDatePickerStyle = .inline
-        datePicker.datePickerMode = .time
-        datePicker.alpha = 0
-        return datePicker
-    }()
-    let previewLabel: UILabel = {
-        let label = UILabel()
-        label.numberOfLines = 1
-        label.textAlignment = .right
-        label.textColor = .systemGray
-        label.alpha = 0
-        return label
-    }()
-    let selectionImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
-        imageView.contentMode = .scaleAspectFit
-        imageView.alpha = 0
-        return imageView
-    }()
-    
+    var titleLabel: UILabel?
+    var iconContainer: UIView?
+    var iconView: UIImageView?
+    var switchView: UISwitch?
+    var inputField: UITextField?
+    var previewLabel: UILabel?
+    var selectionImageView: UIImageView?
     var segmentedControl: UISegmentedControl?
+    var customViewContainer: UIView?
     
-    let customViewContainer: UIView = {
-        let view = UIView()
-        view.alpha = 0
-        return view
-    }()
+    func SetupTitleLabel() {
+        titleLabel = UILabel()
+        titleLabel!.numberOfLines = 1
+        titleLabel!.textAlignment = .left
+        titleLabel!.textColor = .label
+        titleLabel!.font = .preferredFont(forTextStyle: .body)
+        self.contentView.addSubview(titleLabel!)
+    }
+    func SetupIconContainer() {
+        iconContainer = UIView()
+        iconContainer!.layer.cornerRadius = 8
+        iconContainer!.clipsToBounds = true
+        self.contentView.addSubview(iconContainer!)
+    }
+    func SetupIconView() {
+        iconView = UIImageView()
+        iconView!.tintColor = .white
+        iconView!.contentMode = .scaleAspectFit
+        iconContainer!.addSubview(iconView!)
+    }
+    func SetupSwitchView() {
+        switchView = UISwitch()
+        switchView!.onTintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
+        self.contentView.addSubview(switchView!)
+    }
+    func SetupInputField() {
+        inputField = UITextField()
+        inputField!.textColor = .label
+        inputField!.textColor = .systemGray
+        inputField!.textAlignment = .right
+        self.contentView.addSubview(inputField!)
+    }
+    func SetupPreviewLabel() {
+        previewLabel = UILabel()
+        previewLabel!.numberOfLines = 1
+        previewLabel!.textAlignment = .right
+        previewLabel!.textColor = .systemGray
+        self.contentView.addSubview(previewLabel!)
+    }
+    func SetupSelectionImageView() {
+        selectionImageView = UIImageView()
+        selectionImageView!.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
+        selectionImageView!.contentMode = .scaleAspectFit
+        self.contentView.addSubview(selectionImageView!)
+    }
+    
+    func SetupCustomViewContainer() {
+        customViewContainer = UIView()
+        self.contentView.addSubview(customViewContainer!)
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: UITableViewCell.CellStyle.default, reuseIdentifier: reuseIdentifier)
         self.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .white : .systemGray6
-        
-        iconContainer.addSubview(iconView)
-        self.contentView.addSubview(iconContainer)
-        self.contentView.addSubview(titleLabel)
-        self.contentView.addSubview(switchView)
-        self.contentView.addSubview(inputField)
-        self.contentView.addSubview(timePicker)
-        self.contentView.addSubview(previewLabel)
-        self.contentView.addSubview(selectionImageView)
-        self.contentView.addSubview(customViewContainer)
-        
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         let rowWidth = self.contentView.frame.width
         let rowHeight = self.contentView.frame.height
+        
+        let iconContainerSize = iconView == nil ? 0 : contentView.frame.height-padding*0.9
+        if iconContainer != nil && iconView != nil {
+            iconContainer?.frame = CGRect(x: padding, y: 0.5*(rowHeight-iconContainerSize), width: iconContainerSize, height: iconContainerSize)
+            iconView?.frame.size = CGSize(width: iconContainer!.backgroundColor == nil ? iconContainerSize : iconContainerSize*0.7, height: iconContainer!.backgroundColor == nil ? iconContainerSize : iconContainerSize*0.7)
+            iconView?.frame.origin = CGPoint(x: 0.5*(iconContainerSize-iconView!.frame.width), y: 0.5*(iconContainerSize-iconView!.frame.height))
+        }
 
-        let iconContainerSize = iconView.image == nil ? 0 : contentView.frame.height-padding*0.9
-        iconContainer.frame = CGRect(x: padding, y: 0.5*(rowHeight-iconContainerSize), width: iconContainerSize, height: iconContainerSize)
-        iconView.frame.size = CGSize(width: iconContainer.backgroundColor == nil ? iconContainerSize : iconContainerSize*0.7, height: iconContainer.backgroundColor == nil ? iconContainerSize : iconContainerSize*0.7)
-        iconView.frame.origin = CGPoint(x: 0.5*(iconContainerSize-iconView.frame.width), y: 0.5*(iconContainerSize-iconView.frame.height))
-
-        let titleWidth = titleLabel.text == nil ? 0 : titleLabel.text!.size(withAttributes:[.font: titleLabel.font]).width
-        titleLabel.frame = CGRect(x: iconContainerSize == 0 ? padding : iconContainer.frame.maxX + padding, y: 0, width: min(titleWidth, rowWidth-padding-iconContainerSize), height: rowHeight)
+        let titleWidth = titleLabel == nil ? 0 : titleLabel!.text!.size(withAttributes:[.font: titleLabel!.font]).width
+        titleLabel?.frame = CGRect(x: iconContainerSize == 0 ? padding : iconContainer!.frame.maxX + padding, y: 0, width: min(titleWidth, rowWidth-padding-iconContainerSize), height: rowHeight)
         
-        let functionItemWidth = rowWidth-titleLabel.frame.maxX-padding*(self.accessoryType == .none ? 2 : 1.3)
-        switchView.frame.origin = CGPoint(x: rowWidth-switchView.frame.width-padding, y: 0.5*(rowHeight-switchView.frame.height))
-        inputField.frame = CGRect(x: titleLabel.frame.maxX + padding, y: 0, width: functionItemWidth, height: rowHeight)
-        inputField.delegate = self
-        timePicker.frame.size = CGSize(width: functionItemWidth+padding*0.7, height: timePicker.frame.height)
-        timePicker.frame.origin = CGPoint(x: titleLabel.frame.maxX + padding, y: 0.5*(rowHeight-timePicker.frame.height))
-        previewLabel.frame = CGRect(x: titleLabel.frame.maxX + padding, y: 0, width: functionItemWidth, height: rowHeight)
+        if titleLabel != nil {
+            let functionItemWidth = rowWidth-titleLabel!.frame.maxX-padding*(self.accessoryType == .none ? 2 : 1.3)
+            switchView?.frame.origin = CGPoint(x: rowWidth-switchView!.frame.width-padding, y: 0.5*(rowHeight-switchView!.frame.height))
+            inputField?.frame = CGRect(x: titleLabel!.frame.maxX + padding, y: 0, width: functionItemWidth, height: rowHeight)
+            inputField?.delegate = self
+            previewLabel?.frame = CGRect(x: titleLabel!.frame.maxX + padding, y: 0, width: functionItemWidth, height: rowHeight)
+            let selectionImageSize = contentView.frame.height-padding*1.5
+            selectionImageView?.frame = CGRect(x: rowWidth-selectionImageSize-padding, y: 0.5*(rowHeight-selectionImageSize), width: selectionImageSize, height: selectionImageSize)
+            segmentedControl?.frame = CGRect(x: titleLabel!.frame.maxX + padding, y: 0.5*padding, width: functionItemWidth, height: rowHeight-padding)
+        }
         
-        let selectionImageSize = contentView.frame.height-padding*1.5
-        selectionImageView.frame = CGRect(x: rowWidth-selectionImageSize-padding, y: 0.5*(rowHeight-selectionImageSize), width: selectionImageSize, height: selectionImageSize)
-        
-        customViewContainer.frame = CGRect(x: 0, y: 0, width: rowWidth, height: rowHeight)
-        
-        segmentedControl?.frame = CGRect(x: titleLabel.frame.maxX + padding, y: 0.5*padding, width: functionItemWidth, height: rowHeight-padding)
+        customViewContainer?.frame = CGRect(x: 0, y: 0, width: rowWidth, height: rowHeight)
     }
     
     func Setup(settingsOption: SettingsOptionType) {
         switch settingsOption {
         case .inputFieldCell(let model):
-            titleLabel.text = model.title
-            iconView.image = model.icon
-            iconContainer.backgroundColor = model.iconBackgroundColor
-            inputField.text = model.inputFieldText
-            inputField.alpha = 1
+            SetupTitleLabel()
+            SetupInputField()
+            titleLabel!.text = model.title
+            inputField!.text = model.inputFieldText
             self.accessoryType = .none
             break
         case .switchCell(let model):
-            titleLabel.text = model.title
-            iconView.image = model.icon
-            iconContainer.backgroundColor = model.iconBackgroundColor
-            switchView.isOn = model.isOn
-            switchView.alpha = 1
+            SetupTitleLabel()
+            SetupSwitchView()
+            titleLabel!.text = model.title
+            switchView!.isOn = model.isOn
             OnSwitchChange = model.OnChange
-            switchView.addTarget(self, action: #selector(OnSwitchChageValueChange), for: .valueChanged)
+            switchView!.addTarget(self, action: #selector(OnSwitchChageValueChange), for: .valueChanged)
             self.accessoryType = .none
             self.selectionStyle = .none
             break
         case .navigationCell(let model):
-            titleLabel.text = model.title
-            iconView.image = model.icon
-            iconContainer.backgroundColor = model.iconBackgroundColor
-            previewLabel.text = model.SetPreview()
-            previewLabel.alpha = 1
+            SetupTitleLabel()
+            if model.icon != nil {
+                SetupIconContainer()
+                SetupIconView()
+                iconView!.image = model.icon
+                iconContainer!.backgroundColor = model.iconBackgroundColor
+            }
+            SetupPreviewLabel()
+            titleLabel!.text = model.title
+            previewLabel!.text = model.SetPreview()
             SetPreview = model.SetPreview
-            if model.iconBorderWidth != nil { iconContainer.layer.borderWidth = model.iconBorderWidth!; iconContainer.layer.borderColor = UIColor.systemGray.cgColor; }
+            if model.iconBorderWidth != nil { iconContainer!.layer.borderWidth = model.iconBorderWidth!; iconContainer!.layer.borderColor = UIColor.systemGray.cgColor; }
             self.accessoryType = .disclosureIndicator
             break
-        case .timePickerCell(let model):
-            titleLabel.text = model.title
-            iconView.image = model.icon
-            iconContainer.backgroundColor = model.iconBackgroundColor
-            timePicker.date = model.currentDate
-            timePicker.alpha = 1
-            self.accessoryType = .none
         case .selectionCell(let model):
-            titleLabel.text = model.title
-            iconView.image = model.icon
-            iconContainer.backgroundColor = model.iconBackgroundColor
-            selectionImageView.image = UIImage(systemName: model.isSelected ? "checkmark" : "", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
-            selectionImageView.alpha = 1
+            SetupTitleLabel()
+            SetupSelectionImageView()
+            titleLabel!.text = model.title
+            selectionImageView!.image = UIImage(systemName: model.isSelected ? "checkmark" : "", withConfiguration: UIImage.SymbolConfiguration(weight: .semibold))
         case .customViewCell(let model):
-            customViewContainer.addSubview(model)
-            customViewContainer.alpha = 1
+            SetupCustomViewContainer()
+            customViewContainer!.addSubview(model)
             self.accessoryType = .none
             self.selectionStyle = .none
         case .segmentedControlCell(let model):
-            titleLabel.text = model.title
+            SetupTitleLabel()
+            titleLabel!.text = model.title
             OnSegmentedControlChange = model.OnValueChange
             segmentedControl = UISegmentedControl(items: model.items)
-            segmentedControl!.alpha = 1
             segmentedControl?.addTarget(self, action: #selector(OnSegmentedControlValueChange), for: .valueChanged)
             segmentedControl?.selectedSegmentIndex = model.selectedItem
             selectionStyle = .none
             self.contentView.addSubview(segmentedControl!)
         case .staticCell(let model):
-            titleLabel.text = model.title
-            iconView.image = model.icon
-            iconContainer.backgroundColor = model.iconBackgroundColor
-            previewLabel.text = model.SetPreview()
+            SetupTitleLabel()
+            if model.icon != nil {
+                SetupIconContainer()
+                SetupIconView()
+                iconView!.image = model.icon
+                iconContainer!.backgroundColor = model.iconBackgroundColor
+                
+            }
+            SetupPreviewLabel()
+            titleLabel!.text = model.title
+            previewLabel!.text = model.SetPreview()
             SetPreview = model.SetPreview
-            previewLabel.alpha = 1
             selectionStyle = .none
             self.accessoryType = .none
         }
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        iconView.image = nil
-        titleLabel.text = ""
-        switchView.alpha = 0
-        inputField.alpha = 0
-        timePicker.alpha = 0
-        previewLabel.alpha = 0
-        selectionImageView.alpha = 0
-        customViewContainer.alpha = 0
-        segmentedControl?.alpha = 0
-        self.selectionStyle = .default
-        for subview in customViewContainer.subviews { subview.removeFromSuperview() }
-    }
-    
     var SetPreview: (()->String)!
     
     func ReloadPreview () {
-        previewLabel.text = SetPreview()
+        previewLabel?.text = SetPreview()
     }
     
     var OnSwitchChange: ((_ sender: UISwitch) -> Void)!
@@ -394,7 +366,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField.text?.isEmpty ?? true {
-            textField.text = titleLabel.text == "First Name" ? App.settingsConfig.userFirstName : App.settingsConfig.userLastName
+            textField.text = titleLabel!.text == "First Name" ? App.settingsConfig.userFirstName : App.settingsConfig.userLastName
             return
         }
         
@@ -402,7 +374,7 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
             textField.text?.removeFirst()
         }
         
-        if titleLabel.text == "First Name" {
+        if titleLabel!.text == "First Name" {
             App.settingsConfig.userFirstName = textField.text!
             if App.selectedTaskListIndex == 0 { App.instance.SelectTaskList(index: 0, closeMenu: false)}
             App.instance.sideMenuView.userPanel.ReloadName()
@@ -415,8 +387,8 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
     
     func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in
-            switchView.onTintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
-            selectionImageView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
+            switchView?.onTintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
+            selectionImageView?.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
             self.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .white : .systemGray6
         }
     }

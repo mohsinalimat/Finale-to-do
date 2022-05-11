@@ -422,6 +422,7 @@ class WelcomeScreenAllSetPage: UIViewController {
     }
     
     @objc func SkipButtonTap () {
+        App.settingsConfig.completedInitialSetup = true
         App.instance.SelectTaskList(index: 0)
         App.instance.sideMenuView.userPanel.ReloadName()
         App.instance.SaveSettings()
@@ -429,7 +430,11 @@ class WelcomeScreenAllSetPage: UIViewController {
     }
     
     @objc func ContinueButtonTap () {
-        
+        App.settingsConfig.completedInitialSetup = true
+        App.instance.SelectTaskList(index: 0)
+        App.instance.sideMenuView.userPanel.ReloadName()
+        App.instance.SaveSettings()
+        self.navigationController?.dismiss(animated: true)
     }
     
     

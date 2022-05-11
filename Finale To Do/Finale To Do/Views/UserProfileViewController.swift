@@ -141,6 +141,13 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
             i += 1
         }
         
+        if i == 0 {
+            let placeholderLabel = UILabel(frame: CGRect(x: padding, y: padding*2+titleLabel.frame.height, width: frame.width-padding*2, height: containerView.frame.height-padding*3-titleLabel.frame.height))
+            placeholderLabel.text = "You don't have any badges yet."
+            placeholderLabel.textColor = .systemGray2
+            containerView.addSubview(placeholderLabel)
+        }
+        
         containerView.addSubview(titleLabel)
         containerView.addSubview(openIcon)
         containerView.addSubview(scrollView)

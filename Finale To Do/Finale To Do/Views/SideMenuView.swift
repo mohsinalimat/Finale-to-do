@@ -59,7 +59,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         self.addSubview(tableView)
         
         let addListButton = UIButton(frame: CGRect(x: padding, y: tableView.frame.maxY+padding*0.5, width: (frame.width-padding*2)*0.5, height: 25))
-        addListButton.setTitle("Create list", for: .normal)
+        addListButton.setTitle("Create List", for: .normal)
         addListButton.setImage(UIImage(systemName: "plus"), for: .normal)
         addListButton.setTitleColor(.gray, for: .highlighted)
         addListButton.tintColor = .white

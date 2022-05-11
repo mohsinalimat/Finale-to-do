@@ -573,7 +573,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
                     App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: slider.task)
                 }
             } else {
-                if slider.task.taskListID == App.userTaskLists[App.selectedTaskListIndex].id {
+                if slider.task.taskListID == App.userTaskLists[App.selectedTaskListIndex-2].id {
                     App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: slider.task)
                 }
             }
