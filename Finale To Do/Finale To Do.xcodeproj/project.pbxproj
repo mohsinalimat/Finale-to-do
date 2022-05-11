@@ -31,6 +31,8 @@
 		376AD0DD2808FD4C00986B49 /* Classes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DC2808FD4C00986B49 /* Classes.swift */; };
 		376AD0DF280901AF00986B49 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DE280901AF00986B49 /* Extensions.swift */; };
 		377C3914281B0F4C006F42BA /* SettingsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */; };
+		377CB320282B847F001CDBBD /* iPhone Frame.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB31F282B847F001CDBBD /* iPhone Frame.png */; };
+		377CB322282B8905001CDBBD /* Screenshot Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB321282B8905001CDBBD /* Screenshot Placeholder.png */; };
 		378922B128232F2600AA3B1B /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B028232F2600AA3B1B /* UserProfileViewController.swift */; };
 		378922B32823645200AA3B1B /* StatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B22823645200AA3B1B /* StatsManager.swift */; };
 		37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37983B8B2819F608007B241A /* SettingsViewController.swift */; };
@@ -45,11 +47,6 @@
 		37999919282A07D600A42F32 /* All Set.png in Resources */ = {isa = PBXBuildFile; fileRef = 37999918282A07D600A42F32 /* All Set.png */; };
 		37B9998C2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */; };
 		37CE7B81282AD29B00B15440 /* GuidePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CE7B80282AD29B00B15440 /* GuidePageViewController.swift */; };
-		37CE7B8E282B52D000B15440 /* Change task details.png in Resources */ = {isa = PBXBuildFile; fileRef = 37CE7B89282B52CF00B15440 /* Change task details.png */; };
-		37CE7B8F282B52D000B15440 /* Reorder tasks.png in Resources */ = {isa = PBXBuildFile; fileRef = 37CE7B8A282B52CF00B15440 /* Reorder tasks.png */; };
-		37CE7B90282B52D000B15440 /* Create task.png in Resources */ = {isa = PBXBuildFile; fileRef = 37CE7B8B282B52CF00B15440 /* Create task.png */; };
-		37CE7B91282B52D000B15440 /* Complete task.png in Resources */ = {isa = PBXBuildFile; fileRef = 37CE7B8C282B52D000B15440 /* Complete task.png */; };
-		37CE7B92282B52D000B15440 /* Edit task.png in Resources */ = {isa = PBXBuildFile; fileRef = 37CE7B8D282B52D000B15440 /* Edit task.png */; };
 		37D542672825888E00373987 /* orangeFilled@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542572825888C00373987 /* orangeFilled@3x.png */; };
 		37D542682825888E00373987 /* black@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542582825888C00373987 /* black@3x.png */; };
 		37D542692825888E00373987 /* orange@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542592825888C00373987 /* orange@2x.png */; };
@@ -100,6 +97,8 @@
 		376AD0DC2808FD4C00986B49 /* Classes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Classes.swift; sourceTree = "<group>"; };
 		376AD0DE280901AF00986B49 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageViewController.swift; sourceTree = "<group>"; };
+		377CB31F282B847F001CDBBD /* iPhone Frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iPhone Frame.png"; sourceTree = "<group>"; };
+		377CB321282B8905001CDBBD /* Screenshot Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Screenshot Placeholder.png"; sourceTree = "<group>"; };
 		378922B028232F2600AA3B1B /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		378922B22823645200AA3B1B /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
 		37983B8B2819F608007B241A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -114,11 +113,6 @@
 		37999918282A07D600A42F32 /* All Set.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "All Set.png"; sourceTree = "<group>"; };
 		37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSyncConfirmationViewController.swift; sourceTree = "<group>"; };
 		37CE7B80282AD29B00B15440 /* GuidePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidePageViewController.swift; sourceTree = "<group>"; };
-		37CE7B89282B52CF00B15440 /* Change task details.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Change task details.png"; sourceTree = "<group>"; };
-		37CE7B8A282B52CF00B15440 /* Reorder tasks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Reorder tasks.png"; sourceTree = "<group>"; };
-		37CE7B8B282B52CF00B15440 /* Create task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Create task.png"; sourceTree = "<group>"; };
-		37CE7B8C282B52D000B15440 /* Complete task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Complete task.png"; sourceTree = "<group>"; };
-		37CE7B8D282B52D000B15440 /* Edit task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Edit task.png"; sourceTree = "<group>"; };
 		37D542572825888C00373987 /* orangeFilled@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "orangeFilled@3x.png"; sourceTree = "<group>"; };
 		37D542582825888C00373987 /* black@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "black@3x.png"; sourceTree = "<group>"; };
 		37D542592825888C00373987 /* orange@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "orange@2x.png"; sourceTree = "<group>"; };
@@ -311,11 +305,8 @@
 		37CE7B82282AE76E00B15440 /* Guide Screenshots */ = {
 			isa = PBXGroup;
 			children = (
-				37CE7B8C282B52D000B15440 /* Complete task.png */,
-				37CE7B8B282B52CF00B15440 /* Create task.png */,
-				37CE7B89282B52CF00B15440 /* Change task details.png */,
-				37CE7B8D282B52D000B15440 /* Edit task.png */,
-				37CE7B8A282B52CF00B15440 /* Reorder tasks.png */,
+				377CB31F282B847F001CDBBD /* iPhone Frame.png */,
+				377CB321282B8905001CDBBD /* Screenshot Placeholder.png */,
 			);
 			path = "Guide Screenshots";
 			sourceTree = "<group>";
@@ -387,11 +378,12 @@
 				379999032829B35C00A42F32 /* Badge Placeholder.png in Resources */,
 				372B8A2A281CE61F00117A72 /* classicFilled@2x.png in Resources */,
 				372B8A2E281CE61F00117A72 /* classic@2x.png in Resources */,
-				37CE7B90282B52D000B15440 /* Create task.png in Resources */,
 				372B8A31281CE61F00117A72 /* dark@2x.png in Resources */,
+				377CB322282B8905001CDBBD /* Screenshot Placeholder.png in Resources */,
 				376AD0CC2808DC5A00986B49 /* Assets.xcassets in Resources */,
 				372B8A2C281CE61F00117A72 /* darkmodeFilled@3x.png in Resources */,
 				37D5426D2825888E00373987 /* purpleFilled@2x.png in Resources */,
+				377CB320282B847F001CDBBD /* iPhone Frame.png in Resources */,
 				37D542702825888E00373987 /* red@2x.png in Resources */,
 				37D542732825888E00373987 /* blackFilled@2x.png in Resources */,
 				37D542682825888E00373987 /* black@3x.png in Resources */,
@@ -400,17 +392,13 @@
 				37999919282A07D600A42F32 /* All Set.png in Resources */,
 				37D5426F2825888E00373987 /* blackFilled@3x.png in Resources */,
 				372B8A30281CE61F00117A72 /* dark@3x.png in Resources */,
-				37CE7B8F282B52D000B15440 /* Reorder tasks.png in Resources */,
 				37D542712825888E00373987 /* red@3x.png in Resources */,
 				37999917282A07C700A42F32 /* Welcome Screen.png in Resources */,
 				37D5426A2825888E00373987 /* purpleFilled@3x.png in Resources */,
 				379999152829FF9300A42F32 /* Rubik.ttf in Resources */,
 				372B8A2D281CE61F00117A72 /* darkmodeFilled@2x.png in Resources */,
 				3799990E2829E64500A42F32 /* Get to know each other.png in Resources */,
-				37CE7B91282B52D000B15440 /* Complete task.png in Resources */,
 				3799990D2829E64500A42F32 /* Notifications.png in Resources */,
-				37CE7B92282B52D000B15440 /* Edit task.png in Resources */,
-				37CE7B8E282B52D000B15440 /* Change task details.png in Resources */,
 				37D5426B2825888E00373987 /* orangeFilled@2x.png in Resources */,
 				37D542672825888E00373987 /* orangeFilled@3x.png in Resources */,
 				372B8A2F281CE61F00117A72 /* classicFilled@3x.png in Resources */,
