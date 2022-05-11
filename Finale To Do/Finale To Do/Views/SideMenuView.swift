@@ -21,6 +21,8 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     var currentContextMenuView: TaskListMenuItem?
     
+    var selectedTaskListID: UUID?
+    
     init(frame: CGRect, app: App) {
         self.app = app
         
@@ -70,7 +72,8 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         self.addSubview(addListButton)
         
-        let settingsButton = UIButton(frame: CGRect(x: frame.width-padding-25, y: addListButton.frame.origin.y, width: 25, height: 25))
+        let settingsButtonSize = 50.0
+        let settingsButton = UIButton(frame: CGRect(x: frame.width-padding-settingsButtonSize, y: addListButton.frame.origin.y + 0.5*(addListButton.frame.height-settingsButtonSize), width: settingsButtonSize, height: settingsButtonSize))
         settingsButton.setImage(UIImage(systemName: "gearshape"), for: .normal)
         settingsButton.tintColor = .white
         settingsButton.addTarget(self, action: #selector(OpenSettings), for: .touchUpInside)
@@ -142,6 +145,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
         dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.taskListMenuItem.frame, cornerRadius: 10.0)
         dragPreviewParams.backgroundColor = cell.taskListMenuItem.isSelected ? ThemeManager.currentTheme.sidemenuSelectionColor : .clear
+        selectedTaskListID = App.selectedTaskListIndex == 0 ? nil : App.selectedTaskListIndex == 1 ? App.mainTaskList.id : App.userTaskLists[App.selectedTaskListIndex-2].id
         return dragPreviewParams
     }
     
@@ -171,6 +175,15 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let mover = App.userTaskLists.remove(at: sourceIndexPath.row-1)
         App.userTaskLists.insert(mover, at: destinationIndexPath.row-1)
         tableView.reloadData()
+        
+        if selectedTaskListID == nil { return }
+        if selectedTaskListID == App.mainTaskList.id { return }
+        for tasklist in App.userTaskLists {
+            if tasklist.id == selectedTaskListID {
+                App.instance.SelectTaskList(index: App.userTaskLists.firstIndex(of: tasklist)!+2, closeMenu: false)
+                break
+            }
+        }
     }
     
     func getMenuItemPreview(configuration: UIContextMenuConfiguration, isDismissing: Bool) -> UITargetedPreview {

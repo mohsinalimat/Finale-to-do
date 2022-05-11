@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-class AddListView: UIView, UITextFieldDelegate {
+class AddListView: UIView, UITextFieldDelegate, UIDynamicTheme {
     
     let padding = 16.0
     let rowHeight = 45.0
@@ -17,6 +17,7 @@ class AddListView: UIView, UITextFieldDelegate {
     
     var blackoutPanel: UIView!
     var contentView: UIView!
+    var inputFieldBackground: UIView!
     var inputField: UITextField!
     var iconView: UIImageView!
     var createButton: UIButton!
@@ -24,7 +25,7 @@ class AddListView: UIView, UITextFieldDelegate {
     
     let placeholders: [String] = ["Travel plan" , "Final project" , "Grocery list", "Work", "Family", "Sports club", "Hobbies", "Chores", "Shopping list"]
     
-    let icons: [String] = ["folder.fill", "book.closed.fill", "heart.fill", "paperplane.fill", "calendar", "rectangle.fill.on.rectangle.fill", "trash.fill", "alarm.fill", "hourglass", "bolt.fill", "lightbulb.fill", "bag.fill", "tray.full.fill", "archivebox.fill", "graduationcap.fill", "briefcase.fill"]
+    let icons: [String] = ["folder.fill", "tray.full.fill", "archivebox.fill", "briefcase.fill", "bag.fill", "book.fill", "books.vertical.fill", "graduationcap.fill", "heart.fill", "heart.text.square.fill", "lightbulb.fill", "bolt.fill", "deskclock.fill", "hourglass", "airplane", "trash.fill"]
     
     let colors: [UIColor] = [UIColor.defaultColor, UIColor(hex: "5243AA"), UIColor(hex: "87007A"), UIColor(hex: "DE0B0B"), UIColor(hex: "FF991F"), UIColor(hex: "00875A"), UIColor(hex: "008716"), UIColor(hex: "00A3BF")]
     
@@ -44,9 +45,9 @@ class AddListView: UIView, UITextFieldDelegate {
         let createButtonWidth = (frame.width-padding*2)-panelWidth-padding
         let leftPadding = 8.0
         
-        let panel = UIView (frame: CGRect(x: padding, y: padding, width: panelWidth, height: rowHeight))
-        panel.backgroundColor = ThemeManager.currentTheme.sidemenuSelectionColor
-        panel.layer.cornerRadius = 10
+        inputFieldBackground = UIView (frame: CGRect(x: padding, y: padding, width: panelWidth, height: rowHeight))
+        inputFieldBackground.backgroundColor = ThemeManager.currentTheme.sidemenuSelectionColor
+        inputFieldBackground.layer.cornerRadius = 10
         
         inputField = UITextField(frame: CGRect(x: iconWidth, y: 0, width: inputFieldWidth-leftPadding*2, height: rowHeight))
         inputField.delegate = self
@@ -60,7 +61,7 @@ class AddListView: UIView, UITextFieldDelegate {
         inputField.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(CloseColorIconPicker)))
         inputField.text = newTaskList.name
         
-        panel.addSubview(inputField)
+        inputFieldBackground.addSubview(inputField)
         
         iconView = UIImageView(frame: CGRect(x: 0, y: 0, width: iconWidth, height: rowHeight))
         iconView.image = UIImage(systemName: newTaskList.systemIcon)
@@ -70,14 +71,14 @@ class AddListView: UIView, UITextFieldDelegate {
         iconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OpenColorIconPicker)))
         iconView.contentMode = .scaleAspectFit
         
-        panel.addSubview(iconView)
+        inputFieldBackground.addSubview(iconView)
         
-        contentView.addSubview(panel)
+        contentView.addSubview(inputFieldBackground)
         
-        createButton = UIButton(frame: CGRect(x: panel.frame.maxX + padding, y: panel.frame.origin.y, width: createButtonWidth, height: rowHeight))
+        createButton = UIButton(frame: CGRect(x: inputFieldBackground.frame.maxX + padding, y: inputFieldBackground.frame.origin.y, width: createButtonWidth, height: rowHeight))
         createButton.layer.cornerRadius = 10
         createButton.isEnabled = inputField.text != ""
-        createButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: taskList.primaryColor)
+        createButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
         createButton.alpha = createButton.isEnabled ? 1 : 0.5
         createButton.addTarget(self, action: #selector(CreateOrUpdateTaskList), for: .touchUpInside)
         
@@ -110,7 +111,7 @@ class AddListView: UIView, UITextFieldDelegate {
             let keyboardHeight = keyboardFrame.cgRectValue.height
             App.instance.ZoomOutContainterView()
             UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut) { [self] in
-                let y = UIScreen.main.bounds.height - App.instance.view.safeAreaInsets.bottom - keyboardHeight - frame.height*0.052
+                let y = UIScreen.main.bounds.height - keyboardHeight - (inputFieldBackground.frame.height+padding*2)
                 blackoutPanel.alpha = 0.5
                 contentView.frame.origin.y = y
             }
@@ -210,6 +211,15 @@ class AddListView: UIView, UITextFieldDelegate {
         SetTaskListIcon()
     }
     
+    func ReloadThemeColors() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            createButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
+            contentView.backgroundColor = ThemeManager.currentTheme.tintedBackgroundColor
+            inputFieldBackground.backgroundColor = ThemeManager.currentTheme.sidemenuSelectionColor
+        }
+    }
+    
+    
     
     
     
@@ -219,7 +229,7 @@ class AddListView: UIView, UITextFieldDelegate {
     }
 }
 
-class ColorIconPickerView: UIView {
+class ColorIconPickerView: UIView, UIDynamicTheme {
     
     let padding = 12.0
     
@@ -307,6 +317,22 @@ class ColorIconPickerView: UIView {
             self.removeFromSuperview()
         })
     }
+    
+    func ReloadThemeColors() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            self.backgroundColor = ThemeManager.currentTheme.sidemenuSelectionColor
+            for swatch in colorSwatches {
+                swatch.SetColors()
+            }
+            for swatch in iconSwatches {
+                swatch.SetColors()
+            }
+        }
+    }
+    
+    
+    
+    
     
     
     

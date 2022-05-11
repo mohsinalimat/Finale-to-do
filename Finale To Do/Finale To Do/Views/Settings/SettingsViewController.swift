@@ -89,7 +89,7 @@ class SettingsMainPage: SettingsPageViewController {
                 .navigationCell(model: SettingsNavigationOption(title: "Appearance", icon: UIImage(systemName: "circle.hexagongrid.circle"), iconBackgroundColor: .systemPurple, nextPage: SettingsAppearancePage()))
             ]),
 
-            SettingsSection(title: "Help", options: [
+            SettingsSection(title: "More", options: [
                 .navigationCell(model: SettingsNavigationOption(title: "Guide", icon: UIImage(systemName: "doc.text.image.fill"), iconBackgroundColor: .systemOrange, nextPage: SettingsGuidePage())),
                 .navigationCell(model: SettingsNavigationOption(title: "Statistics", icon: UIImage(systemName: "chart.bar.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsStatisticsPage())),
                 .navigationCell(model: SettingsNavigationOption(title: "About", icon: UIImage(systemName: "bookmark.fill"), iconBackgroundColor: .systemTeal, nextPage: SettingsAboutPage(), SetPreview: {return self.appVersion })),
@@ -455,6 +455,10 @@ class SettingsGuidePage: SettingsPageViewController {
             ])
         
         ]
+    }
+    
+    override var PageTitle: String {
+        return "Guide"
     }
 }
 

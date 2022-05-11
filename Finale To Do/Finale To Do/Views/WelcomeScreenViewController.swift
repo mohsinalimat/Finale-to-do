@@ -125,7 +125,7 @@ class WelcomeScreenNamePage: UIViewController, UITextFieldDelegate {
         let bottomPadding = UIApplication.shared.windows.first!.safeAreaInsets.bottom
         let buttonSize = 40.0
         let skipButton = UIButton(frame: CGRect(x: padding, y: frameHeight - bottomPadding - buttonSize*3, width: frameWidth-padding*2, height: buttonSize))
-        skipButton.backgroundColor = UIColor.systemGray3
+        skipButton.backgroundColor = UIColor.systemGray2
         skipButton.setTitle("Skip", for: .normal)
         skipButton.setTitleColor(UIColor.systemGray, for: .highlighted)
         skipButton.layer.cornerRadius = 8
@@ -238,7 +238,7 @@ class WelcomeScreenNotificationsPage: UIViewController {
         let bottomPadding = UIApplication.shared.windows.first!.safeAreaInsets.bottom
         let buttonSize = 40.0
         let skipButton = UIButton(frame: CGRect(x: padding, y: frameHeight - bottomPadding - buttonSize*3, width: frameWidth-padding*2, height: buttonSize))
-        skipButton.backgroundColor = UIColor.systemGray3
+        skipButton.backgroundColor = UIColor.systemGray2
         skipButton.setTitle("Skip", for: .normal)
         skipButton.setTitleColor(UIColor.systemGray, for: .highlighted)
         skipButton.layer.cornerRadius = 8
@@ -315,7 +315,7 @@ class WelcomeScreenCloudSyncPage: UIViewController {
         let bottomPadding = UIApplication.shared.windows.first!.safeAreaInsets.bottom
         let buttonSize = 40.0
         let skipButton = UIButton(frame: CGRect(x: padding, y: frameHeight - bottomPadding - buttonSize*3, width: frameWidth-padding*2, height: buttonSize))
-        skipButton.backgroundColor = UIColor.systemGray3
+        skipButton.backgroundColor = UIColor.systemGray2
         skipButton.setTitle("Skip", for: .normal)
         skipButton.setTitleColor(UIColor.systemGray, for: .highlighted)
         skipButton.layer.cornerRadius = 8
@@ -391,7 +391,7 @@ class WelcomeScreenAllSetPage: UIViewController {
         let bottomPadding = UIApplication.shared.windows.first!.safeAreaInsets.bottom
         let buttonSize = 40.0
         let skipButton = UIButton(frame: CGRect(x: padding, y: frameHeight - bottomPadding - buttonSize*3, width: frameWidth-padding*2, height: buttonSize))
-        skipButton.backgroundColor = UIColor.systemGray3
+        skipButton.backgroundColor = UIColor.systemGray2
         skipButton.setTitle("I'll figure it out myself", for: .normal)
         skipButton.setTitleColor(UIColor.systemGray, for: .highlighted)
         skipButton.layer.cornerRadius = 8
@@ -400,7 +400,7 @@ class WelcomeScreenAllSetPage: UIViewController {
         
         let continueButton = UIButton(frame: CGRect(x: padding, y: skipButton.frame.origin.y - padding*0.5 - buttonSize, width: frameWidth-padding*2, height: buttonSize))
         continueButton.backgroundColor = .defaultColor
-        continueButton.setTitle("Show me around!", for: .normal)
+        continueButton.setTitle("Yes, please!", for: .normal)
         continueButton.setTitleColor(UIColor.systemGray, for: .highlighted)
         continueButton.layer.cornerRadius = 8
         continueButton.addTarget(self, action: #selector(ContinueButtonTap), for: .touchUpInside)
@@ -410,7 +410,7 @@ class WelcomeScreenAllSetPage: UIViewController {
         descriptionLabel.font = .Rubik
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
-        descriptionLabel.text = "Perfect! Would you like to go for a quick tour around the app to learn how to use Finale?"
+        descriptionLabel.text = "Perfect! Would you like us to setup some initial tasks to help you master Finale?"
         descriptionLabel.sizeToFit()
         descriptionLabel.frame.origin.x = 0.5*(frameWidth-descriptionLabel.frame.width)
         
@@ -431,12 +431,33 @@ class WelcomeScreenAllSetPage: UIViewController {
     
     @objc func ContinueButtonTap () {
         App.settingsConfig.completedInitialSetup = true
-        App.instance.SelectTaskList(index: 0)
+        App.userTaskLists.append(CreateTutorialTaskList())
+        App.instance.SelectTaskList(index: 2)
         App.instance.sideMenuView.userPanel.ReloadName()
         App.instance.SaveSettings()
+        App.instance.SaveData()
         self.navigationController?.dismiss(animated: true)
     }
     
+    func CreateTutorialTaskList () -> TaskList{
+        let tasklistID = UUID()
+        return TaskList(name: "Welcome to Finale", primaryColor: .defaultColor, systemIcon: "graduationcap.fill", sortingPreference: .ByTimeCreated, upcomingTasks:[
+            Task(name: "Tap ➕ to create new task", taskListID: tasklistID),
+            Task(name: "Tap or slide the handle to complete task", taskListID: tasklistID),
+            Task(name: "Double-tap task for quick edits", taskListID: tasklistID),
+            Task(name: "Tap 🗓 to add task date and notifications", taskListID: tasklistID),
+            Task(name: "Long-press task to see details", taskListID: tasklistID),
+            Task(name: "Swipe right to open side menu", taskListID: tasklistID),
+            Task(name: "Long-press list to edit or delete",
+                 notes: "- Feel free to delete this list once you are familiar with Finale.",
+                 taskListID: tasklistID),
+            Task(name: "Open \"Guide\" to learn more",
+                 notes: "- You can learn how to use Finale by going through the \"Guide\" page in the settings.",
+                 taskListID: tasklistID),
+        ],
+            id: tasklistID
+        )
+    }
     
     
     required init?(coder: NSCoder) {

@@ -33,7 +33,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
     let fullSliderWidth: CGFloat
     let calendarIconWidth: CGFloat
     
-    let placeholders: [String] = ["Finish annual report", "Create images for the presentation", "Meditate", "Plan holidays with the family", "Help mom with groceries", "Buy new shoes", "Get cat food", "Get dog food", "Brush my corgie", "Say hi to QQ", "Chmok my QQ", "Buy airplane tickets", "Cancel streaming subscription", "Schedule coffee chat", "Schedule work meeting", "Dye my hair", "Download Elden Ring", "Get groceries"]
+    let placeholders: [String] = ["Finish annual report", "Create images for the presentation", "Meditate", "Plan holidays with the family", "Help mom with groceries", "Buy new shoes", "Get cat food", "Get dog food", "Brush my corgie", "Congratulate George", "Rearrange furniture", "Buy airplane tickets", "Cancel streaming subscription", "Schedule coffee chat", "Schedule work meeting", "Dye my hair", "Download Elden Ring", "Get groceries"]
     
     init(task: Task, frame: CGRect, taskListColor: UIColor, app: App) {
         self.task = task
