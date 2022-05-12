@@ -259,7 +259,7 @@ class SettingsAppIconView: UIView {
         
         for i in 0..<AppIcon.allCases.count {
             let cell = AppIconView(
-                frame: CGRect(x: Double(i)*cellWidth, y: 0, width: cellWidth, height: cellHeight),
+                frame: CGRect(x: Double(i)*cellWidth, y: padding, width: cellWidth, height: cellHeight),
                 icon: AppIcon.allCases[i],
                 isSelected:  App.settingsConfig.selectedIcon == AppIcon.allCases[i],
                 parentView: self
@@ -281,7 +281,7 @@ class SettingsAppIconView: UIView {
         self.frame.size = CGSize(width: rowWidth, height: rowHeight)
         
         
-        scrollView.frame = CGRect(x: 0, y: padding, width: rowWidth, height: cellHeight + padding)
+        scrollView.frame = CGRect(x: 0, y: 0, width: rowWidth, height: cellHeight + padding*2)
         scrollView.contentSize = CGSize(width: cellWidth * Double(AppIcon.allCases.count), height: scrollView.frame.height)
     }
     
@@ -318,6 +318,9 @@ class AppIconView: UIView, UIDynamicTheme  {
     let imageView = UIImageView()
     let parentView: SettingsAppIconView
     
+    var lockedLevelBadge: LevelFrame?
+    var isLocked: Bool = false
+    
     init(frame: CGRect, icon: AppIcon, isSelected: Bool, parentView: SettingsAppIconView) {
         self.icon = icon
         self.parentView = parentView
@@ -339,9 +342,26 @@ class AppIconView: UIView, UIDynamicTheme  {
         self.addSubview(imageView)
         self.addSubview(label)
         self.isSelected = isSelected
+        
+        if icon == .orange || icon == .orangeFilled || icon == .red || icon == .redFilled || icon == .purple || icon == .purpleFilled || icon == .black || icon == .blackFilled {
+            let unlockLevel = StatsManager.getLevePerk(type: .ColoredAppIcons).unlockLevel
+            if StatsManager.stats.level < unlockLevel {
+                lockedLevelBadge = AddLockedLevelBadge(level: unlockLevel)
+                self.addSubview(lockedLevelBadge!)
+                isLocked = true
+            }
+        }
     }
     
     @objc func Tap () {
+        if isLocked {
+            let vc = LockedPerkPopupViewController(warningText: "Colored icons are unlocked when you reach level \(StatsManager.getLevePerk(type: .ColoredAppIcons).unlockLevel)", parentVC: parentView.parentViewController)
+            vc.modalPresentationStyle = .overFullScreen
+            vc.modalTransitionStyle = .crossDissolve
+            parentView.parentViewController!.present(vc, animated: true)
+            return
+        }
+        
         parentView.SelectIcon(icon: icon)
     }
     
@@ -361,7 +381,19 @@ class AppIconView: UIView, UIDynamicTheme  {
     
     func ReloadThemeColors() {
         isSelected = isSelected
+        UIView.animate(withDuration: 0.25) { [self] in
+            lockedLevelBadge?.UpdateColor(color: ThemeManager.currentTheme.primaryColor)
+        }
     }
+    
+    func AddLockedLevelBadge(level: Int) -> LevelFrame {
+        let badgeSize = imageView.frame.height*0.4
+        let badge = LevelFrame(frame: CGRect(x: imageView.frame.maxX-badgeSize*0.6, y: imageView.frame.minY-badgeSize*0.4, width: badgeSize, height: badgeSize))
+        badge.UpdateLevel(level: level)
+        return badge
+    }
+    
+    
     
     
     
@@ -399,7 +431,7 @@ class SettingsThemeView: UIView {
         
         for i in 0..<themes.count {
             let cell = AppThemePreviewView(
-                frame: CGRect(x: Double(i)*cellWidth, y: 0, width: cellWidth, height: cellHeight),
+                frame: CGRect(x: Double(i)*cellWidth, y: padding, width: cellWidth, height: cellHeight),
                 theme: themes[i],
                 isSelected: type == .Light ? App.settingsConfig.selectedLightThemeIndex == i : App.settingsConfig.selectedDarkThemeIndex == i,
                 parentView: self)
@@ -409,15 +441,13 @@ class SettingsThemeView: UIView {
     }
     
     
-    
-    
     override func layoutSubviews() {
         super.layoutSubviews()
         rowHeight = SettingsAppBadgeCountView.height
         rowWidth = superview!.frame.width
         self.frame.size = CGSize(width: rowWidth, height: rowHeight)
         
-        scrollView.frame = CGRect(x: 0, y: padding, width: rowWidth, height: cellHeight + padding)
+        scrollView.frame = CGRect(x: 0, y: 0, width: rowWidth, height: cellHeight + padding*2)
         scrollView.contentSize = CGSize(width: cellWidth * Double(themes.count), height: scrollView.frame.height)
     }
     
@@ -468,6 +498,9 @@ class AppThemePreviewView: UIView, UIDynamicTheme  {
     let previewHeader = UIView()
     let sidemenuPreview = UIView()
     let actionButton = UIView()
+    
+    var lockedLevelBadge: LevelFrame?
+    var isLocked: Bool = false
     
     init(frame: CGRect, theme: AppTheme, isSelected: Bool, parentView: SettingsThemeView) {
         self.parentView = parentView
@@ -525,6 +558,15 @@ class AppThemePreviewView: UIView, UIDynamicTheme  {
         self.addSubview(previewBackground)
         self.addSubview(label)
         
+        if theme.name == "True Black" {
+            let unlockLevel = StatsManager.getLevePerk(type: .TrueBlackTheme).unlockLevel
+            if StatsManager.stats.level < unlockLevel {
+                lockedLevelBadge = AddLockedLevelBadge(level: unlockLevel)
+                self.addSubview(lockedLevelBadge!)
+                isLocked = true
+            }
+        }
+        
         self.isSelected = isSelected
         
         SetColors(theme: theme)
@@ -539,6 +581,14 @@ class AppThemePreviewView: UIView, UIDynamicTheme  {
     }
     
     @objc func Tap () {
+        if isLocked {
+            let vc = LockedPerkPopupViewController(warningText: "\(theme.name) theme is unlocked when you reach level \(StatsManager.getLevePerk(type: .TrueBlackTheme).unlockLevel)", parentVC: parentView.parentViewController)
+            vc.modalPresentationStyle = .overFullScreen
+            vc.modalTransitionStyle = .crossDissolve
+            parentView.parentViewController!.present(vc, animated: true)
+            return
+        }
+        
         parentView.SelectTheme(theme: theme)
     }
     
@@ -558,8 +608,17 @@ class AppThemePreviewView: UIView, UIDynamicTheme  {
     
     func ReloadThemeColors() {
         isSelected = isSelected
+        UIView.animate(withDuration: 0.25) { [self] in
+            lockedLevelBadge?.UpdateColor(color: ThemeManager.currentTheme.primaryColor)
+        }
     }
     
+    func AddLockedLevelBadge(level: Int) -> LevelFrame {
+        let badgeSize = previewBackground.frame.height*0.4
+        let badge = LevelFrame(frame: CGRect(x: previewBackground.frame.maxX-badgeSize*0.6, y: previewBackground.frame.minY-badgeSize*0.4, width: badgeSize, height: badgeSize))
+        badge.UpdateLevel(level: level)
+        return badge
+    }
     
     
     
@@ -620,8 +679,6 @@ class SettingsAppLogoAndVersionView: UIView, UIDynamicTheme {
         }
         return ""
     }
-    
-    
     
     
     

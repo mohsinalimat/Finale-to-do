@@ -122,11 +122,13 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
         super.viewWillDisappear(animated)
         self.view.endEditing(true)
         if self.isMovingFromParent {
-            let prevPage = navigationController?.topViewController as! SettingsPageViewController
-            if prevPage.indexPathToUpdate != nil {
-                let cell = prevPage.tableView.cellForRow(at: prevPage.indexPathToUpdate!) as! SettingsTableCell
-                cell.ReloadPreview()
+            if let prevPage = navigationController?.topViewController as? SettingsPageViewController {
+                if prevPage.indexPathToUpdate != nil {
+                    let cell = prevPage.tableView.cellForRow(at: prevPage.indexPathToUpdate!) as! SettingsTableCell
+                    cell.ReloadPreview()
+                }
             }
+            
         }
         
     }

@@ -34,7 +34,7 @@ class GuidePageViewController: UIViewController, UIDynamicTheme {
         let screenshotHeight: CGFloat = screenshotWidth*19.5/9.0
         
         let screenshotView = UIImageView(frame: CGRect(x: 0.5*(width-screenshotWidth), y: padding, width: screenshotWidth, height: screenshotHeight))
-        screenshotView.image = UIImage(named: "Screenshot Placeholder")
+        screenshotView.image = UIImage(named: titleText)
         screenshotView.contentMode = .scaleAspectFit
         screenshotView.layer.cornerRadius = 20
         screenshotView.clipsToBounds = true

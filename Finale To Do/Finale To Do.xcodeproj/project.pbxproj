@@ -32,7 +32,18 @@
 		376AD0DF280901AF00986B49 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DE280901AF00986B49 /* Extensions.swift */; };
 		377C3914281B0F4C006F42BA /* SettingsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */; };
 		377CB320282B847F001CDBBD /* iPhone Frame.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB31F282B847F001CDBBD /* iPhone Frame.png */; };
-		377CB322282B8905001CDBBD /* Screenshot Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB321282B8905001CDBBD /* Screenshot Placeholder.png */; };
+		377CB32E282C4166001CDBBD /* Create List.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB323282C4165001CDBBD /* Create List.png */; };
+		377CB331282C4166001CDBBD /* Reorder Tasks.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB326282C4166001CDBBD /* Reorder Tasks.png */; };
+		377CB332282C4166001CDBBD /* Reorder Lists.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB327282C4166001CDBBD /* Reorder Lists.png */; };
+		377CB333282C4166001CDBBD /* Badges.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB328282C4166001CDBBD /* Badges.png */; };
+		377CB334282C4166001CDBBD /* Level.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB329282C4166001CDBBD /* Level.png */; };
+		377CB335282C4166001CDBBD /* Sort Tasks.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB32A282C4166001CDBBD /* Sort Tasks.png */; };
+		377CB336282C4166001CDBBD /* Edit List.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB32B282C4166001CDBBD /* Edit List.png */; };
+		377CB337282C4166001CDBBD /* Create Task.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB32C282C4166001CDBBD /* Create Task.png */; };
+		377CB338282C4166001CDBBD /* Change Task Details.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB32D282C4166001CDBBD /* Change Task Details.png */; };
+		377CB33B282C45EB001CDBBD /* Complete Task.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB339282C45EB001CDBBD /* Complete Task.png */; };
+		377CB33C282C45EB001CDBBD /* Edit Task.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB33A282C45EB001CDBBD /* Edit Task.png */; };
+		377CB340282C7E7E001CDBBD /* LockedPerkPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CB33F282C7E7D001CDBBD /* LockedPerkPopupViewController.swift */; };
 		378922B128232F2600AA3B1B /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B028232F2600AA3B1B /* UserProfileViewController.swift */; };
 		378922B32823645200AA3B1B /* StatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B22823645200AA3B1B /* StatsManager.swift */; };
 		37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37983B8B2819F608007B241A /* SettingsViewController.swift */; };
@@ -98,7 +109,18 @@
 		376AD0DE280901AF00986B49 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageViewController.swift; sourceTree = "<group>"; };
 		377CB31F282B847F001CDBBD /* iPhone Frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iPhone Frame.png"; sourceTree = "<group>"; };
-		377CB321282B8905001CDBBD /* Screenshot Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Screenshot Placeholder.png"; sourceTree = "<group>"; };
+		377CB323282C4165001CDBBD /* Create List.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Create List.png"; sourceTree = "<group>"; };
+		377CB326282C4166001CDBBD /* Reorder Tasks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Reorder Tasks.png"; sourceTree = "<group>"; };
+		377CB327282C4166001CDBBD /* Reorder Lists.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Reorder Lists.png"; sourceTree = "<group>"; };
+		377CB328282C4166001CDBBD /* Badges.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Badges.png; sourceTree = "<group>"; };
+		377CB329282C4166001CDBBD /* Level.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Level.png; sourceTree = "<group>"; };
+		377CB32A282C4166001CDBBD /* Sort Tasks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sort Tasks.png"; sourceTree = "<group>"; };
+		377CB32B282C4166001CDBBD /* Edit List.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Edit List.png"; sourceTree = "<group>"; };
+		377CB32C282C4166001CDBBD /* Create Task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Create Task.png"; sourceTree = "<group>"; };
+		377CB32D282C4166001CDBBD /* Change Task Details.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Change Task Details.png"; sourceTree = "<group>"; };
+		377CB339282C45EB001CDBBD /* Complete Task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Complete Task.png"; sourceTree = "<group>"; };
+		377CB33A282C45EB001CDBBD /* Edit Task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Edit Task.png"; sourceTree = "<group>"; };
+		377CB33F282C7E7D001CDBBD /* LockedPerkPopupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockedPerkPopupViewController.swift; sourceTree = "<group>"; };
 		378922B028232F2600AA3B1B /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		378922B22823645200AA3B1B /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
 		37983B8B2819F608007B241A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -289,6 +311,7 @@
 				372B89FC281C4DE200117A72 /* MiscSettingsTableRows.swift */,
 				37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */,
 				37CE7B80282AD29B00B15440 /* GuidePageViewController.swift */,
+				377CB33F282C7E7D001CDBBD /* LockedPerkPopupViewController.swift */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -306,7 +329,17 @@
 			isa = PBXGroup;
 			children = (
 				377CB31F282B847F001CDBBD /* iPhone Frame.png */,
-				377CB321282B8905001CDBBD /* Screenshot Placeholder.png */,
+				377CB326282C4166001CDBBD /* Reorder Tasks.png */,
+				377CB32C282C4166001CDBBD /* Create Task.png */,
+				377CB32D282C4166001CDBBD /* Change Task Details.png */,
+				377CB323282C4165001CDBBD /* Create List.png */,
+				377CB32B282C4166001CDBBD /* Edit List.png */,
+				377CB32A282C4166001CDBBD /* Sort Tasks.png */,
+				377CB327282C4166001CDBBD /* Reorder Lists.png */,
+				377CB328282C4166001CDBBD /* Badges.png */,
+				377CB329282C4166001CDBBD /* Level.png */,
+				377CB339282C45EB001CDBBD /* Complete Task.png */,
+				377CB33A282C45EB001CDBBD /* Edit Task.png */,
 			);
 			path = "Guide Screenshots";
 			sourceTree = "<group>";
@@ -370,16 +403,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				37D542722825888E00373987 /* purple@2x.png in Resources */,
+				377CB32E282C4166001CDBBD /* Create List.png in Resources */,
 				379999102829E64500A42F32 /* Cloud sync.png in Resources */,
+				377CB33C282C45EB001CDBBD /* Edit Task.png in Resources */,
+				377CB334282C4166001CDBBD /* Level.png in Resources */,
 				37D542742825888E00373987 /* redFilled@2x.png in Resources */,
+				377CB336282C4166001CDBBD /* Edit List.png in Resources */,
 				37D5426E2825888E00373987 /* orange@3x.png in Resources */,
 				37D542762825888E00373987 /* redFilled@3x.png in Resources */,
 				37D5426C2825888E00373987 /* purple@3x.png in Resources */,
+				377CB337282C4166001CDBBD /* Create Task.png in Resources */,
 				379999032829B35C00A42F32 /* Badge Placeholder.png in Resources */,
 				372B8A2A281CE61F00117A72 /* classicFilled@2x.png in Resources */,
+				377CB33B282C45EB001CDBBD /* Complete Task.png in Resources */,
 				372B8A2E281CE61F00117A72 /* classic@2x.png in Resources */,
 				372B8A31281CE61F00117A72 /* dark@2x.png in Resources */,
-				377CB322282B8905001CDBBD /* Screenshot Placeholder.png in Resources */,
 				376AD0CC2808DC5A00986B49 /* Assets.xcassets in Resources */,
 				372B8A2C281CE61F00117A72 /* darkmodeFilled@3x.png in Resources */,
 				37D5426D2825888E00373987 /* purpleFilled@2x.png in Resources */,
@@ -387,20 +425,25 @@
 				37D542702825888E00373987 /* red@2x.png in Resources */,
 				37D542732825888E00373987 /* blackFilled@2x.png in Resources */,
 				37D542682825888E00373987 /* black@3x.png in Resources */,
+				377CB331282C4166001CDBBD /* Reorder Tasks.png in Resources */,
 				379999042829B35C00A42F32 /* Badge.png in Resources */,
+				377CB333282C4166001CDBBD /* Badges.png in Resources */,
 				37D542692825888E00373987 /* orange@2x.png in Resources */,
 				37999919282A07D600A42F32 /* All Set.png in Resources */,
 				37D5426F2825888E00373987 /* blackFilled@3x.png in Resources */,
 				372B8A30281CE61F00117A72 /* dark@3x.png in Resources */,
 				37D542712825888E00373987 /* red@3x.png in Resources */,
+				377CB332282C4166001CDBBD /* Reorder Lists.png in Resources */,
 				37999917282A07C700A42F32 /* Welcome Screen.png in Resources */,
 				37D5426A2825888E00373987 /* purpleFilled@3x.png in Resources */,
 				379999152829FF9300A42F32 /* Rubik.ttf in Resources */,
 				372B8A2D281CE61F00117A72 /* darkmodeFilled@2x.png in Resources */,
 				3799990E2829E64500A42F32 /* Get to know each other.png in Resources */,
 				3799990D2829E64500A42F32 /* Notifications.png in Resources */,
+				377CB335282C4166001CDBBD /* Sort Tasks.png in Resources */,
 				37D5426B2825888E00373987 /* orangeFilled@2x.png in Resources */,
 				37D542672825888E00373987 /* orangeFilled@3x.png in Resources */,
+				377CB338282C4166001CDBBD /* Change Task Details.png in Resources */,
 				372B8A2F281CE61F00117A72 /* classicFilled@3x.png in Resources */,
 				37D542752825888E00373987 /* black@2x.png in Resources */,
 				372B8A2B281CE61F00117A72 /* classic@3x.png in Resources */,
@@ -421,6 +464,7 @@
 				37E4CE032809C9F3002B4D87 /* AddTaskButton.swift in Sources */,
 				379999062829E0C600A42F32 /* WelcomeScreenViewController.swift in Sources */,
 				37E4CE012809AE3F002B4D87 /* SideMenuView.swift in Sources */,
+				377CB340282C7E7E001CDBBD /* LockedPerkPopupViewController.swift in Sources */,
 				376AD0DD2808FD4C00986B49 /* Classes.swift in Sources */,
 				376AD0C32808DC5900986B49 /* AppDelegate.swift in Sources */,
 				370A9DB32810CDDE00FC30A7 /* TaskSliderContextMenu.swift in Sources */,
@@ -566,7 +610,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Finale To Do/Info.plist";
@@ -597,7 +641,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 4;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Finale To Do/Info.plist";

@@ -221,7 +221,24 @@ struct AchievementBadgeGroup {
     var numberOfBadges: Int { return unlockStatValue.count }
 }
 
+enum LevelPerkType {
+    case TrueBlackTheme
+    case ColoredAppIcons
+    case UnlimitedNotifications
+    case HigherListLimit
+    case HigherTaskHistoryLimit
+}
 
+struct LevelPerk {
+    let unlockLevel: Int
+    let type: LevelPerkType
+    let title: String
+    let OnTap: ()->Void
+    
+    var isUnlocked: Bool {
+        return StatsManager.stats.level >= unlockLevel
+    }
+}
 
 
 
@@ -290,5 +307,22 @@ extension StatsManager {
             unlockStatValue: [2, 5, 10, 20, 30]),
         
     ]
+    
+    static let allLevelPerks: [LevelPerk] = [
+        
+        LevelPerk(unlockLevel: 5, type: .TrueBlackTheme, title: "\"True Black\" theme", OnTap: {}),
+        LevelPerk(unlockLevel: 10, type: .ColoredAppIcons, title: "Colored app icons", OnTap: {}),
+        LevelPerk(unlockLevel: 15, type: .UnlimitedNotifications, title: "Set unlimited notifications", OnTap: {}),
+        LevelPerk(unlockLevel: 20, type: .HigherListLimit, title: "Create up to 20 list", OnTap: {}),
+        LevelPerk(unlockLevel: 25, type: .HigherTaskHistoryLimit, title: "Up to 100 completed tasks for each list", OnTap: {}),
+    
+    ]
+    
+    static func getLevePerk(type: LevelPerkType) -> LevelPerk {
+        for perk in allLevelPerks {
+            if perk.type == type { return perk }
+        }
+        return allLevelPerks[0]
+    }
     
 }

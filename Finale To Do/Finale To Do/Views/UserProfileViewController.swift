@@ -97,7 +97,7 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         progressLabel.textColor = .systemGray
         
         badgesContainer = DrawBadgesBox(frame: CGRect(x: padding, y: progressLabel.frame.maxY + padding*2, width: frameWidth-padding*2, height: 120))
-        levelPerksContainer = DrawLevelPerksBox(frame: CGRect(x: padding, y: badgesContainer.frame.maxY + padding, width: frameWidth-padding*2, height: 120))
+        levelPerksContainer = DrawLevelPerksBox(frame: CGRect(x: padding, y: badgesContainer.frame.maxY + padding, width: frameWidth-padding*2, height: 46))
         
         self.view.addSubview(handle)
         self.view.addSubview(levelFrame)
@@ -124,7 +124,6 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         let scrollViewHeight = containerView.frame.height-titleLabel.frame.maxY
         let cellSize = scrollViewHeight-padding*2
         let scrollView = UIScrollView(frame: CGRect(x: 0, y: titleLabel.frame.maxY, width: containerView.frame.width, height: scrollViewHeight))
-        scrollView.contentSize.width = padding + (cellSize+padding)*Double(StatsManager.stats.badges.count)
         
         var i = 0
         for (groupID, badgeIndex) in StatsManager.stats.badges {
@@ -140,6 +139,8 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
             scrollView.addSubview(badgeCell)
             i += 1
         }
+        
+        scrollView.contentSize.width = padding + (cellSize+padding)*Double(i)
         
         if i == 0 {
             let placeholderLabel = UILabel(frame: CGRect(x: padding, y: padding*2+titleLabel.frame.height, width: frame.width-padding*2, height: containerView.frame.height-padding*3-titleLabel.frame.height))
@@ -162,11 +163,11 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         containerView.layer.cornerRadius = 12
         containerView.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .white : .systemGray6
         
-        let titleLabel = UILabel(frame: CGRect(x: padding, y: padding*0.8, width: containerView.frame.width*0.8, height: 18))
+        let titleLabel = UILabel(frame: CGRect(x: padding, y: 0, width: containerView.frame.width*0.8, height: frame.height))
         titleLabel.text = "My Level Perks"
         
         let iconSize = 14.0
-        let openIcon = UIImageView(frame: CGRect(x: containerView.frame.width-padding*0.5-iconSize, y: 0.5*(titleLabel.frame.origin.y + iconSize), width: iconSize*0.7, height: iconSize))
+        let openIcon = UIImageView(frame: CGRect(x: containerView.frame.width-padding*0.5-iconSize, y: 0.5*(frame.height - iconSize), width: iconSize*0.7, height: iconSize))
         openIcon.image = UIImage(systemName: "greaterthan")
         openIcon.tintColor = .systemGray2
         
@@ -432,9 +433,11 @@ class BadgeGroupViewController: UIViewController, UIScrollViewDelegate {
 
 
 //MARK: My Level Pekrs
-class MyLevelPerksController: UIViewController, UIDynamicTheme {
+class MyLevelPerksController: UIViewController, UIDynamicTheme, UITableViewDelegate, UITableViewDataSource {
     
     let padding = 16.0
+    
+    var tableView: UITableView!
     
     init () {
         super.init(nibName: nil, bundle: nil)
@@ -446,12 +449,68 @@ class MyLevelPerksController: UIViewController, UIDynamicTheme {
         
         let width = self.view.frame.width
         let height = self.view.frame.height
+        
+        tableView = UITableView(frame: CGRect(x: 0, y: 0, width: width, height: height), style: .insetGrouped)
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: .leastNonzeroMagnitude))
+        tableView.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
+        
+        self.view.addSubview(tableView)
     }
     
-    func ReloadThemeColors() {
-        UIView.animate(withDuration: 0.25) {
-            self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return StatsManager.allLevelPerks.count
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "Level \(StatsManager.allLevelPerks[section].unlockLevel)"
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = SettingsTableCell()
+        cell.Setup(settingsOption: .selectionCell(model: SettingsSelectionOption(
+            title: StatsManager.allLevelPerks[indexPath.section].title,
+            selectionID: 0,
+            isSelected: StatsManager.allLevelPerks[indexPath.section].isUnlocked,
+            OnSelect: {
+//                StatsManager.allLevelPerks[indexPath.section].OnTap()
+                self.show(SettingsAppearancePage(), sender: nil)
+            })))
+        cell.selectionStyle = StatsManager.allLevelPerks[indexPath.section].type == .TrueBlackTheme || StatsManager.allLevelPerks[indexPath.section].type == .ColoredAppIcons ? .default : .none
+        cell.accessoryType = StatsManager.allLevelPerks[indexPath.section].type == .TrueBlackTheme || StatsManager.allLevelPerks[indexPath.section].type == .ColoredAppIcons ? .disclosureIndicator : .none
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        if indexPath.section == 0 || indexPath.section == 1 {
+            self.show(SettingsAppearancePage(), sender: nil)
         }
+    }
+    
+    
+    func ReloadThemeColors() {
+        overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        UIView.animate(withDuration: 0.25) { [self] in
+            self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
+            tableView.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
+            for cell in tableView.visibleCells {
+                let c = cell as! SettingsTableCell
+                c.ReloadThemeColors()
+            }
+        }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
+        App.instance.SetSubviewColors(of: self.view)
+        ReloadThemeColors()
     }
     
     
