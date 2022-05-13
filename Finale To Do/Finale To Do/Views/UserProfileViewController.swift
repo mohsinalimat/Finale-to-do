@@ -180,7 +180,7 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
     }
     
     @objc func ShareTap () {
-        
+        self.navigationController!.show(ShareModalViewController(), sender: self.navigationController)
     }
     
     @objc func MyBadgesTap () {
@@ -437,7 +437,7 @@ class MyLevelPerksController: UIViewController, UIDynamicTheme, UITableViewDeleg
     
     let padding = 16.0
     
-    var tableView: UITableView!
+    var tableView: UITableView?
     
     init () {
         super.init(nibName: nil, bundle: nil)
@@ -451,12 +451,12 @@ class MyLevelPerksController: UIViewController, UIDynamicTheme, UITableViewDeleg
         let height = self.view.frame.height
         
         tableView = UITableView(frame: CGRect(x: 0, y: 0, width: width, height: height), style: .insetGrouped)
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: .leastNonzeroMagnitude))
-        tableView.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
+        tableView!.delegate = self
+        tableView!.dataSource = self
+        tableView!.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView!.bounds.size.width, height: .leastNonzeroMagnitude))
+        tableView!.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
         
-        self.view.addSubview(tableView)
+        self.view.addSubview(tableView!)
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -477,10 +477,7 @@ class MyLevelPerksController: UIViewController, UIDynamicTheme, UITableViewDeleg
             title: StatsManager.allLevelPerks[indexPath.section].title,
             selectionID: 0,
             isSelected: StatsManager.allLevelPerks[indexPath.section].isUnlocked,
-            OnSelect: {
-//                StatsManager.allLevelPerks[indexPath.section].OnTap()
-                self.show(SettingsAppearancePage(), sender: nil)
-            })))
+            OnSelect: {})))
         cell.selectionStyle = StatsManager.allLevelPerks[indexPath.section].type == .TrueBlackTheme || StatsManager.allLevelPerks[indexPath.section].type == .ColoredAppIcons ? .default : .none
         cell.accessoryType = StatsManager.allLevelPerks[indexPath.section].type == .TrueBlackTheme || StatsManager.allLevelPerks[indexPath.section].type == .ColoredAppIcons ? .disclosureIndicator : .none
         return cell
@@ -498,10 +495,12 @@ class MyLevelPerksController: UIViewController, UIDynamicTheme, UITableViewDeleg
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         UIView.animate(withDuration: 0.25) { [self] in
             self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
-            tableView.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
-            for cell in tableView.visibleCells {
-                let c = cell as! SettingsTableCell
-                c.ReloadThemeColors()
+            tableView?.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
+            if tableView != nil {
+                for cell in tableView!.visibleCells {
+                    let c = cell as! SettingsTableCell
+                    c.ReloadThemeColors()
+                }
             }
         }
     }
@@ -512,6 +511,172 @@ class MyLevelPerksController: UIViewController, UIDynamicTheme, UITableViewDeleg
         App.instance.SetSubviewColors(of: self.view)
         ReloadThemeColors()
     }
+    
+    
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}
+
+
+
+class ShareModalViewController: UIViewController {
+    
+    let padding = 16.0
+    
+    var shareModal: UIView!
+    var shareImage: UIImage!
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        
+        self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
+        overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        
+        let modalWidth: CGFloat = UIScreen.main.bounds.width - padding*4
+        let modalHeight: CGFloat = modalWidth*1.33
+        
+        shareModal = DrawShareModalImage(frame: CGRect(x: padding*2, y: padding*5, width: modalWidth, height: modalHeight))
+        shareImage = shareModal.renderImage()
+        
+        shareModal.layer.cornerRadius = UIScreen.main.bounds.width*0.041
+        shareModal.clipsToBounds = true
+        
+        let frameWidth = self.view.frame.width
+        let frameHeight = self.view.frame.height
+        let bottomPadding = UIApplication.shared.windows.first!.safeAreaInsets.bottom
+        let buttonSize = 40.0
+        
+        let shareButton = UIButton(frame: CGRect(x: padding, y: frameHeight - bottomPadding - buttonSize*3, width: frameWidth-padding*2, height: buttonSize))
+        shareButton.backgroundColor = .defaultColor
+        shareButton.setTitle("Share", for: .normal)
+        shareButton.setTitleColor(UIColor.systemGray, for: .highlighted)
+        shareButton.layer.cornerRadius = 8
+        shareButton.addTarget(self, action: #selector(Share), for: .touchUpInside)
+        shareButton.titleLabel!.font = .Rubik(size: 18)
+        
+        self.view.addSubview(shareModal)
+        self.view.addSubview(shareButton)
+    }
+    
+    func DrawShareModalImage (frame: CGRect) -> UIView {
+        let modalPadding = UIScreen.main.bounds.width*0.041
+        
+        let width = frame.width
+        let height = frame.height
+        let innerWidth = frame.width*0.743
+        let innerHeight = frame.height*0.719
+        
+        let background = UIImageView(frame: frame)
+        background.image = UIImage(named: "Sharing Modal Background")
+        background.contentMode = .scaleAspectFill
+        
+        let levelFrameSize = background.frame.width*0.35
+        let levelFrame = LevelFrame(frame: CGRect(x: 0.5*(width-levelFrameSize), y: height*0.16, width: levelFrameSize, height: levelFrameSize))
+        levelFrame.UpdateLevel(level: StatsManager.stats.level)
+        levelFrame.UpdateColor(color: .defaultColor)
+        
+        let raysSize = levelFrameSize*1.4
+        let raysView = UIImageView(frame: CGRect(x: levelFrame.frame.origin.x + 0.5*(levelFrameSize-raysSize), y: levelFrame.frame.origin.y + 0.5*(levelFrameSize-raysSize), width: raysSize, height: raysSize))
+        raysView.image = UIImage(named: "Sharing Rays")
+        raysView.contentMode = .scaleAspectFill
+        
+        let nameLabel = UILabel(frame: CGRect(x: 0.5*(width-(innerWidth-modalPadding*2)), y: levelFrame.frame.maxY+modalPadding, width: innerWidth-modalPadding*2, height: innerHeight*0.11))
+        nameLabel.text = nameText
+        nameLabel.font = .Rubik(weight: .regular, size: nameLabel.frame.height*0.8)
+        nameLabel.textColor = .black
+        nameLabel.textAlignment = .center
+        nameLabel.adjustsFontSizeToFitWidth = true
+        
+        var i = 0
+        let badgeSize = innerWidth*0.075
+        let badgeSpacing = badgeSize*0.15
+        let badgesRow = UIView(frame: CGRect(x: 0.5*(width-innerWidth), y: nameLabel.frame.maxY+modalPadding*0.5, width: 0, height: badgeSize))
+        for (groupID, badgeIndex) in StatsManager.stats.badges {
+            if badgeIndex == -1 { continue }
+            
+            let badgeCell = UIImageView(frame: CGRect(x: badgeSpacing+(badgeSize+badgeSpacing)*Double(i), y: 0, width: badgeSize, height: badgeSize))
+            badgeCell.image = StatsManager.getBadgeGroup(id: groupID)?.getIcon(index: badgeIndex)
+            badgeCell.contentMode = .scaleAspectFit
+            badgeCell.layer.shadowRadius = 1
+            badgeCell.layer.shadowOffset = CGSize.zero
+            badgeCell.layer.shadowColor = UIColor.black.cgColor
+            badgeCell.layer.shadowOpacity = 0.2
+            badgesRow.addSubview(badgeCell)
+            i += 1
+        }
+        badgesRow.frame.size.width = badgeSpacing+(badgeSize+badgeSpacing)*Double(i)
+        badgesRow.frame.origin.x = 0.5*(width-badgesRow.frame.width)
+        
+        let daysJoinedLabel = DrawStatLabel(frame: CGRect(x: 0.5*(width-innerWidth), y: badgesRow.frame.maxY+modalPadding*0.5, width: innerWidth, height: nameLabel.frame.height*0.5), text: daysJoinedText)
+        let completedTasksLabel = DrawStatLabel(frame: CGRect(x: 0.5*(width-innerWidth), y: daysJoinedLabel.frame.maxY, width: innerWidth, height: nameLabel.frame.height*0.5), text: completedTasksText)
+        let numberOfBadgesLabel = DrawStatLabel(frame: CGRect(x: 0.5*(width-innerWidth), y: completedTasksLabel.frame.maxY, width: innerWidth, height: nameLabel.frame.height*0.5), text: numberOfBadges)
+        
+        background.addSubview(raysView)
+        background.addSubview(levelFrame)
+        background.addSubview(nameLabel)
+        background.addSubview(badgesRow)
+        background.addSubview(daysJoinedLabel)
+        background.addSubview(completedTasksLabel)
+        background.addSubview(numberOfBadgesLabel)
+        
+        return background
+    }
+    
+    func DrawStatLabel (frame: CGRect, text: NSMutableAttributedString) -> UILabel {
+        let label = UILabel(frame: frame)
+        label.attributedText = text
+        label.textAlignment = .center
+        label.font = .Rubik(size: frame.height*0.8)
+        return label
+    }
+    
+    var nameText: String {
+        return App.settingsConfig.userFullName == " " ? "Anonymus Froggy" : App.settingsConfig.userFullName
+    }
+    
+    var daysJoinedText: NSMutableAttributedString {
+        let text = "Joined \(StatsManager.stats.daysAgoJoined) days ago"
+        let mutableAttributedString = NSMutableAttributedString.init(string: text)
+        
+        let fullRange = NSRange(0..<text.count)
+        let range = (text as NSString).range(of: " \(StatsManager.stats.daysAgoJoined) ")
+        mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: fullRange)
+        mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.defaultColor, range: range)
+        return mutableAttributedString
+    }
+    var completedTasksText: NSMutableAttributedString {
+        let text = "Completed \(StatsManager.stats.totalCompletedTasks) tasks"
+        let mutableAttributedString = NSMutableAttributedString.init(string: text)
+        
+        let fullRange = NSRange(0..<text.count)
+        let range = (text as NSString).range(of: " \(StatsManager.stats.totalCompletedTasks) ")
+        mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: fullRange)
+        mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.defaultColor, range: range)
+        return mutableAttributedString
+    }
+    var numberOfBadges: NSMutableAttributedString {
+        let text = "Earned \(StatsManager.stats.numberOfUnlockedBadges) badges"
+        let mutableAttributedString = NSMutableAttributedString.init(string: text)
+        
+        let fullRange = NSRange(0..<text.count)
+        let range = (text as NSString).range(of: " \(StatsManager.stats.numberOfUnlockedBadges) ")
+        mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.black, range: fullRange)
+        mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.defaultColor, range: range)
+        return mutableAttributedString
+    }
+    
+    @objc func Share () {
+        let items = [shareImage] as [UIImage]
+        let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        self.present(ac, animated: true, completion: nil)
+    }
+    
+    
     
     
     

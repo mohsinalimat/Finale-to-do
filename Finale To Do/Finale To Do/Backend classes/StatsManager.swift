@@ -68,7 +68,9 @@ class StatsManager {
 
         App.instance.ShowBadgeNotification(badgeGroup: badgeGroup)
         
-        EarnPoints(points: getPointsForBadge(stage: badgeIndex), ignoreDailyLimit: true)
+        if badgeGroup.groupID != 6 {
+            EarnPoints(points: getPointsForBadge(stage: badgeIndex), ignoreDailyLimit: true)
+        }
     }
     
     static func getPointsForBadge(stage: Int) -> Int {
@@ -185,6 +187,10 @@ struct StatsConfig: Codable {
         }
         return total
     }
+    
+    var daysAgoJoined: Int {
+        return Calendar.current.daysBetween(dateJoinedApp, and: Date.now)
+    }
 }
 
 struct AchievementBadgeGroup {
@@ -225,7 +231,7 @@ enum LevelPerkType {
     case TrueBlackTheme
     case ColoredAppIcons
     case UnlimitedNotifications
-    case HigherListLimit
+    case UnlimitedLists
     case HigherTaskHistoryLimit
 }
 
@@ -250,7 +256,7 @@ extension StatsManager {
             groupID: 0,
             name: "Companion (x)",
             description: "Join Finale (x) days ago",
-            relatedStat: { return Calendar.current.daysBetween(stats.dateJoinedApp, and: Date.now) },
+            relatedStat: { return stats.daysAgoJoined },
             unlockStatValue: [10, 30, 180, 360, 1000]),
         
         AchievementBadgeGroup(
@@ -310,15 +316,15 @@ extension StatsManager {
     
     static let allLevelPerks: [LevelPerk] = [
         
-        LevelPerk(unlockLevel: 5, type: .TrueBlackTheme, title: "\"True Black\" theme", OnTap: {}),
+        LevelPerk(unlockLevel: 5, type: .TrueBlackTheme, title: "True Black theme", OnTap: {}),
         LevelPerk(unlockLevel: 10, type: .ColoredAppIcons, title: "Colored app icons", OnTap: {}),
         LevelPerk(unlockLevel: 15, type: .UnlimitedNotifications, title: "Set unlimited notifications", OnTap: {}),
-        LevelPerk(unlockLevel: 20, type: .HigherListLimit, title: "Create up to 20 list", OnTap: {}),
-        LevelPerk(unlockLevel: 25, type: .HigherTaskHistoryLimit, title: "Up to 100 completed tasks for each list", OnTap: {}),
+        LevelPerk(unlockLevel: 20, type: .UnlimitedLists, title: "Create unlimited lists", OnTap: {}),
+        LevelPerk(unlockLevel: 25, type: .HigherTaskHistoryLimit, title: "Up to 100 tasks history", OnTap: {}),
     
     ]
     
-    static func getLevePerk(type: LevelPerkType) -> LevelPerk {
+    static func getLevelPerk(type: LevelPerkType) -> LevelPerk {
         for perk in allLevelPerks {
             if perk.type == type { return perk }
         }

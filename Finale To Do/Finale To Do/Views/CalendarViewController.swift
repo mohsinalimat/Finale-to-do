@@ -273,25 +273,39 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         }
     }
     
-    func SelectNotificationType (type: NotificationType?) {
-        if type == nil {
+    func SelectNotificationType (sender: NotificationSelectionRow) {
+        if sender.notificationType == nil {
             for row in notificationSelectoinRows {
-                row.Deselect(visualsOnly: true)
+                row.isSelected = false
             }
             selectedNotificationTypes.removeAll()
-        } else {
-            selectedNotificationTypes.append(type!)
-            notificationSelectoinRows[0].Deselect(visualsOnly: true)
+            sender.isSelected = true
+            return
         }
+        
+        let notifPerk = StatsManager.getLevelPerk(type: .UnlimitedNotifications)
+        if selectedNotificationTypes.count >= 2 && !notifPerk.isUnlocked {
+            let coloredSubstring = "Level \(notifPerk.unlockLevel)"
+            let vc = LockedPerkPopupViewController(warningText: "Reach \(coloredSubstring) to set more than 2 notifications per task", coloredSubstring: coloredSubstring, parentVC: self)
+            vc.modalPresentationStyle = .overFullScreen
+            vc.modalTransitionStyle = .crossDissolve
+            self.present(vc, animated: true)
+            return
+        }
+        
+        selectedNotificationTypes.append(sender.notificationType!)
+        notificationSelectoinRows.first?.isSelected = false
+        sender.isSelected = true
     }
-    func DeselectNotificationType (type: NotificationType?) {
-        if type == nil { return }
+    func DeselectNotificationType (sender: NotificationSelectionRow) {
+        if sender.notificationType == nil { return }
         
-        if selectedNotificationTypes.contains(type!) {
-            selectedNotificationTypes.remove(at: selectedNotificationTypes.firstIndex(of: type!)!)
+        if selectedNotificationTypes.contains(sender.notificationType!) {
+            selectedNotificationTypes.remove(at: selectedNotificationTypes.firstIndex(of: sender.notificationType!)!)
         }
         
-        if selectedNotificationTypes.count == 0 { notificationSelectoinRows[0].Select(visualsOnly: true) }
+        if selectedNotificationTypes.count == 0 { notificationSelectoinRows.first?.isSelected = true }
+        sender.isSelected = false
     }
     
     func OpenNotificationSelectionPage () {
@@ -486,14 +500,12 @@ class NotificationSelectionRow: UIView {
         }
     }
     
-    func Select(visualsOnly: Bool = false) {
-        if !visualsOnly { calendarView.SelectNotificationType(type: notificationType) }
-        isSelected = true
+    func Select() {
+        calendarView.SelectNotificationType(sender: self)
     }
     
-    func Deselect(visualsOnly: Bool = false) {
-        if !visualsOnly { calendarView.DeselectNotificationType(type: notificationType) }
-        isSelected = false
+    func Deselect() {
+        calendarView.DeselectNotificationType(sender: self)
     }
     
     func SetAccentColor (color: UIColor) {

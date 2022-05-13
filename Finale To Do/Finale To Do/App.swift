@@ -379,6 +379,16 @@ class App: UIViewController {
 //MARK: Task list actions
     
     func OpenAddTaskListView () {
+        let listPerk = StatsManager.getLevelPerk(type: .UnlimitedLists)
+        if App.userTaskLists.count >= 9 && !listPerk.isUnlocked {
+            let coloredSubstring = "Level \(listPerk.unlockLevel)"
+            let vc = LockedPerkPopupViewController(warningText: "Reach \(coloredSubstring) to create more than 10 lists", coloredSubstring: coloredSubstring, parentVC: self)
+            vc.modalPresentationStyle = .overFullScreen
+            vc.modalTransitionStyle = .crossDissolve
+            self.present(vc, animated: true)
+            return
+        }
+        
         let addListViewFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height*0.5)
         
         self.view.addSubview(AddListView(frame: addListViewFrame))
@@ -781,11 +791,21 @@ class NotificationView: UIView {
         iconView.layer.shadowOpacity = ThemeManager.currentTheme.interface == .Light ? 0.3 : 0.7
         
         if level != nil {
-            titleLabel.frame = CGRect(x: padding, y: padding*0.7, width: width-padding*2, height: 20)
+            var unlockString: String?
+            for perk in StatsManager.allLevelPerks {
+                if perk.unlockLevel == level { unlockString = "Unlocked: \(perk.title)"}
+            }
+            
             titleLabel.text = "Gained Level \(level!.description)!"
             
-            subtitleLabel.frame = CGRect(x: padding, y: height-padding*0.7-16, width: width-padding*2, height: 16)
-            subtitleLabel.text = "Unlocked: True Black Theme"
+            if unlockString != nil {
+                titleLabel.frame = CGRect(x: padding, y: padding*0.7, width: width-padding*2, height: 20)
+                subtitleLabel.frame = CGRect(x: padding, y: height-padding*0.7-16, width: width-padding*2, height: 16)
+                subtitleLabel.text = unlockString
+                subtitleLabel.adjustsFontSizeToFitWidth = true
+            } else {
+                titleLabel.frame = CGRect(x: padding, y: 0, width: width-padding*2, height: height)
+            }
         } else if badgeGroup != nil {
             let iconSize = height - padding*0.6
             iconView.frame = CGRect(x: 0, y: padding*0.3, width: iconSize, height: iconSize)

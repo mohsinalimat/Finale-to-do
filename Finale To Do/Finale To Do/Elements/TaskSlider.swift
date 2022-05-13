@@ -106,6 +106,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
         let dragGesture = UIPanGestureRecognizer(target: self, action: #selector(Dragging))
         dragGesture.delegate = self
         dragHandleDummy.addGestureRecognizer(dragGesture)
+        dragHandleDummy.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TapDummyHandle)))
         
         let doubleTap = UITapGestureRecognizer(target: self, action: #selector(DoubleTap))
         doubleTap.numberOfTapsRequired = 2
@@ -130,7 +131,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
     @objc func Dragging(sender: UIPanGestureRecognizer) {
         if taskNameInputField.text == "" { return }
         if sender.state == .began {
-            self.endEditing(true)
+            StopEditing()
             originX = sender.location(in: self).x - sliderHandleWidth*0.5
             UIView.animate(withDuration: 0.15) { [self] in
                 sliderView.frame.size.width = max(sliderHandleWidth, min(sender.translation(in: self).x + sliderHandleWidth + originX, fullSliderWidth))
@@ -168,8 +169,9 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
         }
     }
     
-    @objc func TapSlider (sender: UITapGestureRecognizer) {
+    @objc func TapSlider () {
         let duration = 0.2
+        StopEditing()
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut) { [self] in
             sliderView.frame.size.width = fullSliderWidth
@@ -178,6 +180,11 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
         DispatchQueue.main.asyncAfter(deadline: .now() + duration*0.8) { [self] in
             app.CompleteTask(task: task)
             UINotificationFeedbackGenerator().notificationOccurred(.success)
+        }
+    }
+    @objc func TapDummyHandle (sender: UITapGestureRecognizer) {
+        if sliderView.bounds.contains(sender.location(in: self)) {
+            TapSlider()
         }
     }
     
@@ -206,6 +213,8 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
     }
     
     func StopEditing (putInRightPlace: Bool = false) {
+        if !isEditing { return }
+        
         UIView.animate(withDuration: 0.25) {
             self.taskNameInputField.resignFirstResponder()
         }

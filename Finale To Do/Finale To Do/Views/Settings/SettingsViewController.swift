@@ -85,7 +85,7 @@ class SettingsMainPage: SettingsPageViewController {
                 .navigationCell(model: SettingsNavigationOption(title: "Statistics", icon: UIImage(systemName: "chart.bar.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsStatisticsPage())),
                 .navigationCell(model: SettingsNavigationOption(title: "About", icon: UIImage(systemName: "bookmark.fill"), iconBackgroundColor: .systemTeal, nextPage: SettingsAboutPage(), SetPreview: {return self.appVersion })),
                 .navigationCell(model: SettingsNavigationOption(title: "Share", icon: UIImage(systemName: "square.and.arrow.up.fill"), iconBackgroundColor: .systemYellow, OnTap: {
-                    let items = [AppIcon.classic.preview] as [UIImage]
+                    let items = [URL(string: "https://apps.apple.com/us/app/finale-to-do/id1622931101")]
                     let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
                     self.present(ac, animated: true)
                 }))
@@ -318,8 +318,8 @@ class SettingsAppearancePage: SettingsPageViewController {
         App.instance.overrideUserInterfaceStyle = mode == .System ? .unspecified : mode == .Light ? .light : .dark
         navigationController?.overrideUserInterfaceStyle = App.instance.overrideUserInterfaceStyle
         
-        let navController = navigationController as! SettingsNavigationController
-        navController.SetAllViewControllerColors()
+        let navController = navigationController as? SettingsNavigationController
+        navController?.SetAllViewControllerColors()
     }
     
     override var PageTitle: String {
@@ -338,7 +338,7 @@ class SettingsAboutPage: SettingsPageViewController {
             
             SettingsSection(title: "More", options: [
                 .navigationCell(model: SettingsNavigationOption(title: "Visit FinaleToDo.com", icon: UIImage(systemName: "globe"), iconBackgroundColor: .systemBlue, url: URL(string: "https://finaletodo.com"))),
-                .navigationCell(model: SettingsNavigationOption(title: "Rate App", icon: UIImage(systemName: "star.fill"), iconBackgroundColor: .systemGreen, url: URL(string: "itms-apps:itunes.apple.com/us/app/apple-store/id1546661013?mt=8&action=write-review"))),
+                .navigationCell(model: SettingsNavigationOption(title: "Rate App", icon: UIImage(systemName: "star.fill"), iconBackgroundColor: .systemGreen, url: URL(string: "itms-apps:itunes.apple.com/us/app/apple-store/id1622931101?mt=8&action=write-review"))),
                 .navigationCell(model: SettingsNavigationOption(title: "Finale: Daily Habit Tracker", icon: UIImage(named: "Finale: Daily Habit Tracker Icon"), iconBorderWidth: 1, url: URL(string: "https://apps.apple.com/us/app/finale-daily-habit-tracker/id1546661013")))
             ]),
             

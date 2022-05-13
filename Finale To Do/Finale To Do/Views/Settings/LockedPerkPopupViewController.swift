@@ -11,17 +11,19 @@ import UIKit
 
 class LockedPerkPopupViewController: UIViewController {
     
-    let padding = 26.0
+    let padding = 20.0
     
     let containerView = UIView()
     let parentVC: UIViewController?
     
-    init(warningText: String, parentVC: UIViewController? = nil) {
+    init(warningText: String, coloredSubstring: String? = nil, parentVC: UIViewController? = nil) {
         self.parentVC = parentVC
         super.init(nibName: nil, bundle: nil)
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(Dismiss)))
+        self.view.backgroundColor = .black.withAlphaComponent(0.3)
+        
         
         let width = self.view.frame.width
         let height = self.view.frame.height
@@ -30,7 +32,7 @@ class LockedPerkPopupViewController: UIViewController {
         containerView.layer.cornerRadius = 16
         
         let warningLabel = UILabel(frame: CGRect(x: padding, y: padding, width: containerView.frame.width-padding*2, height: 0))
-        warningLabel.text = warningText
+        warningLabel.attributedText = getWarningText(warningText: warningText, coloredSubstring: coloredSubstring)
         warningLabel.font = .preferredFont(forTextStyle: .headline)
         warningLabel.textAlignment = .center
         warningLabel.numberOfLines = 0
@@ -104,6 +106,16 @@ class LockedPerkPopupViewController: UIViewController {
         })
     }
     
+    func getWarningText(warningText: String, coloredSubstring: String? = nil) -> NSMutableAttributedString {
+        let mutableAttributedString = NSMutableAttributedString.init(string: warningText)
+        
+        if coloredSubstring == nil { return mutableAttributedString }
+        
+        let range = (warningText as NSString).range(of: coloredSubstring!)
+        
+        mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: ThemeManager.currentTheme.primaryElementColor(), range: range)
+        return mutableAttributedString
+    }
     
     
     

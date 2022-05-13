@@ -205,7 +205,9 @@ struct SettingsConfig: Codable {
     var selectedDarkThemeIndex: Int = 0
     var selectedIcon: AppIcon = .classic
     
-    var maxNumberOfCompletedTasks: Int = 50
+    var maxNumberOfCompletedTasks: Int {
+        StatsManager.getLevelPerk(type: .HigherTaskHistoryLimit).isUnlocked ? 100 : 50
+    }
     
     var completedInitialSetup: Bool = false
     

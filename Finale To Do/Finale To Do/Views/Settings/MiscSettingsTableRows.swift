@@ -344,9 +344,8 @@ class AppIconView: UIView, UIDynamicTheme  {
         self.isSelected = isSelected
         
         if icon == .orange || icon == .orangeFilled || icon == .red || icon == .redFilled || icon == .purple || icon == .purpleFilled || icon == .black || icon == .blackFilled {
-            let unlockLevel = StatsManager.getLevePerk(type: .ColoredAppIcons).unlockLevel
-            if StatsManager.stats.level < unlockLevel {
-                lockedLevelBadge = AddLockedLevelBadge(level: unlockLevel)
+            if !StatsManager.getLevelPerk(type: .ColoredAppIcons).isUnlocked {
+                lockedLevelBadge = AddLockedLevelBadge(level: StatsManager.getLevelPerk(type: .ColoredAppIcons).unlockLevel)
                 self.addSubview(lockedLevelBadge!)
                 isLocked = true
             }
@@ -355,7 +354,8 @@ class AppIconView: UIView, UIDynamicTheme  {
     
     @objc func Tap () {
         if isLocked {
-            let vc = LockedPerkPopupViewController(warningText: "Colored icons are unlocked when you reach level \(StatsManager.getLevePerk(type: .ColoredAppIcons).unlockLevel)", parentVC: parentView.parentViewController)
+            let coloredSubstring = "Level \(StatsManager.getLevelPerk(type: .ColoredAppIcons).unlockLevel)"
+            let vc = LockedPerkPopupViewController(warningText: "Reach \(coloredSubstring) to unlock colored icons", coloredSubstring: coloredSubstring, parentVC: parentView.parentViewController)
             vc.modalPresentationStyle = .overFullScreen
             vc.modalTransitionStyle = .crossDissolve
             parentView.parentViewController!.present(vc, animated: true)
@@ -459,8 +459,8 @@ class SettingsThemeView: UIView {
             else { themeCell.isSelected = false }
         }
         
-        let navController = self.parentViewController?.navigationController as! SettingsNavigationController
-        navController.SetAllViewControllerColors()
+        let navController = self.parentViewController?.navigationController as? SettingsNavigationController
+        navController?.SetAllViewControllerColors()
     }
     
     
@@ -559,9 +559,8 @@ class AppThemePreviewView: UIView, UIDynamicTheme  {
         self.addSubview(label)
         
         if theme.name == "True Black" {
-            let unlockLevel = StatsManager.getLevePerk(type: .TrueBlackTheme).unlockLevel
-            if StatsManager.stats.level < unlockLevel {
-                lockedLevelBadge = AddLockedLevelBadge(level: unlockLevel)
+            if !StatsManager.getLevelPerk(type: .TrueBlackTheme).isUnlocked {
+                lockedLevelBadge = AddLockedLevelBadge(level: StatsManager.getLevelPerk(type: .TrueBlackTheme).unlockLevel)
                 self.addSubview(lockedLevelBadge!)
                 isLocked = true
             }
@@ -582,7 +581,8 @@ class AppThemePreviewView: UIView, UIDynamicTheme  {
     
     @objc func Tap () {
         if isLocked {
-            let vc = LockedPerkPopupViewController(warningText: "\(theme.name) theme is unlocked when you reach level \(StatsManager.getLevePerk(type: .TrueBlackTheme).unlockLevel)", parentVC: parentView.parentViewController)
+            let coloredSubstring = "Level \(StatsManager.getLevelPerk(type: .TrueBlackTheme).unlockLevel)"
+            let vc = LockedPerkPopupViewController(warningText: "Reach \(coloredSubstring) to unlock \(theme.name) theme", coloredSubstring: coloredSubstring, parentVC: parentView.parentViewController)
             vc.modalPresentationStyle = .overFullScreen
             vc.modalTransitionStyle = .crossDissolve
             parentView.parentViewController!.present(vc, animated: true)

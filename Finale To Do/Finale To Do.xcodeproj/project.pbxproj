@@ -44,6 +44,8 @@
 		377CB33B282C45EB001CDBBD /* Complete Task.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB339282C45EB001CDBBD /* Complete Task.png */; };
 		377CB33C282C45EB001CDBBD /* Edit Task.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB33A282C45EB001CDBBD /* Edit Task.png */; };
 		377CB340282C7E7E001CDBBD /* LockedPerkPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CB33F282C7E7D001CDBBD /* LockedPerkPopupViewController.swift */; };
+		377CB343282DF1C6001CDBBD /* Sharing Modal Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB342282DF1C6001CDBBD /* Sharing Modal Background.png */; };
+		377CB347282E01A5001CDBBD /* Sharing Rays.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB346282E01A5001CDBBD /* Sharing Rays.png */; };
 		378922B128232F2600AA3B1B /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B028232F2600AA3B1B /* UserProfileViewController.swift */; };
 		378922B32823645200AA3B1B /* StatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B22823645200AA3B1B /* StatsManager.swift */; };
 		37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37983B8B2819F608007B241A /* SettingsViewController.swift */; };
@@ -121,6 +123,8 @@
 		377CB339282C45EB001CDBBD /* Complete Task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Complete Task.png"; sourceTree = "<group>"; };
 		377CB33A282C45EB001CDBBD /* Edit Task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Edit Task.png"; sourceTree = "<group>"; };
 		377CB33F282C7E7D001CDBBD /* LockedPerkPopupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockedPerkPopupViewController.swift; sourceTree = "<group>"; };
+		377CB342282DF1C6001CDBBD /* Sharing Modal Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sharing Modal Background.png"; sourceTree = "<group>"; };
+		377CB346282E01A5001CDBBD /* Sharing Rays.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sharing Rays.png"; sourceTree = "<group>"; };
 		378922B028232F2600AA3B1B /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		378922B22823645200AA3B1B /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
 		37983B8B2819F608007B241A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -272,9 +276,19 @@
 			path = Elements;
 			sourceTree = "<group>";
 		};
+		377CB341282DF1B7001CDBBD /* Sharing */ = {
+			isa = PBXGroup;
+			children = (
+				377CB342282DF1C6001CDBBD /* Sharing Modal Background.png */,
+				377CB346282E01A5001CDBBD /* Sharing Rays.png */,
+			);
+			path = Sharing;
+			sourceTree = "<group>";
+		};
 		379999072829E62100A42F32 /* Graphics */ = {
 			isa = PBXGroup;
 			children = (
+				377CB341282DF1B7001CDBBD /* Sharing */,
 				37CE7B82282AE76E00B15440 /* Guide Screenshots */,
 				379999082829E62C00A42F32 /* Welcome Screen */,
 				37BFC1BA28248F7200BCF3FF /* Badges Icons */,
@@ -403,7 +417,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				37D542722825888E00373987 /* purple@2x.png in Resources */,
+				377CB343282DF1C6001CDBBD /* Sharing Modal Background.png in Resources */,
 				377CB32E282C4166001CDBBD /* Create List.png in Resources */,
+				377CB347282E01A5001CDBBD /* Sharing Rays.png in Resources */,
 				379999102829E64500A42F32 /* Cloud sync.png in Resources */,
 				377CB33C282C45EB001CDBBD /* Edit Task.png in Resources */,
 				377CB334282C4166001CDBBD /* Level.png in Resources */,
@@ -610,11 +626,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Finale To Do/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Finale;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save your progress snapshot to your photo library.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -641,11 +658,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Finale To Do/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = Finale;
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save your progress snapshot to your photo library.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
