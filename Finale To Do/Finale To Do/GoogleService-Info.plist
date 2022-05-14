@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>479795691982-ak599t3rbl860qstu5ksfs6isfarb30c.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.479795691982-ak599t3rbl860qstu5ksfs6isfarb30c</string>
+	<key>API_KEY</key>
+	<string>AIzaSyA7KpwFMTrTprB1cAFodfVhcQojsO-Uulc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>479795691982</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.Grant151.Finale-To-Do</string>
+	<key>PROJECT_ID</key>
+	<string>finale-to-do</string>
+	<key>STORAGE_BUCKET</key>
+	<string>finale-to-do.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:479795691982:ios:e1177f2837bee3b7feab9f</string>
+</dict>
+</plist>

@@ -14,9 +14,7 @@ class IAPManager : NSObject, SKProductsRequestDelegate, SKPaymentTransactionObse
     
     let unlockAllPerksID = "UnlockAllPerks"
     
-    override init() {
-        super.init()
-        
+    func configure () {
         SKPaymentQueue.default().add(self)
     }
     
