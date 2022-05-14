@@ -82,7 +82,6 @@ class SettingsMainPage: SettingsPageViewController {
 
             SettingsSection(title: "More", options: [
                 .navigationCell(model: SettingsNavigationOption(title: "Guide", icon: UIImage(systemName: "doc.text.image.fill"), iconBackgroundColor: .systemOrange, nextPage: SettingsGuidePage())),
-                .navigationCell(model: SettingsNavigationOption(title: "Statistics", icon: UIImage(systemName: "chart.bar.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsStatisticsPage())),
                 .navigationCell(model: SettingsNavigationOption(title: "About", icon: UIImage(systemName: "bookmark.fill"), iconBackgroundColor: .systemTeal, nextPage: SettingsAboutPage(), SetPreview: {return self.appVersion })),
                 .navigationCell(model: SettingsNavigationOption(title: "Share", icon: UIImage(systemName: "square.and.arrow.up.fill"), iconBackgroundColor: .systemYellow, OnTap: {
                     let items = [URL(string: "https://apps.apple.com/us/app/finale-to-do/id1622931101")]

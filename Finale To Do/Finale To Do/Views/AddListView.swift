@@ -25,7 +25,7 @@ class AddListView: UIView, UITextFieldDelegate, UIDynamicTheme {
     
     let placeholders: [String] = ["Travel plan" , "Final project" , "Grocery list", "Work", "Family", "Sports club", "Hobbies", "Chores", "Shopping list"]
     
-    let icons: [String] = ["folder.fill", "tray.full.fill", "archivebox.fill", "briefcase.fill", "bag.fill", "book.fill", "books.vertical.fill", "graduationcap.fill", "heart.fill", "heart.text.square.fill", "lightbulb.fill", "bolt.fill", "deskclock.fill", "hourglass", "airplane", "trash.fill"]
+    let icons: [String] = ["folder.fill", "tray.full.fill", "archivebox.fill", "briefcase.fill", "bag.fill", "book.fill", "books.vertical.fill", "graduationcap.fill", "heart.fill", "heart.text.square.fill", "pencil.circle.fill", "lightbulb.fill", "deskclock.fill", "hourglass", "airplane", "trash.fill"]
     
     let colors: [UIColor] = [UIColor.defaultColor, UIColor(hex: "5243AA"), UIColor(hex: "87007A"), UIColor(hex: "DE0B0B"), UIColor(hex: "FF991F"), UIColor(hex: "00875A"), UIColor(hex: "008716"), UIColor(hex: "00A3BF")]
     

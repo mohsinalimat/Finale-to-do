@@ -44,8 +44,7 @@
 		377CB33B282C45EB001CDBBD /* Complete Task.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB339282C45EB001CDBBD /* Complete Task.png */; };
 		377CB33C282C45EB001CDBBD /* Edit Task.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB33A282C45EB001CDBBD /* Edit Task.png */; };
 		377CB340282C7E7E001CDBBD /* LockedPerkPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CB33F282C7E7D001CDBBD /* LockedPerkPopupViewController.swift */; };
-		377CB343282DF1C6001CDBBD /* Sharing Modal Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB342282DF1C6001CDBBD /* Sharing Modal Background.png */; };
-		377CB347282E01A5001CDBBD /* Sharing Rays.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB346282E01A5001CDBBD /* Sharing Rays.png */; };
+		377CB34B282EDAFA001CDBBD /* Sharing Rays.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB34A282EDAFA001CDBBD /* Sharing Rays.png */; };
 		378922B128232F2600AA3B1B /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B028232F2600AA3B1B /* UserProfileViewController.swift */; };
 		378922B32823645200AA3B1B /* StatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B22823645200AA3B1B /* StatsManager.swift */; };
 		37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37983B8B2819F608007B241A /* SettingsViewController.swift */; };
@@ -58,6 +57,9 @@
 		379999152829FF9300A42F32 /* Rubik.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 379999142829FF9300A42F32 /* Rubik.ttf */; };
 		37999917282A07C700A42F32 /* Welcome Screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 37999916282A07C700A42F32 /* Welcome Screen.png */; };
 		37999919282A07D600A42F32 /* All Set.png in Resources */ = {isa = PBXBuildFile; fileRef = 37999918282A07D600A42F32 /* All Set.png */; };
+		37A75A7A282F1996004D6450 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A75A79282F1996004D6450 /* StoreKit.framework */; };
+		37A75A7C282F238D004D6450 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A75A7B282F238D004D6450 /* IAPManager.swift */; };
+		37A75A7F282F3760004D6450 /* Unlock All Perks.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A75A7E282F3760004D6450 /* Unlock All Perks.png */; };
 		37B9998C2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */; };
 		37CE7B81282AD29B00B15440 /* GuidePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CE7B80282AD29B00B15440 /* GuidePageViewController.swift */; };
 		37D542672825888E00373987 /* orangeFilled@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542572825888C00373987 /* orangeFilled@3x.png */; };
@@ -76,6 +78,7 @@
 		37D542742825888E00373987 /* redFilled@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542642825888E00373987 /* redFilled@2x.png */; };
 		37D542752825888E00373987 /* black@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542652825888E00373987 /* black@2x.png */; };
 		37D542762825888E00373987 /* redFilled@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542662825888E00373987 /* redFilled@3x.png */; };
+		37E3116D282EDB8800602990 /* Sharing Modal Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 37E3116C282EDB8800602990 /* Sharing Modal Background.png */; };
 		37E4CE012809AE3F002B4D87 /* SideMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E4CE002809AE3F002B4D87 /* SideMenuView.swift */; };
 		37E4CE032809C9F3002B4D87 /* AddTaskButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37E4CE022809C9F3002B4D87 /* AddTaskButton.swift */; };
 		37F837C5280E11BF00F2A9C0 /* AddListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37F837C4280E11BF00F2A9C0 /* AddListView.swift */; };
@@ -123,8 +126,7 @@
 		377CB339282C45EB001CDBBD /* Complete Task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Complete Task.png"; sourceTree = "<group>"; };
 		377CB33A282C45EB001CDBBD /* Edit Task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Edit Task.png"; sourceTree = "<group>"; };
 		377CB33F282C7E7D001CDBBD /* LockedPerkPopupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockedPerkPopupViewController.swift; sourceTree = "<group>"; };
-		377CB342282DF1C6001CDBBD /* Sharing Modal Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sharing Modal Background.png"; sourceTree = "<group>"; };
-		377CB346282E01A5001CDBBD /* Sharing Rays.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sharing Rays.png"; sourceTree = "<group>"; };
+		377CB34A282EDAFA001CDBBD /* Sharing Rays.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sharing Rays.png"; sourceTree = "<group>"; };
 		378922B028232F2600AA3B1B /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		378922B22823645200AA3B1B /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
 		37983B8B2819F608007B241A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -137,6 +139,9 @@
 		379999142829FF9300A42F32 /* Rubik.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Rubik.ttf; sourceTree = "<group>"; };
 		37999916282A07C700A42F32 /* Welcome Screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Welcome Screen.png"; sourceTree = "<group>"; };
 		37999918282A07D600A42F32 /* All Set.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "All Set.png"; sourceTree = "<group>"; };
+		37A75A79282F1996004D6450 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		37A75A7B282F238D004D6450 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
+		37A75A7E282F3760004D6450 /* Unlock All Perks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Unlock All Perks.png"; sourceTree = "<group>"; };
 		37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSyncConfirmationViewController.swift; sourceTree = "<group>"; };
 		37CE7B80282AD29B00B15440 /* GuidePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidePageViewController.swift; sourceTree = "<group>"; };
 		37D542572825888C00373987 /* orangeFilled@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "orangeFilled@3x.png"; sourceTree = "<group>"; };
@@ -155,6 +160,7 @@
 		37D542642825888E00373987 /* redFilled@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "redFilled@2x.png"; sourceTree = "<group>"; };
 		37D542652825888E00373987 /* black@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "black@2x.png"; sourceTree = "<group>"; };
 		37D542662825888E00373987 /* redFilled@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "redFilled@3x.png"; sourceTree = "<group>"; };
+		37E3116C282EDB8800602990 /* Sharing Modal Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sharing Modal Background.png"; sourceTree = "<group>"; };
 		37E4CE002809AE3F002B4D87 /* SideMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideMenuView.swift; sourceTree = "<group>"; };
 		37E4CE022809C9F3002B4D87 /* AddTaskButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskButton.swift; sourceTree = "<group>"; };
 		37F837C4280E11BF00F2A9C0 /* AddListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddListView.swift; sourceTree = "<group>"; };
@@ -166,6 +172,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37A75A7A282F1996004D6450 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,6 +188,7 @@
 				371135F628138CE300B51322 /* NotificationHelper.swift */,
 				372B8A0F281CD50A00117A72 /* AppIconManager.swift */,
 				378922B22823645200AA3B1B /* StatsManager.swift */,
+				37A75A7B282F238D004D6450 /* IAPManager.swift */,
 			);
 			path = "Backend classes";
 			sourceTree = "<group>";
@@ -221,6 +229,7 @@
 			children = (
 				376AD0C12808DC5900986B49 /* Finale To Do */,
 				376AD0C02808DC5900986B49 /* Products */,
+				37A75A78282F1996004D6450 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -279,8 +288,8 @@
 		377CB341282DF1B7001CDBBD /* Sharing */ = {
 			isa = PBXGroup;
 			children = (
-				377CB342282DF1C6001CDBBD /* Sharing Modal Background.png */,
-				377CB346282E01A5001CDBBD /* Sharing Rays.png */,
+				377CB34A282EDAFA001CDBBD /* Sharing Rays.png */,
+				37E3116C282EDB8800602990 /* Sharing Modal Background.png */,
 			);
 			path = Sharing;
 			sourceTree = "<group>";
@@ -288,6 +297,7 @@
 		379999072829E62100A42F32 /* Graphics */ = {
 			isa = PBXGroup;
 			children = (
+				37A75A7D282F3757004D6450 /* Misc */,
 				377CB341282DF1B7001CDBBD /* Sharing */,
 				37CE7B82282AE76E00B15440 /* Guide Screenshots */,
 				379999082829E62C00A42F32 /* Welcome Screen */,
@@ -315,6 +325,22 @@
 				379999142829FF9300A42F32 /* Rubik.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		37A75A78282F1996004D6450 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				37A75A79282F1996004D6450 /* StoreKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		37A75A7D282F3757004D6450 /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				37A75A7E282F3760004D6450 /* Unlock All Perks.png */,
+			);
+			path = Misc;
 			sourceTree = "<group>";
 		};
 		37B750BF281A40E900164803 /* Settings */ = {
@@ -417,9 +443,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				37D542722825888E00373987 /* purple@2x.png in Resources */,
-				377CB343282DF1C6001CDBBD /* Sharing Modal Background.png in Resources */,
 				377CB32E282C4166001CDBBD /* Create List.png in Resources */,
-				377CB347282E01A5001CDBBD /* Sharing Rays.png in Resources */,
 				379999102829E64500A42F32 /* Cloud sync.png in Resources */,
 				377CB33C282C45EB001CDBBD /* Edit Task.png in Resources */,
 				377CB334282C4166001CDBBD /* Level.png in Resources */,
@@ -435,6 +459,7 @@
 				372B8A2E281CE61F00117A72 /* classic@2x.png in Resources */,
 				372B8A31281CE61F00117A72 /* dark@2x.png in Resources */,
 				376AD0CC2808DC5A00986B49 /* Assets.xcassets in Resources */,
+				37A75A7F282F3760004D6450 /* Unlock All Perks.png in Resources */,
 				372B8A2C281CE61F00117A72 /* darkmodeFilled@3x.png in Resources */,
 				37D5426D2825888E00373987 /* purpleFilled@2x.png in Resources */,
 				377CB320282B847F001CDBBD /* iPhone Frame.png in Resources */,
@@ -445,6 +470,7 @@
 				379999042829B35C00A42F32 /* Badge.png in Resources */,
 				377CB333282C4166001CDBBD /* Badges.png in Resources */,
 				37D542692825888E00373987 /* orange@2x.png in Resources */,
+				37E3116D282EDB8800602990 /* Sharing Modal Background.png in Resources */,
 				37999919282A07D600A42F32 /* All Set.png in Resources */,
 				37D5426F2825888E00373987 /* blackFilled@3x.png in Resources */,
 				372B8A30281CE61F00117A72 /* dark@3x.png in Resources */,
@@ -458,6 +484,7 @@
 				3799990D2829E64500A42F32 /* Notifications.png in Resources */,
 				377CB335282C4166001CDBBD /* Sort Tasks.png in Resources */,
 				37D5426B2825888E00373987 /* orangeFilled@2x.png in Resources */,
+				377CB34B282EDAFA001CDBBD /* Sharing Rays.png in Resources */,
 				37D542672825888E00373987 /* orangeFilled@3x.png in Resources */,
 				377CB338282C4166001CDBBD /* Change Task Details.png in Resources */,
 				372B8A2F281CE61F00117A72 /* classicFilled@3x.png in Resources */,
@@ -491,6 +518,7 @@
 				378922B32823645200AA3B1B /* StatsManager.swift in Sources */,
 				376AD0DB2808EFA300986B49 /* TaskSlider.swift in Sources */,
 				37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */,
+				37A75A7C282F238D004D6450 /* IAPManager.swift in Sources */,
 				37F837C7280E657E00F2A9C0 /* Theme.swift in Sources */,
 				37CE7B81282AD29B00B15440 /* GuidePageViewController.swift in Sources */,
 				375E5D79280F1AA2001A289E /* UndoButton.swift in Sources */,

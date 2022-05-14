@@ -653,15 +653,17 @@ class App: UIViewController {
     
     func ShowLevelUpNotification (level: Int){
         if notificationView == nil {
+            let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
             notificationView = NotificationView(level: level)
-            self.view.addSubview(notificationView!)
+            keyWindow?.addSubview(notificationView!)
         }
     }
     
     func ShowBadgeNotification (badgeGroup: AchievementBadgeGroup) {
         if notificationView == nil {
+            let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
             notificationView = NotificationView(badgeGroup: badgeGroup)
-            self.view.addSubview(notificationView!)
+            keyWindow?.addSubview(notificationView!)
         }
     }
     
@@ -831,6 +833,8 @@ class NotificationView: UIView {
         
         self.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(PanGesture)))
         self.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(Tap)))
+        
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
     }
     
     var originY: CGFloat = 0

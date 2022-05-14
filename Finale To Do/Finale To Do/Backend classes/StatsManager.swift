@@ -151,6 +151,8 @@ struct StatsConfig: Codable {
     
     var pointsEarnedToday: Int = 0
     
+    var purchasedUnlockAllPerks = false
+    
     var level: Int {
         get { return _level }
         set {
@@ -242,7 +244,7 @@ struct LevelPerk {
     let OnTap: ()->Void
     
     var isUnlocked: Bool {
-        return StatsManager.stats.level >= unlockLevel
+        return StatsManager.stats.purchasedUnlockAllPerks || StatsManager.stats.level >= unlockLevel
     }
 }
 

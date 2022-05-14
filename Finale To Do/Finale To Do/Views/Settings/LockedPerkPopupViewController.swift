@@ -96,6 +96,7 @@ class LockedPerkPopupViewController: UIViewController {
                 self.containerView.transform = CGAffineTransform(scaleX: 1, y: 1)
             }
         }
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
     }
     func HideView () {
         UIView.animate(withDuration: 0.2, animations: {

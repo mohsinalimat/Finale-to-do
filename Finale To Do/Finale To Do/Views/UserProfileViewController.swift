@@ -58,8 +58,11 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
     
     let padding = 16.0
     
+    var levelFrame: LevelFrame!
+    var progressBar: ProgressBar!
     var badgesContainer: UIView!
     var levelPerksContainer: UIView!
+    var statisticsContainer: UIView!
     
     init () {
         super.init(nibName: nil, bundle: nil)
@@ -78,7 +81,7 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         handle.layer.cornerRadius = 2
         
         let levelFrameSize = 100.0
-        let levelFrame = LevelFrame(frame: CGRect(x: 0.5*(frameWidth-levelFrameSize), y: handle.frame.maxY + padding*3, width: levelFrameSize, height: levelFrameSize))
+        levelFrame = LevelFrame(frame: CGRect(x: 0.5*(frameWidth-levelFrameSize), y: handle.frame.maxY + padding*3, width: levelFrameSize, height: levelFrameSize))
         levelFrame.UpdateLevel(level: StatsManager.stats.level)
         
         let nameLabel = UILabel(frame: CGRect(x: padding, y: levelFrame.frame.maxY+padding*1, width: frameWidth-padding*2, height: 50))
@@ -87,7 +90,7 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         nameLabel.font = .systemFont(ofSize: 40)
         nameLabel.adjustsFontSizeToFitWidth = true
         
-        let progressBar = ProgressBar(frame: CGRect(x: padding*4, y: nameLabel.frame.maxY+padding, width: frameWidth-padding*8, height: 4))
+        progressBar = ProgressBar(frame: CGRect(x: padding*4, y: nameLabel.frame.maxY+padding, width: frameWidth-padding*8, height: 4))
         progressBar.UpdateProgress(progress: StatsManager.levelProgress)
         
         let progressLabel = UILabel(frame: CGRect(x: padding*4, y: progressBar.frame.maxY+padding*0.5, width: frameWidth-padding*8, height: 18))
@@ -97,7 +100,16 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         progressLabel.textColor = .systemGray
         
         badgesContainer = DrawBadgesBox(frame: CGRect(x: padding, y: progressLabel.frame.maxY + padding*2, width: frameWidth-padding*2, height: 120))
-        levelPerksContainer = DrawLevelPerksBox(frame: CGRect(x: padding, y: badgesContainer.frame.maxY + padding, width: frameWidth-padding*2, height: 46))
+        
+        levelPerksContainer = DrawRow(frame: CGRect(x: padding, y: badgesContainer.frame.maxY + padding, width: frameWidth-padding*2, height: 46), title: "My Level Perks")
+        let levelPerksTap = UILongPressGestureRecognizer(target: self, action: #selector(MyLevelPerksTap))
+        levelPerksTap.minimumPressDuration = 0
+        levelPerksContainer.addGestureRecognizer(levelPerksTap)
+        
+        statisticsContainer = DrawRow(frame: CGRect(x: padding, y: levelPerksContainer.frame.maxY + padding, width: frameWidth-padding*2, height: 46), title: "My Statistics")
+        let statTap = UILongPressGestureRecognizer(target: self, action: #selector(MyStatisticsTap))
+        statTap.minimumPressDuration = 0
+        statisticsContainer.addGestureRecognizer(statTap)
         
         self.view.addSubview(handle)
         self.view.addSubview(levelFrame)
@@ -106,6 +118,7 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         self.view.addSubview(progressLabel)
         self.view.addSubview(badgesContainer)
         self.view.addSubview(levelPerksContainer)
+        self.view.addSubview(statisticsContainer)
     }
     
     func DrawBadgesBox(frame: CGRect) -> UIView {
@@ -125,11 +138,12 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         let cellSize = scrollViewHeight-padding*2
         let scrollView = UIScrollView(frame: CGRect(x: 0, y: titleLabel.frame.maxY, width: containerView.frame.width, height: scrollViewHeight))
         
+        let badgesSpacing = padding*0.5
         var i = 0
         for (groupID, badgeIndex) in StatsManager.stats.badges {
             if badgeIndex == -1 { continue }
             
-            let badgeCell = UIImageView(frame: CGRect(x: padding+(cellSize+padding)*Double(i), y: padding, width: cellSize, height: cellSize))
+            let badgeCell = UIImageView(frame: CGRect(x: padding+(cellSize+badgesSpacing)*Double(i), y: padding, width: cellSize, height: cellSize))
             badgeCell.image = StatsManager.getBadgeGroup(id: groupID)?.getIcon(index: badgeIndex)
             badgeCell.contentMode = .scaleAspectFit
             badgeCell.layer.shadowRadius = 3
@@ -140,7 +154,7 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
             i += 1
         }
         
-        scrollView.contentSize.width = padding + (cellSize+padding)*Double(i)
+        scrollView.contentSize.width = padding + (cellSize+badgesSpacing)*Double(i)
         
         if i == 0 {
             let placeholderLabel = UILabel(frame: CGRect(x: padding, y: padding*2+titleLabel.frame.height, width: frame.width-padding*2, height: containerView.frame.height-padding*3-titleLabel.frame.height))
@@ -153,18 +167,20 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         containerView.addSubview(openIcon)
         containerView.addSubview(scrollView)
         
-        containerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MyBadgesTap)))
+        let tap = UILongPressGestureRecognizer(target: self, action: #selector(MyBadgesTap))
+        tap.minimumPressDuration = 0
+        containerView.addGestureRecognizer(tap)
         
         return containerView
     }
     
-    func DrawLevelPerksBox(frame: CGRect) -> UIView {
+    func DrawRow(frame: CGRect, title: String) -> UIView {
         let containerView = UIView(frame: CGRect(origin: frame.origin, size: frame.size))
         containerView.layer.cornerRadius = 12
         containerView.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .white : .systemGray6
         
         let titleLabel = UILabel(frame: CGRect(x: padding, y: 0, width: containerView.frame.width*0.8, height: frame.height))
-        titleLabel.text = "My Level Perks"
+        titleLabel.text = title
         
         let iconSize = 14.0
         let openIcon = UIImageView(frame: CGRect(x: containerView.frame.width-padding*0.5-iconSize, y: 0.5*(frame.height - iconSize), width: iconSize*0.7, height: iconSize))
@@ -174,8 +190,6 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         containerView.addSubview(titleLabel)
         containerView.addSubview(openIcon)
         
-        containerView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MyLevelPerksTap)))
-        
         return containerView
     }
     
@@ -183,19 +197,48 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         self.navigationController!.show(ShareModalViewController(), sender: self.navigationController)
     }
     
-    @objc func MyBadgesTap () {
-        self.navigationController!.show(MyBadgesViewController(), sender: self.navigationController)
+    @objc func MyBadgesTap (sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            badgesContainer.backgroundColor = .systemGray5
+        } else if sender.state == .ended {
+            self.navigationController!.show(MyBadgesViewController(), sender: self.navigationController)
+            UIView.animate(withDuration: 0.25) { [self] in
+                badgesContainer.backgroundColor = ThemeManager.currentTheme.settingsRowBackgroundColor
+            }
+        }
     }
     
-    @objc func MyLevelPerksTap () {
-        self.navigationController!.show(MyLevelPerksController(), sender: self.navigationController)
+    @objc func MyLevelPerksTap (sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            levelPerksContainer.backgroundColor = .systemGray5
+        } else if sender.state == .ended {
+            self.navigationController!.show(MyLevelPerksController(), sender: self.navigationController)
+            UIView.animate(withDuration: 0.25) { [self] in
+                levelPerksContainer.backgroundColor = ThemeManager.currentTheme.settingsRowBackgroundColor
+            }
+        }
+    }
+    
+    @objc func MyStatisticsTap (sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            statisticsContainer.backgroundColor = .systemGray5
+        } else if sender.state == .ended {
+            self.navigationController!.show(SettingsStatisticsPage(), sender: self.navigationController)
+            UIView.animate(withDuration: 0.25) { [self] in
+                statisticsContainer.backgroundColor = ThemeManager.currentTheme.settingsRowBackgroundColor
+            }
+        }
+        
     }
     
     func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in
             badgesContainer.backgroundColor = ThemeManager.currentTheme.settingsRowBackgroundColor
             levelPerksContainer.backgroundColor = ThemeManager.currentTheme.settingsRowBackgroundColor
+            statisticsContainer.backgroundColor = ThemeManager.currentTheme.settingsRowBackgroundColor
             self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
+            levelFrame.UpdateColor(color: ThemeManager.currentTheme.primaryElementColor())
+            progressBar.ReloadColors()
         }
     }
     
@@ -442,6 +485,10 @@ class MyLevelPerksController: UIViewController, UIDynamicTheme, UITableViewDeleg
     init () {
         super.init(nibName: nil, bundle: nil)
         
+        if !StatsManager.stats.purchasedUnlockAllPerks && StatsManager.stats.level < StatsManager.allLevelPerks.last!.unlockLevel  {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Unlock All", style: .plain, target: self, action: #selector(TapUnlockAll))
+        }
+        
         self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         
@@ -512,6 +559,10 @@ class MyLevelPerksController: UIViewController, UIDynamicTheme, UITableViewDeleg
         ReloadThemeColors()
     }
     
+    @objc func TapUnlockAll() {
+        self.navigationController!.show(UnlockAllLevelPerksViewController(), sender: self.navigationController)
+    }
+    
     
     
     
@@ -523,13 +574,15 @@ class MyLevelPerksController: UIViewController, UIDynamicTheme, UITableViewDeleg
 }
 
 
-
+//MARK: Share Modal
 class ShareModalViewController: UIViewController {
     
     let padding = 16.0
     
     var shareModal: UIView!
     var shareImage: UIImage!
+    
+    var anonymusNames = ["Anonymous Peacock", "Anonymous Cormorant", "Anonymous Froggy", "Anonymous Shark", "Anonymous Bull", "Anonymous Buffalo", "Anonymous Parrot", "Anonymous Lynx", "Anonymous Bobcat", "Anonymous Lizard", "Anonymous Raptor", "Anonymous Lion", "Anonymous Puma", "Anonymous Gazzelle", "Anonymous Zebra"]
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -561,6 +614,8 @@ class ShareModalViewController: UIViewController {
         
         self.view.addSubview(shareModal)
         self.view.addSubview(shareButton)
+        
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
     
     func DrawShareModalImage (frame: CGRect) -> UIView {
@@ -636,7 +691,7 @@ class ShareModalViewController: UIViewController {
     }
     
     var nameText: String {
-        return App.settingsConfig.userFullName == " " ? "Anonymus Froggy" : App.settingsConfig.userFullName
+        return App.settingsConfig.userFullName == " " ? anonymusNames[Int.random(in: 0..<anonymusNames.count)] : App.settingsConfig.userFullName
     }
     
     var daysJoinedText: NSMutableAttributedString {
@@ -673,7 +728,10 @@ class ShareModalViewController: UIViewController {
     @objc func Share () {
         let items = [shareImage] as [UIImage]
         let ac = UIActivityViewController(activityItems: items, applicationActivities: nil)
-        self.present(ac, animated: true, completion: nil)
+        self.present(ac, animated: true, completion: {
+            StatsManager.stats.timesSharedProgress += 1
+            StatsManager.CheckUnlockedBadge(groupID: 7)
+        })
     }
     
     
@@ -685,5 +743,96 @@ class ShareModalViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+}
+
+
+class UnlockAllLevelPerksViewController: UIViewController {
+    
+    let padding = 16.0
+    
+    var purchaseButton: UIButton!
+    
+    init () {
+        super.init(nibName: nil, bundle: nil)
+        
+        self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
+        overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        
+        self.title = "All Perks"
+        
+        let width = self.view.frame.width
+        let height = self.view.frame.height
+        
+        let imageSize = width*0.5
+        let imageView = UIImageView(frame: CGRect(x: 0.5*(width-imageSize), y: padding*6, width: imageSize, height: imageSize))
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(named: "Unlock All Perks")
+        
+        let descriptionLabel = UILabel(frame: CGRect(x: padding, y: imageView.frame.maxY + padding*2, width: width-padding*2, height: 0))
+        descriptionLabel.text = descriptionText
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.textAlignment = .left
+        descriptionLabel.sizeToFit()
+        
+        purchaseButton = UIButton(frame: CGRect(x: padding, y: descriptionLabel.frame.maxY + padding*2, width: width-padding*2, height: 45))
+        purchaseButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
+        purchaseButton.setTitle("Unlock all perks", for: .normal)
+        purchaseButton.setTitleColor(UIColor.systemGray, for: .highlighted)
+        purchaseButton.layer.cornerRadius = 8
+        purchaseButton.addTarget(self, action: #selector(UnlockButton), for: .touchUpInside)
+        purchaseButton.titleLabel!.font = .Rubik(size: 18)
+        
+        let restoreButton = UIButton(frame: CGRect(x: padding, y: purchaseButton.frame.maxY, width: width-padding*2, height: 45))
+        restoreButton.setTitle("Restore Purchases", for: .normal)
+        restoreButton.titleLabel!.font = .Rubik(size: 14)
+        restoreButton.setTitleColor(UIColor.label, for: .normal)
+        restoreButton.setTitleColor(UIColor.systemGray, for: .highlighted)
+        restoreButton.addTarget(self, action: #selector(RestoreButton), for: .touchUpInside)
+        
+        self.view.addSubview(imageView)
+        self.view.addSubview(descriptionLabel)
+        self.view.addSubview(purchaseButton)
+        self.view.addSubview(restoreButton)
+    }
+    
+    var descriptionText: String {
+        var text = "Don't want to spend time leveling up? Get access to all perks immediatly for a symbolic price.\n"
+        for perk in StatsManager.allLevelPerks {
+            text.append("\n- \(perk.title) ")
+        }
+        return text
+    }
+    
+    @objc func UnlockButton () {
+        IAPManager.instance.PurchaseUnlockAllPerks()
+    }
+    
+    @objc func RestoreButton () {
+        IAPManager.instance.RestorePurchases()
+    }
+    
+    func ReloadThemeColors() {
+        overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        UIView.animate(withDuration: 0.25) { [self] in
+            self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
+            purchaseButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
+        }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
+        App.instance.SetSubviewColors(of: self.view)
+        ReloadThemeColors()
+    }
+    
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     
 }

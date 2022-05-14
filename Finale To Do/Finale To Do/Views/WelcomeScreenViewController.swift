@@ -125,14 +125,13 @@ class WelcomeScreenNamePage: UIViewController, UITextFieldDelegate {
         let bottomPadding = UIApplication.shared.windows.first!.safeAreaInsets.bottom
         let buttonSize = 40.0
         let skipButton = UIButton(frame: CGRect(x: padding, y: frameHeight - bottomPadding - buttonSize*3, width: frameWidth-padding*2, height: buttonSize))
-        skipButton.backgroundColor = UIColor.systemGray2
         skipButton.setTitle("Skip", for: .normal)
         skipButton.setTitleColor(UIColor.systemGray, for: .highlighted)
-        skipButton.layer.cornerRadius = 8
+        skipButton.setTitleColor(UIColor.label, for: .normal)
         skipButton.addTarget(self, action: #selector(SkipButtonTap), for: .touchUpInside)
-        skipButton.titleLabel?.font = .Rubik(size: 18)
+        skipButton.titleLabel?.font = .Rubik(size: 16)
         
-        let continueButton = UIButton(frame: CGRect(x: padding, y: skipButton.frame.origin.y - padding*0.5 - buttonSize, width: frameWidth-padding*2, height: buttonSize))
+        let continueButton = UIButton(frame: CGRect(x: padding, y: skipButton.frame.origin.y - buttonSize, width: frameWidth-padding*2, height: buttonSize))
         continueButton.backgroundColor = .defaultColor
         continueButton.setTitle("Next", for: .normal)
         continueButton.setTitleColor(UIColor.systemGray, for: .highlighted)
@@ -238,14 +237,13 @@ class WelcomeScreenNotificationsPage: UIViewController {
         let bottomPadding = UIApplication.shared.windows.first!.safeAreaInsets.bottom
         let buttonSize = 40.0
         let skipButton = UIButton(frame: CGRect(x: padding, y: frameHeight - bottomPadding - buttonSize*3, width: frameWidth-padding*2, height: buttonSize))
-        skipButton.backgroundColor = UIColor.systemGray2
         skipButton.setTitle("Skip", for: .normal)
         skipButton.setTitleColor(UIColor.systemGray, for: .highlighted)
-        skipButton.layer.cornerRadius = 8
+        skipButton.setTitleColor(UIColor.label, for: .normal)
         skipButton.addTarget(self, action: #selector(SkipButtonTap), for: .touchUpInside)
-        skipButton.titleLabel?.font = .Rubik(size: 18)
+        skipButton.titleLabel?.font = .Rubik(size: 16)
         
-        let continueButton = UIButton(frame: CGRect(x: padding, y: skipButton.frame.origin.y - padding*0.5 - buttonSize, width: frameWidth-padding*2, height: buttonSize))
+        let continueButton = UIButton(frame: CGRect(x: padding, y: skipButton.frame.origin.y - buttonSize, width: frameWidth-padding*2, height: buttonSize))
         continueButton.backgroundColor = .defaultColor
         continueButton.setTitle("Enable notifications", for: .normal)
         continueButton.setTitleColor(UIColor.systemGray, for: .highlighted)
@@ -315,14 +313,13 @@ class WelcomeScreenCloudSyncPage: UIViewController {
         let bottomPadding = UIApplication.shared.windows.first!.safeAreaInsets.bottom
         let buttonSize = 40.0
         let skipButton = UIButton(frame: CGRect(x: padding, y: frameHeight - bottomPadding - buttonSize*3, width: frameWidth-padding*2, height: buttonSize))
-        skipButton.backgroundColor = UIColor.systemGray2
         skipButton.setTitle("Skip", for: .normal)
         skipButton.setTitleColor(UIColor.systemGray, for: .highlighted)
-        skipButton.layer.cornerRadius = 8
+        skipButton.setTitleColor(UIColor.label, for: .normal)
         skipButton.addTarget(self, action: #selector(SkipButtonTap), for: .touchUpInside)
-        skipButton.titleLabel?.font = .Rubik(size: 18)
+        skipButton.titleLabel?.font = .Rubik(size: 16)
         
-        let continueButton = UIButton(frame: CGRect(x: padding, y: skipButton.frame.origin.y - padding*0.5 - buttonSize, width: frameWidth-padding*2, height: buttonSize))
+        let continueButton = UIButton(frame: CGRect(x: padding, y: skipButton.frame.origin.y - buttonSize, width: frameWidth-padding*2, height: buttonSize))
         continueButton.backgroundColor = .defaultColor
         continueButton.setTitle("Enable iCloud sync", for: .normal)
         continueButton.setTitleColor(UIColor.systemGray, for: .highlighted)
@@ -391,14 +388,13 @@ class WelcomeScreenAllSetPage: UIViewController {
         let bottomPadding = UIApplication.shared.windows.first!.safeAreaInsets.bottom
         let buttonSize = 40.0
         let skipButton = UIButton(frame: CGRect(x: padding, y: frameHeight - bottomPadding - buttonSize*3, width: frameWidth-padding*2, height: buttonSize))
-        skipButton.backgroundColor = UIColor.systemGray2
         skipButton.setTitle("I'll figure it out myself", for: .normal)
         skipButton.setTitleColor(UIColor.systemGray, for: .highlighted)
-        skipButton.layer.cornerRadius = 8
+        skipButton.setTitleColor(UIColor.label, for: .normal)
         skipButton.addTarget(self, action: #selector(SkipButtonTap), for: .touchUpInside)
-        skipButton.titleLabel?.font = .Rubik(size: 18)
+        skipButton.titleLabel?.font = .Rubik(size: 16)
         
-        let continueButton = UIButton(frame: CGRect(x: padding, y: skipButton.frame.origin.y - padding*0.5 - buttonSize, width: frameWidth-padding*2, height: buttonSize))
+        let continueButton = UIButton(frame: CGRect(x: padding, y: skipButton.frame.origin.y - buttonSize, width: frameWidth-padding*2, height: buttonSize))
         continueButton.backgroundColor = .defaultColor
         continueButton.setTitle("Yes, please!", for: .normal)
         continueButton.setTitleColor(UIColor.systemGray, for: .highlighted)

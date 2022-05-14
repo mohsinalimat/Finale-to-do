@@ -367,11 +367,6 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if textField.text?.isEmpty ?? true {
-            textField.text = titleLabel!.text == "First Name" ? App.settingsConfig.userFirstName : App.settingsConfig.userLastName
-            return
-        }
-        
         if textField.text?.first == " " {
             textField.text?.removeFirst()
         }
