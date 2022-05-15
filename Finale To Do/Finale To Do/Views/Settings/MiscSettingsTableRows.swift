@@ -79,11 +79,11 @@ class SettingsAppBadgeCountView: UIView {
         self.frame.size.width = rowWidth
         
         titleLabel.frame = CGRect(x: padding, y: padding, width: paddedRowWidth, height: 20)
-        subtitleLabel.frame = CGRect(x: padding, y: titleLabel.frame.maxY+padding*0.25, width: paddedRowWidth, height: 12)
+        subtitleLabel.frame = CGRect(x: padding, y: titleLabel.frame.maxY+padding*0.25, width: paddedRowWidth, height: 16)
         
         let iconSize = 60.0
         let badgeSize = iconSize*0.37
-        appIconView.frame = CGRect(x: padding, y: subtitleLabel.frame.maxY+padding*1.5, width: iconSize, height: iconSize)
+        appIconView.frame = CGRect(x: padding, y: subtitleLabel.frame.maxY+padding*1.5-4, width: iconSize, height: iconSize)
         iconBadgeView.frame = CGRect(x: appIconView.frame.maxX - 0.6*badgeSize, y: appIconView.frame.origin.y-badgeSize*0.4, width: badgeSize, height: badgeSize)
         iconBadgeView.layer.cornerRadius = badgeSize*0.5
         badgeNumberLabel.frame = CGRect(x: 0, y: 0, width: badgeSize, height: badgeSize)
@@ -236,9 +236,136 @@ class SettingsSelectionRow: UIView, UIDynamicTheme {
     
 }
 
+//MARK: Widget Lists View
+
+class SettingsWidgetListsView: UIView {
+    static var height: CGFloat {
+        return CGFloat(68 + 50*(App.userTaskLists.count+2))
+    }
+    let selectionRowHeight = 50.0
+    
+    let padding = 16.0
+    var rowWidth: CGFloat!
+    let rowHeight: CGFloat
+    
+    let titleLabel = UILabel()
+    let subtitleLabel = UILabel()
+    let rowsContainer = UIView()
+    
+    var selectionRows = [SettingsSelectionRow]()
+    
+    init() {
+        self.rowHeight = SettingsAppBadgeCountView.height
+        super.init(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 0, height: rowHeight)))
+        
+        titleLabel.text = "Widget Lists"
+        titleLabel.textColor = .label
+        
+        subtitleLabel.text = "Lists shown on the home-screen widget."
+        subtitleLabel.textColor = .systemGray
+        subtitleLabel.font = .preferredFont(forTextStyle: .footnote)
+        
+        self.addSubview(titleLabel)
+        self.addSubview(subtitleLabel)
+        self.addSubview(rowsContainer)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        
+        rowWidth = superview!.frame.width
+        let paddedRowWidth = rowWidth - padding*2
+        self.frame.size.width = rowWidth
+        
+        titleLabel.frame = CGRect(x: padding, y: padding, width: paddedRowWidth, height: 20)
+        subtitleLabel.frame = CGRect(x: padding, y: titleLabel.frame.maxY+padding*0.25, width: paddedRowWidth, height: 16)
+        
+        SetupRows()
+        for row in selectionRows { rowsContainer.addSubview(row) }
+        rowsContainer.frame = CGRect(x: 0, y: subtitleLabel.frame.maxY + padding*0.5-4, width: rowWidth, height: Double(selectionRows.count)*50.0)
+    }
+    
+    func SetupRows () {
+        if selectionRows.count != 0 { return }
+        
+        selectionRows.append(
+            SettingsSelectionRow(frame: CGRect(x: 0, y: Double(0)*selectionRowHeight, width: rowWidth, height: selectionRowHeight),
+                              title: "All",
+                              index: 0,
+                              isSelected: App.settingsConfig.widgetLists.count == 0,
+                              isNone: true,
+                              onSelect: SelectOption,
+                              onDeselect: DeselectOption))
+        
+        selectionRows.append(
+            SettingsSelectionRow(frame: CGRect(x: 0, y: Double(1)*selectionRowHeight, width: rowWidth, height: selectionRowHeight),
+                                 title: App.mainTaskList.name,
+                                  index: 1,
+                                  isSelected: App.settingsConfig.widgetLists.contains(App.mainTaskList.id),
+                                  isNone: false,
+                                  onSelect: SelectOption,
+                                  onDeselect: DeselectOption))
+        
+        for i in 2..<App.userTaskLists.count+2 {
+            selectionRows.append(
+                SettingsSelectionRow(frame: CGRect(x: 0, y: Double(i)*selectionRowHeight, width: rowWidth, height: selectionRowHeight),
+                                     title: App.userTaskLists[i-2].name,
+                                     index: i,
+                                     isSelected: App.settingsConfig.widgetLists.contains(App.userTaskLists[i-2].id),
+                                     isNone: i == 0,
+                                     onSelect: SelectOption,
+                                     onDeselect: DeselectOption)
+            )
+        }
+    }
+    
+    func SelectOption(index: Int) {
+        selectionRows.first?.isSelected = false
+        
+        if index == 0 {
+            for selectionRow in selectionRows {
+                selectionRow.isSelected = false
+            }
+            App.settingsConfig.widgetLists.removeAll()
+        } else {
+            let tasklistID = index == 1 ? App.mainTaskList.id : App.userTaskLists[index-2].id
+            if !App.settingsConfig.widgetLists.contains(tasklistID) {
+                App.settingsConfig.widgetLists.append(tasklistID)
+                //Log Analytics
+            }
+        }
+        selectionRows[index].isSelected = true
+        
+        if App.settingsConfig.widgetLists.count >= App.userTaskLists.count + 1 {
+            SelectOption(index: 0)
+        }
+    }
+    
+    func DeselectOption (index: Int) {
+        if index == 0 { return }
+        var nSelected = 0
+        for row in selectionRows { nSelected += row.isSelected ? 1 : 0}
+        if nSelected == 1 { return }
+        selectionRows[index].isSelected = false
+        
+        let tasklistID = index == 1 ? App.mainTaskList.id : App.userTaskLists[index-2].id
+        if App.settingsConfig.widgetLists.contains(tasklistID) {
+            App.settingsConfig.widgetLists.remove(at: App.settingsConfig.widgetLists.firstIndex(of: tasklistID)!)
+        }
+    }
+    
+    
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 
 //MARK: App Icon View
-
 class SettingsAppIconView: UIView {
     
     static let height: CGFloat = 122.0

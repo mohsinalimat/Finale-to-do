@@ -450,6 +450,10 @@ class App: UIViewController {
             App.instance.SaveSettings()
         }
         
+        if App.settingsConfig.widgetLists.contains(taskList.id) {
+            App.settingsConfig.widgetLists.remove(at: App.settingsConfig.widgetLists.firstIndex(of: taskList.id)!)
+        }
+        
         if App.selectedTaskListIndex == 0 {
             SelectTaskList(index: 0, closeMenu: false)
         }
@@ -755,29 +759,70 @@ class App: UIViewController {
         return App.mainTaskList
     }
     
+    
+//MARK: Widget Funcs
+    
     func SyncWidgetData() {
-        let maxTasks = 20
-        var widgeTasks = [WidgetTask]()
-        
-        var i = 0
-        for tasklist in allTaskLists {
-            for task in tasklist.upcomingTasks {
-                let widgetTask = WidgetTask(name: task.name, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, date: task.dateAssigned)
-                widgeTasks.append(widgetTask)
-                if i >= maxTasks { break }
-                i += 1
+        var allUpcomingTasks = [Task]()
+        if App.settingsConfig.widgetLists.count == 0 {
+            for list in allTaskLists {
+                allUpcomingTasks.append(contentsOf: list.upcomingTasks)
             }
-            if i >= maxTasks { break }
+            allUpcomingTasks = allUpcomingTasks.sorted { taskListView.sortBool(task1: $0, task2: $1, sortingPreference: App.instance.overviewSortingPreference) }
+        } else {
+            for tasklistID in App.settingsConfig.widgetLists {
+                allUpcomingTasks.append(contentsOf: getTaskList(id: tasklistID).upcomingTasks)
+            }
         }
         
         
+        let nTasksToSync = WidgetSync.maxNumberOfTasks < allUpcomingTasks.count ? WidgetSync.maxNumberOfTasks + 2 : WidgetSync.maxNumberOfTasks
         
-        if let encoded = try? JSONEncoder().encode(widgeTasks) {
-            WidgetSync.userDefaults.set(encoded, forKey: WidgetSync.widgetTasksSyncKey)
+        var taskNumber = allUpcomingTasks.count
+        
+        while allUpcomingTasks.count > nTasksToSync { allUpcomingTasks.removeLast() }
+        
+        var upcomingWidgetTasks = [WidgetTask]()
+        for task in allUpcomingTasks {
+            upcomingWidgetTasks.append(WidgetTask(name: task.name, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: task.dateAssigned))
         }
-        WidgetSync.userDefaults.set("Hi, \(App.settingsConfig.userFirstName)", forKey: WidgetSync.widgetTitleSyncKey)
+        
+        var allCompletedTasks = [Task]()
+        if upcomingWidgetTasks.count < nTasksToSync {
+            if App.settingsConfig.widgetLists.count == 0 {
+                for list in allTaskLists {
+                    allCompletedTasks.append(contentsOf: list.completedTasks)
+                }
+            } else {
+                for tasklistID in App.settingsConfig.widgetLists {
+                    allCompletedTasks.append(contentsOf: getTaskList(id: tasklistID).completedTasks)
+                }
+            }
+            
+            allCompletedTasks = allCompletedTasks.sorted { $0.dateCompleted > $1.dateCompleted }
+            while allCompletedTasks.count > nTasksToSync-upcomingWidgetTasks.count { allCompletedTasks.removeLast() }
+        }
+        
+        var completedWidgetTasks = [WidgetTask]()
+        for task in allCompletedTasks {
+            completedWidgetTasks.append(WidgetTask(name: task.name, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: task.dateAssigned))
+        }
+        
+        if let encoded = try? JSONEncoder().encode(upcomingWidgetTasks) {
+            WidgetSync.userDefaults.set(encoded, forKey: WidgetSync.widgetUpcomingTasksSyncKey)
+        }
+        if let encoded = try? JSONEncoder().encode(completedWidgetTasks) {
+            WidgetSync.userDefaults.set(encoded, forKey: WidgetSync.widgetCompletedTasksSyncKey)
+        }
+        WidgetSync.userDefaults.set(widgetTitle, forKey: WidgetSync.widgetTitleSyncKey)
+        WidgetSync.userDefaults.set(taskNumber, forKey: WidgetSync.widgetTasksNumberKey)
         
         WidgetCenter.shared.reloadAllTimelines()
+    }
+    
+    var widgetTitle: String {
+        if App.settingsConfig.userFirstName == "" { return "Tasks" }
+        return "Hi, \(App.settingsConfig.userFirstName)"
     }
     
 }

@@ -77,6 +77,7 @@ class SettingsMainPage: SettingsPageViewController {
             SettingsSection(title: "Preferences", footer: "", options: [
                 .navigationCell(model: SettingsNavigationOption(title: "Default List", icon: UIImage(systemName: "folder.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsDefaultListPage(), SetPreview: { return self.defaultFolderPreview } )),
                 .navigationCell(model: SettingsNavigationOption(title: "Notifications", icon: UIImage(systemName: "bell.badge.fill"), iconBackgroundColor: .systemRed, nextPage: SettingsNotificationsPage())),
+                .navigationCell(model: SettingsNavigationOption(title: "Widget", icon: UIImage(systemName: "list.bullet.rectangle.fill"), iconBackgroundColor: .systemIndigo, nextPage: SettingsWidgetPage())),
                 .navigationCell(model: SettingsNavigationOption(title: "Appearance", icon: UIImage(systemName: "circle.hexagongrid.circle"), iconBackgroundColor: .systemPurple, nextPage: SettingsAppearancePage()))
             ]),
 
@@ -288,6 +289,10 @@ class SettingsNotificationsPage: SettingsPageViewController {
         ReloadSettings()
     }
     
+    override var PageTitle: String {
+        return "Notifications"
+    }
+    
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -295,9 +300,26 @@ class SettingsNotificationsPage: SettingsPageViewController {
     
 }
 
+//MARK: Widget
+
+class SettingsWidgetPage: SettingsPageViewController {
+    
+    override func GetSettings() -> [SettingsSection] {
+        return [
+        
+            SettingsSection(options: [.customViewCell(model: SettingsWidgetListsView())], customHeight: SettingsWidgetListsView.height),
+        
+        ]
+    }
+    
+    override var PageTitle: String {
+        return "Widget"
+    }
+    
+}
+
+
 //MARK: Appearance Page
-
-
 class SettingsAppearancePage: SettingsPageViewController {
     override func GetSettings() -> [SettingsSection] {
         return [

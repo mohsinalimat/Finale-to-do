@@ -54,7 +54,7 @@ class AnalyticsHelper {
     
     static func LogWelcomeScreenCompleted(tutorialAccepted: Bool) {
         Analytics.logEvent("welcome_screen_completed", parameters:
-                            ["username" : App.settingsConfig.userFullName == " " ? "empty" : "added",
+                            ["username" : App.settingsConfig.userFullName == "" ? "empty" : "added",
                              "notifications" : App.settingsConfig.isNotificationsAllowed ? "allowed" : "skipped",
                              "icloud_sync" : App.settingsConfig.isICloudSyncOn ? "enabled" : "skipped",
                              "tutorial" : tutorialAccepted ? "accepted" : "declined",
@@ -161,6 +161,6 @@ class AnalyticsHelper {
     
     static func LogChangedName() {
         Analytics.logEvent("settings_name_changed", parameters:
-                            ["username" : App.settingsConfig.userFullName == " " ? "empty" : "added"])
+                            ["username" : App.settingsConfig.userFullName == "" ? "empty" : "added"])
     }
 }

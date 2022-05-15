@@ -33,4 +33,39 @@ extension Color {
             opacity: Double(a) / 255
         )
     }
+    
+    var components: (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat) {
+
+            #if canImport(UIKit)
+            typealias NativeColor = UIColor
+            #elseif canImport(AppKit)
+            typealias NativeColor = NSColor
+            #endif
+
+            var r: CGFloat = 0
+            var g: CGFloat = 0
+            var b: CGFloat = 0
+            var o: CGFloat = 0
+
+            guard NativeColor(self).getRed(&r, green: &g, blue: &b, alpha: &o) else {
+                // You can handle the failure here as you want
+                return (0, 0, 0, 0)
+            }
+
+            return (r, g, b, o)
+        }
+    
+    func lerp (second: Color, percentage: CGFloat) -> Color {
+        return Color(red: (1-percentage)*self.components.red + percentage*second.components.red, green: (1-percentage)*self.components.green + percentage*second.components.green, blue: (1-percentage)*self.components.blue + percentage*second.components.blue).opacity((1-percentage)*self.components.alpha + percentage*second.components.alpha)
+    }
+    
+}
+
+extension Date {
+    func get(_ components: Calendar.Component..., calendar: Calendar = Calendar.current) -> DateComponents {
+        return calendar.dateComponents(Set(components), from: self)
+    }
+    func get(_ components: Calendar.Component, calendar: Calendar = Calendar.current) -> Int {
+        return calendar.component(components, from: self)
+    }
 }

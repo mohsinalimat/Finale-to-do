@@ -199,6 +199,7 @@ struct SettingsConfig: Codable {
     
     var isNotificationsAllowed: Bool = false
     var appBadgeNumberTypes: [AppBadgeNumberType] = [.OverdueTasks]
+    var widgetLists: [UUID] = []
     
     var interface: InterfaceMode = .System
     var selectedLightThemeIndex: Int = 0
@@ -212,6 +213,9 @@ struct SettingsConfig: Codable {
     var completedInitialSetup: Bool = false
     
     var userFullName: String {
+        if userFirstName == "" { return userLastName }
+        if userLastName == "" { return userFirstName }
+        if userFirstName == "" && userLastName == "" { return "" }
         return "\(userFirstName) \(userLastName)"
     }
     

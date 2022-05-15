@@ -385,7 +385,7 @@ class UserPanel: UIView, UIDynamicTheme {
     }
     
     func ReloadName () {
-        usernameLabel.text = App.settingsConfig.userFullName == " " ? "User" : App.settingsConfig.userFullName
+        usernameLabel.text = App.settingsConfig.userFullName == "" ? "User" : App.settingsConfig.userFullName
     }
     
     func ReloadPanel () {
