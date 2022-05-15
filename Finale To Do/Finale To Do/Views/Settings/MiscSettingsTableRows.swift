@@ -118,6 +118,7 @@ class SettingsAppBadgeCountView: UIView {
         
         if !App.settingsConfig.appBadgeNumberTypes.contains(AppBadgeNumberType(rawValue: index)!) {
             App.settingsConfig.appBadgeNumberTypes.append(AppBadgeNumberType(rawValue: index)!)
+            AnalyticsHelper.LogAppBadgeNumberSelection(type: AppBadgeNumberType(rawValue: index)!)
         }
         
         SetBadgeNumber()
@@ -294,6 +295,8 @@ class SettingsAppIconView: UIView {
             if iconCell.icon == icon { iconCell.isSelected = true }
             else { iconCell.isSelected = false }
         }
+        
+        AnalyticsHelper.LogChangedAppIcon()
     }
 }
 
@@ -461,6 +464,8 @@ class SettingsThemeView: UIView {
         
         let navController = self.parentViewController?.navigationController as? SettingsNavigationController
         navController?.SetAllViewControllerColors()
+        
+        AnalyticsHelper.LogSelectedTheme(theme: theme)
     }
     
     

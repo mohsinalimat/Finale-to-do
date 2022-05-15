@@ -375,10 +375,12 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
             App.settingsConfig.userFirstName = textField.text!
             if App.selectedTaskListIndex == 0 { App.instance.SelectTaskList(index: 0, closeMenu: false)}
             App.instance.sideMenuView.userPanel.ReloadName()
-        } else {
+            AnalyticsHelper.LogChangedName()
+        } else if titleLabel!.text == "Last Name" {
             App.settingsConfig.userLastName = textField.text!
             if App.selectedTaskListIndex == 0 { App.instance.SelectTaskList(index: 0, closeMenu: false)}
             App.instance.sideMenuView.userPanel.ReloadName()
+            AnalyticsHelper.LogChangedName()
         }
     }
     

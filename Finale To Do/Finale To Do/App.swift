@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import SwiftUI
+import WidgetKit
 
 class App: UIViewController {
 
@@ -102,6 +102,8 @@ class App: UIViewController {
         taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
         
         DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
+        
+        AnalyticsHelper.LogTaskCreated()
     }
     
     func CompleteTask(task: Task) {
@@ -149,6 +151,8 @@ class App: UIViewController {
         DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
         
         StatsManager.OnTaskComplete(task: task)
+        
+        AnalyticsHelper.LogTaskCompleted()
     }
     
     func DeleteTask(task: Task) {
@@ -407,6 +411,8 @@ class App: UIViewController {
         sideMenuView.tableView.endUpdates()
         
         SelectTaskList(index: App.userTaskLists.count+1)
+        
+        AnalyticsHelper.LogTaskListCreated(taskList: taskList)
     }
     
     func EditTaskList (oldTaskList: TaskList, updatedTaskList: TaskList) {
@@ -423,6 +429,8 @@ class App: UIViewController {
         if App.selectedTaskListIndex == index + 1 {
             SelectTaskList(index: index+1, closeMenu: false)
         }
+        
+        AnalyticsHelper.LogTaskListEdited(taskList: updatedTaskList)
     }
     
     func DeleteTaskList (taskList: TaskList) {
@@ -674,6 +682,9 @@ class App: UIViewController {
         SaveData()
         NotificationHelper.UpdateAppBadge()
         NotificationHelper.ScheduleAllTaskNotifications()
+        AnalyticsHelper.LogGeneralStats()
+        AnalyticsHelper.RecordUserProperties()
+        SyncWidgetData()
     }
     
     @objc func AppBecameActive() {
@@ -744,8 +755,32 @@ class App: UIViewController {
         return App.mainTaskList
     }
     
+    func SyncWidgetData() {
+        let maxTasks = 20
+        var widgeTasks = [WidgetTask]()
+        
+        var i = 0
+        for tasklist in allTaskLists {
+            for task in tasklist.upcomingTasks {
+                let widgetTask = WidgetTask(name: task.name, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, date: task.dateAssigned)
+                widgeTasks.append(widgetTask)
+                if i >= maxTasks { break }
+                i += 1
+            }
+            if i >= maxTasks { break }
+        }
+        
+        
+        
+        if let encoded = try? JSONEncoder().encode(widgeTasks) {
+            WidgetSync.userDefaults.set(encoded, forKey: WidgetSync.widgetTasksSyncKey)
+        }
+        WidgetSync.userDefaults.set("Hi, \(App.settingsConfig.userFirstName)", forKey: WidgetSync.widgetTitleSyncKey)
+        
+        WidgetCenter.shared.reloadAllTimelines()
+    }
+    
 }
-
 
 
 class NotificationView: UIView {

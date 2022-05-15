@@ -148,7 +148,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         if taskSlider.task.isDueTimeAssigned {
             dueTimePicker.setDate(taskSlider.task.dateAssigned, animated: false)
         } else {
-            dueTimePicker.setDate(Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date.now)!, animated: false)
+            dueTimePicker.setDate(Calendar.current.date(bySettingHour: 10, minute: 0, second: 0, of: Date.now)!, animated: false)
         }
         dueTimePicker.isEnabled = taskSlider.task.isDueTimeAssigned
         
@@ -397,6 +397,10 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         }
         
         OnCalendarClose()
+        
+        if taskSlider.task.notifications.count > 0 {
+            AnalyticsHelper.LogTaskAddedNotification(notifCount: taskSlider.task.notifications.count)
+        }
     }
     
     func OnCalendarClose () {

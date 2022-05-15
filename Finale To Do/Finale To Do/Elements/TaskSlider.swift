@@ -243,6 +243,8 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
         UpdateDateLabel()
         
         taskNameInputField.becomeFirstResponder()
+        
+        AnalyticsHelper.LogTaskAssignedDate()
     }
     
     func ClearDateAndTime() {
@@ -315,6 +317,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
         task.name = taskNameInputField.text!
         if taskNameInputField.text!.contains("!")  {
             SetTaskPriority(priority: .High)
+            AnalyticsHelper.LogTaskSetHighPriority()
         } else {
             SetTaskPriority(priority: .Normal)
         }

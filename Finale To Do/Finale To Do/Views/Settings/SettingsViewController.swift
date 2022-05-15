@@ -187,6 +187,7 @@ class SettingsPersonalPage: SettingsPageViewController {
             self.ReloadSettings()
             self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
         }
+        AnalyticsHelper.LogICloudSyncToggled()
     }
     
     
@@ -226,6 +227,8 @@ class SettingsDefaultListPage: SettingsPageViewController {
     
     func SetDefaultFolder(index: Int) {
         App.settingsConfig.defaultListID = index == 0 ? App.mainTaskList.id : App.userTaskLists[index-1].id
+        
+        AnalyticsHelper.LogChangedDefaultList()
     }
     
 }
@@ -249,6 +252,7 @@ class SettingsNotificationsPage: SettingsPageViewController {
                         self.HideAllNotificationSettings()
                         App.settingsConfig.isNotificationsAllowed = false
                         NotificationHelper.CancelAllScheduledNotifications()
+                        AnalyticsHelper.LogNotificationsToggled()
                     }
                 })
             ])
@@ -257,6 +261,7 @@ class SettingsNotificationsPage: SettingsPageViewController {
     
     func AllowNotificationSuccess () {
         NotificationHelper.ScheduleAllTaskNotifications()
+        AnalyticsHelper.LogNotificationsToggled()
     }
     
     func ShowAllNotificationSettings () {
@@ -319,6 +324,8 @@ class SettingsAppearancePage: SettingsPageViewController {
         
         let navController = navigationController as? SettingsNavigationController
         navController?.SetAllViewControllerColors()
+        
+        AnalyticsHelper.LogChangedInterface()
     }
     
     override var PageTitle: String {

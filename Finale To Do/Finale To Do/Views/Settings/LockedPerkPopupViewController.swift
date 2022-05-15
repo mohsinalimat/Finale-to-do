@@ -39,14 +39,14 @@ class LockedPerkPopupViewController: UIViewController {
         warningLabel.sizeToFit()
         warningLabel.frame.origin.x = 0.5*(containerView.frame.width - warningLabel.frame.width)
         
-        let openProfileButton = UIButton(frame: CGRect(x: padding*3, y: warningLabel.frame.maxY+padding, width: containerView.frame.width-padding*6, height: 40.0))
-        openProfileButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
-        openProfileButton.setTitle("Go to my profile", for: .normal)
-        openProfileButton.setTitleColor(UIColor.systemGray, for: .highlighted)
-        openProfileButton.layer.cornerRadius = 8
-        openProfileButton.addTarget(self, action: #selector(GoToProfile), for: .touchUpInside)
+        let unlockNowButton = UIButton(frame: CGRect(x: padding*3, y: warningLabel.frame.maxY+padding, width: containerView.frame.width-padding*6, height: 40.0))
+        unlockNowButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
+        unlockNowButton.setTitle("Unlock now", for: .normal)
+        unlockNowButton.setTitleColor(UIColor.systemGray, for: .highlighted)
+        unlockNowButton.layer.cornerRadius = 8
+        unlockNowButton.addTarget(self, action: #selector(UnlockNowTap), for: .touchUpInside)
         
-        let dismissButton = UIButton(frame: CGRect(x: padding*3, y: openProfileButton.frame.maxY, width: containerView.frame.width-padding*6, height: 40.0))
+        let dismissButton = UIButton(frame: CGRect(x: padding*3, y: unlockNowButton.frame.maxY, width: containerView.frame.width-padding*6, height: 40.0))
         dismissButton.setTitle("Dismiss", for: .normal)
         dismissButton.setTitleColor(UIColor.systemGray, for: .highlighted)
         dismissButton.layer.cornerRadius = 8
@@ -54,7 +54,7 @@ class LockedPerkPopupViewController: UIViewController {
         dismissButton.addTarget(self, action: #selector(Dismiss), for: .touchUpInside)
         dismissButton.setTitleColor(.label, for: .normal)
         
-        containerView.frame.size.height = (dismissButton.frame.maxY+padding) - (warningLabel.frame.minY-padding)
+        containerView.frame.size.height = (dismissButton.frame.maxY) - (warningLabel.frame.minY-padding)
         containerView.frame.origin.y = 0.5*(height-containerView.frame.size.height)
         
         let blurEffect1 = UIVisualEffectView(frame: CGRect(x: 0, y: 0, width: containerView.frame.width, height: containerView.frame.height))
@@ -69,7 +69,7 @@ class LockedPerkPopupViewController: UIViewController {
         containerView.addGestureRecognizer(UITapGestureRecognizer()) // this way I am blocking dismissing when tapped on the container
         
         containerView.addSubview(warningLabel)
-        containerView.addSubview(openProfileButton)
+        containerView.addSubview(unlockNowButton)
         containerView.addSubview(dismissButton)
         
         self.view.addSubview(containerView)
@@ -80,10 +80,12 @@ class LockedPerkPopupViewController: UIViewController {
     @objc func Dismiss () {
         HideView()
     }
-    @objc func GoToProfile() {
+    @objc func UnlockNowTap() {
         Dismiss()
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {[self] in
-            parentVC?.show(UserProfileNavigationController(), sender: nil)
+            let vc = UnlockAllLevelPerksViewController(showCloseButton: true)
+            vc.modalPresentationStyle = .pageSheet
+            parentVC?.present(vc, animated: true)
         }
     }
     

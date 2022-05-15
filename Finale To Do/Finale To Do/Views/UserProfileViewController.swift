@@ -158,7 +158,7 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         
         if i == 0 {
             let placeholderLabel = UILabel(frame: CGRect(x: padding, y: padding*2+titleLabel.frame.height, width: frame.width-padding*2, height: containerView.frame.height-padding*3-titleLabel.frame.height))
-            placeholderLabel.text = "You don't have any badges yet."
+            placeholderLabel.text = "You don't have any badges yet"
             placeholderLabel.textColor = .systemGray2
             containerView.addSubview(placeholderLabel)
         }
@@ -732,6 +732,7 @@ class ShareModalViewController: UIViewController {
             StatsManager.stats.timesSharedProgress += 1
             StatsManager.CheckUnlockedBadge(groupID: 7)
         })
+        AnalyticsHelper.LogPressedShareButton()
     }
     
     
@@ -753,11 +754,22 @@ class UnlockAllLevelPerksViewController: UIViewController {
     
     var purchaseButton: UIButton!
     
-    init () {
+    init (showCloseButton: Bool = false) {
         super.init(nibName: nil, bundle: nil)
         
         self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        
+        if showCloseButton {
+            let buttonWidth = 80.0
+            let closeButtom = UIButton(frame: CGRect(x: self.view.frame.width-padding-buttonWidth, y: padding, width: buttonWidth, height: 30.0))
+            closeButtom.setTitle("Close", for: .normal)
+            closeButtom.setTitleColor(UIColor.systemBlue, for: .normal)
+            closeButtom.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+            closeButtom.addTarget(self, action: #selector(CloseButtonTap), for: .touchUpInside)
+            closeButtom.contentHorizontalAlignment = .right
+            self.view.addSubview(closeButtom)
+        }
         
         self.title = "All Perks"
         
@@ -827,6 +839,9 @@ class UnlockAllLevelPerksViewController: UIViewController {
         ReloadThemeColors()
     }
     
+    @objc func CloseButtonTap () {
+        self.dismiss(animated: true)
+    }
     
     
     
