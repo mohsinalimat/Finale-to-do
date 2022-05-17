@@ -507,6 +507,11 @@ class SettingsDebugPage: SettingsPageViewController {
             ]),
             
             SettingsSection(options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Force check all badges", OnTap: {
+                    for group in StatsManager.allBadgeGroups {
+                        StatsManager.CheckUnlockedBadge(groupID: group.groupID)
+                    }
+                })),
                 .navigationCell(model: SettingsNavigationOption(title: "Unlock all badges", OnTap: {
                     for group in StatsManager.allBadgeGroups {
                         StatsManager.UnlockBadge(badgeGroup: group, badgeIndex: group.numberOfBadges-1, earnPoints: false)
