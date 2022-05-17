@@ -114,6 +114,8 @@ class ThemeManager {
         AppTheme(name: "Violet", interface: .Light, primaryColor: UIColor(hex: "8453AC"), overrideTasklistHeaderColor: .defaultColor.lerp(second: .white, percentage: 0.1), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "FD5E53")),
         
         AppTheme(name: "Aqua", interface: .Light, primaryColor: UIColor(hex: "22A0ED"), overrideTasklistHeaderColor: .defaultColor.lerp(second: .white, percentage: 0.1), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "47FCF9")),
+        
+        AppTheme(name: "Sunset", interface: .Light, primaryColor: UIColor(hex: "EB4F34"), overrideTasklistHeaderColor: .defaultColor.lerp(second: .white, percentage: 0.1), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "FF3C00")),
     
     ]
     
@@ -124,6 +126,8 @@ class ThemeManager {
         AppTheme(name: "Violet", interface: .Dark, primaryColor: UIColor(hex: "664C7C"), overrideTasklistHeaderColor: .defaultColor.dark, overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "FD5E53")),
         
         AppTheme(name: "Aqua", interface: .Dark, primaryColor: UIColor(hex: "227DB5"), overrideTasklistHeaderColor: .defaultColor.dark, overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "3DD9D6")),
+        
+        AppTheme(name: "Sunset", interface: .Dark, primaryColor: UIColor(hex: "A83D31"), overrideTasklistHeaderColor: .defaultColor.dark, overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "DB3B0B")),
         
         AppTheme(name: "True Black", interface: .Dark, primaryColor: UIColor(hex: "4D4D4D"),
                  overrideTasklistHeaderColor: UIColor(hex: "000000"),

@@ -20,6 +20,86 @@
 		372B8A2F281CE61F00117A72 /* classicFilled@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 372B8A27281CE61F00117A72 /* classicFilled@3x.png */; };
 		372B8A30281CE61F00117A72 /* dark@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 372B8A28281CE61F00117A72 /* dark@3x.png */; };
 		372B8A31281CE61F00117A72 /* dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 372B8A29281CE61F00117A72 /* dark@2x.png */; };
+		3750A033283300C700E72EB5 /* Protagonist I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE2283300C600E72EB5 /* Protagonist I.png */; };
+		3750A034283300C700E72EB5 /* Protagonist II.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE3283300C600E72EB5 /* Protagonist II.png */; };
+		3750A035283300C700E72EB5 /* Patron V.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE4283300C600E72EB5 /* Patron V.png */; };
+		3750A036283300C700E72EB5 /* Companion I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE5283300C600E72EB5 /* Companion I.png */; };
+		3750A037283300C700E72EB5 /* Surgeon I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE6283300C600E72EB5 /* Surgeon I.png */; };
+		3750A038283300C700E72EB5 /* Extravert IV.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE7283300C600E72EB5 /* Extravert IV.png */; };
+		3750A039283300C700E72EB5 /* Workaholic II.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE8283300C600E72EB5 /* Workaholic II.png */; };
+		3750A03A283300C700E72EB5 /* Connoisseur I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE9283300C600E72EB5 /* Connoisseur I.png */; };
+		3750A03B283300C700E72EB5 /* Workaholic I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FEA283300C600E72EB5 /* Workaholic I.png */; };
+		3750A03C283300C700E72EB5 /* Surgeon II.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FEB283300C600E72EB5 /* Surgeon II.png */; };
+		3750A03D283300C700E72EB5 /* Patron II.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FEC283300C600E72EB5 /* Patron II.png */; };
+		3750A03E283300C700E72EB5 /* Companion IV.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FED283300C600E72EB5 /* Companion IV.png */; };
+		3750A03F283300C700E72EB5 /* Connoisseur II.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FEE283300C600E72EB5 /* Connoisseur II.png */; };
+		3750A040283300C700E72EB5 /* Surgeon III.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FEF283300C600E72EB5 /* Surgeon III.png */; };
+		3750A041283300C700E72EB5 /* Extravert I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FF0283300C600E72EB5 /* Extravert I.png */; };
+		3750A042283300C700E72EB5 /* Patron III.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FF1283300C600E72EB5 /* Patron III.png */; };
+		3750A043283300C700E72EB5 /* Principal II.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FF2283300C600E72EB5 /* Principal II.png */; };
+		3750A044283300C700E72EB5 /* Principal V.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FF3283300C600E72EB5 /* Principal V.png */; };
+		3750A045283300C700E72EB5 /* Companion III.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FF4283300C600E72EB5 /* Companion III.png */; };
+		3750A046283300C700E72EB5 /* Extravert III.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FF5283300C600E72EB5 /* Extravert III.png */; };
+		3750A047283300C700E72EB5 /* Patron IV.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FF6283300C600E72EB5 /* Patron IV.png */; };
+		3750A048283300C700E72EB5 /* Surgeon IV.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FF7283300C600E72EB5 /* Surgeon IV.png */; };
+		3750A049283300C700E72EB5 /* Companion II.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FF8283300C600E72EB5 /* Companion II.png */; };
+		3750A04A283300C700E72EB5 /* Principal III.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FF9283300C600E72EB5 /* Principal III.png */; };
+		3750A04B283300C700E72EB5 /* Extravert V.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FFA283300C600E72EB5 /* Extravert V.png */; };
+		3750A04C283300C700E72EB5 /* Workaholic III.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FFB283300C600E72EB5 /* Workaholic III.png */; };
+		3750A04D283300C700E72EB5 /* Principal I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FFC283300C600E72EB5 /* Principal I.png */; };
+		3750A04E283300C700E72EB5 /* Companion V.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FFD283300C600E72EB5 /* Companion V.png */; };
+		3750A04F283300C700E72EB5 /* Principal IV.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FFE283300C600E72EB5 /* Principal IV.png */; };
+		3750A050283300C700E72EB5 /* Protagonist IV.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FFF283300C600E72EB5 /* Protagonist IV.png */; };
+		3750A051283300C700E72EB5 /* Connoisseur III.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A000283300C600E72EB5 /* Connoisseur III.png */; };
+		3750A052283300C700E72EB5 /* Protagonist V.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A001283300C600E72EB5 /* Protagonist V.png */; };
+		3750A053283300C700E72EB5 /* Connoisseur IV.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A002283300C600E72EB5 /* Connoisseur IV.png */; };
+		3750A054283300C700E72EB5 /* Patron I.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A003283300C600E72EB5 /* Patron I.png */; };
+		3750A055283300C700E72EB5 /* Workaholic V.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A004283300C600E72EB5 /* Workaholic V.png */; };
+		3750A056283300C700E72EB5 /* Connoisseur V.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A005283300C600E72EB5 /* Connoisseur V.png */; };
+		3750A057283300C700E72EB5 /* Workaholic IV.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A006283300C600E72EB5 /* Workaholic IV.png */; };
+		3750A058283300C700E72EB5 /* Extravert II.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A007283300C600E72EB5 /* Extravert II.png */; };
+		3750A059283300C700E72EB5 /* Surgeon V.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A008283300C600E72EB5 /* Surgeon V.png */; };
+		3750A05A283300C700E72EB5 /* Protagonist III.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A009283300C600E72EB5 /* Protagonist III.png */; };
+		3750A05B283300C700E72EB5 /* Protagonist I Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A00B283300C700E72EB5 /* Protagonist I Placeholder.png */; };
+		3750A05C283300C700E72EB5 /* Companion II Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A00C283300C700E72EB5 /* Companion II Placeholder.png */; };
+		3750A05D283300C700E72EB5 /* Surgeon III Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A00D283300C700E72EB5 /* Surgeon III Placeholder.png */; };
+		3750A05E283300C700E72EB5 /* Connoisseur V Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A00E283300C700E72EB5 /* Connoisseur V Placeholder.png */; };
+		3750A05F283300C700E72EB5 /* Surgeon I Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A00F283300C700E72EB5 /* Surgeon I Placeholder.png */; };
+		3750A060283300C700E72EB5 /* Surgeon II Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A010283300C700E72EB5 /* Surgeon II Placeholder.png */; };
+		3750A061283300C700E72EB5 /* Protagonist II Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A011283300C700E72EB5 /* Protagonist II Placeholder.png */; };
+		3750A062283300C700E72EB5 /* Principal IV Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A012283300C700E72EB5 /* Principal IV Placeholder.png */; };
+		3750A063283300C700E72EB5 /* Companion V Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A013283300C700E72EB5 /* Companion V Placeholder.png */; };
+		3750A064283300C700E72EB5 /* Connoisseur II Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A014283300C700E72EB5 /* Connoisseur II Placeholder.png */; };
+		3750A065283300C700E72EB5 /* Patron V Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A015283300C700E72EB5 /* Patron V Placeholder.png */; };
+		3750A066283300C700E72EB5 /* Workaholic II Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A016283300C700E72EB5 /* Workaholic II Placeholder.png */; };
+		3750A067283300C700E72EB5 /* Extravert II Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A017283300C700E72EB5 /* Extravert II Placeholder.png */; };
+		3750A068283300C700E72EB5 /* Protagonist III Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A018283300C700E72EB5 /* Protagonist III Placeholder.png */; };
+		3750A069283300C700E72EB5 /* Principal III Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A019283300C700E72EB5 /* Principal III Placeholder.png */; };
+		3750A06A283300C700E72EB5 /* Workaholic V Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A01A283300C700E72EB5 /* Workaholic V Placeholder.png */; };
+		3750A06B283300C700E72EB5 /* Principal V Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A01B283300C700E72EB5 /* Principal V Placeholder.png */; };
+		3750A06C283300C700E72EB5 /* Patron IV Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A01C283300C700E72EB5 /* Patron IV Placeholder.png */; };
+		3750A06D283300C700E72EB5 /* Connoisseur III Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A01D283300C700E72EB5 /* Connoisseur III Placeholder.png */; };
+		3750A06E283300C700E72EB5 /* Extravert V Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A01E283300C700E72EB5 /* Extravert V Placeholder.png */; };
+		3750A06F283300C700E72EB5 /* Extravert I Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A01F283300C700E72EB5 /* Extravert I Placeholder.png */; };
+		3750A070283300C700E72EB5 /* Extravert IV Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A020283300C700E72EB5 /* Extravert IV Placeholder.png */; };
+		3750A071283300C700E72EB5 /* Companion III Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A021283300C700E72EB5 /* Companion III Placeholder.png */; };
+		3750A072283300C700E72EB5 /* Workaholic I Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A022283300C700E72EB5 /* Workaholic I Placeholder.png */; };
+		3750A073283300C700E72EB5 /* Principal I Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A023283300C700E72EB5 /* Principal I Placeholder.png */; };
+		3750A074283300C700E72EB5 /* Patron II Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A024283300C700E72EB5 /* Patron II Placeholder.png */; };
+		3750A075283300C700E72EB5 /* Patron III Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A025283300C700E72EB5 /* Patron III Placeholder.png */; };
+		3750A076283300C700E72EB5 /* Principal II Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A026283300C700E72EB5 /* Principal II Placeholder.png */; };
+		3750A077283300C700E72EB5 /* Companion I Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A027283300C700E72EB5 /* Companion I Placeholder.png */; };
+		3750A078283300C700E72EB5 /* Extravert III Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A028283300C700E72EB5 /* Extravert III Placeholder.png */; };
+		3750A079283300C700E72EB5 /* Connoisseur IV Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A029283300C700E72EB5 /* Connoisseur IV Placeholder.png */; };
+		3750A07A283300C700E72EB5 /* Workaholic IV Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A02A283300C700E72EB5 /* Workaholic IV Placeholder.png */; };
+		3750A07B283300C700E72EB5 /* Patron I Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A02B283300C700E72EB5 /* Patron I Placeholder.png */; };
+		3750A07C283300C700E72EB5 /* Workaholic III Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A02C283300C700E72EB5 /* Workaholic III Placeholder.png */; };
+		3750A07D283300C700E72EB5 /* Protagonist V Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A02D283300C700E72EB5 /* Protagonist V Placeholder.png */; };
+		3750A07E283300C700E72EB5 /* Companion IV Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A02E283300C700E72EB5 /* Companion IV Placeholder.png */; };
+		3750A07F283300C700E72EB5 /* Connoisseur I Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A02F283300C700E72EB5 /* Connoisseur I Placeholder.png */; };
+		3750A080283300C700E72EB5 /* Surgeon V Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A030283300C700E72EB5 /* Surgeon V Placeholder.png */; };
+		3750A081283300C700E72EB5 /* Protagonist IV Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A031283300C700E72EB5 /* Protagonist IV Placeholder.png */; };
+		3750A082283300C700E72EB5 /* Surgeon IV Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A032283300C700E72EB5 /* Surgeon IV Placeholder.png */; };
 		3752F4AF28307516007AD922 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3752F4AE28307516007AD922 /* FirebaseAnalytics */; };
 		3752F4B128307516007AD922 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3752F4B028307516007AD922 /* FirebaseCrashlytics */; };
 		3752F4B3283078F3007AD922 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3752F4B2283078F3007AD922 /* GoogleService-Info.plist */; };
@@ -57,8 +137,6 @@
 		378922B128232F2600AA3B1B /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B028232F2600AA3B1B /* UserProfileViewController.swift */; };
 		378922B32823645200AA3B1B /* StatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B22823645200AA3B1B /* StatsManager.swift */; };
 		37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37983B8B2819F608007B241A /* SettingsViewController.swift */; };
-		379999032829B35C00A42F32 /* Badge Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 379999012829B35C00A42F32 /* Badge Placeholder.png */; };
-		379999042829B35C00A42F32 /* Badge.png in Resources */ = {isa = PBXBuildFile; fileRef = 379999022829B35C00A42F32 /* Badge.png */; };
 		379999062829E0C600A42F32 /* WelcomeScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379999052829E0C600A42F32 /* WelcomeScreenViewController.swift */; };
 		3799990D2829E64500A42F32 /* Notifications.png in Resources */ = {isa = PBXBuildFile; fileRef = 379999092829E64400A42F32 /* Notifications.png */; };
 		3799990E2829E64500A42F32 /* Get to know each other.png in Resources */ = {isa = PBXBuildFile; fileRef = 3799990A2829E64400A42F32 /* Get to know each other.png */; };
@@ -136,6 +214,86 @@
 		372B8A28281CE61F00117A72 /* dark@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark@3x.png"; sourceTree = "<group>"; };
 		372B8A29281CE61F00117A72 /* dark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark@2x.png"; sourceTree = "<group>"; };
 		372B8A38281E41E600117A72 /* Finale To Do.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Finale To Do.entitlements"; sourceTree = "<group>"; };
+		37509FE2283300C600E72EB5 /* Protagonist I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist I.png"; sourceTree = "<group>"; };
+		37509FE3283300C600E72EB5 /* Protagonist II.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist II.png"; sourceTree = "<group>"; };
+		37509FE4283300C600E72EB5 /* Patron V.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron V.png"; sourceTree = "<group>"; };
+		37509FE5283300C600E72EB5 /* Companion I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion I.png"; sourceTree = "<group>"; };
+		37509FE6283300C600E72EB5 /* Surgeon I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon I.png"; sourceTree = "<group>"; };
+		37509FE7283300C600E72EB5 /* Extravert IV.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Extravert IV.png"; sourceTree = "<group>"; };
+		37509FE8283300C600E72EB5 /* Workaholic II.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Workaholic II.png"; sourceTree = "<group>"; };
+		37509FE9283300C600E72EB5 /* Connoisseur I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur I.png"; sourceTree = "<group>"; };
+		37509FEA283300C600E72EB5 /* Workaholic I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Workaholic I.png"; sourceTree = "<group>"; };
+		37509FEB283300C600E72EB5 /* Surgeon II.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon II.png"; sourceTree = "<group>"; };
+		37509FEC283300C600E72EB5 /* Patron II.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron II.png"; sourceTree = "<group>"; };
+		37509FED283300C600E72EB5 /* Companion IV.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion IV.png"; sourceTree = "<group>"; };
+		37509FEE283300C600E72EB5 /* Connoisseur II.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur II.png"; sourceTree = "<group>"; };
+		37509FEF283300C600E72EB5 /* Surgeon III.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon III.png"; sourceTree = "<group>"; };
+		37509FF0283300C600E72EB5 /* Extravert I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Extravert I.png"; sourceTree = "<group>"; };
+		37509FF1283300C600E72EB5 /* Patron III.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron III.png"; sourceTree = "<group>"; };
+		37509FF2283300C600E72EB5 /* Principal II.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Principal II.png"; sourceTree = "<group>"; };
+		37509FF3283300C600E72EB5 /* Principal V.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Principal V.png"; sourceTree = "<group>"; };
+		37509FF4283300C600E72EB5 /* Companion III.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion III.png"; sourceTree = "<group>"; };
+		37509FF5283300C600E72EB5 /* Extravert III.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Extravert III.png"; sourceTree = "<group>"; };
+		37509FF6283300C600E72EB5 /* Patron IV.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron IV.png"; sourceTree = "<group>"; };
+		37509FF7283300C600E72EB5 /* Surgeon IV.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon IV.png"; sourceTree = "<group>"; };
+		37509FF8283300C600E72EB5 /* Companion II.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion II.png"; sourceTree = "<group>"; };
+		37509FF9283300C600E72EB5 /* Principal III.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Principal III.png"; sourceTree = "<group>"; };
+		37509FFA283300C600E72EB5 /* Extravert V.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Extravert V.png"; sourceTree = "<group>"; };
+		37509FFB283300C600E72EB5 /* Workaholic III.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Workaholic III.png"; sourceTree = "<group>"; };
+		37509FFC283300C600E72EB5 /* Principal I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Principal I.png"; sourceTree = "<group>"; };
+		37509FFD283300C600E72EB5 /* Companion V.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion V.png"; sourceTree = "<group>"; };
+		37509FFE283300C600E72EB5 /* Principal IV.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Principal IV.png"; sourceTree = "<group>"; };
+		37509FFF283300C600E72EB5 /* Protagonist IV.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist IV.png"; sourceTree = "<group>"; };
+		3750A000283300C600E72EB5 /* Connoisseur III.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur III.png"; sourceTree = "<group>"; };
+		3750A001283300C600E72EB5 /* Protagonist V.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist V.png"; sourceTree = "<group>"; };
+		3750A002283300C600E72EB5 /* Connoisseur IV.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur IV.png"; sourceTree = "<group>"; };
+		3750A003283300C600E72EB5 /* Patron I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron I.png"; sourceTree = "<group>"; };
+		3750A004283300C600E72EB5 /* Workaholic V.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Workaholic V.png"; sourceTree = "<group>"; };
+		3750A005283300C600E72EB5 /* Connoisseur V.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur V.png"; sourceTree = "<group>"; };
+		3750A006283300C600E72EB5 /* Workaholic IV.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Workaholic IV.png"; sourceTree = "<group>"; };
+		3750A007283300C600E72EB5 /* Extravert II.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Extravert II.png"; sourceTree = "<group>"; };
+		3750A008283300C600E72EB5 /* Surgeon V.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon V.png"; sourceTree = "<group>"; };
+		3750A009283300C600E72EB5 /* Protagonist III.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist III.png"; sourceTree = "<group>"; };
+		3750A00B283300C700E72EB5 /* Protagonist I Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist I Placeholder.png"; sourceTree = "<group>"; };
+		3750A00C283300C700E72EB5 /* Companion II Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion II Placeholder.png"; sourceTree = "<group>"; };
+		3750A00D283300C700E72EB5 /* Surgeon III Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon III Placeholder.png"; sourceTree = "<group>"; };
+		3750A00E283300C700E72EB5 /* Connoisseur V Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur V Placeholder.png"; sourceTree = "<group>"; };
+		3750A00F283300C700E72EB5 /* Surgeon I Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon I Placeholder.png"; sourceTree = "<group>"; };
+		3750A010283300C700E72EB5 /* Surgeon II Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon II Placeholder.png"; sourceTree = "<group>"; };
+		3750A011283300C700E72EB5 /* Protagonist II Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist II Placeholder.png"; sourceTree = "<group>"; };
+		3750A012283300C700E72EB5 /* Principal IV Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Principal IV Placeholder.png"; sourceTree = "<group>"; };
+		3750A013283300C700E72EB5 /* Companion V Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion V Placeholder.png"; sourceTree = "<group>"; };
+		3750A014283300C700E72EB5 /* Connoisseur II Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur II Placeholder.png"; sourceTree = "<group>"; };
+		3750A015283300C700E72EB5 /* Patron V Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron V Placeholder.png"; sourceTree = "<group>"; };
+		3750A016283300C700E72EB5 /* Workaholic II Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Workaholic II Placeholder.png"; sourceTree = "<group>"; };
+		3750A017283300C700E72EB5 /* Extravert II Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Extravert II Placeholder.png"; sourceTree = "<group>"; };
+		3750A018283300C700E72EB5 /* Protagonist III Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist III Placeholder.png"; sourceTree = "<group>"; };
+		3750A019283300C700E72EB5 /* Principal III Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Principal III Placeholder.png"; sourceTree = "<group>"; };
+		3750A01A283300C700E72EB5 /* Workaholic V Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Workaholic V Placeholder.png"; sourceTree = "<group>"; };
+		3750A01B283300C700E72EB5 /* Principal V Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Principal V Placeholder.png"; sourceTree = "<group>"; };
+		3750A01C283300C700E72EB5 /* Patron IV Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron IV Placeholder.png"; sourceTree = "<group>"; };
+		3750A01D283300C700E72EB5 /* Connoisseur III Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur III Placeholder.png"; sourceTree = "<group>"; };
+		3750A01E283300C700E72EB5 /* Extravert V Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Extravert V Placeholder.png"; sourceTree = "<group>"; };
+		3750A01F283300C700E72EB5 /* Extravert I Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Extravert I Placeholder.png"; sourceTree = "<group>"; };
+		3750A020283300C700E72EB5 /* Extravert IV Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Extravert IV Placeholder.png"; sourceTree = "<group>"; };
+		3750A021283300C700E72EB5 /* Companion III Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion III Placeholder.png"; sourceTree = "<group>"; };
+		3750A022283300C700E72EB5 /* Workaholic I Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Workaholic I Placeholder.png"; sourceTree = "<group>"; };
+		3750A023283300C700E72EB5 /* Principal I Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Principal I Placeholder.png"; sourceTree = "<group>"; };
+		3750A024283300C700E72EB5 /* Patron II Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron II Placeholder.png"; sourceTree = "<group>"; };
+		3750A025283300C700E72EB5 /* Patron III Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron III Placeholder.png"; sourceTree = "<group>"; };
+		3750A026283300C700E72EB5 /* Principal II Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Principal II Placeholder.png"; sourceTree = "<group>"; };
+		3750A027283300C700E72EB5 /* Companion I Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion I Placeholder.png"; sourceTree = "<group>"; };
+		3750A028283300C700E72EB5 /* Extravert III Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Extravert III Placeholder.png"; sourceTree = "<group>"; };
+		3750A029283300C700E72EB5 /* Connoisseur IV Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur IV Placeholder.png"; sourceTree = "<group>"; };
+		3750A02A283300C700E72EB5 /* Workaholic IV Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Workaholic IV Placeholder.png"; sourceTree = "<group>"; };
+		3750A02B283300C700E72EB5 /* Patron I Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron I Placeholder.png"; sourceTree = "<group>"; };
+		3750A02C283300C700E72EB5 /* Workaholic III Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Workaholic III Placeholder.png"; sourceTree = "<group>"; };
+		3750A02D283300C700E72EB5 /* Protagonist V Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist V Placeholder.png"; sourceTree = "<group>"; };
+		3750A02E283300C700E72EB5 /* Companion IV Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Companion IV Placeholder.png"; sourceTree = "<group>"; };
+		3750A02F283300C700E72EB5 /* Connoisseur I Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Connoisseur I Placeholder.png"; sourceTree = "<group>"; };
+		3750A030283300C700E72EB5 /* Surgeon V Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon V Placeholder.png"; sourceTree = "<group>"; };
+		3750A031283300C700E72EB5 /* Protagonist IV Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist IV Placeholder.png"; sourceTree = "<group>"; };
+		3750A032283300C700E72EB5 /* Surgeon IV Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon IV Placeholder.png"; sourceTree = "<group>"; };
 		3752F4B2283078F3007AD922 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3752F4B8283095EC007AD922 /* WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		3752F4B9283095EC007AD922 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -174,8 +332,6 @@
 		378922B028232F2600AA3B1B /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		378922B22823645200AA3B1B /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
 		37983B8B2819F608007B241A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		379999012829B35C00A42F32 /* Badge Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Badge Placeholder.png"; sourceTree = "<group>"; };
-		379999022829B35C00A42F32 /* Badge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Badge.png; sourceTree = "<group>"; };
 		379999052829E0C600A42F32 /* WelcomeScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreenViewController.swift; sourceTree = "<group>"; };
 		379999092829E64400A42F32 /* Notifications.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Notifications.png; sourceTree = "<group>"; };
 		3799990A2829E64400A42F32 /* Get to know each other.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Get to know each other.png"; sourceTree = "<group>"; };
@@ -283,6 +439,100 @@
 			path = "Alternative Icons";
 			sourceTree = "<group>";
 		};
+		37509FE1283300C600E72EB5 /* Badges */ = {
+			isa = PBXGroup;
+			children = (
+				37509FE2283300C600E72EB5 /* Protagonist I.png */,
+				37509FE3283300C600E72EB5 /* Protagonist II.png */,
+				37509FE4283300C600E72EB5 /* Patron V.png */,
+				37509FE5283300C600E72EB5 /* Companion I.png */,
+				37509FE6283300C600E72EB5 /* Surgeon I.png */,
+				37509FE7283300C600E72EB5 /* Extravert IV.png */,
+				37509FE8283300C600E72EB5 /* Workaholic II.png */,
+				37509FE9283300C600E72EB5 /* Connoisseur I.png */,
+				37509FEA283300C600E72EB5 /* Workaholic I.png */,
+				37509FEB283300C600E72EB5 /* Surgeon II.png */,
+				37509FEC283300C600E72EB5 /* Patron II.png */,
+				37509FED283300C600E72EB5 /* Companion IV.png */,
+				37509FEE283300C600E72EB5 /* Connoisseur II.png */,
+				37509FEF283300C600E72EB5 /* Surgeon III.png */,
+				37509FF0283300C600E72EB5 /* Extravert I.png */,
+				37509FF1283300C600E72EB5 /* Patron III.png */,
+				37509FF2283300C600E72EB5 /* Principal II.png */,
+				37509FF3283300C600E72EB5 /* Principal V.png */,
+				37509FF4283300C600E72EB5 /* Companion III.png */,
+				37509FF5283300C600E72EB5 /* Extravert III.png */,
+				37509FF6283300C600E72EB5 /* Patron IV.png */,
+				37509FF7283300C600E72EB5 /* Surgeon IV.png */,
+				37509FF8283300C600E72EB5 /* Companion II.png */,
+				37509FF9283300C600E72EB5 /* Principal III.png */,
+				37509FFA283300C600E72EB5 /* Extravert V.png */,
+				37509FFB283300C600E72EB5 /* Workaholic III.png */,
+				37509FFC283300C600E72EB5 /* Principal I.png */,
+				37509FFD283300C600E72EB5 /* Companion V.png */,
+				37509FFE283300C600E72EB5 /* Principal IV.png */,
+				37509FFF283300C600E72EB5 /* Protagonist IV.png */,
+				3750A000283300C600E72EB5 /* Connoisseur III.png */,
+				3750A001283300C600E72EB5 /* Protagonist V.png */,
+				3750A002283300C600E72EB5 /* Connoisseur IV.png */,
+				3750A003283300C600E72EB5 /* Patron I.png */,
+				3750A004283300C600E72EB5 /* Workaholic V.png */,
+				3750A005283300C600E72EB5 /* Connoisseur V.png */,
+				3750A006283300C600E72EB5 /* Workaholic IV.png */,
+				3750A007283300C600E72EB5 /* Extravert II.png */,
+				3750A008283300C600E72EB5 /* Surgeon V.png */,
+				3750A009283300C600E72EB5 /* Protagonist III.png */,
+			);
+			path = Badges;
+			sourceTree = "<group>";
+		};
+		3750A00A283300C700E72EB5 /* Badges Placeholders */ = {
+			isa = PBXGroup;
+			children = (
+				3750A00B283300C700E72EB5 /* Protagonist I Placeholder.png */,
+				3750A00C283300C700E72EB5 /* Companion II Placeholder.png */,
+				3750A00D283300C700E72EB5 /* Surgeon III Placeholder.png */,
+				3750A00E283300C700E72EB5 /* Connoisseur V Placeholder.png */,
+				3750A00F283300C700E72EB5 /* Surgeon I Placeholder.png */,
+				3750A010283300C700E72EB5 /* Surgeon II Placeholder.png */,
+				3750A011283300C700E72EB5 /* Protagonist II Placeholder.png */,
+				3750A012283300C700E72EB5 /* Principal IV Placeholder.png */,
+				3750A013283300C700E72EB5 /* Companion V Placeholder.png */,
+				3750A014283300C700E72EB5 /* Connoisseur II Placeholder.png */,
+				3750A015283300C700E72EB5 /* Patron V Placeholder.png */,
+				3750A016283300C700E72EB5 /* Workaholic II Placeholder.png */,
+				3750A017283300C700E72EB5 /* Extravert II Placeholder.png */,
+				3750A018283300C700E72EB5 /* Protagonist III Placeholder.png */,
+				3750A019283300C700E72EB5 /* Principal III Placeholder.png */,
+				3750A01A283300C700E72EB5 /* Workaholic V Placeholder.png */,
+				3750A01B283300C700E72EB5 /* Principal V Placeholder.png */,
+				3750A01C283300C700E72EB5 /* Patron IV Placeholder.png */,
+				3750A01D283300C700E72EB5 /* Connoisseur III Placeholder.png */,
+				3750A01E283300C700E72EB5 /* Extravert V Placeholder.png */,
+				3750A01F283300C700E72EB5 /* Extravert I Placeholder.png */,
+				3750A020283300C700E72EB5 /* Extravert IV Placeholder.png */,
+				3750A021283300C700E72EB5 /* Companion III Placeholder.png */,
+				3750A022283300C700E72EB5 /* Workaholic I Placeholder.png */,
+				3750A023283300C700E72EB5 /* Principal I Placeholder.png */,
+				3750A024283300C700E72EB5 /* Patron II Placeholder.png */,
+				3750A025283300C700E72EB5 /* Patron III Placeholder.png */,
+				3750A026283300C700E72EB5 /* Principal II Placeholder.png */,
+				3750A027283300C700E72EB5 /* Companion I Placeholder.png */,
+				3750A028283300C700E72EB5 /* Extravert III Placeholder.png */,
+				3750A029283300C700E72EB5 /* Connoisseur IV Placeholder.png */,
+				3750A02A283300C700E72EB5 /* Workaholic IV Placeholder.png */,
+				3750A02B283300C700E72EB5 /* Patron I Placeholder.png */,
+				3750A02C283300C700E72EB5 /* Workaholic III Placeholder.png */,
+				3750A02D283300C700E72EB5 /* Protagonist V Placeholder.png */,
+				3750A02E283300C700E72EB5 /* Companion IV Placeholder.png */,
+				3750A02F283300C700E72EB5 /* Connoisseur I Placeholder.png */,
+				3750A030283300C700E72EB5 /* Surgeon V Placeholder.png */,
+				3750A031283300C700E72EB5 /* Protagonist IV Placeholder.png */,
+				3750A032283300C700E72EB5 /* Surgeon IV Placeholder.png */,
+			);
+			path = "Badges Placeholders";
+			sourceTree = "<group>";
+		};
 		3752F4BD283095EC007AD922 /* Widget */ = {
 			isa = PBXGroup;
 			children = (
@@ -372,17 +622,16 @@
 		379999072829E62100A42F32 /* Graphics */ = {
 			isa = PBXGroup;
 			children = (
-				37A75A7D282F3757004D6450 /* Misc */,
 				377CB341282DF1B7001CDBBD /* Sharing */,
 				37CE7B82282AE76E00B15440 /* Guide Screenshots */,
-				379999082829E62C00A42F32 /* Welcome Screen */,
+				379999082829E62C00A42F32 /* Illustrations */,
 				37BFC1BA28248F7200BCF3FF /* Badges Icons */,
 				372B8A21281CE61F00117A72 /* Alternative Icons */,
 			);
 			path = Graphics;
 			sourceTree = "<group>";
 		};
-		379999082829E62C00A42F32 /* Welcome Screen */ = {
+		379999082829E62C00A42F32 /* Illustrations */ = {
 			isa = PBXGroup;
 			children = (
 				3799990C2829E64400A42F32 /* Cloud sync.png */,
@@ -390,8 +639,9 @@
 				379999092829E64400A42F32 /* Notifications.png */,
 				37999916282A07C700A42F32 /* Welcome Screen.png */,
 				37999918282A07D600A42F32 /* All Set.png */,
+				37A75A7E282F3760004D6450 /* Unlock All Perks.png */,
 			);
-			path = "Welcome Screen";
+			path = Illustrations;
 			sourceTree = "<group>";
 		};
 		379999132829FF6F00A42F32 /* Fonts */ = {
@@ -412,14 +662,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		37A75A7D282F3757004D6450 /* Misc */ = {
-			isa = PBXGroup;
-			children = (
-				37A75A7E282F3760004D6450 /* Unlock All Perks.png */,
-			);
-			path = Misc;
-			sourceTree = "<group>";
-		};
 		37B750BF281A40E900164803 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
@@ -436,8 +678,8 @@
 		37BFC1BA28248F7200BCF3FF /* Badges Icons */ = {
 			isa = PBXGroup;
 			children = (
-				379999012829B35C00A42F32 /* Badge Placeholder.png */,
-				379999022829B35C00A42F32 /* Badge.png */,
+				37509FE1283300C600E72EB5 /* Badges */,
+				3750A00A283300C700E72EB5 /* Badges Placeholders */,
 			);
 			path = "Badges Icons";
 			sourceTree = "<group>";
@@ -562,51 +804,129 @@
 				377CB32E282C4166001CDBBD /* Create List.png in Resources */,
 				379999102829E64500A42F32 /* Cloud sync.png in Resources */,
 				377CB33C282C45EB001CDBBD /* Edit Task.png in Resources */,
+				3750A064283300C700E72EB5 /* Connoisseur II Placeholder.png in Resources */,
+				3750A044283300C700E72EB5 /* Principal V.png in Resources */,
+				3750A080283300C700E72EB5 /* Surgeon V Placeholder.png in Resources */,
 				377CB334282C4166001CDBBD /* Level.png in Resources */,
 				37D542742825888E00373987 /* redFilled@2x.png in Resources */,
+				3750A034283300C700E72EB5 /* Protagonist II.png in Resources */,
+				3750A05C283300C700E72EB5 /* Companion II Placeholder.png in Resources */,
+				3750A05E283300C700E72EB5 /* Connoisseur V Placeholder.png in Resources */,
+				3750A056283300C700E72EB5 /* Connoisseur V.png in Resources */,
+				3750A07A283300C700E72EB5 /* Workaholic IV Placeholder.png in Resources */,
+				3750A065283300C700E72EB5 /* Patron V Placeholder.png in Resources */,
+				3750A053283300C700E72EB5 /* Connoisseur IV.png in Resources */,
+				3750A03E283300C700E72EB5 /* Companion IV.png in Resources */,
+				3750A05F283300C700E72EB5 /* Surgeon I Placeholder.png in Resources */,
+				3750A076283300C700E72EB5 /* Principal II Placeholder.png in Resources */,
+				3750A03B283300C700E72EB5 /* Workaholic I.png in Resources */,
+				3750A057283300C700E72EB5 /* Workaholic IV.png in Resources */,
+				3750A079283300C700E72EB5 /* Connoisseur IV Placeholder.png in Resources */,
 				377CB336282C4166001CDBBD /* Edit List.png in Resources */,
+				3750A082283300C700E72EB5 /* Surgeon IV Placeholder.png in Resources */,
+				3750A06F283300C700E72EB5 /* Extravert I Placeholder.png in Resources */,
+				3750A04C283300C700E72EB5 /* Workaholic III.png in Resources */,
 				37D5426E2825888E00373987 /* orange@3x.png in Resources */,
+				3750A03D283300C700E72EB5 /* Patron II.png in Resources */,
+				3750A039283300C700E72EB5 /* Workaholic II.png in Resources */,
 				37D542762825888E00373987 /* redFilled@3x.png in Resources */,
+				3750A069283300C700E72EB5 /* Principal III Placeholder.png in Resources */,
 				37D5426C2825888E00373987 /* purple@3x.png in Resources */,
 				377CB337282C4166001CDBBD /* Create Task.png in Resources */,
-				379999032829B35C00A42F32 /* Badge Placeholder.png in Resources */,
+				3750A070283300C700E72EB5 /* Extravert IV Placeholder.png in Resources */,
+				3750A068283300C700E72EB5 /* Protagonist III Placeholder.png in Resources */,
+				3750A077283300C700E72EB5 /* Companion I Placeholder.png in Resources */,
+				3750A043283300C700E72EB5 /* Principal II.png in Resources */,
+				3750A050283300C700E72EB5 /* Protagonist IV.png in Resources */,
+				3750A062283300C700E72EB5 /* Principal IV Placeholder.png in Resources */,
+				3750A047283300C700E72EB5 /* Patron IV.png in Resources */,
+				3750A059283300C700E72EB5 /* Surgeon V.png in Resources */,
+				3750A06E283300C700E72EB5 /* Extravert V Placeholder.png in Resources */,
+				3750A038283300C700E72EB5 /* Extravert IV.png in Resources */,
+				3750A06B283300C700E72EB5 /* Principal V Placeholder.png in Resources */,
 				372B8A2A281CE61F00117A72 /* classicFilled@2x.png in Resources */,
+				3750A037283300C700E72EB5 /* Surgeon I.png in Resources */,
 				377CB33B282C45EB001CDBBD /* Complete Task.png in Resources */,
+				3750A07C283300C700E72EB5 /* Workaholic III Placeholder.png in Resources */,
+				3750A05A283300C700E72EB5 /* Protagonist III.png in Resources */,
 				372B8A2E281CE61F00117A72 /* classic@2x.png in Resources */,
+				3750A04B283300C700E72EB5 /* Extravert V.png in Resources */,
+				3750A046283300C700E72EB5 /* Extravert III.png in Resources */,
+				3750A07D283300C700E72EB5 /* Protagonist V Placeholder.png in Resources */,
 				372B8A31281CE61F00117A72 /* dark@2x.png in Resources */,
+				3750A04D283300C700E72EB5 /* Principal I.png in Resources */,
 				376AD0CC2808DC5A00986B49 /* Assets.xcassets in Resources */,
 				37A75A7F282F3760004D6450 /* Unlock All Perks.png in Resources */,
+				3750A071283300C700E72EB5 /* Companion III Placeholder.png in Resources */,
+				3750A04E283300C700E72EB5 /* Companion V.png in Resources */,
 				372B8A2C281CE61F00117A72 /* darkmodeFilled@3x.png in Resources */,
+				3750A055283300C700E72EB5 /* Workaholic V.png in Resources */,
 				37D5426D2825888E00373987 /* purpleFilled@2x.png in Resources */,
 				377CB320282B847F001CDBBD /* iPhone Frame.png in Resources */,
+				3750A04A283300C700E72EB5 /* Principal III.png in Resources */,
+				3750A040283300C700E72EB5 /* Surgeon III.png in Resources */,
 				37D542702825888E00373987 /* red@2x.png in Resources */,
 				37D542732825888E00373987 /* blackFilled@2x.png in Resources */,
 				37D542682825888E00373987 /* black@3x.png in Resources */,
 				377CB331282C4166001CDBBD /* Reorder Tasks.png in Resources */,
-				379999042829B35C00A42F32 /* Badge.png in Resources */,
+				3750A054283300C700E72EB5 /* Patron I.png in Resources */,
+				3750A03C283300C700E72EB5 /* Surgeon II.png in Resources */,
+				3750A05B283300C700E72EB5 /* Protagonist I Placeholder.png in Resources */,
 				377CB333282C4166001CDBBD /* Badges.png in Resources */,
+				3750A05D283300C700E72EB5 /* Surgeon III Placeholder.png in Resources */,
+				3750A03A283300C700E72EB5 /* Connoisseur I.png in Resources */,
+				3750A052283300C700E72EB5 /* Protagonist V.png in Resources */,
 				37D542692825888E00373987 /* orange@2x.png in Resources */,
 				37E3116D282EDB8800602990 /* Sharing Modal Background.png in Resources */,
+				3750A048283300C700E72EB5 /* Surgeon IV.png in Resources */,
+				3750A07B283300C700E72EB5 /* Patron I Placeholder.png in Resources */,
+				3750A033283300C700E72EB5 /* Protagonist I.png in Resources */,
+				3750A061283300C700E72EB5 /* Protagonist II Placeholder.png in Resources */,
+				3750A074283300C700E72EB5 /* Patron II Placeholder.png in Resources */,
 				37999919282A07D600A42F32 /* All Set.png in Resources */,
+				3750A03F283300C700E72EB5 /* Connoisseur II.png in Resources */,
 				37D5426F2825888E00373987 /* blackFilled@3x.png in Resources */,
 				372B8A30281CE61F00117A72 /* dark@3x.png in Resources */,
+				3750A042283300C700E72EB5 /* Patron III.png in Resources */,
 				37D542712825888E00373987 /* red@3x.png in Resources */,
+				3750A051283300C700E72EB5 /* Connoisseur III.png in Resources */,
 				377CB332282C4166001CDBBD /* Reorder Lists.png in Resources */,
 				37999917282A07C700A42F32 /* Welcome Screen.png in Resources */,
+				3750A058283300C700E72EB5 /* Extravert II.png in Resources */,
 				37D5426A2825888E00373987 /* purpleFilled@3x.png in Resources */,
+				3750A067283300C700E72EB5 /* Extravert II Placeholder.png in Resources */,
+				3750A045283300C700E72EB5 /* Companion III.png in Resources */,
+				3750A07F283300C700E72EB5 /* Connoisseur I Placeholder.png in Resources */,
+				3750A041283300C700E72EB5 /* Extravert I.png in Resources */,
 				379999152829FF9300A42F32 /* Rubik.ttf in Resources */,
+				3750A060283300C700E72EB5 /* Surgeon II Placeholder.png in Resources */,
+				3750A049283300C700E72EB5 /* Companion II.png in Resources */,
 				372B8A2D281CE61F00117A72 /* darkmodeFilled@2x.png in Resources */,
 				3799990E2829E64500A42F32 /* Get to know each other.png in Resources */,
 				3799990D2829E64500A42F32 /* Notifications.png in Resources */,
+				3750A066283300C700E72EB5 /* Workaholic II Placeholder.png in Resources */,
+				3750A06D283300C700E72EB5 /* Connoisseur III Placeholder.png in Resources */,
+				3750A078283300C700E72EB5 /* Extravert III Placeholder.png in Resources */,
 				377CB335282C4166001CDBBD /* Sort Tasks.png in Resources */,
+				3750A081283300C700E72EB5 /* Protagonist IV Placeholder.png in Resources */,
+				3750A075283300C700E72EB5 /* Patron III Placeholder.png in Resources */,
 				37D5426B2825888E00373987 /* orangeFilled@2x.png in Resources */,
 				377CB34B282EDAFA001CDBBD /* Sharing Rays.png in Resources */,
+				3750A073283300C700E72EB5 /* Principal I Placeholder.png in Resources */,
 				37D542672825888E00373987 /* orangeFilled@3x.png in Resources */,
+				3750A063283300C700E72EB5 /* Companion V Placeholder.png in Resources */,
 				377CB338282C4166001CDBBD /* Change Task Details.png in Resources */,
 				372B8A2F281CE61F00117A72 /* classicFilled@3x.png in Resources */,
 				37D542752825888E00373987 /* black@2x.png in Resources */,
+				3750A036283300C700E72EB5 /* Companion I.png in Resources */,
+				3750A06A283300C700E72EB5 /* Workaholic V Placeholder.png in Resources */,
+				3750A04F283300C700E72EB5 /* Principal IV.png in Resources */,
+				3750A035283300C700E72EB5 /* Patron V.png in Resources */,
+				3750A07E283300C700E72EB5 /* Companion IV Placeholder.png in Resources */,
+				3750A072283300C700E72EB5 /* Workaholic I Placeholder.png in Resources */,
 				372B8A2B281CE61F00117A72 /* classic@3x.png in Resources */,
 				3752F4B3283078F3007AD922 /* GoogleService-Info.plist in Resources */,
+				3750A06C283300C700E72EB5 /* Patron IV Placeholder.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

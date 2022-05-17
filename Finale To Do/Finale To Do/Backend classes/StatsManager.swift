@@ -204,11 +204,11 @@ struct AchievementBadgeGroup {
     var unlockStatValue: [Int]
     
     func getIcon(index: Int) -> UIImage {
-        return UIImage(named: "Badge")!
+        return UIImage(named: getName(index: index))!
     }
     
     func getPlaceholder(index: Int) -> UIImage {
-        return UIImage(named: "Badge Placeholder")!
+        return UIImage(named: "\(getName(index: index)) Placeholder")!
     }
     
     func getName(index: Int) -> String {

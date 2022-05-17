@@ -10,29 +10,40 @@ import SwiftUI
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry()
+        return SimpleEntry(date: Date.now)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry()
+        let entry = SimpleEntry(date: Date.now)
         completion(entry)
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-       let timeline = Timeline(entries: [SimpleEntry()], policy: .atEnd)
+        var entries = [SimpleEntry]()
+        
+        let currentDate = Date()
+        
+        for minutesOffset in 0..<10 {
+            let entryDate = Calendar.current.date(byAdding: .minute, value: minutesOffset*30, to: currentDate)!
+            let entry = SimpleEntry(date: entryDate)
+            entries.append(entry)
+        }
+        
+        let timeline = Timeline(entries: entries, policy: .atEnd)
         completion(timeline)
     }
 }
 
 struct SimpleEntry: TimelineEntry {
-    let date: Date = Date.now
+    let date: Date
     
     let title: String
     let upcomingTasks: [WidgetTask]
     let completedTasks: [WidgetTask]
     let taskNumber: Int
     
-    init () {
+    init (date: Date) {
+        self.date = date
         self.title = WidgetSync.userDefaults.value(forKey: WidgetSync.widgetTitleSyncKey) as? String ?? "Tasks"
         
         if let data = WidgetSync.userDefaults.data(forKey: WidgetSync.widgetUpcomingTasksSyncKey) {
@@ -126,7 +137,7 @@ struct WidgeTaskListView: View {
                 
                 if entry.upcomingTasks.count > 0 {
                     ForEach(0..<min(maxNumberOfTasks, entry.upcomingTasks.count)) { i in
-                        UpcomingTaskRow(task: entry.upcomingTasks[i], showDate: showDate)
+                        UpcomingTaskRow(task: entry.upcomingTasks[i], showDate: showDate, currentDate: entry.date)
                     }
 
                     Spacer()
@@ -168,7 +179,7 @@ struct WidgeTaskListWithCompletedView: View {
                     .padding(.vertical, 2)
 
                     ForEach(entry.upcomingTasks) { upcomingTask in
-                        UpcomingTaskRow(task: upcomingTask, showDate: true)
+                        UpcomingTaskRow(task: upcomingTask, showDate: true, currentDate: entry.date)
                     }
                     
                     if entry.upcomingTasks.count <= WidgetSync.maxNumberOfTasks  {
@@ -182,7 +193,7 @@ struct WidgeTaskListWithCompletedView: View {
                         .padding(.bottom, 2)
 
                         ForEach(entry.completedTasks) { completedTask in
-                            CompletedTaskRow(task: completedTask, showDate: true)
+                            CompletedTaskRow(task: completedTask, showDate: true, currentDate: entry.date)
                         }
                     }
                     
@@ -206,6 +217,7 @@ struct WidgeTaskListWithCompletedView: View {
 struct UpcomingTaskRow: View {
     let task: WidgetTask
     let showDate: Bool
+    let currentDate: Date
     
     var body: some View {
         HStack {
@@ -218,9 +230,9 @@ struct UpcomingTaskRow: View {
             Spacer()
             
             if showDate {
-                Text(task.assignedDateTimeString)
+                Text(task.assignedDateTimeString(currentDate: currentDate))
                     .font(.system(size: 10))
-                    .foregroundColor(task.isOverdue ? Color.red.lerp(second: .black, percentage: 0.2) : Color(uiColor: .systemGray))
+                    .foregroundColor(task.isOverdue(currentDate: currentDate) ? Color.red.lerp(second: .black, percentage: 0.2) : Color(uiColor: .systemGray))
             }
         }
     }
@@ -230,6 +242,7 @@ struct CompletedTaskRow: View {
 
     let task: WidgetTask
     let showDate: Bool
+    let currentDate: Date
     
     var body: some View {
         HStack {
@@ -240,7 +253,7 @@ struct CompletedTaskRow: View {
                 .lineLimit(1)
             Spacer()
             if showDate {
-                Text(task.assignedDateTimeString)
+                Text(task.assignedDateTimeString(currentDate: currentDate))
                     .strikethrough()
                     .font(.system(size: 10))
                     .foregroundColor(Color(uiColor: .systemGray3))

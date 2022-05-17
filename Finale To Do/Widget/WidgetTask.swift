@@ -17,17 +17,17 @@ struct WidgetTask: Identifiable, Codable {
     let isDueTimeAssigned: Bool
     let dateAssigned: Date
     
-    var assignedDateTimeString: String {
+    func assignedDateTimeString(currentDate: Date) -> String {
         if !isDateAssigned {
             return ""
         }
         
         var attString = ""
-        if Calendar.current.isDateInToday(dateAssigned) {
+        if isSameDay(date1: dateAssigned, date2: currentDate) {
             attString = "Today"
-        } else if Calendar.current.isDateInTomorrow(dateAssigned) {
+        } else if isTomorrow(date1: dateAssigned, date2: currentDate) {
             attString = "Tomorrow"
-        } else if Calendar.current.isDateInYesterday(dateAssigned) {
+        } else if isYesterday(date1: dateAssigned, date2: currentDate) {
             attString = "Yesterday"
         } else {
             let formatter = DateFormatter()
@@ -51,9 +51,22 @@ struct WidgetTask: Identifiable, Codable {
         return attString
     }
     
-    var isOverdue: Bool {
+    func isOverdue(currentDate: Date) -> Bool {
         if !isDateAssigned { return false }
-        return Date.now > dateAssigned
+        return currentDate > dateAssigned
+    }
+    
+    func isSameDay(date1: Date, date2: Date) -> Bool {
+        let diff = date1.get(.day, calendar: Calendar.current) - date2.get(.day, calendar: Calendar.current)
+        return diff == 0
+    }
+    func isYesterday(date1: Date, date2: Date) -> Bool {
+        let diff = date1.get(.day, calendar: Calendar.current) - date2.get(.day, calendar: Calendar.current)
+        return diff == -1
+    }
+    func isTomorrow(date1: Date, date2: Date) -> Bool {
+        let diff = date1.get(.day, calendar: Calendar.current) - date2.get(.day, calendar: Calendar.current)
+        return diff == 1
     }
 }
 

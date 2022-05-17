@@ -439,7 +439,7 @@ class WelcomeScreenAllSetPage: UIViewController {
     
     func CreateTutorialTaskList () -> TaskList{
         let tasklistID = UUID()
-        return TaskList(name: "Welcome to Finale", primaryColor: .defaultColor, systemIcon: "graduationcap.fill", sortingPreference: .ByTimeCreated, upcomingTasks:[
+        return TaskList(name: "Welcome to Finale", primaryColor: .defaultColor, systemIcon: "graduationcap.fill", sortingPreference: .Unsorted, upcomingTasks:[
             Task(name: "Tap ➕ to create new task", taskListID: tasklistID),
             Task(name: "Tap or slide the handle to complete task", taskListID: tasklistID),
             Task(name: "Double-tap task for quick edits", taskListID: tasklistID),

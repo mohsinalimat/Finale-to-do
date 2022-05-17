@@ -163,13 +163,17 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
             containerView.addSubview(placeholderLabel)
         }
         
+        let tap = UILongPressGestureRecognizer(target: self, action: #selector(MyBadgesTap))
+        tap.minimumPressDuration = 0
+        tap.cancelsTouchesInView = false
+        let tapContainer = UIView(frame: CGRect(x: 0, y: 0, width: containerView.frame.width, height: scrollView.frame.origin.y))
+        tapContainer.addGestureRecognizer(tap)
+        scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MyBadgesTap)))
+        
+        containerView.addSubview(tapContainer)
         containerView.addSubview(titleLabel)
         containerView.addSubview(openIcon)
         containerView.addSubview(scrollView)
-        
-        let tap = UILongPressGestureRecognizer(target: self, action: #selector(MyBadgesTap))
-        tap.minimumPressDuration = 0
-        containerView.addGestureRecognizer(tap)
         
         return containerView
     }
