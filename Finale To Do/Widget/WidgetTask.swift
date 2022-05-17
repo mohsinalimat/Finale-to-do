@@ -16,6 +16,7 @@ struct WidgetTask: Identifiable, Codable {
     let isDateAssigned: Bool
     let isDueTimeAssigned: Bool
     let dateAssigned: Date
+    let isHighPriority: Bool
     
     func assignedDateTimeString(currentDate: Date) -> String {
         if !isDateAssigned {

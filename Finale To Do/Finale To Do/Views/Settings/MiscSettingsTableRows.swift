@@ -340,6 +340,8 @@ class SettingsWidgetListsView: UIView {
         if App.settingsConfig.widgetLists.count >= App.userTaskLists.count + 1 {
             SelectOption(index: 0)
         }
+        
+        AnalyticsHelper.LogWidgetListsSelection()
     }
     
     func DeselectOption (index: Int) {
@@ -777,6 +779,13 @@ class SettingsAppLogoAndVersionView: UIView, UIDynamicTheme {
         super.init(frame: CGRect.zero)
         backgroundColor = .red
         
+        
+        let debugTaps = UITapGestureRecognizer(target: self, action: #selector(RevealDebug))
+        debugTaps.numberOfTapsRequired = 40
+        debugTaps.cancelsTouchesInView = false
+        appIcon.isUserInteractionEnabled = true
+        appIcon.addGestureRecognizer(debugTaps)
+        
         self.addSubview(appIcon)
         self.addSubview(versionLabel)
     }
@@ -812,6 +821,9 @@ class SettingsAppLogoAndVersionView: UIView, UIDynamicTheme {
         return ""
     }
     
+    @objc func RevealDebug () {
+        parentViewController?.navigationController?.show(SettingsDebugPage(), sender: parentViewController!.navigationController!)
+    }
     
     
     

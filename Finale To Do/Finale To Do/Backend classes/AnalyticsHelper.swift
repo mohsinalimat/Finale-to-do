@@ -143,6 +143,11 @@ class AnalyticsHelper {
                             ["app_badge_type" : type.str])
     }
     
+    static func LogWidgetListsSelection() {
+        Analytics.logEvent("settings_widget_lists_select", parameters:
+                            ["is_all_lists_selected" : App.settingsConfig.widgetLists.count == 0 ? "true" : "false"])
+    }
+    
     static func LogChangedDefaultList() {
         Analytics.logEvent("settings_default_list_changed", parameters: ["is_main_list_default" : App.settingsConfig.defaultListID == App.mainTaskList.id ? "true" : "false"])
     }
@@ -156,7 +161,7 @@ class AnalyticsHelper {
     }
     
     static func LogChangedAppIcon () {
-        Analytics.logEvent("settings_app_icon_changed", parameters: ["app_icon" : App.settingsConfig.selectedIcon.name!])
+        Analytics.logEvent("settings_app_icon_changed", parameters: ["app_icon" : App.settingsConfig.selectedIcon.displayName])
     }
     
     static func LogChangedName() {

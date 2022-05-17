@@ -784,7 +784,7 @@ class App: UIViewController {
         
         var upcomingWidgetTasks = [WidgetTask]()
         for task in allUpcomingTasks {
-            upcomingWidgetTasks.append(WidgetTask(name: task.name, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: task.dateAssigned))
+            upcomingWidgetTasks.append(WidgetTask(name: task.name, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: task.dateAssigned, isHighPriority: task.priority == .High))
         }
         
         var allCompletedTasks = [Task]()
@@ -805,7 +805,7 @@ class App: UIViewController {
         
         var completedWidgetTasks = [WidgetTask]()
         for task in allCompletedTasks {
-            completedWidgetTasks.append(WidgetTask(name: task.name, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: task.dateAssigned))
+            completedWidgetTasks.append(WidgetTask(name: task.name, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: task.dateAssigned, isHighPriority: task.priority == .High))
         }
         
         if let encoded = try? JSONEncoder().encode(upcomingWidgetTasks) {

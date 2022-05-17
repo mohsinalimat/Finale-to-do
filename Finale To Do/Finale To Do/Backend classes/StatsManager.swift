@@ -63,12 +63,12 @@ class StatsManager {
         return max(0, min(pointsPerTask, pointsPerTask+delta*2))
     }
     
-    static func UnlockBadge(badgeGroup: AchievementBadgeGroup, badgeIndex: Int) {
+    static func UnlockBadge(badgeGroup: AchievementBadgeGroup, badgeIndex: Int, earnPoints: Bool = true) {
         stats.badges[badgeGroup.groupID] = badgeIndex
 
         App.instance.ShowBadgeNotification(badgeGroup: badgeGroup)
         
-        if badgeGroup.groupID != 6 {
+        if badgeGroup.groupID != 6 && earnPoints {
             EarnPoints(points: getPointsForBadge(stage: badgeIndex), ignoreDailyLimit: true)
         }
     }

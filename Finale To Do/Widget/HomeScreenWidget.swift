@@ -227,6 +227,7 @@ struct UpcomingTaskRow: View {
             Text(task.name)
                 .font(.system(size: 12))
                 .lineLimit(1)
+                .foregroundColor(task.isHighPriority ? Color(hex: task.colorHex) : Color(uiColor: UIColor.label))
             Spacer()
             
             if showDate {
