@@ -71,7 +71,7 @@ class SettingsMainPage: SettingsPageViewController {
     override func GetSettings() -> [SettingsSection] {
         return [
             SettingsSection(title: "Personal", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Name", icon: UIImage(systemName: "person.text.rectangle.fill"), iconBackgroundColor: .systemGreen, nextPage: SettingsPersonalPage(), SetPreview: {return App.settingsConfig.userFullName;} ))
+                .navigationCell(model: SettingsNavigationOption(title: "Personal", icon: UIImage(systemName: "person.text.rectangle.fill"), iconBackgroundColor: .systemGreen, nextPage: SettingsPersonalPage(), SetPreview: {return App.settingsConfig.userFullName;} ))
             ]),
             
             SettingsSection(title: "Preferences", footer: "", options: [
@@ -151,6 +151,7 @@ class SettingsPersonalPage: SettingsPageViewController {
                     App.settingsConfig.isICloudSyncOn = true
                     App.instance.LoadICloudData(iCloudKey: NSUbiquitousKeyValueStore())
                     App.instance.sideMenuView.tableView.reloadData()
+                    App.instance.sideMenuView.userPanel.ReloadPanel()
                     App.instance.SelectTaskList(index: 0, closeMenu: false)
                     ThemeManager.SetTheme(theme: App.settingsConfig.GetCurrentTheme())
                     
@@ -193,7 +194,7 @@ class SettingsPersonalPage: SettingsPageViewController {
     
     
     override var PageTitle: String {
-        return "Name"
+        return "Personal"
     }
     
     var icloudSyncFooter: String {
@@ -365,17 +366,18 @@ class SettingsAboutPage: SettingsPageViewController {
             SettingsSection(options: [.customViewCell(model: SettingsAppLogoAndVersionView())], customHeight: SettingsAppLogoAndVersionView.height),
             
             SettingsSection(title: "More", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Visit FinaleToDo.com", icon: UIImage(systemName: "globe"), iconBackgroundColor: .systemBlue, url: URL(string: "https://finaletodo.com"))),
+//                .navigationCell(model: SettingsNavigationOption(title: "Visit FinaleToDo.com", icon: UIImage(systemName: "globe"), iconBackgroundColor: .systemBlue, url: URL(string: "https://finaletodo.com"))),
                 .navigationCell(model: SettingsNavigationOption(title: "Rate App", icon: UIImage(systemName: "star.fill"), iconBackgroundColor: .systemGreen, url: URL(string: "itms-apps:itunes.apple.com/us/app/apple-store/id1622931101?mt=8&action=write-review"))),
                 .navigationCell(model: SettingsNavigationOption(title: "Finale: Daily Habit Tracker", icon: UIImage(named: "Finale: Daily Habit Tracker Icon"), iconBorderWidth: 1, url: URL(string: "https://apps.apple.com/us/app/finale-daily-habit-tracker/id1546661013")))
             ]),
             
             SettingsSection(title: "Help", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Contact Developer", icon: UIImage(systemName: "message.fill"), iconBackgroundColor: .systemBlue, nextPage: nil, url: URL(string: "https://twitter.com/GrantOgany")))
+                .navigationCell(model: SettingsNavigationOption(title: "Developer", icon: UIImage(systemName: "message.fill"), iconBackgroundColor: .systemCyan, nextPage: nil, url: URL(string: "https://twitter.com/GrantOgany"))),
+                .navigationCell(model: SettingsNavigationOption(title: "Contact Support", icon: UIImage(systemName: "envelope.fill"), iconBackgroundColor: .systemBlue, nextPage: nil, url: URL(string: "mailto:info@finaletodo.com")))
             ]),
             
             SettingsSection(title: "Legal", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Privacy Policy", url: URL(string: "http://app.finale.cc/privacy-policy")))
+                .navigationCell(model: SettingsNavigationOption(title: "Privacy Policy", url: URL(string: "https://finaletodo.com/privacy-policy")))
             ]),
             
         ]
@@ -441,6 +443,9 @@ class SettingsGuidePage: SettingsPageViewController {
                 .navigationCell(model: SettingsNavigationOption(title: "Change details", nextPage: GuidePageViewController(
                     titleText: "Change Task Details",
                     descriptionText: "Long press on the task to peak its details. Tap inside to expand the view and edit the task."))),
+                .navigationCell(model: SettingsNavigationOption(title: "Task Priority", nextPage: GuidePageViewController(
+                    titleText: "Change Task Priority",
+                    descriptionText: "Tasks that contain an exclamation mark in their title are considered \"high priority\". Alternatively, you can set priority from the detailed task view."))),
                 .navigationCell(model: SettingsNavigationOption(title: "Complete", nextPage: GuidePageViewController(
                     titleText: "Complete Task",
                     descriptionText: "Tap on the colored handle to complete the task. Alternatively, you can slide the handle all the way to the right."))),
@@ -481,7 +486,7 @@ class SettingsGuidePage: SettingsPageViewController {
     }
 }
 
-
+//MARK: Debug page
 class SettingsDebugPage: SettingsPageViewController {
     override var PageTitle: String {
         return "Debug"
@@ -494,7 +499,7 @@ class SettingsDebugPage: SettingsPageViewController {
                 .navigationCell(model: SettingsNavigationOption(title: "Set level", OnTap: {
                     let alert = UIAlertController(title: "Set Level", message: "Enter new level", preferredStyle: .alert)
                     alert.addTextField { (textField) in
-                        textField.keyboardType = .numberPad
+                        textField.keyboardType = .numbersAndPunctuation
                         textField.text = StatsManager.stats.level.description
                     }
                     alert.addAction(UIAlertAction(title: "Set", style: .default, handler: { [weak alert] (_) in
@@ -525,11 +530,11 @@ class SettingsDebugPage: SettingsPageViewController {
                 .navigationCell(model: SettingsNavigationOption(title: "Unlock badge", OnTap: {
                     let alert = UIAlertController(title: "Set Badge", message: "Enter badge group ID and badge index to unlock", preferredStyle: .alert)
                     alert.addTextField { (textField) in
-                        textField.keyboardType = .numberPad
+                        textField.keyboardType = .numbersAndPunctuation
                         textField.placeholder = "Badge group index"
                     }
                     alert.addTextField { (textField) in
-                        textField.keyboardType = .numberPad
+                        textField.keyboardType = .numbersAndPunctuation
                         textField.placeholder = "Badge index"
                     }
                     alert.addAction(UIAlertAction(title: "Set", style: .default, handler: { [weak alert] (_) in

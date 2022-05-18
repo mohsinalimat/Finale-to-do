@@ -168,4 +168,9 @@ class AnalyticsHelper {
         Analytics.logEvent("settings_name_changed", parameters:
                             ["username" : App.settingsConfig.userFullName == "" ? "empty" : "added"])
     }
+    
+    static func LogGuideOpen(page: String){
+        Analytics.logEvent("settings_guide_opened", parameters:
+                            ["guide_page" : page])
+    }
 }

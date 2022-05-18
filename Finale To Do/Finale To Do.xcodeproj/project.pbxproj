@@ -134,6 +134,7 @@
 		377CB33C282C45EB001CDBBD /* Edit Task.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB33A282C45EB001CDBBD /* Edit Task.png */; };
 		377CB340282C7E7E001CDBBD /* LockedPerkPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377CB33F282C7E7D001CDBBD /* LockedPerkPopupViewController.swift */; };
 		377CB34B282EDAFA001CDBBD /* Sharing Rays.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB34A282EDAFA001CDBBD /* Sharing Rays.png */; };
+		3787307F28348D22003A7133 /* Change Task Priority.png in Resources */ = {isa = PBXBuildFile; fileRef = 3787307E28348D22003A7133 /* Change Task Priority.png */; };
 		378922B128232F2600AA3B1B /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B028232F2600AA3B1B /* UserProfileViewController.swift */; };
 		378922B32823645200AA3B1B /* StatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B22823645200AA3B1B /* StatsManager.swift */; };
 		37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37983B8B2819F608007B241A /* SettingsViewController.swift */; };
@@ -329,6 +330,7 @@
 		377CB33A282C45EB001CDBBD /* Edit Task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Edit Task.png"; sourceTree = "<group>"; };
 		377CB33F282C7E7D001CDBBD /* LockedPerkPopupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockedPerkPopupViewController.swift; sourceTree = "<group>"; };
 		377CB34A282EDAFA001CDBBD /* Sharing Rays.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sharing Rays.png"; sourceTree = "<group>"; };
+		3787307E28348D22003A7133 /* Change Task Priority.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Change Task Priority.png"; sourceTree = "<group>"; };
 		378922B028232F2600AA3B1B /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		378922B22823645200AA3B1B /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
 		37983B8B2819F608007B241A /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -699,6 +701,7 @@
 				377CB329282C4166001CDBBD /* Level.png */,
 				377CB339282C45EB001CDBBD /* Complete Task.png */,
 				377CB33A282C45EB001CDBBD /* Edit Task.png */,
+				3787307E28348D22003A7133 /* Change Task Priority.png */,
 			);
 			path = "Guide Screenshots";
 			sourceTree = "<group>";
@@ -849,6 +852,7 @@
 				377CB33B282C45EB001CDBBD /* Complete Task.png in Resources */,
 				3750A07C283300C700E72EB5 /* Workaholic III Placeholder.png in Resources */,
 				3750A05A283300C700E72EB5 /* Protagonist III.png in Resources */,
+				3787307F28348D22003A7133 /* Change Task Priority.png in Resources */,
 				372B8A2E281CE61F00117A72 /* classic@2x.png in Resources */,
 				3750A04B283300C700E72EB5 /* Extravert V.png in Resources */,
 				3750A046283300C700E72EB5 /* Extravert III.png in Resources */,
@@ -1193,13 +1197,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Finale To Do/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Finale To Do";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save your progress snapshot to your photo library.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Allow Finale To Do to save your progress snapshot to your photo library.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -1227,12 +1231,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Finale To Do/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Finale To Do";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Save your progress snapshot to your photo library.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Allow Finale To Do to save your progress snapshot to your photo library.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;

@@ -406,7 +406,7 @@ class WelcomeScreenAllSetPage: UIViewController {
         descriptionLabel.font = .Rubik
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
-        descriptionLabel.text = "Perfect! Would you like us to setup some initial tasks to help you master Finale?"
+        descriptionLabel.text = "Perfect! Would you like us to setup some initial tasks to help you master Finale To Do?"
         descriptionLabel.sizeToFit()
         descriptionLabel.frame.origin.x = 0.5*(frameWidth-descriptionLabel.frame.width)
         
@@ -441,10 +441,12 @@ class WelcomeScreenAllSetPage: UIViewController {
         let tasklistID = UUID()
         return TaskList(name: "Welcome to Finale", primaryColor: .defaultColor, systemIcon: "graduationcap.fill", sortingPreference: .Unsorted, upcomingTasks:[
             Task(name: "Tap ➕ to create new task", taskListID: tasklistID),
-            Task(name: "Tap or slide the handle to complete task", taskListID: tasklistID),
+            Task(name: "Long-press task to see details", taskListID: tasklistID),
+            Task(name: "Tap the handle to complete task", taskListID: tasklistID),
             Task(name: "Double-tap task for quick edits", taskListID: tasklistID),
             Task(name: "Tap 🗓 to add task date and notifications", taskListID: tasklistID),
-            Task(name: "Long-press task to see details", taskListID: tasklistID),
+            Task(name: "Add '!' to mark task as high priority",
+                 notes: "- Tasks containing an exclamation mark in their title are considered \"high priority\".", taskListID: tasklistID),
             Task(name: "Swipe right to open side menu", taskListID: tasklistID),
             Task(name: "Long-press list to edit or delete",
                  notes: "- Feel free to delete this list once you are familiar with Finale.",

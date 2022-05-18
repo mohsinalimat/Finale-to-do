@@ -128,7 +128,7 @@ class StatsManager {
         CheckUnlockedBadge(groupID: 4)
         
         if stats.totalDaysActive >= 2 && stats.totalCompletedTasks >= 3 {
-//            SKStoreReviewController.requestReviewInCurrentScene()
+            SKStoreReviewController.requestReviewInCurrentScene()
         }
     }
 }
