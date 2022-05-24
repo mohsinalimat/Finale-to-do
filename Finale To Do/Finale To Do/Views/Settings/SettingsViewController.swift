@@ -366,7 +366,7 @@ class SettingsAboutPage: SettingsPageViewController {
             SettingsSection(options: [.customViewCell(model: SettingsAppLogoAndVersionView())], customHeight: SettingsAppLogoAndVersionView.height),
             
             SettingsSection(title: "More", options: [
-//                .navigationCell(model: SettingsNavigationOption(title: "Visit FinaleToDo.com", icon: UIImage(systemName: "globe"), iconBackgroundColor: .systemBlue, url: URL(string: "https://finaletodo.com"))),
+                .navigationCell(model: SettingsNavigationOption(title: "Visit FinaleToDo.com", icon: UIImage(systemName: "globe"), iconBackgroundColor: .systemBlue, url: URL(string: "https://finaletodo.com"))),
                 .navigationCell(model: SettingsNavigationOption(title: "Rate App", icon: UIImage(systemName: "star.fill"), iconBackgroundColor: .systemGreen, url: URL(string: "itms-apps:itunes.apple.com/us/app/apple-store/id1622931101?mt=8&action=write-review"))),
                 .navigationCell(model: SettingsNavigationOption(title: "Finale: Daily Habit Tracker", icon: UIImage(named: "Finale: Daily Habit Tracker Icon"), iconBorderWidth: 1, url: URL(string: "https://apps.apple.com/us/app/finale-daily-habit-tracker/id1546661013")))
             ]),
