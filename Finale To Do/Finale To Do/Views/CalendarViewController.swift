@@ -84,7 +84,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         clearButton.addTarget(self, action: #selector(Clear), for: .touchUpInside)
         clearButton.imageView!.layer.borderWidth = 0 // this is a weird fix for image scaling when opening the calendar view
         
-        confirmButton = UIButton(frame: CGRect(x: padding*2+buttonWidth, y: clearButton.frame.origin.y, width: buttonWidth, height: buttonHeight))
+        confirmButton = UIButton(frame: CGRect(x: clearButton.frame.maxX + padding, y: clearButton.frame.origin.y, width: buttonWidth, height: buttonHeight))
         confirmButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: tintColor)
         confirmButton.setTitle(" Assign", for: .normal)
         confirmButton.setTitleColor(.systemGray, for: .highlighted)
@@ -96,7 +96,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         
         let containerHeight = confirmButton.frame.maxY + padding
         containerView.frame = CGRect(x: 0.5*(UIScreen.main.bounds.width-containerWidth), y: 0.5*(UIScreen.main.bounds.height-containerHeight), width: containerWidth, height: containerHeight)
-        firstPageView.frame = CGRect(x: 0, y: 0, width: containerWidth, height: containerHeight)
+        firstPageView.frame = CGRect(x: 0, y: 0, width: containerWidth, height: containerHeight-confirmButton.frame.height-padding*2)
         
         let blurEffect2 = UIVisualEffectView(frame: CGRect(x: 0, y: 0, width: containerView.frame.width, height: containerView.frame.height))
         blurEffect2.effect = UIBlurEffect(style: .systemUltraThinMaterial)
@@ -115,10 +115,11 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         firstPageView.addSubview(calendarView)
         firstPageView.addSubview(timeDueRow)
         firstPageView.addSubview(notificationRow)
-        firstPageView.addSubview(clearButton)
-        firstPageView.addSubview(confirmButton)
         
-        notificationPageView = DrawNotificationSelectionPage(size: containerView.frame.size)
+        notificationPageView = DrawNotificationSelectionPage(size: CGSize(width: firstPageView.frame.width, height: firstPageView.frame.height))
+        
+        containerView.addSubview(clearButton)
+        containerView.addSubview(confirmButton)
         containerView.addSubview(notificationPageView)
         containerView.addSubview(firstPageView)
         

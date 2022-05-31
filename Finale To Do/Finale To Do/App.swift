@@ -58,7 +58,8 @@ class App: UIViewController {
         sideMenuView = SideMenuView(frame: sideMenuFrame, app: self)
         
         let fullScreenFrame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        taskListView = TaskListView(frame: fullScreenFrame, taskLists: allTaskLists, app: self)
+//        taskListView = TaskListView(frame: fullScreenFrame, taskLists: allTaskLists, app: self)
+        taskListView = UpcomingTasksView(frame: fullScreenFrame, taskLists: allTaskLists, app: self)
         
         containerView.addSubview(sideMenuView)
         containerView.addSubview(taskListView)
@@ -493,16 +494,14 @@ class App: UIViewController {
     
     func LoadData () {
         if let data = UserDefaults.standard.data(forKey: settingsKey) {
-            if let decoded = try? JSONDecoder().decode(SettingsConfig.self, from: data) {
-                App.settingsConfig = decoded
-                App.settingsConfig.isNotificationsAllowed = App.settingsConfig.isNotificationsAllowed
-            }
+            do {
+                if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] { DecodeSettings(json: json) }
+            } catch let error as NSError { print("Failed to load: \(error.localizedDescription)") }
         } else {
             if let data = NSUbiquitousKeyValueStore().data(forKey: settingsKey) {
-                if let decoded = try? JSONDecoder().decode(SettingsConfig.self, from: data) {
-                    App.settingsConfig = decoded
-                    App.settingsConfig.isNotificationsAllowed = App.settingsConfig.isNotificationsAllowed
-                }
+                do {
+                    if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] { DecodeSettings(json: json) }
+                } catch let error as NSError { print("Failed to load: \(error.localizedDescription)") }
             }
         }
         
@@ -602,6 +601,36 @@ class App: UIViewController {
         }
     }
     
+    func DecodeSettings (json: [String: Any]) {
+        for (key, value) in json {
+            if key == "userFirstName" { App.settingsConfig.userFirstName = value as? String ?? App.settingsConfig.userFirstName}
+            else if key == "userLastName" { App.settingsConfig.userLastName = value as? String ?? App.settingsConfig.userLastName}
+            else if key == "isICloudSyncOn" { App.settingsConfig.isICloudSyncOn = value as? Bool ?? App.settingsConfig.isICloudSyncOn}
+            else if key == "defaultListID" {
+                App.settingsConfig.defaultListID = (value as? String) != nil ? UUID(uuidString: (value as! String))! : App.settingsConfig.defaultListID
+            }
+            else if key == "isNotificationsAllowed" { App.settingsConfig.isNotificationsAllowed = value as? Bool ?? App.settingsConfig.isNotificationsAllowed}
+            else if key == "appBadgeNumberTypes" {
+                App.settingsConfig.appBadgeNumberTypes = (value as? [Int])?.compactMap{ AppBadgeNumberType(rawValue: $0) } ?? App.settingsConfig.appBadgeNumberTypes
+            }
+            else if key == "widgetLists" {
+                App.settingsConfig.widgetLists = (value as? [String])?.compactMap{ UUID(uuidString: $0) } ?? App.settingsConfig.widgetLists
+            }
+            else if key == "interface" {
+                App.settingsConfig.interface = (value as? Int) != nil ? InterfaceMode(rawValue: (value as! Int))! : App.settingsConfig.interface
+            }
+            else if key == "selectedLightThemeIndex" { App.settingsConfig.selectedLightThemeIndex = value as? Int ?? App.settingsConfig.selectedLightThemeIndex}
+            else if key == "selectedDarkThemeIndex" { App.settingsConfig.selectedDarkThemeIndex = value as? Int ?? App.settingsConfig.selectedDarkThemeIndex}
+            else if key == "selectedIcon" {
+                App.settingsConfig.selectedIcon = (value as? Int) != nil ? AppIcon(rawValue: (value as! Int))! : App.settingsConfig.selectedIcon
+            }
+            else if key == "completedInitialSetup" { App.settingsConfig.completedInitialSetup = value as? Bool ?? App.settingsConfig.completedInitialSetup}
+            else if key == "smartLists" {
+                App.settingsConfig.smartLists = (value as? [Int])?.compactMap{ SmartList(rawValue: $0) } ?? App.settingsConfig.smartLists
+            }
+        }
+    }
+    
     func SaveData () {
         let keyStore = App.settingsConfig.isICloudSyncOn ? NSUbiquitousKeyValueStore() : nil
         
@@ -625,11 +654,13 @@ class App: UIViewController {
     
     func SaveSettings () {
         let keyStore = App.settingsConfig.isICloudSyncOn ? NSUbiquitousKeyValueStore() : nil
-        
+
         if let encoded = try? JSONEncoder().encode(App.settingsConfig) {
             SaveValue(value: encoded, forKey: settingsKey, iCloudKey: keyStore)
+            
+            print(App.settingsConfig.smartLists)
         }
-        
+
         keyStore?.synchronize()
     }
     

@@ -75,7 +75,7 @@ class SettingsMainPage: SettingsPageViewController {
             ]),
             
             SettingsSection(title: "Preferences", footer: "", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Default List", icon: UIImage(systemName: "folder.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsDefaultListPage(), SetPreview: { return self.defaultFolderPreview } )),
+                .navigationCell(model: SettingsNavigationOption(title: "Lists", icon: UIImage(systemName: "folder.fill"), iconBackgroundColor: .systemBlue, nextPage: SettingsListsPage())),
                 .navigationCell(model: SettingsNavigationOption(title: "Notifications", icon: UIImage(systemName: "bell.badge.fill"), iconBackgroundColor: .systemRed, nextPage: SettingsNotificationsPage())),
                 .navigationCell(model: SettingsNavigationOption(title: "Widget", icon: UIImage(systemName: "list.bullet.rectangle.fill"), iconBackgroundColor: .systemIndigo, nextPage: SettingsWidgetPage())),
                 .navigationCell(model: SettingsNavigationOption(title: "Appearance", icon: UIImage(systemName: "circle.hexagongrid.circle"), iconBackgroundColor: .systemPurple, nextPage: SettingsAppearancePage()))
@@ -95,16 +95,6 @@ class SettingsMainPage: SettingsPageViewController {
     
     override var PageTitle: String {
         return "Settings"
-    }
-    
-    var defaultFolderPreview: String {
-        for taskList in App.userTaskLists {
-            if App.settingsConfig.defaultListID == taskList.id {
-                return taskList.name
-            }
-        }
-        
-        return App.mainTaskList.name
     }
     
     var appVersion: String {
@@ -205,6 +195,52 @@ class SettingsPersonalPage: SettingsPageViewController {
     
 }
 
+//MARK: Lists Page
+class SettingsListsPage: SettingsPageViewController {
+    
+    override func GetSettings() -> [SettingsSection] {
+        var smartListsSwitchOptions = [SettingsOptionType]()
+        
+        for smartList in SmartList.allCases {
+            smartListsSwitchOptions.append(
+                .switchCell(model: SettingsSwitchOption(title: smartList.title, isOn: App.settingsConfig.smartLists.contains(smartList), OnChange: { sender in
+                    self.SwitchSmartList(sender: sender, smartList: smartList)
+                }))
+            )
+        }
+        
+        return [
+            SettingsSection(footer: "New tasks from the 'overview' page will be added to this list.", options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Default List", nextPage: SettingsDefaultListPage(), SetPreview: { return self.defaultFolderPreview } ))
+            ]),
+            SettingsSection(title: "Smart lists", footer: "Smart lists compile and present your tasks in a special way.", options: smartListsSwitchOptions)
+        ]
+    }
+    
+    var defaultFolderPreview: String {
+        for taskList in App.userTaskLists {
+            if App.settingsConfig.defaultListID == taskList.id {
+                return taskList.name
+            }
+        }
+        
+        return App.mainTaskList.name
+    }
+    
+    override var PageTitle: String {
+        return "Lists"
+    }
+    
+    func SwitchSmartList (sender: UISwitch, smartList: SmartList) {
+        if sender.isOn {
+            if !App.settingsConfig.smartLists.contains(smartList) { App.settingsConfig.smartLists.append(smartList) }
+        } else {
+            if App.settingsConfig.smartLists.contains(smartList) { App.settingsConfig.smartLists.remove(at: App.settingsConfig.smartLists.firstIndex(of: smartList)!) }
+        }
+    }
+    
+}
+
 //MARK: Default list Page
 class SettingsDefaultListPage: SettingsPageViewController {
     
@@ -220,7 +256,7 @@ class SettingsDefaultListPage: SettingsPageViewController {
             }))
         }
         
-        return [ SettingsSection(footer: "New tasks from the 'overview' page will be added to this list.", options: options) ]
+        return [ SettingsSection(options: options) ]
     }
     
     override var PageTitle: String {

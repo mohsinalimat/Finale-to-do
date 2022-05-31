@@ -20,7 +20,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     var colorPanelHeader: UIView!
     var headerGradientLayer: CAGradientLayer!
     var hamburgerButton: UIButton!
-    var sortButton: UIButton!
+    var sortButton: UIButton?
     var titleLabel: UILabel!
     var tableView: UITableView!
     var placeholderView: UIView?
@@ -94,22 +94,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         header.addSubview(hamburgerButton)
         
-        let sortButtonSize = hamburgerButtonSize
-        sortButton = UIButton(frame: CGRect(x: frame.width-sortButtonSize-padding, y: hamburgerButton.frame.origin.y, width: sortButtonSize, height: sortButtonSize))
-        sortButton.tintColor = headerElementsColor
-        sortButton.setImage(UIImage(systemName: "arrow.up.arrow.down", withConfiguration: UIImage.SymbolConfiguration.init(weight: .semibold)), for: .normal)
-        sortButton.contentVerticalAlignment = .fill
-        sortButton.contentHorizontalAlignment = .fill
-        sortButton.imageEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 0)
-        sortButton.imageView?.contentMode = .scaleAspectFit
-        sortButton.contentHorizontalAlignment = .right
-        sortButton.showsMenuAsPrimaryAction = true
-        sortButton.menu = sortButtonMenu
-        sortButton.addAction(UIAction {_ in
-            App.instance.StopEditingAllTasks()
-        }, for: .menuActionTriggered)
-        
-        header.addSubview(sortButton)
+        AddSortButton()
+        if sortButton != nil { header.addSubview(sortButton!) }
         
         let titleHeight = header.frame.height*0.3
         let titleWidth = header.frame.width-padding*2
@@ -126,6 +112,23 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         addSubview(header)
         
         originalTableContentOffsetY = tableView.contentOffset.y
+    }
+    
+    func AddSortButton () {
+        let sortButtonSize = frame.width * 0.1
+        sortButton = UIButton(frame: CGRect(x: frame.width-sortButtonSize-padding, y: hamburgerButton.frame.origin.y, width: sortButtonSize, height: sortButtonSize))
+        sortButton?.tintColor = headerElementsColor
+        sortButton?.setImage(UIImage(systemName: "arrow.up.arrow.down", withConfiguration: UIImage.SymbolConfiguration.init(weight: .semibold)), for: .normal)
+        sortButton?.contentVerticalAlignment = .fill
+        sortButton?.contentHorizontalAlignment = .fill
+        sortButton?.imageEdgeInsets = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 0)
+        sortButton?.imageView?.contentMode = .scaleAspectFit
+        sortButton?.contentHorizontalAlignment = .right
+        sortButton?.showsMenuAsPrimaryAction = true
+        sortButton?.menu = sortButtonMenu
+        sortButton?.addAction(UIAction {_ in
+            App.instance.StopEditingAllTasks()
+        }, for: .menuActionTriggered)
     }
     
     func DrawContent(frame: CGRect) {
@@ -294,7 +297,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.insert(mover, at: destinationIndexPath.row)
             App.userTaskLists[App.selectedTaskListIndex-2].sortingPreference = .Unsorted
         }
-        sortButton.menu = sortButtonMenu
+        sortButton?.menu = sortButtonMenu
     }
     
     func getSliderPreview(configuration: UIContextMenuConfiguration, isDismissing: Bool = false) -> UITargetedPreview {
@@ -390,8 +393,8 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         titleLabel.text = App.selectedTaskListIndex == 0 ? App.settingsConfig.userFirstName == "" ? "Overview" : "Hi, \(App.settingsConfig.userFirstName)" : taskLists[0].name
         titleLabel.textColor = headerElementsColor
         hamburgerButton.tintColor = headerElementsColor
-        sortButton.tintColor = headerElementsColor
-        sortButton.menu = sortButtonMenu
+        sortButton?.tintColor = headerElementsColor
+        sortButton?.menu = sortButtonMenu
         contentView.backgroundColor = ThemeManager.currentTheme.tasklistBackgroundColor
         SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
         colorPanelHeader.layer.compositingFilter = ThemeManager.currentTheme.interface == .Light ? "multiplyBlendMode" : "screenBlendMode"
@@ -461,7 +464,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
             titleLabel.textColor = headerElementsColor
             hamburgerButton.tintColor = headerElementsColor
-            sortButton.tintColor = headerElementsColor
+            sortButton?.tintColor = headerElementsColor
             contentView.backgroundColor = ThemeManager.currentTheme.tasklistBackgroundColor
         }
     }
@@ -510,7 +513,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         } else {
             taskLists[0].sortingPreference = sortPreference
         }
-        sortButton.menu = sortButtonMenu
+        sortButton?.menu = sortButtonMenu
         
         var beforeSort = [Task]()
         if animated {

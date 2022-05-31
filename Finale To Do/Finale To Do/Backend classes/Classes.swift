@@ -189,13 +189,13 @@ class TaskList: Codable, Equatable {
 }
 
 struct SettingsConfig: Codable {
-    
     var userFirstName: String = ""
     var userLastName: String = ""
     
     var isICloudSyncOn: Bool = false
     
     var defaultListID: UUID = UUID()
+    var smartLists: [SmartList] = [.Overview]
     
     var isNotificationsAllowed: Bool = false
     var appBadgeNumberTypes: [AppBadgeNumberType] = [.OverdueTasks]
@@ -206,11 +206,11 @@ struct SettingsConfig: Codable {
     var selectedDarkThemeIndex: Int = 0
     var selectedIcon: AppIcon = .classic
     
+    var completedInitialSetup: Bool = false
+    
     var maxNumberOfCompletedTasks: Int {
         StatsManager.getLevelPerk(type: .HigherTaskHistoryLimit).isUnlocked ? 100 : 50
     }
-    
-    var completedInitialSetup: Bool = false
     
     var userFullName: String {
         if userFirstName == "" { return userLastName }
@@ -315,4 +315,19 @@ protocol UIDynamicTheme {
     
     func ReloadThemeColors ()
     
+}
+
+
+enum SmartList: Int, Codable, CaseIterable {
+    case Overview = 0
+    case Upcoming = 1
+    
+    var title: String {
+        switch self {
+        case .Overview:
+            return "Overview"
+        case .Upcoming:
+            return "Upcoming"
+        }
+    }
 }

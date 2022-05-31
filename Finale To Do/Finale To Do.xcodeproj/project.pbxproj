@@ -100,6 +100,7 @@
 		3750A080283300C700E72EB5 /* Surgeon V Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A030283300C700E72EB5 /* Surgeon V Placeholder.png */; };
 		3750A081283300C700E72EB5 /* Protagonist IV Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A031283300C700E72EB5 /* Protagonist IV Placeholder.png */; };
 		3750A082283300C700E72EB5 /* Surgeon IV Placeholder.png in Resources */ = {isa = PBXBuildFile; fileRef = 3750A032283300C700E72EB5 /* Surgeon IV Placeholder.png */; };
+		3752B66C28459D9D008A5713 /* UpcomingTasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3752B66B28459D9D008A5713 /* UpcomingTasksView.swift */; };
 		3752F4AF28307516007AD922 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3752F4AE28307516007AD922 /* FirebaseAnalytics */; };
 		3752F4B128307516007AD922 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 3752F4B028307516007AD922 /* FirebaseCrashlytics */; };
 		3752F4B3283078F3007AD922 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3752F4B2283078F3007AD922 /* GoogleService-Info.plist */; };
@@ -295,6 +296,7 @@
 		3750A030283300C700E72EB5 /* Surgeon V Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon V Placeholder.png"; sourceTree = "<group>"; };
 		3750A031283300C700E72EB5 /* Protagonist IV Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist IV Placeholder.png"; sourceTree = "<group>"; };
 		3750A032283300C700E72EB5 /* Surgeon IV Placeholder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Surgeon IV Placeholder.png"; sourceTree = "<group>"; };
+		3752B66B28459D9D008A5713 /* UpcomingTasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpcomingTasksView.swift; sourceTree = "<group>"; };
 		3752F4B2283078F3007AD922 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3752F4B8283095EC007AD922 /* WidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		3752F4B9283095EC007AD922 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
@@ -593,6 +595,7 @@
 				375E5D7A280F7155001A289E /* CalendarViewController.swift */,
 				370A9DB22810CDDE00FC30A7 /* TaskSliderContextMenu.swift */,
 				376AD0D62808DDEB00986B49 /* TaskListView.swift */,
+				3752B66B28459D9D008A5713 /* UpcomingTasksView.swift */,
 				37E4CE002809AE3F002B4D87 /* SideMenuView.swift */,
 				37F837C4280E11BF00F2A9C0 /* AddListView.swift */,
 				378922B028232F2600AA3B1B /* UserProfileViewController.swift */,
@@ -982,6 +985,7 @@
 				37E4CE012809AE3F002B4D87 /* SideMenuView.swift in Sources */,
 				377CB340282C7E7E001CDBBD /* LockedPerkPopupViewController.swift in Sources */,
 				376AD0DD2808FD4C00986B49 /* Classes.swift in Sources */,
+				3752B66C28459D9D008A5713 /* UpcomingTasksView.swift in Sources */,
 				376AD0C32808DC5900986B49 /* AppDelegate.swift in Sources */,
 				370A9DB32810CDDE00FC30A7 /* TaskSliderContextMenu.swift in Sources */,
 				378922B128232F2600AA3B1B /* UserProfileViewController.swift in Sources */,
