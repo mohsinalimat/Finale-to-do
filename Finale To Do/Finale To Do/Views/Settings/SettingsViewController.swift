@@ -210,7 +210,7 @@ class SettingsListsPage: SettingsPageViewController {
         }
         
         return [
-            SettingsSection(footer: "New tasks from the 'overview' page will be added to this list.", options: [
+            SettingsSection(footer: "New tasks created from Smart Lists will be added to this list.", options: [
                 .navigationCell(model: SettingsNavigationOption(title: "Default List", nextPage: SettingsDefaultListPage(), SetPreview: { return self.defaultFolderPreview } ))
             ]),
             SettingsSection(title: "Smart lists", footer: "Smart lists compile and present your tasks in a special way.", options: smartListsSwitchOptions)
@@ -237,6 +237,9 @@ class SettingsListsPage: SettingsPageViewController {
         } else {
             if App.settingsConfig.smartLists.contains(smartList) { App.settingsConfig.smartLists.remove(at: App.settingsConfig.smartLists.firstIndex(of: smartList)!) }
         }
+        App.settingsConfig.smartLists = App.settingsConfig.smartLists.sorted { $0.rawValue < $1.rawValue }
+        App.instance.sideMenuView.DrawSmartLists()
+        App.instance.SelectTaskList(index: 0, closeMenu: false)
     }
     
 }

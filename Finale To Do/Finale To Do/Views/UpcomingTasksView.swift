@@ -26,6 +26,7 @@ class UpcomingTasksView: TaskListView {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
+        TogglePlaceholder()
         return sections.count
     }
     
@@ -46,8 +47,43 @@ class UpcomingTasksView: TaskListView {
         return cell
     }
     
+    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        
+        return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: {
+            let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+            
+            return TaskSliderContextMenu(slider: cell.slider, indexPath: indexPath)
+        }, actionProvider: { _ in
+            let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+            let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
+                self.app.DeleteTask(task: cell.slider.task)
+            }
+            let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
+            
+            let Edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { action in
+                cell.slider.StartEditing()
+            }
+            let AssignDate = UIAction(title: cell.slider.task.isDateAssigned ? "Change date" : "Assign date", image: UIImage(systemName: "calendar")) { action in
+                cell.slider.ShowCalendarView(taskSliderContextMenu: nil)
+            }
+            
+            let Regular = UIMenu(title: "", options: .displayInline, children: [AssignDate, Edit])
+            
+            return UIMenu(title: "", children: [Regular, Delete])
+        })
+    }
+    
     override func ReloadTaskData(sortOverviewList: Bool = true) {
         super.ReloadTaskData(sortOverviewList: sortOverviewList)
+//        SortUpcomingTasks(sortPreference: .ByTimeDue)
+        
+        tasksOverdue.removeAll()
+        tasksToday.removeAll()
+        tasksTomorrow.removeAll()
+        tasksThisWeek.removeAll()
+        tasksThisMonth.removeAll()
+        tasksLater.removeAll()
+        tasksWithoutDate.removeAll()
         
         for task in allUpcomingTasks {
             if !task.isDateAssigned {
@@ -63,22 +99,89 @@ class UpcomingTasksView: TaskListView {
         }
         
         sections.removeAll()
-        if tasksOverdue.count > 0 { sections.append( UpcomingTasksSection(title: "Overdue", tasks: tasksOverdue)) }
-        if tasksToday.count > 0 { sections.append( UpcomingTasksSection(title: "Today", tasks: tasksToday)) }
-        if tasksTomorrow.count > 0 { sections.append( UpcomingTasksSection(title: "Tomorrow", tasks: tasksTomorrow)) }
-        if tasksThisWeek.count > 0 { sections.append( UpcomingTasksSection(title: "This week", tasks: tasksThisWeek)) }
-        if tasksThisMonth.count > 0 { sections.append( UpcomingTasksSection(title: "This month", tasks: tasksThisMonth)) }
-        if tasksLater.count > 0 { sections.append( UpcomingTasksSection(title: "Later", tasks: tasksLater)) }
-        if tasksWithoutDate.count > 0 { sections.append( UpcomingTasksSection(title: "Without date", tasks: tasksWithoutDate)) }
+        if tasksOverdue.count > 0 { sections.append( UpcomingTasksSection(id: 0, title: "Overdue", tasks: tasksOverdue)) }
+        if tasksToday.count > 0 { sections.append( UpcomingTasksSection(id: 1, title: "Today", tasks: tasksToday)) }
+        if tasksTomorrow.count > 0 { sections.append( UpcomingTasksSection(id: 2, title: "Tomorrow", tasks: tasksTomorrow)) }
+        if tasksThisWeek.count > 0 { sections.append( UpcomingTasksSection(id: 3, title: "This week", tasks: tasksThisWeek)) }
+        if tasksThisMonth.count > 0 { sections.append( UpcomingTasksSection(id: 4, title: "This month", tasks: tasksThisMonth)) }
+        if tasksLater.count > 0 { sections.append( UpcomingTasksSection(id: 5, title: "Later", tasks: tasksLater)) }
+        if tasksWithoutDate.count > 0 { sections.append( UpcomingTasksSection(id: 6, title: "Without date", tasks: tasksWithoutDate)) }
     }
     
     override func AddSortButton() {
         return
     }
     
+    override func MoveTaskToRightSortedIndexPath(task: Task, moveRow: Bool = true) {
+        super.MoveTaskToRightSortedIndexPath(task: task, moveRow: false)
+        
+        var oldSectionsIDs = [Int]()
+        var oldIndexPath = IndexPath(row: 0, section: 0)
+        for i in 0..<sections.count {
+            if sections[i].tasks.contains(task) {
+                oldIndexPath.section = i
+                oldIndexPath.row = sections[i].tasks.firstIndex(of: task)!
+            }
+            oldSectionsIDs.append(sections[i].id)
+        }
+        
+        ReloadTaskData()
+        
+        var newSectionsIDs = [Int]()
+        var newIndexPath = IndexPath(row: 0, section: 0)
+        for i in 0..<sections.count {
+            if sections[i].tasks.contains(task) {
+                newIndexPath.section = i
+                newIndexPath.row = sections[i].tasks.firstIndex(of: task)!
+            }
+            newSectionsIDs.append(sections[i].id)
+        }
+        
+        if oldSectionsIDs.contains(-1) {
+            tableView.performBatchUpdates({
+                tableView.deleteSections(IndexSet(integer: 0), with: .fade)
+                oldSectionsIDs.removeFirst()
+                if oldSectionsIDs == newSectionsIDs {
+                    tableView.insertRows(at: [newIndexPath], with: .fade)
+                } else {
+                    if newSectionsIDs.count > oldSectionsIDs.count {
+                        tableView.insertSections(IndexSet(integer: newIndexPath.section), with: .fade)
+                    }
+                }
+            })
+            tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
+        } else {
+            tableView.performBatchUpdates({
+                if newSectionsIDs == oldSectionsIDs {
+                    tableView.moveRow(at: oldIndexPath, to: newIndexPath)
+                } else {
+                    if newSectionsIDs.count > oldSectionsIDs.count {
+                        tableView.deleteRows(at: [oldIndexPath], with: .fade)
+                        tableView.insertSections(IndexSet(integer: newIndexPath.section), with: .fade)
+                    } else if newSectionsIDs.count < oldSectionsIDs.count {
+                        tableView.deleteSections(IndexSet(integer: oldIndexPath.section), with: .fade)
+                        tableView.insertRows(at: [newIndexPath], with: .fade)
+                    } else {
+                        tableView.deleteSections(IndexSet(integer: oldIndexPath.section), with: .fade)
+                        tableView.insertSections(IndexSet(integer: newIndexPath.section), with: .fade)
+                    }
+                }
+            })
+        }
+    }
+    
+    override var shouldShowPlaceholder: Bool {
+        return sections.count == 0
+    }
+    
+    override var placeholderTitle: String {
+        return "Looks like you are done with everything!"
+    }
+    
 }
 
 struct UpcomingTasksSection {
+    var id: Int
     var title: String
     var tasks: [Task]
 }

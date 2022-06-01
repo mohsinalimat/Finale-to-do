@@ -77,7 +77,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         headerGradientLayer.endPoint = CGPoint(x: 1.3, y: -0.3)
         headerGradientLayer.frame = colorPanelHeader.bounds
         colorPanelHeader.layer.insertSublayer(headerGradientLayer, at:0)
-        SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
+        SetHeaderGradient(color: App.selectedTaskListIndex < App.settingsConfig.smartLists.count ? .clear : taskLists[0].primaryColor)
         colorPanelHeader.layer.compositingFilter = ThemeManager.currentTheme.interface == .Light ? "multiplyBlendMode" : "screenBlendMode"
         colorPanelHeader.layer.opacity = ThemeManager.currentTheme.interface == .Light ? 1 : 0.8
         header.addSubview(colorPanelHeader)
@@ -101,7 +101,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let titleWidth = header.frame.width-padding*2
         titleLabel = UILabel(frame: CGRect(x: padding - titleWidth*0.5, y: hamburgerButton.frame.maxY + padding*0.45 + titleHeight*0.5, width: titleWidth, height: titleHeight))
         titleLabel.font = UIFont.systemFont(ofSize: 40, weight: .bold)
-        titleLabel.text = App.selectedTaskListIndex == 0 ? App.settingsConfig.userFirstName == "" ? "Overview" : "Hi, \(App.settingsConfig.userFirstName)" : taskLists[0].name
+        titleLabel.text = headerTitle
         titleLabel.textColor = headerElementsColor
         titleLabel.adjustsFontSizeToFitWidth = true
         titleLabel.layer.anchorPoint = CGPoint(x: 0, y: 1)
@@ -177,6 +177,14 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         if ThemeManager.currentTheme.usesDynamicColors { return .label }
         else { return .white }
+    }
+    
+    var headerTitle: String {
+        if App.selectedTaskListIndex < App.settingsConfig.smartLists.count {
+            return App.settingsConfig.smartLists[App.selectedTaskListIndex].taskListHeaderTitle
+        } else {
+            return taskLists[0].name
+        }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -390,13 +398,13 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         tableView.reloadData()
         tableView.setContentOffset(CGPoint(x: 0, y: tableView.frame.minY), animated: false)
         originalTableContentOffsetY = tableView.contentOffset.y
-        titleLabel.text = App.selectedTaskListIndex == 0 ? App.settingsConfig.userFirstName == "" ? "Overview" : "Hi, \(App.settingsConfig.userFirstName)" : taskLists[0].name
+        titleLabel.text = headerTitle
         titleLabel.textColor = headerElementsColor
         hamburgerButton.tintColor = headerElementsColor
         sortButton?.tintColor = headerElementsColor
         sortButton?.menu = sortButtonMenu
         contentView.backgroundColor = ThemeManager.currentTheme.tasklistBackgroundColor
-        SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
+        SetHeaderGradient(color: App.selectedTaskListIndex < App.settingsConfig.smartLists.count ? .clear : taskLists[0].primaryColor)
         colorPanelHeader.layer.compositingFilter = ThemeManager.currentTheme.interface == .Light ? "multiplyBlendMode" : "screenBlendMode"
         colorPanelHeader.layer.opacity = ThemeManager.currentTheme.interface == .Light ? 1 : 0.8
         addTaskButton.ReloadVisuals(color: App.selectedTaskListIndex == 0 ? .defaultColor : taskLists[0].primaryColor)
@@ -461,7 +469,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         UIView.animate(withDuration: 0.25) { [self] in
             colorPanelHeader.layer.compositingFilter = ThemeManager.currentTheme.interface == .Light ? "multiplyBlendMode" : "screenBlendMode"
             colorPanelHeader.layer.opacity = ThemeManager.currentTheme.interface == .Light ? 1 : 0.8
-            SetHeaderGradient(color: App.selectedTaskListIndex == 0 ? .clear : taskLists[0].primaryColor)
+            SetHeaderGradient(color: App.selectedTaskListIndex < App.settingsConfig.smartLists.count ? .clear : taskLists[0].primaryColor)
             titleLabel.textColor = headerElementsColor
             hamburgerButton.tintColor = headerElementsColor
             sortButton?.tintColor = headerElementsColor
@@ -549,20 +557,20 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         }
     }
     
-    func MoveTaskToRightSortedIndexPath (task: Task) {
+    func MoveTaskToRightSortedIndexPath (task: Task, moveRow: Bool = true) {
         let newIndexPath = GetSortedIndexPath(task: task)
         let originalIndexPath = IndexPath(row: task.isCompleted ? App.instance.taskListView.allCompletedTasks.firstIndex(of: task)! : App.instance.taskListView.allUpcomingTasks.firstIndex(of: task)!, section: task.isCompleted ? 1 : 0)
         if originalIndexPath == newIndexPath { return }
         
-        tableView.moveRow(at: originalIndexPath, to: newIndexPath)
+        if moveRow { tableView.moveRow(at: originalIndexPath, to: newIndexPath) }
         allUpcomingTasks.remove(at: originalIndexPath.row)
         allUpcomingTasks.insert(task, at: newIndexPath.row)
-        if App.selectedTaskListIndex == 1 {
+        if App.selectedTaskListIndex == App.settingsConfig.smartLists.count {
             App.mainTaskList.upcomingTasks.remove(at: originalIndexPath.row)
             App.mainTaskList.upcomingTasks.insert(task, at: newIndexPath.row)
-        } else if App.selectedTaskListIndex != 0 {
-            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.remove(at: originalIndexPath.row)
-            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.insert(task, at: newIndexPath.row)
+        } else if App.selectedTaskListIndex > App.settingsConfig.smartLists.count {
+            App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].upcomingTasks.remove(at: originalIndexPath.row)
+            App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].upcomingTasks.insert(task, at: newIndexPath.row)
         }
         
         if allUpcomingTasks.count > 0 { tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
@@ -644,7 +652,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func TogglePlaceholder () {
-        if allUpcomingTasks.count == 0 && allCompletedTasks.count == 0 {
+        if shouldShowPlaceholder {
             placeholderView?.removeFromSuperview()
             placeholderView = DrawPlaceholder()
             contentView.addSubview(placeholderView!)
@@ -663,17 +671,21 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         }
     }
     
+    var shouldShowPlaceholder: Bool {
+        return allUpcomingTasks.count == 0 && allCompletedTasks.count == 0
+    }
+    
     func DrawPlaceholder () -> UIView {
         let container = UIView(frame: CGRect(x: 0, y: contentView.frame.height*0.15, width: contentView.frame.width, height: contentView.frame.height*0.4))
         
         let icon = ClipboardIcon(position: CGPoint(x: container.center.x, y: container.frame.height*0.3), color: App.selectedTaskListIndex == 0 ? .defaultColor : taskLists[0].primaryColor)
         
         let titleLabel = UILabel(frame: CGRect(x: 0, y: icon.frame.maxY+padding, width: container.frame.width, height: 20))
-        titleLabel.text = "You don't have any tasks here yet."
+        titleLabel.text = placeholderTitle
         titleLabel.textAlignment = .center
         
         let subtitleLabel = UILabel(frame: CGRect(x: 0.5*(container.frame.width-titleLabel.frame.width*0.7), y: titleLabel.frame.maxY+padding, width: titleLabel.frame.width*0.7, height: 40))
-        subtitleLabel.text = "Relax and enjoy. When you are ready, press + to add new tasks."
+        subtitleLabel.text = placeholderSubtitle
         subtitleLabel.font = .preferredFont(forTextStyle: .subheadline)
         subtitleLabel.textColor = .systemGray
         subtitleLabel.numberOfLines = 2
@@ -685,6 +697,13 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         container.addSubview(subtitleLabel)
         
         return container
+    }
+    
+    var placeholderTitle: String {
+        return "You don't have any tasks here yet."
+    }
+    var placeholderSubtitle: String {
+        return "Relax and enjoy. When you are ready, press + to add new tasks."
     }
     
     required init?(coder: NSCoder) {

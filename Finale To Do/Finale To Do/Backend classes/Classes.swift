@@ -330,4 +330,31 @@ enum SmartList: Int, Codable, CaseIterable {
             return "Upcoming"
         }
     }
+    
+    var taskListHeaderTitle: String {
+        switch self {
+        case .Overview:
+            return App.settingsConfig.userFirstName == "" ? "Overview" : "Hi, \(App.settingsConfig.userFirstName)"
+        case .Upcoming:
+            return "Upcoming"
+        }
+    }
+    
+    var icon: String {
+        switch self {
+        case .Overview:
+            return "tray.full.fill"
+        case .Upcoming:
+            return "calendar.badge.clock"
+        }
+    }
+    
+    var viewClass: UIView.Type {
+        switch self {
+        case .Overview:
+            return TaskListView.self
+        case .Upcoming:
+            return UpcomingTasksView.self
+        }
+    }
 }

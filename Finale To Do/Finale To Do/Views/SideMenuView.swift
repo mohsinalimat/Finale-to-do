@@ -17,7 +17,8 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     let tableView: UITableView
     var userPanel: UserPanel!
-    var overviewMenuItem: TaskListMenuItem!
+    var smartListsItems = [TaskListMenuItem]()
+    var listsLabel: UILabel!
     
     var currentContextMenuView: TaskListMenuItem?
     
@@ -36,18 +37,16 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         self.addSubview(userPanel)
         
-        overviewMenuItem = TaskListMenuItem(frame: CGRect(x: padding*0.5, y: userPanel.frame.maxY+padding*0.5, width: frame.width-padding, height: menuItemHeight), taskList: TaskList(name: "Overview", primaryColor: .defaultColor, systemIcon: "tray.full.fill"), index: 0)
-        
-        self.addSubview(overviewMenuItem)
-        
-        let listsLabel = UILabel(frame: CGRect(x: padding, y: overviewMenuItem.frame.maxY + padding*0.5, width: frame.width-padding*2, height: 30))
+        listsLabel = UILabel(frame: CGRect(x: padding, y: 0, width: frame.width-padding*2, height: menuItemHeight))
         listsLabel.text = "Lists"
-        listsLabel.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+        listsLabel.font = .preferredFont(forTextStyle: .headline)
         listsLabel.textColor = .white
+        
+        DrawSmartLists()
         
         self.addSubview(listsLabel)
         
-        tableView.frame = CGRect(x: padding*0.5, y: listsLabel.frame.maxY+padding*0.5, width: frame.width-padding, height: frame.height*0.87-listsLabel.frame.maxY)
+        tableView.frame = CGRect(x: padding*0.5, y: listsLabel.frame.maxY, width: frame.width-padding, height: frame.height*0.87-listsLabel.frame.maxY)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.dragDelegate = self
@@ -82,6 +81,21 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
     }
     
+    func DrawSmartLists () {
+        for smartList in smartListsItems { smartList.removeFromSuperview() }
+        smartListsItems.removeAll()
+        
+        for i in 0..<App.settingsConfig.smartLists.count {
+            let menuItem = TaskListMenuItem(frame: CGRect(x: padding*0.5, y: Double(i)*menuItemHeight + userPanel.frame.maxY+padding*0.5, width: frame.width-padding, height: menuItemHeight), taskList: TaskList(name: App.settingsConfig.smartLists[i].title, primaryColor: .defaultColor, systemIcon: App.settingsConfig.smartLists[i].icon), index: i)
+            smartListsItems.append(menuItem)
+            self.addSubview(menuItem)
+        }
+        
+        let maxY = smartListsItems.count > 0 ? smartListsItems.last!.frame.maxY : userPanel.frame.maxY + padding*0.5
+        listsLabel.frame.origin.y = maxY
+        tableView.frame.origin.y = listsLabel.frame.maxY
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return App.userTaskLists.count+1
     }
@@ -90,9 +104,9 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let cell = tableView.dequeueReusableCell(withIdentifier: "sideMenuTaskListCell", for: indexPath) as! TaskListTableCell
         
         if indexPath.row == 0 {
-            cell.Setup(taskList: App.mainTaskList, frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: 1)
+            cell.Setup(taskList: App.mainTaskList, frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: App.settingsConfig.smartLists.count)
         } else {
-            cell.Setup(taskList: App.userTaskLists[indexPath.row-1], frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: indexPath.row+1)
+            cell.Setup(taskList: App.userTaskLists[indexPath.row-1], frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: indexPath.row+App.settingsConfig.smartLists.count)
         }
         
         return cell
@@ -145,7 +159,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
         dragPreviewParams.visiblePath = UIBezierPath(roundedRect: cell.taskListMenuItem.frame, cornerRadius: 10.0)
         dragPreviewParams.backgroundColor = cell.taskListMenuItem.isSelected ? ThemeManager.currentTheme.sidemenuSelectionColor : .clear
-        selectedTaskListID = App.selectedTaskListIndex == 0 ? nil : App.selectedTaskListIndex == 1 ? App.mainTaskList.id : App.userTaskLists[App.selectedTaskListIndex-2].id
+        selectedTaskListID = App.selectedTaskListIndex < App.settingsConfig.smartLists.count ? nil : App.selectedTaskListIndex == App.settingsConfig.smartLists.count ? App.mainTaskList.id : App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].id
         return dragPreviewParams
     }
     
@@ -180,7 +194,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         if selectedTaskListID == App.mainTaskList.id { return }
         for tasklist in App.userTaskLists {
             if tasklist.id == selectedTaskListID {
-                App.instance.SelectTaskList(index: App.userTaskLists.firstIndex(of: tasklist)!+2, closeMenu: false)
+                App.instance.SelectTaskList(index: App.userTaskLists.firstIndex(of: tasklist)!+App.settingsConfig.smartLists.count+1, closeMenu: false)
                 break
             }
         }
@@ -232,7 +246,9 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         self.parentViewController?.show(UserProfileNavigationController(), sender: self)
     }
     
-    
+    func UpdateSmartListsVisuals () {
+        for smartList in smartListsItems { smartList.ReloadVisuals() }
+    }
     
     
     required init?(coder: NSCoder) {

@@ -411,7 +411,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
             }
         }
         
-        App.instance.taskListView.taskLists = App.selectedTaskListIndex == 0 ? App.instance.allTaskLists : App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
+        App.instance.taskListView.taskLists = App.selectedTaskListIndex < App.settingsConfig.smartLists.count ? App.instance.allTaskLists : App.selectedTaskListIndex == App.settingsConfig.smartLists.count ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1]]
         App.instance.taskListView.ReloadTaskData()
         App.instance.taskListView.tableView.reloadData()
         
@@ -566,18 +566,17 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if closeButton != nil {
-            if App.selectedTaskListIndex == 0 {
+            if App.selectedTaskListIndex < App.settingsConfig.smartLists.count {
                 App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: slider.task)
-            } else if App.selectedTaskListIndex == 1 {
+            } else if App.selectedTaskListIndex == App.settingsConfig.smartLists.count {
                 if slider.task.taskListID == App.mainTaskList.id {
                     App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: slider.task)
                 }
             } else {
-                if slider.task.taskListID == App.userTaskLists[App.selectedTaskListIndex-2].id {
+                if slider.task.taskListID == App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].id {
                     App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: slider.task)
                 }
             }
-            
         }
     }
     
