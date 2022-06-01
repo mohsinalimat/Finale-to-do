@@ -158,7 +158,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         let addTaskButtonSize = 56.0
         originalAddTaskPositionY = frame.height-addTaskButtonSize-padding*3
-        addTaskButton = AddTaskButton(frame: CGRect(x: frame.width-addTaskButtonSize-padding, y: originalAddTaskPositionY, width: addTaskButtonSize, height: addTaskButtonSize), tasklistColor: App.selectedTaskListIndex == 0 ? .defaultColor : taskLists[0].primaryColor, app: app)
+        addTaskButton = AddTaskButton(frame: CGRect(x: frame.width-addTaskButtonSize-padding, y: originalAddTaskPositionY, width: addTaskButtonSize, height: addTaskButtonSize), tasklistColor: App.selectedTaskListIndex < App.settingsConfig.smartLists.count ? .defaultColor : taskLists[0].primaryColor, app: app)
         
         contentView.addSubview(addTaskButton)
         
@@ -173,7 +173,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     var headerElementsColor: UIColor {
-        if App.selectedTaskListIndex != 0 { return .white }
+        if App.selectedTaskListIndex >= App.settingsConfig.smartLists.count { return .white }
         
         if ThemeManager.currentTheme.usesDynamicColors { return .label }
         else { return .white }
@@ -284,26 +284,26 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
-        if sourceIndexPath.section == 1 || App.selectedTaskListIndex == 0 { return sourceIndexPath }
+        if sourceIndexPath.section == 1 || App.selectedTaskListIndex < App.settingsConfig.smartLists.count { return sourceIndexPath }
         if proposedDestinationIndexPath.section == 0 { return proposedDestinationIndexPath }
         else { return IndexPath(row: allUpcomingTasks.count-1, section: 0) }
     }
     
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        if sourceIndexPath.section == 1 || App.selectedTaskListIndex == 0 { return }
+        if sourceIndexPath.section == 1 || App.selectedTaskListIndex < App.settingsConfig.smartLists.count { return }
         
         let mover = allUpcomingTasks.remove(at: sourceIndexPath.row)
         allUpcomingTasks.insert(mover, at: destinationIndexPath.row)
-        if App.selectedTaskListIndex == 0 {
+        if App.selectedTaskListIndex < App.settingsConfig.smartLists.count {
             // do nothing
-        } else if App.selectedTaskListIndex == 1 {
+        } else if App.selectedTaskListIndex == App.settingsConfig.smartLists.count {
             App.mainTaskList.upcomingTasks.remove(at: sourceIndexPath.row)
             App.mainTaskList.upcomingTasks.insert(mover, at: destinationIndexPath.row)
             App.mainTaskList.sortingPreference = .Unsorted
         } else {
-            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.remove(at: sourceIndexPath.row)
-            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.insert(mover, at: destinationIndexPath.row)
-            App.userTaskLists[App.selectedTaskListIndex-2].sortingPreference = .Unsorted
+            App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].upcomingTasks.remove(at: sourceIndexPath.row)
+            App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].upcomingTasks.insert(mover, at: destinationIndexPath.row)
+            App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].sortingPreference = .Unsorted
         }
         sortButton?.menu = sortButtonMenu
     }
@@ -390,7 +390,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             allCompletedTasks.append(contentsOf: taskList.completedTasks)
         }
         allCompletedTasks = allCompletedTasks.sorted { $0.dateCompleted > $1.dateCompleted }
-        if App.selectedTaskListIndex == 0 && sortOverviewList { SortUpcomingTasks(sortPreference: App.instance.overviewSortingPreference, animated: false) }
+        if App.selectedTaskListIndex < App.settingsConfig.smartLists.count && sortOverviewList { SortUpcomingTasks(sortPreference: App.instance.overviewSortingPreference, animated: false) }
     }
     
     func ReloadView () {
@@ -407,7 +407,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         SetHeaderGradient(color: App.selectedTaskListIndex < App.settingsConfig.smartLists.count ? .clear : taskLists[0].primaryColor)
         colorPanelHeader.layer.compositingFilter = ThemeManager.currentTheme.interface == .Light ? "multiplyBlendMode" : "screenBlendMode"
         colorPanelHeader.layer.opacity = ThemeManager.currentTheme.interface == .Light ? 1 : 0.8
-        addTaskButton.ReloadVisuals(color: App.selectedTaskListIndex == 0 ? .defaultColor : taskLists[0].primaryColor)
+        addTaskButton.ReloadVisuals(color: App.selectedTaskListIndex < App.settingsConfig.smartLists.count ? .defaultColor : taskLists[0].primaryColor)
         if undoButton != nil {
             undoButton!.removeFromSuperview()
             undoButton = nil
@@ -418,7 +418,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardHeight = keyboardFrame.cgRectValue.height
             UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut) { [self] in
-                let y = frame.height - UIScreen.main.bounds.height*0.17 - keyboardHeight - App.instance.view.safeAreaInsets.bottom - addTaskButton.frame.height
+                let y = contentView.frame.height - keyboardHeight - addTaskButton.frame.height - padding
                 addTaskButton.frame.origin.y = y
             }
         }
@@ -506,17 +506,17 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             SortUpcomingTasks(sortPreference: .ByName)
         }
         
-        let defaultAction = UIMenu(title: "", options: .displayInline, children: [App.selectedTaskListIndex == 0 ? list : unsorted])
+        let defaultAction = UIMenu(title: "", options: .displayInline, children: [App.selectedTaskListIndex < App.settingsConfig.smartLists.count ? list : unsorted])
         return UIMenu(title: "", children: [defaultAction, timeCreated, timeDue, priority, name])
     }
     
     func getSortItemState (sortingPreference: SortingPreference) -> UIMenuElement.State {
-        if App.selectedTaskListIndex == 0 { return sortingPreference == App.instance.overviewSortingPreference ? .on : .off }
+        if App.selectedTaskListIndex < App.settingsConfig.smartLists.count { return sortingPreference == App.instance.overviewSortingPreference ? .on : .off }
         return sortingPreference == taskLists[0].sortingPreference ? .on : .off
     }
     
     func SortUpcomingTasks(sortPreference: SortingPreference, animated: Bool = true) {
-        if App.selectedTaskListIndex == 0 {
+        if App.selectedTaskListIndex < App.settingsConfig.smartLists.count {
             App.instance.overviewSortingPreference = sortPreference
         } else {
             taskLists[0].sortingPreference = sortPreference
@@ -528,16 +528,16 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             beforeSort.append(contentsOf: allUpcomingTasks)
         }
         
-        if App.selectedTaskListIndex == 0 {
+        if App.selectedTaskListIndex < App.settingsConfig.smartLists.count {
             allUpcomingTasks = allUpcomingTasks.sorted { sortBool(task1: $0, task2: $1, sortingPreference: sortPreference) }
-        } else if App.selectedTaskListIndex == 1 {
+        } else if App.selectedTaskListIndex == App.settingsConfig.smartLists.count {
             App.mainTaskList.upcomingTasks = App.mainTaskList.upcomingTasks.sorted { sortBool(task1: $0, task2: $1, sortingPreference: sortPreference) }
         } else {
-            App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks = App.userTaskLists[App.selectedTaskListIndex-2].upcomingTasks.sorted { sortBool(task1: $0, task2: $1, sortingPreference: sortPreference) }
+            App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].upcomingTasks = App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].upcomingTasks.sorted { sortBool(task1: $0, task2: $1, sortingPreference: sortPreference) }
         }
         
-        if App.selectedTaskListIndex != 0 {
-            taskLists = App.selectedTaskListIndex == 1 ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-2]]
+        if App.selectedTaskListIndex > App.settingsConfig.smartLists.count {
+            taskLists = App.selectedTaskListIndex == App.settingsConfig.smartLists.count ? [App.mainTaskList] : [App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1]]
             ReloadTaskData()
         }
         
@@ -578,7 +578,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     func GetSortedIndexPath (task: Task) -> IndexPath {
         let sortPreference: SortingPreference
-        if App.selectedTaskListIndex == 0 {
+        if App.selectedTaskListIndex < App.settingsConfig.smartLists.count { //This needs to be fixed to only be true when 'Overview' is selected
             sortPreference = App.instance.overviewSortingPreference
         } else {
             sortPreference = taskLists[0].sortingPreference
@@ -678,7 +678,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     func DrawPlaceholder () -> UIView {
         let container = UIView(frame: CGRect(x: 0, y: contentView.frame.height*0.15, width: contentView.frame.width, height: contentView.frame.height*0.4))
         
-        let icon = ClipboardIcon(position: CGPoint(x: container.center.x, y: container.frame.height*0.3), color: App.selectedTaskListIndex == 0 ? .defaultColor : taskLists[0].primaryColor)
+        let icon = ClipboardIcon(position: CGPoint(x: container.center.x, y: container.frame.height*0.3), color: App.selectedTaskListIndex < App.settingsConfig.smartLists.count ? .defaultColor : taskLists[0].primaryColor)
         
         let titleLabel = UILabel(frame: CGRect(x: 0, y: icon.frame.maxY+padding, width: container.frame.width, height: 20))
         titleLabel.text = placeholderTitle

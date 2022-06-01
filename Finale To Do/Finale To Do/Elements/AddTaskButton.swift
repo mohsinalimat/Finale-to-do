@@ -72,7 +72,7 @@ class AddTaskButton: UIView, UIDynamicTheme, UIContextMenuInteractionDelegate {
     }
     
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
-        if App.selectedTaskListIndex != 0 { return nil }
+        if App.selectedTaskListIndex >= App.settingsConfig.smartLists.count { return nil }
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { suggestedActions in
             var options = [UIAction]()
             

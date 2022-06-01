@@ -410,9 +410,14 @@ class SettingsAboutPage: SettingsPageViewController {
                 .navigationCell(model: SettingsNavigationOption(title: "Finale: Daily Habit Tracker", icon: UIImage(named: "Finale: Daily Habit Tracker Icon"), iconBorderWidth: 1, url: URL(string: "https://apps.apple.com/us/app/finale-daily-habit-tracker/id1546661013")))
             ]),
             
+            SettingsSection(title: "Follow Us", options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Twitter", icon: UIImage(named: "TwitterIcon"), nextPage: nil, url: URL(string: "https://twitter.com/FinaleToDo"))),
+                .navigationCell(model: SettingsNavigationOption(title: "Reddit", icon: UIImage(named: "RedditIcon"), nextPage: nil, url: URL(string: "https://www.reddit.com/r/FinaleToDo/")))
+            ]),
+            
             SettingsSection(title: "Help", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Developer", icon: UIImage(systemName: "message.fill"), iconBackgroundColor: .systemCyan, nextPage: nil, url: URL(string: "https://twitter.com/GrantOgany"))),
-                .navigationCell(model: SettingsNavigationOption(title: "Contact Support", icon: UIImage(systemName: "envelope.fill"), iconBackgroundColor: .systemBlue, nextPage: nil, url: URL(string: "mailto:info@finaletodo.com")))
+                .navigationCell(model: SettingsNavigationOption(title: "Lead Developer", icon: UIImage(systemName: "message.fill"), iconBackgroundColor: .systemCyan, nextPage: nil, url: URL(string: "https://twitter.com/GrantOgany"))),
+                .navigationCell(model: SettingsNavigationOption(title: "Contact Support", icon: UIImage(systemName: "envelope.fill"), iconBackgroundColor: .systemBlue, nextPage: nil, url: URL(string: "https://www.finaletodo.com/help")))
             ]),
             
             SettingsSection(title: "Legal", options: [

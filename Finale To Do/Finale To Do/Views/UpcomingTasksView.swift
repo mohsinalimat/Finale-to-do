@@ -75,7 +75,6 @@ class UpcomingTasksView: TaskListView {
     
     override func ReloadTaskData(sortOverviewList: Bool = true) {
         super.ReloadTaskData(sortOverviewList: sortOverviewList)
-//        SortUpcomingTasks(sortPreference: .ByTimeDue)
         
         tasksOverdue.removeAll()
         tasksToday.removeAll()
@@ -106,6 +105,10 @@ class UpcomingTasksView: TaskListView {
         if tasksThisMonth.count > 0 { sections.append( UpcomingTasksSection(id: 4, title: "This month", tasks: tasksThisMonth)) }
         if tasksLater.count > 0 { sections.append( UpcomingTasksSection(id: 5, title: "Later", tasks: tasksLater)) }
         if tasksWithoutDate.count > 0 { sections.append( UpcomingTasksSection(id: 6, title: "Without date", tasks: tasksWithoutDate)) }
+    }
+    
+    override func SortUpcomingTasks(sortPreference: SortingPreference, animated: Bool = true) {
+        allUpcomingTasks = allUpcomingTasks.sorted { sortBool(task1: $0, task2: $1, sortingPreference: .ByTimeDue) }
     }
     
     override func AddSortButton() {
@@ -167,6 +170,7 @@ class UpcomingTasksView: TaskListView {
                     }
                 }
             })
+            if newIndexPath == IndexPath(row: 0, section: 0) || oldIndexPath == IndexPath(row: 0, section: 0) { tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         }
     }
     

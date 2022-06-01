@@ -86,7 +86,11 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         smartListsItems.removeAll()
         
         for i in 0..<App.settingsConfig.smartLists.count {
-            let menuItem = TaskListMenuItem(frame: CGRect(x: padding*0.5, y: Double(i)*menuItemHeight + userPanel.frame.maxY+padding*0.5, width: frame.width-padding, height: menuItemHeight), taskList: TaskList(name: App.settingsConfig.smartLists[i].title, primaryColor: .defaultColor, systemIcon: App.settingsConfig.smartLists[i].icon), index: i)
+            let menuItem = TaskListMenuItem(
+                frame: CGRect(x: padding*0.5, y: Double(i)*menuItemHeight + userPanel.frame.maxY+padding*0.5, width: frame.width-padding, height: menuItemHeight),
+                taskList: TaskList(name: App.settingsConfig.smartLists[i].title, primaryColor: .defaultColor, systemIcon: App.settingsConfig.smartLists[i].icon),
+                index: i,
+                taskCountNumber: App.settingsConfig.smartLists[i].taskCountNumber)
             smartListsItems.append(menuItem)
             self.addSubview(menuItem)
         }
@@ -104,9 +108,9 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         let cell = tableView.dequeueReusableCell(withIdentifier: "sideMenuTaskListCell", for: indexPath) as! TaskListTableCell
         
         if indexPath.row == 0 {
-            cell.Setup(taskList: App.mainTaskList, frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: App.settingsConfig.smartLists.count)
+            cell.Setup(taskList: App.mainTaskList, frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: App.settingsConfig.smartLists.count, taskCountNumber: { App.mainTaskList.upcomingTasks.count })
         } else {
-            cell.Setup(taskList: App.userTaskLists[indexPath.row-1], frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: indexPath.row+App.settingsConfig.smartLists.count)
+            cell.Setup(taskList: App.userTaskLists[indexPath.row-1], frameSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight), index: indexPath.row+App.settingsConfig.smartLists.count, taskCountNumber: { App.userTaskLists[indexPath.row-1].upcomingTasks.count } )
         }
         
         return cell
@@ -236,9 +240,17 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func UpdateUpcomingTasksCounts () {
+        UpdateSmartListTasksCount()
         for cell in tableView.visibleCells {
             let taskListCell = cell as! TaskListTableCell
-            taskListCell.taskListMenuItem.upcomingTaskCountLabel.text = taskListCell.taskListMenuItem.taskList.upcomingTasks.count == 0 ? "" :  taskListCell.taskListMenuItem.taskList.upcomingTasks.count.description
+            taskListCell.taskListMenuItem.ReloadTaskCountNumber()
+        }
+    }
+    
+    func UpdateSmartListTasksCount () {
+        for cell in smartListsItems {
+            let taskListCell = cell as! TaskListMenuItem
+            taskListCell.ReloadTaskCountNumber()
         }
     }
     
@@ -266,15 +278,18 @@ class TaskListMenuItem: UIView, UIDynamicTheme {
     
     var upcomingTaskCountLabel: UILabel!
     
+    var taskCountNumber: (()->Int)?
+    
     var isSelected: Bool {
         get {
             return App.selectedTaskListIndex == index
         }
     }
     
-    init(frame: CGRect, taskList: TaskList, index: Int) {
+    init(frame: CGRect, taskList: TaskList, index: Int, taskCountNumber: (()->Int)? = nil) {
         self.index = index
         self.taskList = taskList
+        self.taskCountNumber = taskCountNumber
         super.init(frame: frame)
         
         self.backgroundColor = isSelected ? ThemeManager.currentTheme.sidemenuSelectionColor : .clearInteractive
@@ -287,11 +302,11 @@ class TaskListMenuItem: UIView, UIDynamicTheme {
         iconView.contentMode = .scaleAspectFit
         
         let upcomingTaskCountLabelWidth: CGFloat
-        if index != 0 {
+        if taskCountNumber != nil {
             upcomingTaskCountLabelWidth = 20
             upcomingTaskCountLabel = UILabel(frame: CGRect(x: frame.width-padding*2-upcomingTaskCountLabelWidth, y: 0, width: upcomingTaskCountLabelWidth, height: frame.height))
             upcomingTaskCountLabel.textColor = .lightGray
-            upcomingTaskCountLabel.text = taskList.upcomingTasks.count == 0 ? "" : taskList.upcomingTasks.count.description
+            upcomingTaskCountLabel.text = taskCountNumber!() == 0 ? "" : taskCountNumber!().description
             upcomingTaskCountLabel.adjustsFontSizeToFitWidth = true
             upcomingTaskCountLabel.font = .preferredFont(forTextStyle: .subheadline)
             upcomingTaskCountLabel.textAlignment = .right
@@ -324,6 +339,12 @@ class TaskListMenuItem: UIView, UIDynamicTheme {
         }
     }
     
+    func ReloadTaskCountNumber () {
+        if taskCountNumber != nil {
+            upcomingTaskCountLabel.text = taskCountNumber!() == 0 ? "" : taskCountNumber!().description
+        }
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -341,11 +362,11 @@ class TaskListTableCell: UITableViewCell {
         backgroundColor = .clear
     }
     
-    func Setup(taskList: TaskList, frameSize: CGSize, index: Int) {
+    func Setup(taskList: TaskList, frameSize: CGSize, index: Int, taskCountNumber: (()->Int)? = nil) {
         for subview in contentView.subviews {
             subview.removeFromSuperview()
         }
-        taskListMenuItem = TaskListMenuItem(frame: CGRect(x: 0, y: 0, width: frameSize.width, height: frameSize.height), taskList: taskList, index: index)
+        taskListMenuItem = TaskListMenuItem(frame: CGRect(x: 0, y: 0, width: frameSize.width, height: frameSize.height), taskList: taskList, index: index, taskCountNumber: taskCountNumber)
         contentView.addSubview(taskListMenuItem)
     }
     

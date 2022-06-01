@@ -555,7 +555,7 @@ class App: UIViewController {
         sideMenuView.tableView.insertRows(at: [IndexPath(row: App.userTaskLists.count, section: 0)], with: .bottom)
         sideMenuView.tableView.endUpdates()
         
-        SelectTaskList(index: App.userTaskLists.count+1)
+        SelectTaskList(index: App.userTaskLists.count+App.settingsConfig.smartLists.count)
         
         AnalyticsHelper.LogTaskListCreated(taskList: taskList)
     }
@@ -568,11 +568,10 @@ class App: UIViewController {
         let index = updatedTaskList.id == App.mainTaskList.id ? 0 : App.userTaskLists.firstIndex(of: oldTaskList)! + 1
         sideMenuView.tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .automatic)
         
-        if App.selectedTaskListIndex == 0 && index == 0 {
-            SelectTaskList(index: index, closeMenu: false)
-        }
-        if App.selectedTaskListIndex == index + 1 {
-            SelectTaskList(index: index+1, closeMenu: false)
+        if App.selectedTaskListIndex < App.settingsConfig.smartLists.count { //if smart list is selected, update it cause it has tasks from updated lists
+            SelectTaskList(index: App.selectedTaskListIndex, closeMenu: false)
+        } else if App.selectedTaskListIndex == index + App.settingsConfig.smartLists.count { //If this list is currently selected, update it
+            SelectTaskList(index: App.selectedTaskListIndex, closeMenu: false)
         }
         
         AnalyticsHelper.LogTaskListEdited(taskList: updatedTaskList)
@@ -582,12 +581,14 @@ class App: UIViewController {
         let index = App.userTaskLists.firstIndex(of: taskList)!
         App.userTaskLists.remove(at: index)
         
-        sideMenuView.tableView.beginUpdates()
         sideMenuView.tableView.deleteRows(at: [IndexPath(row: index+1, section: 0)], with: .fade)
-        sideMenuView.tableView.endUpdates()
         
-        if index == App.selectedTaskListIndex-2 {
-            SelectTaskList(index: index > 0 ? index+1 : 1, closeMenu: false)
+        if index == App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1 {
+            SelectTaskList(index: App.selectedTaskListIndex-1, closeMenu: false)
+        } else if App.selectedTaskListIndex > App.settingsConfig.smartLists.count+App.userTaskLists.count{
+            SelectTaskList(index: App.selectedTaskListIndex-1, closeMenu: false)
+        } else {
+            SelectTaskList(index: App.selectedTaskListIndex, closeMenu: false)
         }
         
         if App.settingsConfig.defaultListID == taskList.id {
@@ -599,9 +600,7 @@ class App: UIViewController {
             App.settingsConfig.widgetLists.remove(at: App.settingsConfig.widgetLists.firstIndex(of: taskList.id)!)
         }
         
-        if App.selectedTaskListIndex == 0 {
-            SelectTaskList(index: 0, closeMenu: false)
-        }
+        if App.settingsConfig.smartLists.contains(.Upcoming) { sideMenuView.UpdateSmartListTasksCount() }
     }
     
     

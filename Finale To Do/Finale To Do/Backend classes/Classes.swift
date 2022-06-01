@@ -357,4 +357,25 @@ enum SmartList: Int, Codable, CaseIterable {
             return UpcomingTasksView.self
         }
     }
+    
+    var taskCountNumber: (()->Int)? {
+        switch self {
+        case .Overview:
+            return nil
+        case .Upcoming:
+            return {
+                var n = 0
+                for list in App.instance.allTaskLists {
+                    for task in list.upcomingTasks {
+                        if task.isOverdue {
+                            n += 1
+                        } else if task.isDateAssigned && Calendar.current.isDateInToday(task.dateAssigned) {
+                            n += 1
+                        }
+                    }
+                }
+                return n
+            }
+        }
+    }
 }

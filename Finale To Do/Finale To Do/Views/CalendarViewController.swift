@@ -411,6 +411,8 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         if taskSliderContextMenu == nil && !taskSlider.isEditing {
             App.instance.taskListView.MoveTaskToRightSortedIndexPath(task: taskSlider.task)
         }
+        
+        if App.settingsConfig.smartLists.contains(.Upcoming) { App.instance.sideMenuView.UpdateSmartListTasksCount() }
     }
     
     @objc func HideViewNoAction () {
@@ -420,9 +422,9 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
     
     func ReloadThemeColors() {
         let color: UIColor
-        if App.selectedTaskListIndex == 0 { color = .defaultColor }
-        else if App.selectedTaskListIndex == 1 { color = App.mainTaskList.primaryColor }
-        else { color = App.userTaskLists[App.selectedTaskListIndex-2].primaryColor }
+        if App.selectedTaskListIndex < App.settingsConfig.smartLists.count { color = .defaultColor }
+        else if App.selectedTaskListIndex == App.settingsConfig.smartLists.count { color = App.mainTaskList.primaryColor }
+        else { color = App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].primaryColor }
         accentColor = color
         UIView.animate(withDuration: 0.25) { [self] in
             if calendarView != nil { calendarView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) }
