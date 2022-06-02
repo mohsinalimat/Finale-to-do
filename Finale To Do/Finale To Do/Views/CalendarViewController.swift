@@ -345,7 +345,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         selectedNotificationTypes.removeAll()
         
         notificationPageView.removeFromSuperview()
-        notificationPageView = DrawNotificationSelectionPage(size: containerView.frame.size)
+        notificationPageView = DrawNotificationSelectionPage(size: firstPageView.frame.size)
         containerView.addSubview(notificationPageView)
         
         notificationStatusLabel.text = notificationStatusLabelText
