@@ -85,7 +85,9 @@ class App: UIViewController {
 //MARK: Task Actions
     
     func CreateNewTask(tasklist: TaskList? = nil) {
-        taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true)
+        DispatchQueue.main.async { [self] in
+            taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true)
+        }
         
         StopEditingAllTasks()
         
@@ -906,8 +908,7 @@ class App: UIViewController {
     
     func StopEditingAllTasks () {
         for cell in taskListView.tableView.visibleCells as! [TaskSliderTableCell] {
-            cell.slider.StopEditing()
-            if cell.slider.task.name == "" { DeleteTask(task: cell.slider.task) }
+            cell.slider.StopEditing(putInRightPlace: taskListView is UpcomingTasksView)
             taskListView.currentSliderEditing = nil
         }
     }

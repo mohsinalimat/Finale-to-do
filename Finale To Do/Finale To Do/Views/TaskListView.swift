@@ -149,6 +149,9 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TouchedTable)))
         tableView.showsVerticalScrollIndicator = false
         tableView.backgroundColor = .clear
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: UIScreen.main.bounds.height*0.45))
+        footerView.backgroundColor = .clear
+        tableView.tableFooterView = footerView
         
         contentView.addSubview(tableView)
         
@@ -396,8 +399,10 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     func ReloadView () {
         ReloadTaskData()
         tableView.reloadData()
-        tableView.setContentOffset(CGPoint(x: 0, y: tableView.frame.minY), animated: false)
-        originalTableContentOffsetY = tableView.contentOffset.y
+        DispatchQueue.main.async { [self] in
+            tableView.setContentOffset(CGPoint(x: 0, y: tableView.frame.minY), animated: false)
+            originalTableContentOffsetY = tableView.contentOffset.y
+        }
         titleLabel.text = headerTitle
         titleLabel.textColor = headerElementsColor
         hamburgerButton.tintColor = headerElementsColor
@@ -420,6 +425,15 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut) { [self] in
                 let y = contentView.frame.height - keyboardHeight - addTaskButton.frame.height - padding
                 addTaskButton.frame.origin.y = y
+            }
+            if currentSliderEditing != nil {
+                let sliderMaxY = currentSliderEditing!.superview!.convert(currentSliderEditing!.frame, to: nil).maxY
+                let threasholdY = addTaskButton.superview!.convert(addTaskButton.frame, to: nil).origin.y - padding
+                if sliderMaxY > threasholdY {
+                    DispatchQueue.main.async { [self] in
+                        tableView.setContentOffset(CGPoint(x: 0, y: tableView.contentOffset.y + (sliderMaxY-threasholdY) ), animated: true)
+                    }
+                }
             }
         }
     }
