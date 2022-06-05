@@ -32,10 +32,12 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
         tableView = UITableView(frame: CGRect(x: 0, y: 0, width: viewWidth, height: self.view.frame.height), style: .insetGrouped)
         tableView.delegate = self
         tableView.dataSource = self
-//        tableView.register(SettingsTableCell.self, forCellReuseIdentifier: SettingsTableCell.identifier)
         tableView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TapOutside)))
         tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: self.tableView.bounds.size.width, height: .leastNonzeroMagnitude))
         tableView.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black
+        let tableFooter = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: rowHeight*2))
+        tableFooter.backgroundColor = .clear
+        tableView.tableFooterView = tableFooter
         
         self.view.addSubview(tableView)
     }
