@@ -20,6 +20,8 @@
 		372B8A2F281CE61F00117A72 /* classicFilled@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 372B8A27281CE61F00117A72 /* classicFilled@3x.png */; };
 		372B8A30281CE61F00117A72 /* dark@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 372B8A28281CE61F00117A72 /* dark@3x.png */; };
 		372B8A31281CE61F00117A72 /* dark@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 372B8A29281CE61F00117A72 /* dark@2x.png */; };
+		3737D78A284EE821006A5387 /* Level Frame 2.png in Resources */ = {isa = PBXBuildFile; fileRef = 3737D789284EE821006A5387 /* Level Frame 2.png */; };
+		3737D78C284EE8E8006A5387 /* Level Frame 1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3737D78B284EE8E8006A5387 /* Level Frame 1.png */; };
 		37424C9D28480B3000BD8349 /* RedditIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 37424C9B28480B3000BD8349 /* RedditIcon.png */; };
 		37424C9F28480B8A00BD8349 /* TwitterIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 37424C9E28480B8A00BD8349 /* TwitterIcon.png */; };
 		3750A033283300C700E72EB5 /* Protagonist I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE2283300C600E72EB5 /* Protagonist I.png */; };
@@ -218,6 +220,8 @@
 		372B8A28281CE61F00117A72 /* dark@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark@3x.png"; sourceTree = "<group>"; };
 		372B8A29281CE61F00117A72 /* dark@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "dark@2x.png"; sourceTree = "<group>"; };
 		372B8A38281E41E600117A72 /* Finale To Do.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Finale To Do.entitlements"; sourceTree = "<group>"; };
+		3737D789284EE821006A5387 /* Level Frame 2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Level Frame 2.png"; sourceTree = "<group>"; };
+		3737D78B284EE8E8006A5387 /* Level Frame 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Level Frame 1.png"; sourceTree = "<group>"; };
 		37424C9B28480B3000BD8349 /* RedditIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RedditIcon.png; sourceTree = "<group>"; };
 		37424C9E28480B8A00BD8349 /* TwitterIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TwitterIcon.png; sourceTree = "<group>"; };
 		37509FE2283300C600E72EB5 /* Protagonist I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist I.png"; sourceTree = "<group>"; };
@@ -447,6 +451,15 @@
 			path = "Alternative Icons";
 			sourceTree = "<group>";
 		};
+		3737D784284EE7C4006A5387 /* Level Frames */ = {
+			isa = PBXGroup;
+			children = (
+				3737D78B284EE8E8006A5387 /* Level Frame 1.png */,
+				3737D789284EE821006A5387 /* Level Frame 2.png */,
+			);
+			path = "Level Frames";
+			sourceTree = "<group>";
+		};
 		37424C9928480B2400BD8349 /* Social Media Logos */ = {
 			isa = PBXGroup;
 			children = (
@@ -640,6 +653,7 @@
 		379999072829E62100A42F32 /* Graphics */ = {
 			isa = PBXGroup;
 			children = (
+				3737D784284EE7C4006A5387 /* Level Frames */,
 				37424C9928480B2400BD8349 /* Social Media Logos */,
 				377CB341282DF1B7001CDBBD /* Sharing */,
 				37CE7B82282AE76E00B15440 /* Guide Screenshots */,
@@ -870,6 +884,7 @@
 				3750A07C283300C700E72EB5 /* Workaholic III Placeholder.png in Resources */,
 				3750A05A283300C700E72EB5 /* Protagonist III.png in Resources */,
 				3787307F28348D22003A7133 /* Change Task Priority.png in Resources */,
+				3737D78A284EE821006A5387 /* Level Frame 2.png in Resources */,
 				372B8A2E281CE61F00117A72 /* classic@2x.png in Resources */,
 				3750A04B283300C700E72EB5 /* Extravert V.png in Resources */,
 				3750A046283300C700E72EB5 /* Extravert III.png in Resources */,
@@ -880,6 +895,7 @@
 				37A75A7F282F3760004D6450 /* Unlock All Perks.png in Resources */,
 				3750A071283300C700E72EB5 /* Companion III Placeholder.png in Resources */,
 				3750A04E283300C700E72EB5 /* Companion V.png in Resources */,
+				3737D78C284EE8E8006A5387 /* Level Frame 1.png in Resources */,
 				372B8A2C281CE61F00117A72 /* darkmodeFilled@3x.png in Resources */,
 				3750A055283300C700E72EB5 /* Workaholic V.png in Resources */,
 				37D5426D2825888E00373987 /* purpleFilled@2x.png in Resources */,
@@ -1217,7 +1233,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1234,7 +1250,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.10.3;
+				MARKETING_VERSION = 1.10.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Grant151.Finale-To-Do";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1251,7 +1267,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Finale To Do/Info.plist";
@@ -1267,7 +1283,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.10.3;
+				MARKETING_VERSION = 1.10.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Grant151.Finale-To-Do";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

@@ -76,6 +76,7 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         settingsButton.setImage(UIImage(systemName: "gearshape"), for: .normal)
         settingsButton.tintColor = .white
         settingsButton.addTarget(self, action: #selector(OpenSettings), for: .touchUpInside)
+        settingsButton.contentHorizontalAlignment = .right
         
         self.addSubview(settingsButton)
         
@@ -455,14 +456,9 @@ class LevelFrame: UIView {
         
         let iconSize = frame.width * 0.95
         levelIcon.frame = CGRect(x: 0.5*(frame.width-iconSize), y: 0.5*(frame.height-iconSize), width: iconSize, height: iconSize)
-        levelIcon.image = UIImage(named: "Level Frame")
         levelIcon.contentMode = .scaleAspectFit
         colorLayer.frame = levelIcon.frame
         colorLayer.layer.compositingFilter = "multiplyBlendMode"
-        let mask = UIImageView(image: UIImage(named: "Level Frame"))
-        mask.frame = CGRect(x: -0.5, y: -0.5, width: iconSize+1, height: iconSize+1)
-        mask.contentMode = .scaleAspectFit
-        colorLayer.mask = mask
         
         levelLabel.frame = levelIcon.frame
         levelLabel.frame.origin.y -= frame.width/57
@@ -479,7 +475,13 @@ class LevelFrame: UIView {
     }
     
     func UpdateLevel(level: Int) {
+        let iconSize = frame.width * 0.95
         levelLabel.text = level.description
+        levelIcon.image = StatsManager.stats.level < 20 ? UIImage(named: "Level Frame 1") : UIImage(named: "Level Frame 2")
+        let mask = UIImageView(image: levelIcon.image)
+        mask.frame = CGRect(x: -0.5, y: -0.5, width: iconSize+1, height: iconSize+1)
+        mask.contentMode = .scaleAspectFit
+        colorLayer.mask = mask
     }
     
     func UpdateColor(color: UIColor) {
