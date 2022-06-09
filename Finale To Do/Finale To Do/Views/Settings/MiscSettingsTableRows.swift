@@ -155,6 +155,7 @@ class SettingsSelectionRow: UIView, UIDynamicTheme {
     
     
     let index: Int
+    var accentColor: UIColor
     
     var OnSelect: (_ index: Int)->Void
     var OnDeselect: (_ index: Int)->Void
@@ -167,7 +168,7 @@ class SettingsSelectionRow: UIView, UIDynamicTheme {
         set {
             _isSelected = newValue
             imageView.image = UIImage(systemName: _isSelected ? isNone ? "circle.inset.filled" : "checkmark.circle.fill" :  "circle")
-            imageView.tintColor = isSelected ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor) : .systemGray
+            imageView.tintColor = isSelected ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) : .systemGray
         }
     }
     
@@ -176,8 +177,9 @@ class SettingsSelectionRow: UIView, UIDynamicTheme {
     let isNone: Bool
     let padding = 16.0
     
-    init(frame: CGRect, title: String, index: Int, isSelected: Bool, isNone: Bool, onSelect: @escaping (_ index: Int)->Void, onDeselect: @escaping (_ index: Int)->Void) {
+    init(frame: CGRect, title: String, accentColor: UIColor = .defaultColor, index: Int, isSelected: Bool, isNone: Bool, onSelect: @escaping (_ index: Int)->Void, onDeselect: @escaping (_ index: Int)->Void) {
         self.isNone = isNone
+        self.accentColor = accentColor
         self.OnSelect = onSelect
         self.OnDeselect = onDeselect
         self.index = index
@@ -220,11 +222,14 @@ class SettingsSelectionRow: UIView, UIDynamicTheme {
     
     func ReloadThemeColors() {
         UIView.animate(withDuration: 0.25) { [self] in
-            imageView.tintColor = isSelected ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor) : .systemGray
+            imageView.tintColor = isSelected ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) : .systemGray
         }
     }
     
-    
+    func SetAccentColor (color: UIColor) {
+        accentColor = color
+        ReloadThemeColors()
+    }
     
     
     
@@ -418,7 +423,7 @@ class SettingsAppIconView: UIView {
     func SelectIcon(icon: AppIcon) {
         AppIconManager.setIcon(icon)
         App.settingsConfig.selectedIcon = icon
-        App.instance.SaveSettings()
+        SaveManager.instance.SaveSettings()
         
         for iconCell in allIcons {
             if iconCell.icon == icon { iconCell.isSelected = true }

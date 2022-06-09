@@ -666,21 +666,23 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func TogglePlaceholder () {
-        if shouldShowPlaceholder {
-            placeholderView?.removeFromSuperview()
-            placeholderView = DrawPlaceholder()
-            contentView.addSubview(placeholderView!)
-            placeholderView?.alpha = 0
-            UIView.animate(withDuration: 0.25) { [self] in
-                tableView.alpha = 0
-                placeholderView?.alpha = 1
-            }
-        } else {
-            if tableView.alpha == 1 { return }
-            
-            UIView.animate(withDuration: 0.25) { [self] in
-                tableView.alpha = 1
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [self] in
+            if shouldShowPlaceholder {
+                placeholderView?.removeFromSuperview()
+                placeholderView = DrawPlaceholder()
+                contentView.addSubview(placeholderView!)
                 placeholderView?.alpha = 0
+                UIView.animate(withDuration: 0.25) { [self] in
+                    tableView.alpha = 0
+                    placeholderView?.alpha = 1
+                }
+            } else {
+                if tableView.alpha == 1 { return }
+                
+                UIView.animate(withDuration: 0.25) { [self] in
+                    tableView.alpha = 1
+                    placeholderView?.alpha = 0
+                }
             }
         }
     }

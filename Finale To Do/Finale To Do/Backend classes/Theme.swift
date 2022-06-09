@@ -143,7 +143,7 @@ class ThemeManager {
         } else if theme.interface == .Dark {
             App.settingsConfig.selectedDarkThemeIndex = ThemeManager.darkThemes.firstIndex(of: theme)!
         }
-        App.instance.SaveSettings()
+        SaveManager.instance.SaveSettings()
         ThemeManager.currentTheme = App.settingsConfig.GetCurrentTheme()
         App.instance.SetSubviewColors(of: App.instance.view)
     }

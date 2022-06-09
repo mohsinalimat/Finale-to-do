@@ -13,40 +13,43 @@ class Task: Codable, Equatable {
     var name: String
     var priority: TaskPriority
     var notes: String
+    var notifications: [NotificationType : String]
+    var repeating: [TaskRepeatType]
     var isCompleted: Bool
     var isDateAssigned: Bool
     var isDueTimeAssigned: Bool
     var dateAssigned: Date
     var dateCreated: Date
     var dateCompleted: Date
-    var notifications: [NotificationType : String]
     var taskListID: UUID
     
     init () {
         self.name = ""
         self.priority = .Normal
         self.notes = ""
+        self.notifications = [NotificationType : String]()
+        self.repeating = [TaskRepeatType]()
         self.isCompleted = false
         self.isDateAssigned = false
         self.isDueTimeAssigned = false
         self.dateAssigned = Date(timeIntervalSince1970: 0)
         self.dateCreated = Date()
         self.dateCompleted = Date(timeIntervalSince1970: 0)
-        self.notifications = [NotificationType : String]()
         self.taskListID = UUID()
     }
     
-    init(name: String = "", priority: TaskPriority = .Normal, notes: String = "", isComleted: Bool = false, isDateAssigned: Bool = false, isDueTimeAssigned: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), notifications: [NotificationType : String] = [NotificationType : String](), taskListID: UUID = UUID()) {
+    init(name: String = "", priority: TaskPriority = .Normal, notes: String = "", repeating: [TaskRepeatType] = [], isComleted: Bool = false, isDateAssigned: Bool = false, isDueTimeAssigned: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), notifications: [NotificationType : String] = [NotificationType : String](), taskListID: UUID = UUID()) {
         self.name = name
         self.priority = priority
         self.notes = notes
+        self.notifications = notifications
+        self.repeating = repeating
         self.isCompleted = isComleted
         self.isDateAssigned = isDateAssigned
         self.isDueTimeAssigned = isDueTimeAssigned
         self.dateAssigned = dateAssigned
         self.dateCreated = dateCreated
         self.dateCompleted = dateCompleted
-        self.notifications = notifications
         self.taskListID = taskListID
     }
     
@@ -93,13 +96,14 @@ class Task: Codable, Equatable {
         name = try container.decode(String.self, forKey: .name)
         priority = try container.decode(TaskPriority.self, forKey: .priority)
         notes = try container.decode(String.self, forKey: .notes)
+        notifications = try container.decode([NotificationType : String].self, forKey: .notifications)
+        repeating = try container.decode([TaskRepeatType].self, forKey: .repeating)
         isCompleted = try container.decode(Bool.self, forKey: .isCompleted)
         isDateAssigned = try container.decode(Bool.self, forKey: .isDateAssigned)
         isDueTimeAssigned = try container.decode(Bool.self, forKey: .isDueTimeAssigned)
         dateAssigned = try container.decode(Date.self, forKey: .dateAssigned)
         dateCreated = try container.decode(Date.self, forKey: .dateCreated)
         dateCompleted = try container.decode(Date.self, forKey: .dateCompleted)
-        notifications = try container.decode([NotificationType : String].self, forKey: .notifications)
         taskListID = try container.decode(UUID.self, forKey: .taskListID)
     }
     
@@ -108,13 +112,14 @@ class Task: Codable, Equatable {
         try container.encode(name, forKey: .name)
         try container.encode(priority, forKey: .priority)
         try container.encode(notes, forKey: .notes)
+        try container.encode(notifications, forKey: .notifications)
+        try container.encode(repeating, forKey: .repeating)
         try container.encode(isCompleted, forKey: .isCompleted)
         try container.encode(isDateAssigned, forKey: .isDateAssigned)
         try container.encode(isDueTimeAssigned, forKey: .isDueTimeAssigned)
         try container.encode(dateAssigned, forKey: .dateAssigned)
         try container.encode(dateCreated, forKey: .dateCreated)
         try container.encode(dateCompleted, forKey: .dateCompleted)
-        try container.encode(notifications, forKey: .notifications)
         try container.encode(taskListID, forKey: .taskListID)
     }
     
@@ -123,13 +128,14 @@ class Task: Codable, Equatable {
         lhs.name == rhs.name &&
         lhs.priority == rhs.priority &&
         lhs.notes == rhs.notes &&
+        lhs.notifications == rhs.notifications
+        lhs.repeating == rhs.repeating
         lhs.isCompleted == rhs.isCompleted &&
         lhs.isDateAssigned == rhs.isDateAssigned &&
         lhs.isDueTimeAssigned == rhs.isDueTimeAssigned &&
         lhs.dateAssigned == rhs.dateAssigned &&
         lhs.dateCreated == rhs.dateCreated &&
         lhs.dateCompleted == rhs.dateCompleted &&
-        lhs.notifications == rhs.notifications
         lhs.taskListID == rhs.taskListID
     }
 }
@@ -238,6 +244,34 @@ enum TaskPriority: Int, Codable, CaseIterable {
     }
 }
 
+enum TaskRepeatType: Int, Codable, CaseIterable {
+    case Daily = 0
+    case Weekly = 1
+    case Monthly = 2
+    case Monday = 3
+    case Tuesday = 4
+    case Wednesday = 5
+    case Thursday = 6
+    case Friday = 7
+    case Saturday = 8
+    case Sunday = 9
+    
+    var str: String {
+        switch self {
+        case .Daily: return "Daily"
+        case .Weekly: return "Weekly"
+        case .Monthly: return "Monthly"
+        case .Monday: return "Mon"
+        case .Tuesday: return "Tue"
+        case .Wednesday: return "Wed"
+        case .Thursday: return "Thu"
+        case .Friday: return "Fri"
+        case .Saturday: return "Sat"
+        case .Sunday: return "Sun"
+        }
+    }
+}
+
 enum SortingPreference: Int, Codable {
     case Unsorted = 0
     case ByList = 1
@@ -291,6 +325,8 @@ enum TaskCodingKeys: CodingKey {
     case name
     case priority
     case notes
+    case notifications
+    case repeating
     case isCompleted
     case isDateAssigned
     case isDueTimeAssigned
@@ -298,7 +334,6 @@ enum TaskCodingKeys: CodingKey {
     case dateCreated
     case dateCompleted
     case indexInOverview
-    case notifications
     case taskListID
 }
 enum TaskListCodingKeys: CodingKey {

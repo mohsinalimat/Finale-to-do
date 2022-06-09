@@ -22,7 +22,7 @@ class SettingsNavigationController: UINavigationController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        App.instance.SaveSettings()
+        SaveManager.instance.SaveSettings()
     }
     
     func SetAllViewControllerColors() {
@@ -130,8 +130,8 @@ class SettingsPersonalPage: SettingsPageViewController {
         if sender.isOn {
             let keyStore = NSUbiquitousKeyValueStore()
             
-            if let lastSyncDate = keyStore.object(forKey: App.instance.lastICloudSyncKey) as? Date {
-                let deviceName = keyStore.string(forKey: App.instance.deviceNameKey) ?? "Unknown device"
+            if let lastSyncDate = keyStore.object(forKey: SaveManager.instance.lastICloudSyncKey) as? Date {
+                let deviceName = keyStore.string(forKey: SaveManager.instance.deviceNameKey) ?? "Unknown device"
                 let confirmationVC = ICloudSyncConfirmationViewController(
                     lastICloudSync: lastSyncDate,
                     deviceName: deviceName,
@@ -139,7 +139,7 @@ class SettingsPersonalPage: SettingsPageViewController {
                      sender.setOn(false, animated: true)
                 }, OnConfirm: {
                     App.settingsConfig.isICloudSyncOn = true
-                    App.instance.LoadICloudData(iCloudKey: NSUbiquitousKeyValueStore())
+                    SaveManager.instance.LoadICloudData(iCloudKey: NSUbiquitousKeyValueStore())
                     App.instance.sideMenuView.tableView.reloadData()
                     App.instance.sideMenuView.userPanel.ReloadPanel()
                     App.instance.SelectTaskList(index: 0, closeMenu: false)
@@ -157,8 +157,8 @@ class SettingsPersonalPage: SettingsPageViewController {
                     }
                 }, OnDecline: {
                     App.settingsConfig.isICloudSyncOn = true
-                    App.instance.SaveSettings()
-                    App.instance.SaveData()
+                    SaveManager.instance.SaveSettings()
+                    SaveManager.instance.SaveData()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         self.ReloadSettings()
                         self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
@@ -174,7 +174,7 @@ class SettingsPersonalPage: SettingsPageViewController {
                 self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
             }
         } else {
-            App.instance.RemoveICloudSaveFiles()
+            SaveManager.instance.RemoveICloudSaveFiles()
             App.settingsConfig.isICloudSyncOn = false
             self.ReloadSettings()
             self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)

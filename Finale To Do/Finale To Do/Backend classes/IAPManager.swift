@@ -98,7 +98,7 @@ class IAPManager : NSObject, SKProductsRequestDelegate, SKPaymentTransactionObse
     func HandlePurchase(id: String) {
         if id == unlockAllPerksID {
             StatsManager.stats.purchasedUnlockAllPerks = true
-            App.instance.SaveData()
+            SaveManager.instance.SaveData()
         }
     }
 }

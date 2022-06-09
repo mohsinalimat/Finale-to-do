@@ -421,7 +421,7 @@ class WelcomeScreenAllSetPage: UIViewController {
         App.settingsConfig.completedInitialSetup = true
         App.instance.SelectTaskList(index: 0)
         App.instance.sideMenuView.userPanel.ReloadName()
-        App.instance.SaveSettings()
+        SaveManager.instance.SaveSettings()
         AnalyticsHelper.LogWelcomeScreenCompleted(tutorialAccepted: false)
         self.navigationController?.dismiss(animated: true)
     }
@@ -431,8 +431,8 @@ class WelcomeScreenAllSetPage: UIViewController {
         App.userTaskLists.append(CreateTutorialTaskList())
         App.instance.SelectTaskList(index: 2)
         App.instance.sideMenuView.userPanel.ReloadName()
-        App.instance.SaveSettings()
-        App.instance.SaveData()
+        SaveManager.instance.SaveSettings()
+        SaveManager.instance.SaveData()
         AnalyticsHelper.LogWelcomeScreenCompleted(tutorialAccepted: true)
         self.navigationController?.dismiss(animated: true)
     }

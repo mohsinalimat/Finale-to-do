@@ -154,6 +154,8 @@
 		37A75A7A282F1996004D6450 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A75A79282F1996004D6450 /* StoreKit.framework */; };
 		37A75A7C282F238D004D6450 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A75A7B282F238D004D6450 /* IAPManager.swift */; };
 		37A75A7F282F3760004D6450 /* Unlock All Perks.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A75A7E282F3760004D6450 /* Unlock All Perks.png */; };
+		37A8B9842852677E00A032AF /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A8B9832852677E00A032AF /* SaveManager.swift */; };
+		37A8B98628526B2A00A032AF /* Notes.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 37A8B98528526B2A00A032AF /* Notes.rtf */; };
 		37B9998C2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */; };
 		37CE7B81282AD29B00B15440 /* GuidePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CE7B80282AD29B00B15440 /* GuidePageViewController.swift */; };
 		37D542672825888E00373987 /* orangeFilled@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542572825888C00373987 /* orangeFilled@3x.png */; };
@@ -355,6 +357,8 @@
 		37A75A79282F1996004D6450 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		37A75A7B282F238D004D6450 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		37A75A7E282F3760004D6450 /* Unlock All Perks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Unlock All Perks.png"; sourceTree = "<group>"; };
+		37A8B9832852677E00A032AF /* SaveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
+		37A8B98528526B2A00A032AF /* Notes.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Notes.rtf; sourceTree = "<group>"; };
 		37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSyncConfirmationViewController.swift; sourceTree = "<group>"; };
 		37CE7B80282AD29B00B15440 /* GuidePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidePageViewController.swift; sourceTree = "<group>"; };
 		37D542572825888C00373987 /* orangeFilled@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "orangeFilled@3x.png"; sourceTree = "<group>"; };
@@ -416,6 +420,7 @@
 				378922B22823645200AA3B1B /* StatsManager.swift */,
 				37A75A7B282F238D004D6450 /* IAPManager.swift */,
 				3763F5DB282F70B1005FB2C4 /* AnalyticsHelper.swift */,
+				37A8B9832852677E00A032AF /* SaveManager.swift */,
 			);
 			path = "Backend classes";
 			sourceTree = "<group>";
@@ -610,6 +615,7 @@
 				3752F4B2283078F3007AD922 /* GoogleService-Info.plist */,
 				372B8A38281E41E600117A72 /* Finale To Do.entitlements */,
 				376AD0CB2808DC5A00986B49 /* Assets.xcassets */,
+				37A8B98528526B2A00A032AF /* Notes.rtf */,
 			);
 			path = "Finale To Do";
 			sourceTree = "<group>";
@@ -880,6 +886,7 @@
 				3750A06B283300C700E72EB5 /* Principal V Placeholder.png in Resources */,
 				372B8A2A281CE61F00117A72 /* classicFilled@2x.png in Resources */,
 				3750A037283300C700E72EB5 /* Surgeon I.png in Resources */,
+				37A8B98628526B2A00A032AF /* Notes.rtf in Resources */,
 				377CB33B282C45EB001CDBBD /* Complete Task.png in Resources */,
 				3750A07C283300C700E72EB5 /* Workaholic III Placeholder.png in Resources */,
 				3750A05A283300C700E72EB5 /* Protagonist III.png in Resources */,
@@ -1022,6 +1029,7 @@
 				370A9DB32810CDDE00FC30A7 /* TaskSliderContextMenu.swift in Sources */,
 				378922B128232F2600AA3B1B /* UserProfileViewController.swift in Sources */,
 				3763F5DC282F70B1005FB2C4 /* AnalyticsHelper.swift in Sources */,
+				37A8B9842852677E00A032AF /* SaveManager.swift in Sources */,
 				375E5D7B280F7155001A289E /* CalendarViewController.swift in Sources */,
 				376AD0C52808DC5900986B49 /* SceneDelegate.swift in Sources */,
 				371135F728138CE300B51322 /* NotificationHelper.swift in Sources */,
