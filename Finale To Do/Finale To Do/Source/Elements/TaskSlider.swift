@@ -247,11 +247,12 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
         AnalyticsHelper.LogTaskAssignedDate()
     }
     
-    func ClearDateAndTime() {
+    func ClearDateTimeAndRepeat() {
         task.isDateAssigned = false
         task.isDueTimeAssigned = false
         task.dateAssigned = Date(timeIntervalSince1970: 0)
         task.RemoveAllNotifications()
+        task.repeating.removeAll()
         calendarIconView.alpha = isEditing ? 1 : 0
         UpdateDateLabel()
         

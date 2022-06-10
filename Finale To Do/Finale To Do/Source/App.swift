@@ -84,7 +84,7 @@ class App: UIViewController {
     
 //MARK: Task Actions
     
-    func CreateNewTask(tasklist: TaskList? = nil) {
+    func CreateNewTask(tasklist: TaskList? = nil, task: Task? = nil) {
         DispatchQueue.main.async { [self] in
             taskListView.tableView.setContentOffset(CGPoint(x: 0, y: taskListView.originalTableContentOffsetY), animated: true)
         }
@@ -94,23 +94,27 @@ class App: UIViewController {
         let newTask: Task
         if App.selectedTaskListIndex < App.settingsConfig.smartLists.count {
             if tasklist == nil {
-                newTask = Task(taskListID: defaultList.id)
+                newTask = task ?? Task(taskListID: defaultList.id)
                 defaultList.upcomingTasks.insert(newTask, at: 0)
             } else {
-                newTask = Task(taskListID: tasklist!.id)
+                newTask = task ?? Task(taskListID: tasklist!.id)
                 tasklist!.upcomingTasks.insert(newTask, at: 0)
             }
         } else if App.selectedTaskListIndex == App.settingsConfig.smartLists.count { //Main task list
-            newTask = Task(taskListID: App.mainTaskList.id)
+            newTask = task ?? Task(taskListID: App.mainTaskList.id)
             App.mainTaskList.upcomingTasks.insert(newTask, at: 0)
         } else {
-            newTask = Task(taskListID: App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].id)
+            newTask = task ?? Task(taskListID: App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].id)
             App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].upcomingTasks.insert(newTask, at: 0)
         }
         
         taskListView.allUpcomingTasks.insert(newTask, at: 0)
 
         CreateNewTaskTableAnimation()
+        
+        if task != nil {
+            taskListView.MoveTaskToRightSortedIndexPath(task: task!)
+        }
         
         DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
         
@@ -166,6 +170,8 @@ class App: UIViewController {
         lastCompletedTask = task
         lastDeletedTask = nil
         taskListView.ShowUndoButton()
+        
+        if task.repeating.count > 0 { AddRepeatingTask(task: task) }
         
         DispatchQueue.main.async { self.sideMenuView.UpdateUpcomingTasksCounts() }
         
@@ -444,6 +450,34 @@ class App: UIViewController {
         } else if lastDeletedTask != nil {
             UndoDeletingTask(task: lastDeletedTask!)
         }
+    }
+    
+    func AddRepeatingTask (task: Task) {
+        if task.repeating.count == 0 || !task.isDateAssigned { return }
+        
+        let newDate: Date
+        if task.repeating.count == 1 && (task.repeating.first == .Daily || task.repeating.first == .Weekly || task.repeating.first == .Monthly) {
+            if task.repeating.first == .Daily { newDate = Calendar.current.date(byAdding: .day, value: 1, to: task.dateAssigned)! }
+            else if task.repeating.first == .Weekly { newDate = Calendar.current.date(byAdding: .day, value: 7, to: task.dateAssigned)! }
+            else { newDate = Calendar.current.date(byAdding: .month, value: 1, to: task.dateAssigned)! } //Monthly
+        } else {
+            var allDates = [Date]()
+            for repeatType in task.repeating {
+                if repeatType == .Monday { allDates.append(task.dateAssigned.next(.monday)) }
+                else if repeatType == .Tuesday { allDates.append(task.dateAssigned.next(.tuesday)) }
+                else if repeatType == .Wednesday { allDates.append(task.dateAssigned.next(.wednesday)) }
+                else if repeatType == .Thursday { allDates.append(task.dateAssigned.next(.thursday)) }
+                else if repeatType == .Friday { allDates.append(task.dateAssigned.next(.friday)) }
+                else if repeatType == .Saturday { allDates.append(task.dateAssigned.next(.saturday)) }
+                else { allDates.append(task.dateAssigned.next(.sunday)) } //Sunday
+            }
+            allDates = allDates.sorted { $0 < $1 }
+            newDate = allDates.first!
+        }
+        
+        let newTask = Task(name: task.name, priority: task.priority, notes: task.notes, repeating: task.repeating, isComleted: false, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: newDate, dateCreated: task.dateCreated, notifications: task.notifications, taskListID: task.taskListID)
+        
+        CreateNewTask(tasklist: getTaskList(id: newTask.taskListID), task: newTask)
     }
     
     

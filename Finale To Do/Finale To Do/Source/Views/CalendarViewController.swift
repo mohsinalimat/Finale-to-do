@@ -23,6 +23,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
     var selectedNotificationTypes = [NotificationType]()
     
     var repeatSelectionRows = [SettingsSelectionRow]()
+    var weekdaysSelectionRow: WeekdaysSelectionRow!
     var selectedRepeatTypes = [TaskRepeatType]()
     
     var confirmButton: UIButton!
@@ -46,6 +47,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         for (notificationType, _) in taskSlider.task.notifications {
             self.selectedNotificationTypes.append(notificationType)
         }
+        for repeatType in taskSlider.task.repeating { self.selectedRepeatTypes.append(repeatType) }
         super.init(nibName: nil, bundle: nil)
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         SharedInit(tintColor: tintColor, taskSlider: taskSlider)
@@ -255,7 +257,15 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
     }
     
     var repeatStatusLabelText: String {
-        return "None"
+        if selectedRepeatTypes.count == 0  { return "No" }
+        
+        var text = ""
+        for type in selectedRepeatTypes {
+            text.append("\(type.longStr), ")
+        }
+        text.removeLast()
+        text.removeLast()
+        return text
     }
     
     func DrawNotificationSelectionPage (size: CGSize) -> UIView {
@@ -278,8 +288,9 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         
         notificationSelectoinRows.removeAll()
         let noneRow = SettingsSelectionRow(
-            frame: CGRect(x: 0, y: titleLabel.frame.maxY + padding, width: size.width, height: 40.0),
+            frame: CGRect(x: 0, y: titleLabel.frame.maxY + padding, width: size.width, height: 45.0),
             title: "None",
+            accentColor: accentColor,
             index: -1,
             isSelected: taskSlider.task.notifications.count == 0,
             isNone: true,
@@ -292,7 +303,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         let end = taskSlider.task.isDueTimeAssigned ? 5 : 10
         for i in start..<end {
             let row = SettingsSelectionRow(
-                frame: CGRect(x: 0, y: noneRow.frame.maxY + padding + Double(taskSlider.task.isDueTimeAssigned ? i : i-5)*50.0, width: size.width, height: 40.0),
+                frame: CGRect(x: 0, y: noneRow.frame.maxY + Double(taskSlider.task.isDueTimeAssigned ? i : i-5)*45.0, width: size.width, height: 45.0),
                 title: NotificationType(rawValue: i)!.str,
                 accentColor: accentColor,
                 index: i,
@@ -388,6 +399,21 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         }
     }
     
+    func SelectRepeatType (index: Int) {
+        for row in repeatSelectionRows {
+            row.isSelected = row.index == index
+        }
+        selectedRepeatTypes.removeAll()
+        if index != -1 { selectedRepeatTypes.append(TaskRepeatType(rawValue: index)!) }
+        
+        weekdaysSelectionRow.isSelected = false
+        weekdaysSelectionRow.DeselectAll()
+    }
+    
+    func DeselectRepeatType (index: Int) {
+        return
+    }
+    
     func OpenNotificationSelectionPage () {
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut) { [self] in
             firstPageView.frame.origin.x = -firstPageView.frame.width
@@ -423,10 +449,11 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         
         repeatSelectionRows.removeAll()
         let noneRow = SettingsSelectionRow(
-            frame: CGRect(x: 0, y: titleLabel.frame.maxY + padding, width: size.width, height: 40.0),
-            title: "None",
+            frame: CGRect(x: 0, y: titleLabel.frame.maxY + padding, width: size.width, height: 45.0),
+            title: "No",
+            accentColor: accentColor,
             index: -1,
-            isSelected: taskSlider.task.notifications.count == 0,
+            isSelected: taskSlider.task.repeating.count == 0,
             isNone: true,
             onSelect: SelectRepeatType,
             onDeselect: DeselectRepeatType)
@@ -435,17 +462,29 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         
         for i in 0..<3  {
             let row = SettingsSelectionRow(
-                frame: CGRect(x: 0, y: noneRow.frame.maxY + padding + Double(i)*50.0, width: size.width, height: 40.0),
-                title: TaskRepeatType(rawValue: i)!.str,
+                frame: CGRect(x: 0, y: noneRow.frame.maxY + Double(i)*45.0, width: size.width, height: 45.0),
+                title: TaskRepeatType(rawValue: i)!.shortStr,
                 accentColor: accentColor,
                 index: i,
-                isSelected: taskSlider.task.containsNotification(notificationType: NotificationType(rawValue: i)!),
+                isSelected: taskSlider.task.repeating.contains(TaskRepeatType(rawValue: i)!),
                 isNone: false,
                 onSelect: SelectRepeatType,
                 onDeselect: DeselectRepeatType)
             view.addSubview(row)
             repeatSelectionRows.append(row)
         }
+        
+        weekdaysSelectionRow = WeekdaysSelectionRow(
+            frame: CGRect(x: 0, y: repeatSelectionRows.last!.frame.maxY, width: size.width, height: 45.0),
+            title: "Specific Days",
+            accentColor: accentColor,
+            index: 3,
+            isSelected: taskSlider.task.repeating.contains(.Monday) || taskSlider.task.repeating.contains(.Tuesday) || taskSlider.task.repeating.contains(.Wednesday) || taskSlider.task.repeating.contains(.Thursday) || taskSlider.task.repeating.contains(.Friday) || taskSlider.task.repeating.contains(.Saturday) || taskSlider.task.repeating.contains(.Sunday),
+            isNone: false,
+            onSelect: SelectRepeatType,
+            onDeselect: DeselectRepeatType,
+            calView: self)
+        view.addSubview(weekdaysSelectionRow)
         
         view.addSubview(titleLabel)
         view.addSubview(backButton)
@@ -456,6 +495,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         
         return view
     }
+    
     
     func OpenRepeatSelectionPage () {
         UIView.animate(withDuration: 0.25, delay: 0, options: .curveEaseOut) { [self] in
@@ -535,7 +575,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
     }
     
     @objc func Clear () {
-        taskSlider.ClearDateAndTime()
+        taskSlider.ClearDateTimeAndRepeat()
         OnCalendarClose()
     }
     
@@ -556,6 +596,9 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         for notificationType in selectedNotificationTypes {
             taskSlider.task.AddNotification(notificationType: notificationType)
         }
+        
+        taskSlider.task.repeating.removeAll()
+        for repeatType in selectedRepeatTypes { taskSlider.task.repeating.append(repeatType) }
         
         OnCalendarClose()
         
@@ -606,4 +649,151 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         fatalError("init(coder:) has not been implemented")
     }
     
+}
+
+
+class WeekdaysSelectionRow: SettingsSelectionRow {
+    
+    let calView: CalendarViewController
+    
+    var weekdaysButtons = [WeekdaySelectionButton]()
+    
+    init(frame: CGRect, title: String, accentColor: UIColor, index: Int, isSelected: Bool, isNone: Bool, onSelect: @escaping ((Int) -> Void), onDeselect: @escaping ((Int) -> Void), calView: CalendarViewController) {
+        self.calView = calView
+        super.init(frame: frame, title: title, accentColor: accentColor, index: index, isSelected: isSelected, isNone: isNone, onSelect: onSelect, onDeselect: onDeselect)
+        
+        let spacing = 7.0
+        let buttonSize = (self.frame.width-padding*2-spacing*6.0) / 7.0
+        
+        weekdaysButtons.removeAll()
+        let weekdaysRange = Calendar.current.firstWeekday == 1 ? [9, 3, 4, 5, 6, 7, 8] : [3, 4, 5, 6, 7, 8, 9]
+        for i in 0..<weekdaysRange.count {
+            let button = WeekdaySelectionButton(
+                frame: CGRect(x: padding + Double(i)*(buttonSize+spacing), y: self.frame.size.height, width: buttonSize, height: buttonSize),
+                isSelected: calView.taskSlider.task.repeating.contains(TaskRepeatType(rawValue: weekdaysRange[i])!),
+                accentColor: accentColor,
+                weekday: TaskRepeatType(rawValue: weekdaysRange[i])!,
+                onSelect: SelectWeekday,
+                onDeselect: DeselectWeekday)
+            self.addSubview(button)
+            weekdaysButtons.append(button)
+        }
+        
+        
+        self.frame.size.height += buttonSize + padding
+    }
+    
+    func SelectWeekday(sender: WeekdaySelectionButton) {
+        if calView.selectedRepeatTypes.contains(.Daily) {
+            calView.selectedRepeatTypes.remove(at: calView.selectedRepeatTypes.firstIndex(of: .Daily)!)
+        }
+        if calView.selectedRepeatTypes.contains(.Weekly) {
+            calView.selectedRepeatTypes.remove(at: calView.selectedRepeatTypes.firstIndex(of: .Weekly)!)
+        }
+        if calView.selectedRepeatTypes.contains(.Monthly) {
+            calView.selectedRepeatTypes.remove(at: calView.selectedRepeatTypes.firstIndex(of: .Monthly)!)
+        }
+        
+        if !calView.selectedRepeatTypes.contains(sender.type) {
+            calView.selectedRepeatTypes.append(sender.type)
+        }
+        
+        for row in calView.repeatSelectionRows { row.isSelected = false }
+        self.isSelected = true
+        sender.isSelected = true
+        
+        var checkDaily = false
+        for type in 3..<10 {
+            if !calView.selectedRepeatTypes.contains(TaskRepeatType(rawValue: type)!) { checkDaily = true }
+        }
+        if !checkDaily {
+            calView.SelectRepeatType(index: 0) // select daily
+        }
+    }
+    func DeselectWeekday(sender: WeekdaySelectionButton) {
+        if calView.selectedRepeatTypes.contains(sender.type) {
+            calView.selectedRepeatTypes.remove(at: calView.selectedRepeatTypes.firstIndex(of: sender.type)!)
+        }
+        
+        sender.isSelected = false
+        
+        if calView.selectedRepeatTypes.count == 0 { calView.SelectRepeatType(index: -1) } //Select none
+    }
+    
+    func DeselectAll () {
+        for button in weekdaysButtons {
+            button.isSelected = false
+        }
+    }
+    
+    @objc override func Tap () {
+        
+    }
+    
+    override func ReloadThemeColors() {
+        super.ReloadThemeColors()
+        for button in weekdaysButtons {
+            button.ReloadThemeColors()
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
+class WeekdaySelectionButton: UIView {
+    
+    let button = UIButton()
+    
+    var accentColor: UIColor!
+    
+    var _isSelected = false
+    var isSelected: Bool {
+        get { return _isSelected }
+        set {
+            _isSelected = newValue
+            button.backgroundColor = _isSelected ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) : .systemGray2
+            button.setTitleColor(_isSelected ? .white : .label, for: .normal)
+        }
+    }
+    
+    var onSelect: (WeekdaySelectionButton) -> Void
+    var onDeselect: (WeekdaySelectionButton) -> Void
+    
+    let type: TaskRepeatType
+    
+    init(frame: CGRect, isSelected: Bool, accentColor: UIColor, weekday: TaskRepeatType, onSelect: @escaping ((WeekdaySelectionButton) -> Void), onDeselect: @escaping ((WeekdaySelectionButton) -> Void)) {
+        self.onSelect = onSelect
+        self.onDeselect = onDeselect
+        self.type = weekday
+        self.accentColor = accentColor
+        super.init(frame: frame)
+        
+        button.frame = CGRect(x: 0, y: 0, width: frame.width, height: frame.height)
+        button.layer.cornerRadius = frame.size.width*0.5
+        button.setTitle(weekday.shortStr, for: .normal)
+        button.addTarget(self, action: #selector(ButtonTap), for: .touchUpInside)
+        button.contentHorizontalAlignment = .center
+        button.titleLabel?.font = .preferredFont(forTextStyle: .footnote)
+        
+        self.addSubview(button)
+        
+        self.isSelected = isSelected
+    }
+    
+    @objc func ButtonTap () {
+        if isSelected { onDeselect(self) }
+        else { onSelect(self) }
+    }
+    
+    func ReloadThemeColors() {
+        UIView.animate(withDuration: 0.25) { [self] in
+            button.backgroundColor = isSelected ? ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) : .systemGray2
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }

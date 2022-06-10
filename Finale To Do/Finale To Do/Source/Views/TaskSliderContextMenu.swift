@@ -27,6 +27,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
     var priorityButton: UIButton!
     var dueButton: UILabel!
     var notificationButton: UILabel!
+    var repeatButton: UILabel!
     var maxDueNotifButtonWidth: CGFloat!
     
     let notesPlaceholder = "Add any notes here"
@@ -37,6 +38,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
     var row3: UIView!
     var row4: UIView!
     var row5: UIView!
+    var row6: UIView?
     var notesArea: UIView!
     var closeButton: UIButton?
     
@@ -67,11 +69,12 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
         
         if !slider.task.isCompleted {
             row5 = CreateNotificationRow(title: "Notifications", fullFrameWidth: rowWidth-padding*2, prevFrame: row4.frame, titleWidth: titleWidth)
+            row6 = CreateRepeatRow(title: "Repeat", fullFrameWidth: rowWidth-padding*2, prevFrame: row5.frame, titleWidth: titleWidth)
         } else {
             row5 = CreateStaticRow(title: "Completed", content: completedOnContent, fullFrameWidth: rowWidth-padding*2, prevFrame: row4.frame, titleWidth: titleWidth)
         }
         
-        notesArea = CreateNotesArea(prevFrameMaxY: row5.frame.maxY)
+        notesArea = CreateNotesArea(prevFrameMaxY: row6?.frame.maxY ?? row5.frame.maxY)
         
         containerView = UIView(frame: CGRect(x: 0, y: 0, width: slider.frame.width, height: notesArea.frame.maxY + padding))
         containerView.layer.cornerRadius = 10
@@ -81,6 +84,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
         containerView.addSubview(row3)
         containerView.addSubview(row4)
         containerView.addSubview(row5)
+        if row6 != nil { containerView.addSubview(row6!) }
         containerView.addSubview(notesArea)
         containerView.backgroundColor = .systemGray4
         
@@ -311,6 +315,23 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
         return containerView
     }
     
+    func CreateRepeatRow (title: String, fullFrameWidth: CGFloat, prevFrame: CGRect, titleWidth: CGFloat) -> UIView {
+        let containerView = UIView()
+        
+        let titleLabel = CreateTitleLabel(title: title, width: titleWidth)
+        
+        repeatButton = CreateContentLabel(content: repeatContent, width: fullFrameWidth-titleLabel.frame.width-padding, positionX: titleLabel.frame.maxX + padding)
+        repeatButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(OpenCalendarView)))
+        repeatButton.isUserInteractionEnabled = true
+        
+        containerView.frame = CGRect(x: padding, y: prevFrame.maxY+spacing, width: fullFrameWidth, height: max(titleLabel.frame.height, repeatButton.frame.height))
+        
+        containerView.addSubview(titleLabel)
+        containerView.addSubview(repeatButton)
+        
+        return containerView
+    }
+    
     func CreateStaticRow (title: String, content: NSMutableAttributedString, fullFrameWidth: CGFloat, prevFrame: CGRect, titleWidth: CGFloat) -> UIView {
         let containerView = UIView()
         
@@ -354,7 +375,8 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
         row3.frame.origin.y = row2.frame.maxY + spacing
         row4.frame.origin.y = row3.frame.maxY + spacing
         row5.frame.origin.y = row4.frame.maxY + spacing
-        notesArea.frame.origin.y = row5.frame.maxY + padding
+        row6?.frame.origin.y = row5.frame.maxY + spacing
+        notesArea.frame.origin.y = (row6?.frame.maxY ?? row5.frame.maxY) + padding
         containerView.frame.size.height = notesArea.frame.maxY + padding
         closeButton?.frame.origin.y = containerView.frame.maxY + padding
     }
@@ -438,6 +460,11 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
         notificationButton.frame.size = notificationButton.bounds.size
         row5.frame.size.height = notificationButton.frame.height
         
+        repeatButton.frame.size.width = maxDueNotifButtonWidth
+        repeatButton.attributedText = repeatContent
+        repeatButton.sizeToFit()
+        repeatButton.frame.size = repeatButton.bounds.size
+        
         newSlider.UpdateDateLabel()
         
         UpdateViewHeight()
@@ -490,6 +517,27 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
             }
             
             attString.deleteCharacters(in: NSRange(attString.length-1..<attString.length))
+            
+            attString.addAttribute(.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attString.length))
+        }
+        
+        return attString
+    }
+    
+    var repeatContent: NSMutableAttributedString {
+        var attString = NSMutableAttributedString(string: "")
+        
+        if slider.task.repeating.count == 0 {
+            attString = NSMutableAttributedString(string: "No")
+            attString.SetColor(color: .systemGray)
+        } else {
+            let paragraphStyle = NSMutableParagraphStyle()
+            
+            for type in slider.task.repeating {
+                attString.append(NSMutableAttributedString(string: "\(type.longStr), "))
+            }
+            
+            attString.deleteCharacters(in: NSRange(attString.length-2..<attString.length))
             
             attString.addAttribute(.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attString.length))
         }

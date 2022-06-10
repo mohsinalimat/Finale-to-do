@@ -128,8 +128,8 @@ class Task: Codable, Equatable {
         lhs.name == rhs.name &&
         lhs.priority == rhs.priority &&
         lhs.notes == rhs.notes &&
-        lhs.notifications == rhs.notifications
-        lhs.repeating == rhs.repeating
+        lhs.notifications == rhs.notifications &&
+        lhs.repeating == rhs.repeating &&
         lhs.isCompleted == rhs.isCompleted &&
         lhs.isDateAssigned == rhs.isDateAssigned &&
         lhs.isDueTimeAssigned == rhs.isDueTimeAssigned &&
@@ -256,7 +256,7 @@ enum TaskRepeatType: Int, Codable, CaseIterable {
     case Saturday = 8
     case Sunday = 9
     
-    var str: String {
+    var longStr: String {
         switch self {
         case .Daily: return "Daily"
         case .Weekly: return "Weekly"
@@ -268,6 +268,20 @@ enum TaskRepeatType: Int, Codable, CaseIterable {
         case .Friday: return "Fri"
         case .Saturday: return "Sat"
         case .Sunday: return "Sun"
+        }
+    }
+    var shortStr: String {
+        switch self {
+        case .Daily: return "Daily"
+        case .Weekly: return "Weekly"
+        case .Monthly: return "Monthly"
+        case .Monday: return "M"
+        case .Tuesday: return "T"
+        case .Wednesday: return "W"
+        case .Thursday: return "T"
+        case .Friday: return "F"
+        case .Saturday: return "S"
+        case .Sunday: return "S"
         }
     }
 }

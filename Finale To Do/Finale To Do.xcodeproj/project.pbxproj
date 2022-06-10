@@ -155,7 +155,6 @@
 		37A75A7C282F238D004D6450 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A75A7B282F238D004D6450 /* IAPManager.swift */; };
 		37A75A7F282F3760004D6450 /* Unlock All Perks.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A75A7E282F3760004D6450 /* Unlock All Perks.png */; };
 		37A8B9842852677E00A032AF /* SaveManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A8B9832852677E00A032AF /* SaveManager.swift */; };
-		37A8B98628526B2A00A032AF /* Notes.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 37A8B98528526B2A00A032AF /* Notes.rtf */; };
 		37B9998C2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */; };
 		37CE7B81282AD29B00B15440 /* GuidePageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37CE7B80282AD29B00B15440 /* GuidePageViewController.swift */; };
 		37D542672825888E00373987 /* orangeFilled@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D542572825888C00373987 /* orangeFilled@3x.png */; };
@@ -358,7 +357,6 @@
 		37A75A7B282F238D004D6450 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		37A75A7E282F3760004D6450 /* Unlock All Perks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Unlock All Perks.png"; sourceTree = "<group>"; };
 		37A8B9832852677E00A032AF /* SaveManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveManager.swift; sourceTree = "<group>"; };
-		37A8B98528526B2A00A032AF /* Notes.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Notes.rtf; sourceTree = "<group>"; };
 		37B9998B2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICloudSyncConfirmationViewController.swift; sourceTree = "<group>"; };
 		37CE7B80282AD29B00B15440 /* GuidePageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidePageViewController.swift; sourceTree = "<group>"; };
 		37D542572825888C00373987 /* orangeFilled@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "orangeFilled@3x.png"; sourceTree = "<group>"; };
@@ -605,17 +603,11 @@
 			children = (
 				379999132829FF6F00A42F32 /* Fonts */,
 				379999072829E62100A42F32 /* Graphics */,
-				371D998128146E270060CB34 /* Backend classes */,
-				376AD0D92808EF9600986B49 /* Elements */,
-				376AD0D82808EF8B00986B49 /* Views */,
-				376AD0C22808DC5900986B49 /* AppDelegate.swift */,
-				376AD0C42808DC5900986B49 /* SceneDelegate.swift */,
-				376AD0C62808DC5900986B49 /* App.swift */,
+				37A8B988285400E800A032AF /* Source */,
 				376AD0D02808DC5A00986B49 /* Info.plist */,
 				3752F4B2283078F3007AD922 /* GoogleService-Info.plist */,
 				372B8A38281E41E600117A72 /* Finale To Do.entitlements */,
 				376AD0CB2808DC5A00986B49 /* Assets.xcassets */,
-				37A8B98528526B2A00A032AF /* Notes.rtf */,
 			);
 			path = "Finale To Do";
 			sourceTree = "<group>";
@@ -623,11 +615,10 @@
 		376AD0D82808EF8B00986B49 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				37A8B987285400C600A032AF /* Smart Lists */,
 				37B750BF281A40E900164803 /* Settings */,
 				375E5D7A280F7155001A289E /* CalendarViewController.swift */,
 				370A9DB22810CDDE00FC30A7 /* TaskSliderContextMenu.swift */,
-				376AD0D62808DDEB00986B49 /* TaskListView.swift */,
-				3752B66B28459D9D008A5713 /* UpcomingTasksView.swift */,
 				37E4CE002809AE3F002B4D87 /* SideMenuView.swift */,
 				37F837C4280E11BF00F2A9C0 /* AddListView.swift */,
 				378922B028232F2600AA3B1B /* UserProfileViewController.swift */,
@@ -699,6 +690,28 @@
 				3752F4BB283095EC007AD922 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		37A8B987285400C600A032AF /* Smart Lists */ = {
+			isa = PBXGroup;
+			children = (
+				376AD0D62808DDEB00986B49 /* TaskListView.swift */,
+				3752B66B28459D9D008A5713 /* UpcomingTasksView.swift */,
+			);
+			path = "Smart Lists";
+			sourceTree = "<group>";
+		};
+		37A8B988285400E800A032AF /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				371D998128146E270060CB34 /* Backend classes */,
+				376AD0D92808EF9600986B49 /* Elements */,
+				376AD0D82808EF8B00986B49 /* Views */,
+				376AD0C22808DC5900986B49 /* AppDelegate.swift */,
+				376AD0C42808DC5900986B49 /* SceneDelegate.swift */,
+				376AD0C62808DC5900986B49 /* App.swift */,
+			);
+			path = Source;
 			sourceTree = "<group>";
 		};
 		37B750BF281A40E900164803 /* Settings */ = {
@@ -886,7 +899,6 @@
 				3750A06B283300C700E72EB5 /* Principal V Placeholder.png in Resources */,
 				372B8A2A281CE61F00117A72 /* classicFilled@2x.png in Resources */,
 				3750A037283300C700E72EB5 /* Surgeon I.png in Resources */,
-				37A8B98628526B2A00A032AF /* Notes.rtf in Resources */,
 				377CB33B282C45EB001CDBBD /* Complete Task.png in Resources */,
 				3750A07C283300C700E72EB5 /* Workaholic III Placeholder.png in Resources */,
 				3750A05A283300C700E72EB5 /* Protagonist III.png in Resources */,
@@ -1241,7 +1253,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1258,7 +1270,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.10.5;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Grant151.Finale-To-Do";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1275,7 +1287,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Finale To Do/Info.plist";
@@ -1291,7 +1303,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.10.5;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Grant151.Finale-To-Do";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

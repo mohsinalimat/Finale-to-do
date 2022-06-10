@@ -227,7 +227,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             let Edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { action in
                 cell.slider.StartEditing()
             }
-            let AssignDate = UIAction(title: cell.slider.task.isDateAssigned ? "Change date" : "Assign date", image: UIImage(systemName: "calendar")) { action in
+            let AssignDate = UIAction(title: cell.slider.task.isDateAssigned ? "Change Date" : "Assign Date", image: UIImage(systemName: "calendar")) { action in
                 cell.slider.ShowCalendarView(taskSliderContextMenu: nil)
             }
             

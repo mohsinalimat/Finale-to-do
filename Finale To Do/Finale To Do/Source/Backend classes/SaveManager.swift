@@ -236,13 +236,16 @@ class SaveManager {
                 if (value as? NSArray) == nil { continue }
                 
                 var k = 0
-                var id = ""
                 for i in value as! NSArray {
                     if (i as? Int) != nil { k = i as! Int }
                     else if (i as? String) != nil {
-                        id = i as! String
-                        task.notifications[NotificationType(rawValue: k)!] = id
+                        task.notifications[NotificationType(rawValue: k)!] = (i as! String)
                     }
+                }
+            }
+            else if key == "repeating" {
+                for i in value as! [Int] {
+                    task.repeating.append(TaskRepeatType(rawValue: i)!)
                 }
             }
             else if key == "taskListID" { task.taskListID = (value as? String) != nil ? UUID(uuidString: (value as! String))! : task.taskListID}
@@ -254,8 +257,6 @@ class SaveManager {
 //MARK: Save
     
     func SaveData () {
-        return
-        
         let keyStore = App.settingsConfig.isICloudSyncOn ? NSUbiquitousKeyValueStore() : nil
         
         SaveValue(value: App.instance.overviewSortingPreference.rawValue, forKey: overviewSortingPrefKey, iCloudKey: keyStore)
