@@ -163,7 +163,7 @@ class TaskList: Codable, Equatable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: TaskListCodingKeys.self)
         name = try container.decode(String.self, forKey: .name)
-        primaryColor = try container.decode(Color.self, forKey: .primaryColor).uiColor
+        primaryColor = try container.decode(CodableColor.self, forKey: .primaryColor).uiColor
         systemIcon = try container.decode(String.self, forKey: .systemIcon)
         sortingPreference = try container.decode(SortingPreference.self, forKey: .sortingPreference)
         upcomingTasks = try container.decode([Task].self, forKey: .upcomingTasks)
@@ -174,7 +174,7 @@ class TaskList: Codable, Equatable {
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: TaskListCodingKeys.self)
         try container.encode(name, forKey: .name)
-        try container.encode(Color(uiColor: primaryColor), forKey: .primaryColor)
+        try container.encode(CodableColor(uiColor: primaryColor), forKey: .primaryColor)
         try container.encode(sortingPreference, forKey: .sortingPreference)
         try container.encode(systemIcon, forKey: .systemIcon)
         try container.encode(upcomingTasks, forKey: .upcomingTasks)

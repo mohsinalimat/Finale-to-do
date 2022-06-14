@@ -9,6 +9,10 @@ import Foundation
 import SwiftUI
 
 extension Color {
+    public static var defaultColor: Color {
+        return Color(hex: "0962E5")
+    }
+    
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0
@@ -67,5 +71,33 @@ extension Date {
     }
     func get(_ components: Calendar.Component, calendar: Calendar = Calendar.current) -> Int {
         return calendar.component(components, from: self)
+    }
+    
+    func nOfDaysInCurrentMonth() -> Int{
+        let calendar = Calendar.current
+
+        let dateComponents = DateComponents(year: calendar.component(.year, from: self), month: calendar.component(.month, from: self))
+        let date = calendar.date(from: dateComponents)!
+
+        let range = calendar.range(of: .day, in: .month, for: date)!
+        let numDays = range.count
+
+        return numDays
+    }
+}
+
+struct FixedClipped: ViewModifier {
+    func body(content: Content) -> some View {
+        ZStack(alignment: .leading) {
+            content.hidden().layoutPriority(1)
+            content.fixedSize(horizontal: true, vertical: false)
+        }
+        .clipped()
+    }
+}
+
+extension View {
+    func fixedClipped() -> some View {
+        self.modifier(FixedClipped())
     }
 }

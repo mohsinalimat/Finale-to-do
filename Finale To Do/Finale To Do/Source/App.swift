@@ -773,13 +773,13 @@ class App: UIViewController {
             for list in allTaskLists {
                 allUpcomingTasks.append(contentsOf: list.upcomingTasks)
             }
-            allUpcomingTasks = allUpcomingTasks.sorted { taskListView.sortBool(task1: $0, task2: $1, sortingPreference: App.instance.overviewSortingPreference) }
         } else {
             for tasklistID in App.settingsConfig.widgetLists {
                 allUpcomingTasks.append(contentsOf: getTaskList(id: tasklistID).upcomingTasks)
             }
         }
         
+        allUpcomingTasks = allUpcomingTasks.sorted { taskListView.sortBool(task1: $0, task2: $1, sortingPreference: .ByTimeDue) }
         
         let nTasksToSync = WidgetSync.maxNumberOfTasks < allUpcomingTasks.count ? WidgetSync.maxNumberOfTasks + 2 : WidgetSync.maxNumberOfTasks
         

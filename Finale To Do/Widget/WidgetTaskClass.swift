@@ -24,11 +24,11 @@ struct WidgetTask: Identifiable, Codable {
         }
         
         var attString = ""
-        if isSameDay(date1: dateAssigned, date2: currentDate) {
+        if isToday(currentDate: currentDate) {
             attString = "Today"
-        } else if isTomorrow(date1: dateAssigned, date2: currentDate) {
+        } else if isTomorrow(currentDate: currentDate) {
             attString = "Tomorrow"
-        } else if isYesterday(date1: dateAssigned, date2: currentDate) {
+        } else if isYesterday(currentDate: currentDate) {
             attString = "Yesterday"
         } else {
             let formatter = DateFormatter()
@@ -57,22 +57,37 @@ struct WidgetTask: Identifiable, Codable {
         return currentDate > dateAssigned
     }
     
-    func isSameDay(date1: Date, date2: Date) -> Bool {
-        let diff = date1.get(.day, calendar: Calendar.current) - date2.get(.day, calendar: Calendar.current)
+    func isToday(currentDate: Date) -> Bool {
+        let diff = dateAssigned.get(.day, calendar: Calendar.current) - currentDate.get(.day, calendar: Calendar.current)
         return diff == 0
     }
-    func isYesterday(date1: Date, date2: Date) -> Bool {
-        let diff = date1.get(.day, calendar: Calendar.current) - date2.get(.day, calendar: Calendar.current)
+    func isYesterday(currentDate: Date) -> Bool {
+        let diff = dateAssigned.get(.day, calendar: Calendar.current) - currentDate.get(.day, calendar: Calendar.current)
         return diff == -1
     }
-    func isTomorrow(date1: Date, date2: Date) -> Bool {
-        let diff = date1.get(.day, calendar: Calendar.current) - date2.get(.day, calendar: Calendar.current)
+    func isTomorrow(currentDate: Date) -> Bool {
+        let diff = dateAssigned.get(.day, calendar: Calendar.current) - currentDate.get(.day, calendar: Calendar.current)
         return diff == 1
+    }
+    
+    func isThisWeek(currentDate: Date) -> Bool {
+        let diff = dateAssigned.get(.weekOfYear, calendar: Calendar.current) - currentDate.get(.weekOfYear, calendar: Calendar.current)
+        return diff == 0
+    }
+    
+    func isNextWeek(currentDate: Date) -> Bool {
+        let diff = dateAssigned.get(.weekOfYear, calendar: Calendar.current) - currentDate.get(.weekOfYear, calendar: Calendar.current)
+        return diff == 1
+    }
+    
+    func isThisMonth(currentDate: Date) -> Bool {
+        let diff = dateAssigned.get(.month, calendar: Calendar.current) - currentDate.get(.month, calendar: Calendar.current)
+        return diff == 0
     }
 }
 
 class WidgetSync {
-    static let maxNumberOfTasks = 15
+    static let maxNumberOfTasks = 20
     
     static let userDefaults = UserDefaults(suiteName: "group.finale-to-do-widget-cache")!
     
