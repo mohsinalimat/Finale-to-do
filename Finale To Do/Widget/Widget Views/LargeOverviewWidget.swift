@@ -10,7 +10,7 @@ import SwiftUI
 struct LargeOverviewWidget: View {
     var entry: SimpleEntry
     
-    let maxNumberOfTasks: Int
+    let maxNumberOfTasks: Int = 18
     let taskNumber: Int
     
     var body: some View {
@@ -22,15 +22,15 @@ struct LargeOverviewWidget: View {
                 if entry.upcomingTasks.count > 0 || entry.completedTasks.count > 0 {
                     SectionTitle(title: "Upcoming")
 
-                    ForEach(entry.upcomingTasks) { upcomingTask in
-                        UpcomingTaskRow(task: upcomingTask, showDate: true, currentDate: entry.date)
+                    ForEach(0..<min(maxNumberOfTasks, entry.upcomingTasks.count)) { i in
+                        UpcomingTaskRow(task: entry.upcomingTasks[i], showDate: true, currentDate: entry.date)
                     }
                     
-                    if entry.upcomingTasks.count <= WidgetSync.maxNumberOfTasks  {
+                    if entry.upcomingTasks.count < maxNumberOfTasks  {
                         SectionTitle(title: "Completed")
 
-                        ForEach(entry.completedTasks) { completedTask in
-                            CompletedTaskRow(task: completedTask, showDate: true, currentDate: entry.date)
+                        ForEach(0..<min(maxNumberOfTasks-entry.upcomingTasks.count, entry.completedTasks.count)) { i in
+                            CompletedTaskRow(task: entry.completedTasks[i], showDate: true, currentDate: entry.date)
                         }
                     }
                     

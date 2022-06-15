@@ -781,19 +781,17 @@ class App: UIViewController {
         
         allUpcomingTasks = allUpcomingTasks.sorted { taskListView.sortBool(task1: $0, task2: $1, sortingPreference: .ByTimeDue) }
         
-        let nTasksToSync = WidgetSync.maxNumberOfTasks < allUpcomingTasks.count ? WidgetSync.maxNumberOfTasks + 2 : WidgetSync.maxNumberOfTasks
+        let taskNumber = allUpcomingTasks.count
         
-        var taskNumber = allUpcomingTasks.count
-        
-        while allUpcomingTasks.count > nTasksToSync { allUpcomingTasks.removeLast() }
+        while allUpcomingTasks.count > WidgetSync.maxNumberOfTasks { allUpcomingTasks.removeLast() }
         
         var upcomingWidgetTasks = [WidgetTask]()
         for task in allUpcomingTasks {
-            upcomingWidgetTasks.append(WidgetTask(name: task.name, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: task.dateAssigned, isHighPriority: task.priority == .High))
+            upcomingWidgetTasks.append(WidgetTask(name: task.name, isCompleted: false, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: task.dateAssigned, isHighPriority: task.priority == .High))
         }
         
         var allCompletedTasks = [Task]()
-        if upcomingWidgetTasks.count < nTasksToSync {
+        if upcomingWidgetTasks.count < WidgetSync.maxNumberOfTasks {
             if App.settingsConfig.widgetLists.count == 0 {
                 for list in allTaskLists {
                     allCompletedTasks.append(contentsOf: list.completedTasks)
@@ -805,12 +803,12 @@ class App: UIViewController {
             }
             
             allCompletedTasks = allCompletedTasks.sorted { $0.dateCompleted > $1.dateCompleted }
-            while allCompletedTasks.count > nTasksToSync-upcomingWidgetTasks.count { allCompletedTasks.removeLast() }
+            while allCompletedTasks.count > WidgetSync.maxNumberOfTasks-upcomingWidgetTasks.count { allCompletedTasks.removeLast() }
         }
         
         var completedWidgetTasks = [WidgetTask]()
         for task in allCompletedTasks {
-            completedWidgetTasks.append(WidgetTask(name: task.name, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: task.dateAssigned, isHighPriority: task.priority == .High))
+            completedWidgetTasks.append(WidgetTask(name: task.name, isCompleted: task.isCompleted, colorHex: getTaskList(id: task.taskListID).primaryColor.hexStringFromColor, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: task.dateAssigned, isHighPriority: task.priority == .High))
         }
         
         if let encoded = try? JSONEncoder().encode(upcomingWidgetTasks) {

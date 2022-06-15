@@ -15,7 +15,7 @@ struct UpcomingWidgetView : View {
     
     var body: some View {
         switch family {
-        case .systemLarge: LargeUpcomingWidget(entry: entry, maxNumberOfTasks: WidgetSync.maxNumberOfTasks, taskNumber: entry.taskNumber)
+        case .systemLarge: LargeUpcomingWidget(entry: entry, taskNumber: entry.taskNumber)
         case .systemExtraLarge: EmptyView()
         @unknown default: EmptyView()
         }

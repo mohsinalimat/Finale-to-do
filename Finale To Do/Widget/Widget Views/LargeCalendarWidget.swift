@@ -10,9 +10,9 @@ import SwiftUI
 struct LargeCalendarWidget: View {
     var entry: SimpleEntry
     
-    let allWeeks: [WeekModel]
+    var allWeeks: [WeekModel]!
     let weekdaysLabels: [String]
-    
+        
     init(_ entry: SimpleEntry) {
         self.entry = entry
         
@@ -26,10 +26,10 @@ struct LargeCalendarWidget: View {
                 
         var firstWeek = WeekModel()
         for i in 0..<firstDayOfWeek {
-            firstWeek.days.append(DayModel(date: Calendar.current.date(byAdding: .day, value: i-firstDayOfWeek, to: firstDayOfMonth)!, tasks: [self.entry.upcomingTasks.first!]))
+            firstWeek.days.append(DayModel(date: Calendar.current.date(byAdding: .day, value: i-firstDayOfWeek, to: firstDayOfMonth)!, tasks: []))
         }
         for i in 0..<7-firstDayOfWeek {
-            firstWeek.days.append(DayModel(date: Calendar.current.date(byAdding: .day, value: i, to: firstDayOfMonth)!, tasks: [self.entry.upcomingTasks.last!]))
+            firstWeek.days.append(DayModel(date: Calendar.current.date(byAdding: .day, value: i, to: firstDayOfMonth)!, tasks: []))
         }
         
         weeks.append(firstWeek)
@@ -37,20 +37,47 @@ struct LargeCalendarWidget: View {
         for week in 1..<numberOfWeeks {
             var newWeek = WeekModel()
             for day in 1..<8 {
-                newWeek.days.append(DayModel(date: Calendar.current.date(byAdding: .day, value: day, to: weeks[week-1].days.last!.date)!, tasks: [self.entry.upcomingTasks.first!]))
+                newWeek.days.append(DayModel(date: Calendar.current.date(byAdding: .day, value: day, to: weeks[week-1].days.last!.date)!, tasks: []))
             }
             weeks.append(newWeek)
         }
         
         self.allWeeks = weeks
         self.weekdaysLabels = Calendar.current.firstWeekday == 1 ? ["S", "M", "T", "W", "T", "F", "S"] : ["M", "T", "W", "T", "F", "S", "S"]
+        
+    taskLoop: for task in entry.upcomingTasks {
+            if !task.isDateAssigned { continue taskLoop}
+            for week in 0..<allWeeks.count {
+                for day in 0..<allWeeks[week].days.count {
+                    if allWeeks[week].days[day].date.isSameDay(compareDate: task.dateAssigned) {
+                        if allWeeks[week].days[day].tasks.count < 3 { allWeeks[week].days[day].tasks.append(task) }
+                        continue taskLoop
+                    }
+                }
+            }
+        }
+        
+    taskLoop: for task in entry.completedTasks {
+            if !task.isDateAssigned { continue taskLoop}
+            for week in 0..<allWeeks.count {
+                for day in 0..<allWeeks[week].days.count {
+                    if allWeeks[week].days[day].date.isSameDay(compareDate: task.dateAssigned) {
+                        if allWeeks[week].days[day].tasks.count < 3 &&
+                            Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: allWeeks[week].days[day].date)! < Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date.now)!
+                        { allWeeks[week].days[day].tasks.append(task) }
+                        continue taskLoop
+                    }
+                }
+            }
+        }
+        
     }
     
     var body: some View {
         ZStack {
             Color(.systemGray6)
             VStack(alignment: .trailing, spacing: 0) {
-                MonthLabel()
+                HeaderLabel()
                 WeekdaysLabels(labels: weekdaysLabels)
                 
                 ForEach(allWeeks) { week in
@@ -82,15 +109,17 @@ struct DayView: View {
                     Text(dayModel.date.get(.day).description)
                         .font(.system(size: 10, weight: Calendar.current.isDateInToday(dayModel.date) ? .bold : .regular))
                         .padding(.leading, 4)
-                        .padding(.top, 2)
+                        .padding(.vertical, 2)
                         .foregroundColor(dateColor)
                     
                     Spacer()
                 }
                 ForEach(dayModel.tasks) { task in
-                    UpcomingTaskCalendarRow(task: task)
+                    if !task.isCompleted { UpcomingTaskCalendarRow(task: task) }
+                    else { CompletedTaskCalendarRow(task: task) }
                 }
                 Spacer()
+                    .padding(.top, -20) //Because otherwise if there are 3 tasks it scaled the height of the day view even when there is enough space
             }
         }
     }
@@ -116,6 +145,7 @@ struct UpcomingTaskCalendarRow: View {
                     .font(.system(size: 10))
                     .lineLimit(1)
                     .padding(.leading, 1)
+                    .foregroundColor(.white)
                     .fixedClipped()
             }
         }
@@ -132,7 +162,7 @@ struct CompletedTaskCalendarRow: View {
         HStack {
             Text(task.name)
                 .strikethrough()
-                .foregroundColor(Color(uiColor: .systemGray2))
+                .foregroundColor(Color(uiColor: .systemGray3))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.system(size: 10))
                 .lineLimit(1)
@@ -153,7 +183,7 @@ struct DayModel: Identifiable, Equatable {
     var id = UUID()
     
     let date: Date
-    let tasks: [WidgetTask]
+    var tasks: [WidgetTask]
 }
 
 struct WeekModel: Identifiable {
@@ -180,7 +210,7 @@ struct WeekdaysLabels: View {
     }
 }
 
-struct MonthLabel: View {
+struct HeaderLabel: View {
     var body: some View {
         HStack {
             Spacer()

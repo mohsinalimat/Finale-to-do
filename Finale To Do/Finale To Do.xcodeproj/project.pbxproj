@@ -429,12 +429,12 @@
 				376AD0DC2808FD4C00986B49 /* Classes.swift */,
 				376AD0DE280901AF00986B49 /* Extensions.swift */,
 				37F837C6280E657E00F2A9C0 /* Theme.swift */,
-				371135F628138CE300B51322 /* NotificationHelper.swift */,
 				372B8A0F281CD50A00117A72 /* AppIconManager.swift */,
 				378922B22823645200AA3B1B /* StatsManager.swift */,
 				37A75A7B282F238D004D6450 /* IAPManager.swift */,
-				3763F5DB282F70B1005FB2C4 /* AnalyticsHelper.swift */,
 				37A8B9832852677E00A032AF /* SaveManager.swift */,
+				3763F5DB282F70B1005FB2C4 /* AnalyticsHelper.swift */,
+				371135F628138CE300B51322 /* NotificationHelper.swift */,
 			);
 			path = "Backend classes";
 			sourceTree = "<group>";

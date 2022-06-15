@@ -10,7 +10,7 @@ import SwiftUI
 struct SimpleOverviewWidget: View {
     var entry: SimpleEntry
     
-    let maxNumberOfTasks: Int = 6
+    let maxNumberOfTasks: Int = 7
     let showDate: Bool
     let taskNumber: Int
     

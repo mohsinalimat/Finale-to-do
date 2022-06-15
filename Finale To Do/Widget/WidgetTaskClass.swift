@@ -12,6 +12,7 @@ struct WidgetTask: Identifiable, Codable {
     let id = UUID()
     
     let name: String
+    let isCompleted: Bool
     let colorHex: String
     let isDateAssigned: Bool
     let isDueTimeAssigned: Bool
@@ -58,36 +59,54 @@ struct WidgetTask: Identifiable, Codable {
     }
     
     func isToday(currentDate: Date) -> Bool {
+        if !isThisYearAndMonth(currentDate: currentDate) { return false }
+        
         let diff = dateAssigned.get(.day, calendar: Calendar.current) - currentDate.get(.day, calendar: Calendar.current)
         return diff == 0
     }
     func isYesterday(currentDate: Date) -> Bool {
+        if !isThisYearAndMonth(currentDate: currentDate) { return false }
+        
         let diff = dateAssigned.get(.day, calendar: Calendar.current) - currentDate.get(.day, calendar: Calendar.current)
         return diff == -1
     }
     func isTomorrow(currentDate: Date) -> Bool {
+        if !isThisYearAndMonth(currentDate: currentDate) { return false }
+        
         let diff = dateAssigned.get(.day, calendar: Calendar.current) - currentDate.get(.day, calendar: Calendar.current)
         return diff == 1
     }
     
     func isThisWeek(currentDate: Date) -> Bool {
+        if !isThisYearAndMonth(currentDate: currentDate) { return false }
+        
         let diff = dateAssigned.get(.weekOfYear, calendar: Calendar.current) - currentDate.get(.weekOfYear, calendar: Calendar.current)
         return diff == 0
     }
     
     func isNextWeek(currentDate: Date) -> Bool {
+        if !isThisYearAndMonth(currentDate: currentDate) { return false }
+        
         let diff = dateAssigned.get(.weekOfYear, calendar: Calendar.current) - currentDate.get(.weekOfYear, calendar: Calendar.current)
         return diff == 1
     }
     
     func isThisMonth(currentDate: Date) -> Bool {
+        if !isThisYearAndMonth(currentDate: currentDate) { return false }
+        
         let diff = dateAssigned.get(.month, calendar: Calendar.current) - currentDate.get(.month, calendar: Calendar.current)
         return diff == 0
+    }
+    
+    func isThisYearAndMonth (currentDate: Date) -> Bool {
+        if dateAssigned.get(.month, calendar: Calendar.current) - currentDate.get(.month, calendar: Calendar.current) != 0 { return false }
+        if dateAssigned.get(.year, calendar: Calendar.current) - currentDate.get(.year, calendar: Calendar.current) != 0 { return false }
+        return true
     }
 }
 
 class WidgetSync {
-    static let maxNumberOfTasks = 20
+    static let maxNumberOfTasks = 130
     
     static let userDefaults = UserDefaults(suiteName: "group.finale-to-do-widget-cache")!
     

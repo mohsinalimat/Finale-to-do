@@ -60,7 +60,7 @@ extension Color {
         }
     
     func lerp (second: Color, percentage: CGFloat) -> Color {
-        return Color(red: (1-percentage)*self.components.red + percentage*second.components.red, green: (1-percentage)*self.components.green + percentage*second.components.green, blue: (1-percentage)*self.components.blue + percentage*second.components.blue).opacity((1-percentage)*self.components.alpha + percentage*second.components.alpha)
+        return Color(red: (1.0-percentage)*self.components.red + percentage*second.components.red, green: (1.0-percentage)*self.components.green + percentage*second.components.green, blue: (1.0-percentage)*self.components.blue + percentage*second.components.blue).opacity((1.0-percentage)*self.components.alpha + percentage*second.components.alpha)
     }
     
 }
@@ -83,6 +83,13 @@ extension Date {
         let numDays = range.count
 
         return numDays
+    }
+    
+    func isSameDay(compareDate: Date) -> Bool {
+        if self.get(.month, calendar: Calendar.current) - compareDate.get(.month, calendar: Calendar.current) != 0 { return false }
+        if self.get(.year, calendar: Calendar.current) - compareDate.get(.year, calendar: Calendar.current) != 0 { return false }
+        
+        return self.get(.day, calendar: Calendar.current) - compareDate.get(.day, calendar: Calendar.current) == 0
     }
 }
 

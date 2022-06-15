@@ -17,7 +17,7 @@ struct OveriviewWidgetView : View {
         switch family {
         case .systemSmall: SimpleOverviewWidget(entry: entry, showDate: false, taskNumber: entry.taskNumber)
         case .systemMedium: SimpleOverviewWidget(entry: entry, showDate: true, taskNumber: entry.taskNumber)
-        case .systemLarge: LargeOverviewWidget(entry: entry, maxNumberOfTasks: WidgetSync.maxNumberOfTasks, taskNumber: entry.taskNumber)
+        case .systemLarge: LargeOverviewWidget(entry: entry, taskNumber: entry.taskNumber)
         case .systemExtraLarge: EmptyView()
         @unknown default: EmptyView()
         }

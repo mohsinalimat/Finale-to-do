@@ -10,7 +10,7 @@ import SwiftUI
 struct LargeUpcomingWidget: View {
     var entry: SimpleEntry
     
-    let maxNumberOfTasks: Int
+    let maxNumberOfTasks: Int = 18
     let taskNumber: Int
     
     @State var tasksOverdue = [WidgetTask]()
@@ -33,28 +33,28 @@ struct LargeUpcomingWidget: View {
                 
                 if entry.upcomingTasks.count > 0 {
                     if tasksOverdue.count > 0 {
-                        UpcomingTasksSection(title: "Overdue", tasks: tasksOverdue, currentDate: entry.date)
+                        UpcomingTasksSection(title: "Overdue", tasks: tasksOverdue, currentDate: entry.date, maxNumberOfTasks: min(maxNumberOfTasks, tasksOverdue.count))
                     }
                     if tasksToday.count > 0 {
-                        UpcomingTasksSection(title: "Today", tasks: tasksToday, currentDate: entry.date)
+                        UpcomingTasksSection(title: "Today", tasks: tasksToday, currentDate: entry.date, maxNumberOfTasks: min(maxNumberOfTasks - tasksOverdue.count, tasksToday.count))
                     }
                     if tasksTomorrow.count > 0 {
-                        UpcomingTasksSection(title: "Tomorrow", tasks: tasksTomorrow, currentDate: entry.date)
+                        UpcomingTasksSection(title: "Tomorrow", tasks: tasksTomorrow, currentDate: entry.date, maxNumberOfTasks: min(maxNumberOfTasks - tasksOverdue.count - tasksToday.count, tasksTomorrow.count))
                     }
                     if tasksThisWeek.count > 0 {
-                        UpcomingTasksSection(title: "This Week", tasks: tasksThisWeek, currentDate: entry.date)
+                        UpcomingTasksSection(title: "This Week", tasks: tasksThisWeek, currentDate: entry.date, maxNumberOfTasks: min(maxNumberOfTasks - tasksOverdue.count - tasksToday.count - tasksTomorrow.count, tasksThisWeek.count))
                     }
                     if tasksNextWeek.count > 0 {
-                        UpcomingTasksSection(title: "Next Week", tasks: tasksNextWeek, currentDate: entry.date)
+                        UpcomingTasksSection(title: "Next Week", tasks: tasksNextWeek, currentDate: entry.date, maxNumberOfTasks: min(maxNumberOfTasks - tasksOverdue.count - tasksToday.count - tasksTomorrow.count - tasksThisWeek.count, tasksNextWeek.count))
                     }
                     if tasksThisMonth.count > 0 {
-                        UpcomingTasksSection(title: "This Month", tasks: tasksThisMonth, currentDate: entry.date)
+                        UpcomingTasksSection(title: "This Month", tasks: tasksThisMonth, currentDate: entry.date, maxNumberOfTasks: min(maxNumberOfTasks - tasksOverdue.count - tasksToday.count - tasksTomorrow.count - tasksThisWeek.count - tasksNextWeek.count, tasksThisMonth.count))
                     }
                     if tasksLater.count > 0 {
-                        UpcomingTasksSection(title: "Later", tasks: tasksLater, currentDate: entry.date)
+                        UpcomingTasksSection(title: "Later", tasks: tasksLater, currentDate: entry.date, maxNumberOfTasks: min(maxNumberOfTasks - tasksOverdue.count - tasksToday.count - tasksTomorrow.count - tasksThisWeek.count - tasksNextWeek.count - tasksThisMonth.count, tasksLater.count))
                     }
                     if tasksWithoutDate.count > 0 {
-                        UpcomingTasksSection(title: "Without Date", tasks: tasksWithoutDate, currentDate: entry.date)
+                        UpcomingTasksSection(title: "Without Date", tasks: tasksWithoutDate, currentDate: entry.date, maxNumberOfTasks: min(maxNumberOfTasks - tasksOverdue.count - tasksToday.count - tasksTomorrow.count - tasksThisWeek.count - tasksNextWeek.count - tasksThisMonth.count - tasksLater.count, tasksWithoutDate.count))
                     }
                 } else {
                     PlaceholderTitle(title: "You don't have any tasks here yet.")
@@ -97,11 +97,15 @@ struct UpcomingTasksSection: View {
     let tasks: [WidgetTask]
     let currentDate: Date
     
+    let maxNumberOfTasks: Int
+    
     var body: some View {
-        SectionTitle(title: title)
-        
-        ForEach(tasks) { task in
-            UpcomingTaskRow(task: task, showDate: true, currentDate: currentDate)
+        if maxNumberOfTasks > 0 {
+            SectionTitle(title: title)
+            
+            ForEach(0..<min(maxNumberOfTasks, tasks.count)) { i in
+                UpcomingTaskRow(task: tasks[i], showDate: true, currentDate: currentDate)
+            }
         }
     }
 }
