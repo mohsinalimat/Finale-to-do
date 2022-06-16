@@ -14,6 +14,7 @@ class UpcomingTasksView: TaskListView {
     var tasksToday = [Task]()
     var tasksTomorrow = [Task]()
     var tasksThisWeek = [Task]()
+    var tasksNextWeek = [Task]()
     var tasksThisMonth = [Task]()
     var tasksLater = [Task]()
     var tasksWithoutDate = [Task]()
@@ -80,6 +81,7 @@ class UpcomingTasksView: TaskListView {
         tasksToday.removeAll()
         tasksTomorrow.removeAll()
         tasksThisWeek.removeAll()
+        tasksNextWeek.removeAll()
         tasksThisMonth.removeAll()
         tasksLater.removeAll()
         tasksWithoutDate.removeAll()
@@ -92,6 +94,7 @@ class UpcomingTasksView: TaskListView {
                 else if Calendar.current.isDateInToday(task.dateAssigned) { tasksToday.append(task) }
                 else if Calendar.current.isDateInTomorrow(task.dateAssigned) { tasksTomorrow.append(task) }
                 else if Calendar.current.isDate(task.dateAssigned, equalTo: Date.now, toGranularity: .weekOfYear) { tasksThisWeek.append(task) }
+                else if task.dateAssigned.get(.weekOfYear) - Date.now.get(.weekOfYear) == 1 { tasksNextWeek.append(task) }
                 else if Calendar.current.isDate(task.dateAssigned, equalTo: Date.now, toGranularity: .month) { tasksThisMonth.append(task) }
                 else { tasksLater.append(task) }
             }
@@ -102,6 +105,7 @@ class UpcomingTasksView: TaskListView {
         if tasksToday.count > 0 { sections.append( UpcomingTasksSection(id: 1, title: "Today", tasks: tasksToday)) }
         if tasksTomorrow.count > 0 { sections.append( UpcomingTasksSection(id: 2, title: "Tomorrow", tasks: tasksTomorrow)) }
         if tasksThisWeek.count > 0 { sections.append( UpcomingTasksSection(id: 3, title: "This week", tasks: tasksThisWeek)) }
+        if tasksNextWeek.count > 0 { sections.append( UpcomingTasksSection(id: 3, title: "Next week", tasks: tasksNextWeek)) }
         if tasksThisMonth.count > 0 { sections.append( UpcomingTasksSection(id: 4, title: "This month", tasks: tasksThisMonth)) }
         if tasksLater.count > 0 { sections.append( UpcomingTasksSection(id: 5, title: "Later", tasks: tasksLater)) }
         if tasksWithoutDate.count > 0 { sections.append( UpcomingTasksSection(id: 6, title: "Without date", tasks: tasksWithoutDate)) }

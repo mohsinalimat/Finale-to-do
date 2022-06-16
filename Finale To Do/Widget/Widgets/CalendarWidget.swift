@@ -30,7 +30,7 @@ struct CalendargWidget: Widget {
             CalendarWidgetView(entry: entry)
         }
         .configurationDisplayName("Calendar")
-        .description("All your upcoming tasks on a calendar.")
+        .description("An overview of all your tasks for the current month.")
         .supportedFamilies([.systemLarge])
     }
 }

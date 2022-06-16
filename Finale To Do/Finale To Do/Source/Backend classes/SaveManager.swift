@@ -20,6 +20,7 @@ class SaveManager {
     let lastICloudSyncKey = "FINALE_DEV_APP_lastICloudSyncDate"
     let lastLocalSaveKey = "FINALE_DEV_APP_lastICloudSaveDate"
     let deviceNameKey = "FINALE_DEV_APP_deviceName"
+    let appVersionKey = "FINALE_DEV_APP_appVersion"
 
     
 //MARK: Load
@@ -76,6 +77,8 @@ class SaveManager {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 App.instance.present(WelcomeScreenNavController(), animated: true)
             }
+        } else {
+            CheckIfAppUpdated()
         }
     }
     
@@ -87,18 +90,11 @@ class SaveManager {
             do {
                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] { App.mainTaskList = DecodeTaskList(json: json, defaultTaskList: App.mainTaskList) }
             } catch let error as NSError { print("Failed to load: \(error.localizedDescription)") }
-            
-//            if let decoded = try? JSONDecoder().decode(TaskList.self, from: data) {
-//                App.mainTaskList = decoded
-//            }
         }
         if let data = UserDefaults.standard.data(forKey: userTaskListKey) {
             do {
                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] { App.userTaskLists = DecodeTaskListArray(json: json) }
             } catch let error as NSError { print("Failed to load: \(error.localizedDescription)") }
-//            if let decoded = try? JSONDecoder().decode([TaskList].self, from: data) {
-//                App.userTaskLists = decoded
-//            }
         }
         if let data = UserDefaults.standard.data(forKey: statsKey) {
             if let decoded = try? JSONDecoder().decode(StatsConfig.self, from: data) {
@@ -125,19 +121,11 @@ class SaveManager {
             do {
                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] { App.mainTaskList = DecodeTaskList(json: json, defaultTaskList: App.mainTaskList) }
             } catch let error as NSError { print("Failed to load: \(error.localizedDescription)") }
-            
-//            if let decoded = try? JSONDecoder().decode(TaskList.self, from: data) {
-//                App.mainTaskList = decoded
-//            }
         }
         if let data = iCloudKey.data(forKey: userTaskListKey) {
             do {
                 if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [[String: Any]] { App.userTaskLists = DecodeTaskListArray(json: json) }
             } catch let error as NSError { print("Failed to load: \(error.localizedDescription)") }
-            
-//            if let decoded = try? JSONDecoder().decode([TaskList].self, from: data) {
-//                App.userTaskLists = decoded
-//            }
         }
         if let data = iCloudKey.data(forKey: statsKey) {
             if let decoded = try? JSONDecoder().decode(StatsConfig.self, from: data) {
@@ -259,6 +247,7 @@ class SaveManager {
     func SaveData () {
         let keyStore = App.settingsConfig.isICloudSyncOn ? NSUbiquitousKeyValueStore() : nil
         
+        SaveValue(value: appVersion, forKey: appVersionKey, iCloudKey: keyStore)
         SaveValue(value: App.instance.overviewSortingPreference.rawValue, forKey: overviewSortingPrefKey, iCloudKey: keyStore)
         
         if let encoded = try? JSONEncoder().encode(App.mainTaskList) {
@@ -308,4 +297,45 @@ class SaveManager {
         }
     }
     
+    var appVersion: String? {
+        if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+            return version
+        }
+        return nil
+    }
+    
+    func CheckIfAppUpdated() {
+        let oldVersion = UserDefaults.standard.string(forKey: appVersionKey) ?? "1.11.0"
+        guard let currentVersion = appVersion else { return }
+        
+        let oldVersionComponents = oldVersion.components(separatedBy: ".").compactMap{ Int($0) }
+        let currentVersionComponents = currentVersion.components(separatedBy: ".").compactMap{ Int($0) }
+        
+        if oldVersionComponents.count < 3 || currentVersionComponents.count < 3 { print("retuning"); return }
+        
+        let didMajorMinorUpdate: Bool
+        if currentVersionComponents.first! > oldVersionComponents.first! { didMajorMinorUpdate = true }
+        else if currentVersionComponents[1] > oldVersionComponents[1] { didMajorMinorUpdate = true }
+        else { didMajorMinorUpdate = false }
+        
+        if !didMajorMinorUpdate { return }
+        
+        guard let URL = Bundle.main.url(forResource: "ChangeLogs", withExtension: "json") else { return }
+        guard let data = (try? Data(contentsOf: URL)) else { return }
+        if let logs = try? JSONDecoder().decode([ChangeLog].self, from: data) {
+            for log in logs {
+                let currentVersionString = "\(currentVersionComponents.first!.description).\(currentVersionComponents[1].description)"
+                if log.version == currentVersionString {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        App.instance.present(AppUpdatedViewController(changeLog: log), animated: true)
+                    }
+                }
+            }
+        }
+    }
+}
+
+struct ChangeLog: Decodable {
+    let version: String
+    let change_logs: [String]
 }

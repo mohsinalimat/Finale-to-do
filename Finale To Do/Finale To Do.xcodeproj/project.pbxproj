@@ -154,6 +154,8 @@
 		379999152829FF9300A42F32 /* Rubik.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 379999142829FF9300A42F32 /* Rubik.ttf */; };
 		37999917282A07C700A42F32 /* Welcome Screen.png in Resources */ = {isa = PBXBuildFile; fileRef = 37999916282A07C700A42F32 /* Welcome Screen.png */; };
 		37999919282A07D600A42F32 /* All Set.png in Resources */ = {isa = PBXBuildFile; fileRef = 37999918282A07D600A42F32 /* All Set.png */; };
+		37A0235E285A9F2C0070EED6 /* ChangeLogs.json in Resources */ = {isa = PBXBuildFile; fileRef = 37A0235D285A9F2C0070EED6 /* ChangeLogs.json */; };
+		37A02360285ABEC60070EED6 /* AppUpdatedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A0235F285ABEC60070EED6 /* AppUpdatedViewController.swift */; };
 		37A75A7A282F1996004D6450 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37A75A79282F1996004D6450 /* StoreKit.framework */; };
 		37A75A7C282F238D004D6450 /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37A75A7B282F238D004D6450 /* IAPManager.swift */; };
 		37A75A7F282F3760004D6450 /* Unlock All Perks.png in Resources */ = {isa = PBXBuildFile; fileRef = 37A75A7E282F3760004D6450 /* Unlock All Perks.png */; };
@@ -364,6 +366,8 @@
 		379999142829FF9300A42F32 /* Rubik.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Rubik.ttf; sourceTree = "<group>"; };
 		37999916282A07C700A42F32 /* Welcome Screen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Welcome Screen.png"; sourceTree = "<group>"; };
 		37999918282A07D600A42F32 /* All Set.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "All Set.png"; sourceTree = "<group>"; };
+		37A0235D285A9F2C0070EED6 /* ChangeLogs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChangeLogs.json; sourceTree = "<group>"; };
+		37A0235F285ABEC60070EED6 /* AppUpdatedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdatedViewController.swift; sourceTree = "<group>"; };
 		37A75A79282F1996004D6450 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		37A75A7B282F238D004D6450 /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		37A75A7E282F3760004D6450 /* Unlock All Perks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Unlock All Perks.png"; sourceTree = "<group>"; };
@@ -626,6 +630,7 @@
 				3752F4B2283078F3007AD922 /* GoogleService-Info.plist */,
 				372B8A38281E41E600117A72 /* Finale To Do.entitlements */,
 				376AD0CB2808DC5A00986B49 /* Assets.xcassets */,
+				37A0235D285A9F2C0070EED6 /* ChangeLogs.json */,
 			);
 			path = "Finale To Do";
 			sourceTree = "<group>";
@@ -641,6 +646,7 @@
 				37F837C4280E11BF00F2A9C0 /* AddListView.swift */,
 				378922B028232F2600AA3B1B /* UserProfileViewController.swift */,
 				379999052829E0C600A42F32 /* WelcomeScreenViewController.swift */,
+				37A0235F285ABEC60070EED6 /* AppUpdatedViewController.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -905,6 +911,7 @@
 				3750A034283300C700E72EB5 /* Protagonist II.png in Resources */,
 				3750A05C283300C700E72EB5 /* Companion II Placeholder.png in Resources */,
 				3750A05E283300C700E72EB5 /* Connoisseur V Placeholder.png in Resources */,
+				37A0235E285A9F2C0070EED6 /* ChangeLogs.json in Resources */,
 				3750A056283300C700E72EB5 /* Connoisseur V.png in Resources */,
 				3750A07A283300C700E72EB5 /* Workaholic IV Placeholder.png in Resources */,
 				3750A065283300C700E72EB5 /* Patron V Placeholder.png in Resources */,
@@ -1075,6 +1082,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37A02360285ABEC60070EED6 /* AppUpdatedViewController.swift in Sources */,
 				37B9998C2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift in Sources */,
 				370A9DB128106F5D00FC30A7 /* ConfirmationSlideover.swift in Sources */,
 				376AD0C72808DC5900986B49 /* App.swift in Sources */,
@@ -1318,7 +1326,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.11.0;
+				MARKETING_VERSION = 1.12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Grant151.Finale-To-Do";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1351,7 +1359,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.11.0;
+				MARKETING_VERSION = 1.12.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Grant151.Finale-To-Do";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
