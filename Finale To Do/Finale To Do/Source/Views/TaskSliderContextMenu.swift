@@ -10,8 +10,6 @@ import UIKit
 
 class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicTheme {
     
-    let indexPath: IndexPath
-    
     let padding = 16.0
     let spacing = 8.0
     var rowHeight: CGFloat!
@@ -44,8 +42,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
     
     var originalTaskName: String!
     
-    init(slider: TaskSlider, indexPath: IndexPath) {
-        self.indexPath = indexPath
+    init(slider: TaskSlider, fullscreen: Bool = false) {
         self.slider = slider
         super.init(nibName: nil, bundle: nil)
         
@@ -93,6 +90,8 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
         self.preferredContentSize = CGSize(width: slider.frame.width, height: notesArea.frame.maxY + padding)
         self.view.backgroundColor = .systemGray5
         self.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TapOutside)))
+        
+        if fullscreen { PresentFullScreen() }
     }
     
     func CreateNotesArea (prevFrameMaxY: CGFloat) -> UIView {
@@ -566,7 +565,7 @@ class TaskSliderContextMenu: UIViewController, UITextViewDelegate, UIDynamicThem
         notesInputField.frame.size.height += notesAreaIncrease
         notesArea.frame.size.height += notesAreaIncrease
         
-        containerView.frame.origin.x = 0.5*(UIScreen.main.bounds.width-view.frame.width)
+        containerView.frame.origin.x = 0.5*(UIScreen.main.bounds.width-containerView.frame.width)
         containerView.frame.origin.y = handle.frame.maxY + padding
         
         closeButton = UIButton(frame: CGRect(x: padding, y: containerView.frame.maxY + padding, width: UIScreen.main.bounds.width-padding*2, height: 40))

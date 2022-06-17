@@ -63,7 +63,7 @@ struct LargeCalendarWidget: View {
                 for day in 0..<allWeeks[week].days.count {
                     if allWeeks[week].days[day].date.isSameDay(compareDate: task.dateAssigned) {
                         if allWeeks[week].days[day].tasks.count < 3 &&
-                            Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: allWeeks[week].days[day].date)! < Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date.now)!
+                            Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: allWeeks[week].days[day].date)! <= Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date.now)!
                         { allWeeks[week].days[day].tasks.append(task) }
                         continue taskLoop
                     }

@@ -143,6 +143,9 @@
 		3787307F28348D22003A7133 /* Change Task Priority.png in Resources */ = {isa = PBXBuildFile; fileRef = 3787307E28348D22003A7133 /* Change Task Priority.png */; };
 		378922B128232F2600AA3B1B /* UserProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B028232F2600AA3B1B /* UserProfileViewController.swift */; };
 		378922B32823645200AA3B1B /* StatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 378922B22823645200AA3B1B /* StatsManager.swift */; };
+		37916AA3285C236B005742A4 /* TodayWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37916AA2285C236B005742A4 /* TodayWidget.swift */; };
+		37916AA5285C23B3005742A4 /* MediumTodayWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37916AA4285C23B3005742A4 /* MediumTodayWidget.swift */; };
+		37916AA7285C2F86005742A4 /* SmallTodayWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37916AA6285C2F86005742A4 /* SmallTodayWidget.swift */; };
 		379694972857EB36004F323F /* LargeOverviewWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379694952857EAEB004F323F /* LargeOverviewWidget.swift */; };
 		3796949D2857F60A004F323F /* SimpleOverviewWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 379694992857F599004F323F /* SimpleOverviewWidget.swift */; };
 		3796949E2857F60C004F323F /* SharedViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3796949B2857F5E2004F323F /* SharedViews.swift */; };
@@ -355,6 +358,9 @@
 		3787307E28348D22003A7133 /* Change Task Priority.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Change Task Priority.png"; sourceTree = "<group>"; };
 		378922B028232F2600AA3B1B /* UserProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileViewController.swift; sourceTree = "<group>"; };
 		378922B22823645200AA3B1B /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
+		37916AA2285C236B005742A4 /* TodayWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayWidget.swift; sourceTree = "<group>"; };
+		37916AA4285C23B3005742A4 /* MediumTodayWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediumTodayWidget.swift; sourceTree = "<group>"; };
+		37916AA6285C2F86005742A4 /* SmallTodayWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallTodayWidget.swift; sourceTree = "<group>"; };
 		379694952857EAEB004F323F /* LargeOverviewWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeOverviewWidget.swift; sourceTree = "<group>"; };
 		379694992857F599004F323F /* SimpleOverviewWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleOverviewWidget.swift; sourceTree = "<group>"; };
 		3796949B2857F5E2004F323F /* SharedViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedViews.swift; sourceTree = "<group>"; };
@@ -677,6 +683,8 @@
 				379694952857EAEB004F323F /* LargeOverviewWidget.swift */,
 				37FA13F52857FECA003B9392 /* LargeUpcomingWidget.swift */,
 				37FA13F928580AF9003B9392 /* LargeCalendarWidget.swift */,
+				37916AA4285C23B3005742A4 /* MediumTodayWidget.swift */,
+				37916AA6285C2F86005742A4 /* SmallTodayWidget.swift */,
 				379694992857F599004F323F /* SimpleOverviewWidget.swift */,
 				3796949B2857F5E2004F323F /* SharedViews.swift */,
 			);
@@ -797,6 +805,7 @@
 			children = (
 				37FA13EE2857FD55003B9392 /* OverviewWidget.swift */,
 				37FA13F12857FD72003B9392 /* UpcomingWidget.swift */,
+				37916AA2285C236B005742A4 /* TodayWidget.swift */,
 				37FA13F728580AB2003B9392 /* CalendarWidget.swift */,
 			);
 			path = Widgets;
@@ -1065,9 +1074,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				37FA13F02857FD68003B9392 /* OverviewWidget.swift in Sources */,
+				37916AA7285C2F86005742A4 /* SmallTodayWidget.swift in Sources */,
+				37916AA3285C236B005742A4 /* TodayWidget.swift in Sources */,
 				37FA13F62857FECA003B9392 /* LargeUpcomingWidget.swift in Sources */,
 				379694972857EB36004F323F /* LargeOverviewWidget.swift in Sources */,
 				37FA13F828580AB2003B9392 /* CalendarWidget.swift in Sources */,
+				37916AA5285C23B3005742A4 /* MediumTodayWidget.swift in Sources */,
 				3796949D2857F60A004F323F /* SimpleOverviewWidget.swift in Sources */,
 				37F645562830ACAD0045BE78 /* WidgetTaskClass.swift in Sources */,
 				3796949E2857F60C004F323F /* SharedViews.swift in Sources */,

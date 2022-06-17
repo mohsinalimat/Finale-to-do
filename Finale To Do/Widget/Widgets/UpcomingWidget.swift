@@ -30,7 +30,7 @@ struct UpcomingWidget: Widget {
             UpcomingWidgetView(entry: entry)
         }
         .configurationDisplayName("Upcoming Tasks")
-        .description("An overview of your upcoming tasks categorized my due date.")
+        .description("Overview of your upcoming tasks categorized my due date.")
         .supportedFamilies([.systemLarge])
     }
 }

@@ -10,15 +10,14 @@ import SwiftUI
 struct SimpleOverviewWidget: View {
     var entry: SimpleEntry
     
-    let maxNumberOfTasks: Int = 7
+    let maxNumberOfTasks: Int = 6
     let showDate: Bool
-    let taskNumber: Int
     
     var body: some View {
         ZStack (alignment: .topLeading) {
             Color(uiColor: .systemGray6)
             VStack(alignment: .trailing, spacing: 2) {
-                TitleRow(titleText: entry.title, taskNumber: taskNumber)
+                TitleRow(titleText: entry.title, taskNumber: entry.taskNumber)
                     .padding(.bottom, 4)
                 
                 if entry.upcomingTasks.count > 0 {

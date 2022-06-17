@@ -94,7 +94,6 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
         
         sliderView.backgroundColor = taskListColor
         sliderView.layer.cornerRadius = sliderCornerRadius
-//        sliderView.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(Dragging)))
         sliderView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(TapSlider)))
 
         sliderHandle.backgroundColor = !task.isCompleted ? taskListColor.dark : .clear

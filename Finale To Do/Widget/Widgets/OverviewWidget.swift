@@ -15,9 +15,9 @@ struct OveriviewWidgetView : View {
     
     var body: some View {
         switch family {
-        case .systemSmall: SimpleOverviewWidget(entry: entry, showDate: false, taskNumber: entry.taskNumber)
-        case .systemMedium: SimpleOverviewWidget(entry: entry, showDate: true, taskNumber: entry.taskNumber)
-        case .systemLarge: LargeOverviewWidget(entry: entry, taskNumber: entry.taskNumber)
+        case .systemSmall: SimpleOverviewWidget(entry: entry, showDate: false)
+        case .systemMedium: SimpleOverviewWidget(entry: entry, showDate: true)
+        case .systemLarge: LargeOverviewWidget(entry: entry)
         case .systemExtraLarge: EmptyView()
         @unknown default: EmptyView()
         }
@@ -32,7 +32,7 @@ struct OverviewWidget: Widget {
             OveriviewWidgetView(entry: entry)
         }
         .configurationDisplayName("Tasks Overview")
-        .description("Quick overview of your upcoming tasks.")
+        .description("Quick overview of all your upcoming tasks.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }
 }

@@ -67,6 +67,7 @@ struct AllWidgets: WidgetBundle {
     var body: some Widget {
         OverviewWidget()
         UpcomingWidget()
+        TodayWidget()
         CalendargWidget()
     }
 }

@@ -8,7 +8,7 @@
 import UIKit
 import SwiftUI
 
-class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableViewDragDelegate, UITableViewDropDelegate, UIDynamicTheme {
+class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableViewDragDelegate, UITableViewDropDelegate, UIDynamicTheme, UIGestureRecognizerDelegate {
 
     let app: App
     
@@ -157,6 +157,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         let dragGesture = UIPanGestureRecognizer(target: self, action: #selector(DragGesture))
         dragGesture.minimumNumberOfTouches = 1
+        dragGesture.delegate = self
         contentView.addGestureRecognizer(dragGesture)
         
         let addTaskButtonSize = 56.0
@@ -190,6 +191,10 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         }
     }
     
+    func OpenTaskDetailsView (slider: TaskSlider) {
+        App.instance.present(TaskSliderContextMenu(slider: slider, fullscreen: true), animated: true)
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         TogglePlaceholder()
         return section == 0 ? allUpcomingTasks.count : allCompletedTasks.count
@@ -212,8 +217,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: {  
             let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
-            
-            return TaskSliderContextMenu(slider: cell.slider, indexPath: indexPath)
+            return TaskSliderContextMenu(slider: cell.slider)
         }, actionProvider: { _ in
             let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
             let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
@@ -225,7 +229,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
                 self.app.UndoCompletingTask(task: cell.slider.task)
             }
             let Edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { action in
-                cell.slider.StartEditing()
+                self.OpenTaskDetailsView(slider: cell.slider)
             }
             let AssignDate = UIAction(title: cell.slider.task.isDateAssigned ? "Change Date" : "Assign Date", image: UIImage(systemName: "calendar")) { action in
                 cell.slider.ShowCalendarView(taskSliderContextMenu: nil)
@@ -255,6 +259,24 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             }
         }
         
+    }
+    
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
+
+        let editAction = UIContextualAction(style: .normal, title: "Edit") { (action, view, completion) in
+            self.OpenTaskDetailsView(slider: cell.slider)
+            completion(true)
+        }
+        editAction.backgroundColor = .systemGray
+
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (action, view, completion) in
+            self.app.DeleteTask(task: cell.slider.task)
+            completion(true)
+        }
+        deleteAction.backgroundColor = UIColor.red
+
+        return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
     }
     
     func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
@@ -374,6 +396,14 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     @objc func DragGesture (sender: UIPanGestureRecognizer) {
         app.DragSideMenu(sender: sender)
+    }
+    
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if let panGestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
+            let translation = panGestureRecognizer.translation(in: superview!)
+            return app.isSideMenuOpen ? translation.x <= 0 : translation.x >= 0
+        }
+        return false
     }
     
     func getTaskListColor (id: UUID) -> UIColor {

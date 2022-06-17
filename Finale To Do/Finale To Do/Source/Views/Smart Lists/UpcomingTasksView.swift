@@ -53,7 +53,7 @@ class UpcomingTasksView: TaskListView {
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: {
             let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
             
-            return TaskSliderContextMenu(slider: cell.slider, indexPath: indexPath)
+            return TaskSliderContextMenu(slider: cell.slider)
         }, actionProvider: { _ in
             let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
             let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in

@@ -11,13 +11,12 @@ struct LargeOverviewWidget: View {
     var entry: SimpleEntry
     
     let maxNumberOfTasks: Int = 18
-    let taskNumber: Int
     
     var body: some View {
         ZStack {
             Color(.systemGray6)
             VStack(alignment: .trailing, spacing: 2) {
-                TitleRow(titleText: entry.title, taskNumber: taskNumber)
+                TitleRow(titleText: entry.title, taskNumber: entry.taskNumber)
                 
                 if entry.upcomingTasks.count > 0 || entry.completedTasks.count > 0 {
                     SectionTitle(title: "Upcoming")
