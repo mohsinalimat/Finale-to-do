@@ -197,7 +197,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         TogglePlaceholder()
-        return section == 0 ? allUpcomingTasks.count : allCompletedTasks.count
+        return section == 0 ? allUpcomingTasks.count : App.settingsConfig.hideCompletedTasks ? min(App.settingsConfig.maxTasksIfCompletedTasksHidden, allCompletedTasks.count) : allCompletedTasks.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

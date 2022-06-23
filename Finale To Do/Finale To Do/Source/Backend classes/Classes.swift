@@ -13,7 +13,7 @@ class Task: Codable, Equatable {
     var name: String
     var priority: TaskPriority
     var notes: String
-    var notifications: [NotificationType : String]
+    var notifications: [NotificationType : [String]]
     var repeating: [TaskRepeatType]
     var isCompleted: Bool
     var isDateAssigned: Bool
@@ -27,7 +27,7 @@ class Task: Codable, Equatable {
         self.name = ""
         self.priority = .Normal
         self.notes = ""
-        self.notifications = [NotificationType : String]()
+        self.notifications = [NotificationType : [String]]()
         self.repeating = [TaskRepeatType]()
         self.isCompleted = false
         self.isDateAssigned = false
@@ -38,7 +38,7 @@ class Task: Codable, Equatable {
         self.taskListID = UUID()
     }
     
-    init(name: String = "", priority: TaskPriority = .Normal, notes: String = "", repeating: [TaskRepeatType] = [], isComleted: Bool = false, isDateAssigned: Bool = false, isDueTimeAssigned: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), notifications: [NotificationType : String] = [NotificationType : String](), taskListID: UUID = UUID()) {
+    init(name: String = "", priority: TaskPriority = .Normal, notes: String = "", repeating: [TaskRepeatType] = [], isComleted: Bool = false, isDateAssigned: Bool = false, isDueTimeAssigned: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), notifications: [NotificationType : [String]] = [NotificationType : [String]](), taskListID: UUID = UUID()) {
         self.name = name
         self.priority = priority
         self.notes = notes
@@ -66,7 +66,7 @@ class Task: Codable, Equatable {
     func AddNotification (notificationType: NotificationType) {
         if self.containsNotification(notificationType: notificationType) { return }
         
-        self.notifications[notificationType] = UUID().uuidString
+        self.notifications[notificationType] = [UUID().uuidString]
     }
     
     func RemoveNotification (notificationType: NotificationType) {
@@ -82,8 +82,10 @@ class Task: Codable, Equatable {
     }
     
     func CancelAllNotifications () {
-        for (_, id) in self.notifications {
-            NotificationHelper.CancelNotification(id: id)
+        for (_, ids) in self.notifications {
+            for id in ids {
+                NotificationHelper.CancelNotification(id: id)
+            }
         }
     }
     
@@ -96,7 +98,7 @@ class Task: Codable, Equatable {
         name = try container.decode(String.self, forKey: .name)
         priority = try container.decode(TaskPriority.self, forKey: .priority)
         notes = try container.decode(String.self, forKey: .notes)
-        notifications = try container.decode([NotificationType : String].self, forKey: .notifications)
+        notifications = try container.decode([NotificationType : [String]].self, forKey: .notifications)
         repeating = try container.decode([TaskRepeatType].self, forKey: .repeating)
         isCompleted = try container.decode(Bool.self, forKey: .isCompleted)
         isDateAssigned = try container.decode(Bool.self, forKey: .isDateAssigned)
@@ -202,9 +204,12 @@ struct SettingsConfig: Codable {
     
     var defaultListID: UUID = UUID()
     var smartLists: [SmartList] = [.Overview]
+    var hideCompletedTasks: Bool = false
     
     var isNotificationsAllowed: Bool = false
+    var isNaggingModeOn: Bool = false
     var appBadgeNumberTypes: [AppBadgeNumberType] = [.OverdueTasks]
+    
     var widgetLists: [UUID] = []
     
     var interface: InterfaceMode = .System
@@ -217,6 +222,8 @@ struct SettingsConfig: Codable {
     var maxNumberOfCompletedTasks: Int {
         StatsManager.getLevelPerk(type: .HigherTaskHistoryLimit).isUnlocked ? 100 : 50
     }
+    
+    let maxTasksIfCompletedTasksHidden = 5
     
     var userFullName: String {
         if userFirstName == "" { return userLastName }

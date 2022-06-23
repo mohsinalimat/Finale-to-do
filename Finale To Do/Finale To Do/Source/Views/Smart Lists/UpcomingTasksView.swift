@@ -62,7 +62,7 @@ class UpcomingTasksView: TaskListView {
             let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
             
             let Edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { action in
-                cell.slider.StartEditing()
+                self.OpenTaskDetailsView(slider: cell.slider)
             }
             let AssignDate = UIAction(title: cell.slider.task.isDateAssigned ? "Change Date" : "Assign Date", image: UIImage(systemName: "calendar")) { action in
                 cell.slider.ShowCalendarView(taskSliderContextMenu: nil)

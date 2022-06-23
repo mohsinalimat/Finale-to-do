@@ -3,8 +3,15 @@
     "version": "1.12",
     "change_logs": [
         "Smart lists! Preview all your tasks in an organized way",
-        "Repeating tasks! C reate tasks which will automatically repeat on your selected schedule",
+        "Repeating tasks! Create tasks which will automatically repeat on your selected schedule",
         "New \"Calendar\" and \"Upcoming\" and \"Today\" home screen widgets",
+        ]
+    },
+    {
+    "version": "1.13",
+    "change_logs": [
+        "Nagging mode! Receive multiple notifications in a row until you open the app",
+        "Hide Completed Tasks! Optional toggle to show only most recently completed tasks",
         ]
     },
 ]

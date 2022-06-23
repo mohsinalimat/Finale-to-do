@@ -13,7 +13,19 @@ class NotificationHelper {
     
     static func ScheduleNotificationsForTask(task: Task) {
         
-        for (notificationType, id) in task.notifications {
+        for (notificationType, ids) in task.notifications {
+            if App.settingsConfig.isNaggingModeOn {
+                if ids.count < 5 {
+                    for _ in 0..<5-ids.count {
+                        task.notifications[notificationType]?.append(UUID().uuidString)
+                    }
+                }
+            } else if ids.count > 1 {
+                for _ in 1..<ids.count { task.notifications[notificationType]?.removeLast() }
+            }
+        }
+        
+        for (notificationType, ids) in task.notifications {
             let content = UNMutableNotificationContent()
             content.body = "\(GetNotificationPrefix(notificationType: notificationType))\(task.name)"
             content.sound = UNNotificationSound.default
@@ -21,18 +33,22 @@ class NotificationHelper {
             if task.priority == .High { content.title = "Important"}
             
             let notificationDate = GetNotificationDate(taskAssignedDate: task.dateAssigned, notificationType: notificationType)
-            
-            let trigger = UNCalendarNotificationTrigger(dateMatching: GetDateComponents(date: notificationDate), repeats: false)
+                        
+            for i in 0..<ids.count {
+                let dateComponent = GetDateComponents(date: notificationDate.advanced(by: Double(i)*60.0*2.0))
+                
+                let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponent, repeats: false)
 
-            let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+                let request = UNNotificationRequest(identifier: ids[i], content: content, trigger: trigger)
 
-            UNUserNotificationCenter.current().add(request, withCompletionHandler: { error in
-                if error == nil {
-                    print("Scheduled notification with ID: \(id).")
-                } else {
-                    print("Failed to schedule notification with ID: \(id).\nError: \(error?.localizedDescription ?? "unknown error")" )
-                }
-            })
+                UNUserNotificationCenter.current().add(request, withCompletionHandler: { error in
+                    if error == nil {
+                        print("Scheduled notification number \(i) with ID: \(ids[i]).")
+                    } else {
+                        print("Failed to schedule notification number \(i) with ID: \(ids[i]).\nError: \(error?.localizedDescription ?? "unknown error")" )
+                    }
+                })
+            }
         }
         
     }

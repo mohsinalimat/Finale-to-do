@@ -203,6 +203,9 @@ class App: UIViewController {
             taskListView.tableView.performBatchUpdates({
                 taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 0)], with: UITableView.RowAnimation.right)
                 taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 1)], with: UITableView.RowAnimation.automatic)
+                if App.settingsConfig.hideCompletedTasks && taskListView.allCompletedTasks.count > App.settingsConfig.maxTasksIfCompletedTasksHidden {
+                    taskListView.tableView.deleteRows(at: [IndexPath(row: App.settingsConfig.maxTasksIfCompletedTasksHidden-1, section: 1)], with: UITableView.RowAnimation.right)
+                }
             })
         }
         
@@ -290,7 +293,12 @@ class App: UIViewController {
                 }
             }
         } else {
-            taskListView.tableView.deleteRows(at: [taskListViewIndexPath], with: UITableView.RowAnimation.right)
+            taskListView.tableView.performBatchUpdates {
+                taskListView.tableView.deleteRows(at: [taskListViewIndexPath], with: UITableView.RowAnimation.right)
+                if task.isCompleted == true && App.settingsConfig.hideCompletedTasks && taskListView.allCompletedTasks.count >= App.settingsConfig.maxTasksIfCompletedTasksHidden {
+                    taskListView.tableView.insertRows(at: [IndexPath(row: App.settingsConfig.maxTasksIfCompletedTasksHidden-1, section: 1)], with: UITableView.RowAnimation.right)
+                }
+            }
             if taskListView.allUpcomingTasks.count > 0 && taskListViewIndexPath.row == 0 {
                 taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false)
             }
@@ -372,6 +380,9 @@ class App: UIViewController {
             taskListView.tableView.performBatchUpdates({
                 taskListView.tableView.insertRows(at: [IndexPath(row: undoIndexPath, section: 0)], with: UITableView.RowAnimation.right)
                 taskListView.tableView.deleteRows(at: [IndexPath(row: tableIndex, section: 1)], with: UITableView.RowAnimation.right)
+                if App.settingsConfig.hideCompletedTasks && taskListView.allCompletedTasks.count >= App.settingsConfig.maxTasksIfCompletedTasksHidden {
+                    taskListView.tableView.insertRows(at: [IndexPath(row: App.settingsConfig.maxTasksIfCompletedTasksHidden-1, section: 1)], with: UITableView.RowAnimation.right)
+                }
             })
             if index == 0 { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         }
@@ -437,7 +448,12 @@ class App: UIViewController {
                 }
             }
         } else {
-            taskListView.tableView.insertRows(at: [undoIndexPath], with: UITableView.RowAnimation.right)
+            taskListView.tableView.performBatchUpdates {
+                taskListView.tableView.insertRows(at: [undoIndexPath], with: UITableView.RowAnimation.right)
+                if undoIndexPath.section == 1 && App.settingsConfig.hideCompletedTasks && taskListView.allCompletedTasks.count > App.settingsConfig.maxTasksIfCompletedTasksHidden {
+                    taskListView.tableView.deleteRows(at: [IndexPath(row: App.settingsConfig.maxTasksIfCompletedTasksHidden-1, section: 1)], with: UITableView.RowAnimation.right)
+                }
+            }
             if undoIndexPath == IndexPath(row: 0, section: 0) { taskListView.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .bottom, animated: false) }
         }
         

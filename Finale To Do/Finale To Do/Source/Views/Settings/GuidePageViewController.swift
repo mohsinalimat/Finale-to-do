@@ -74,8 +74,6 @@ class GuidePageViewController: UIViewController, UIDynamicTheme {
         scrollView.contentSize.height = descriptionContainer.frame.maxY + padding*5
         
         self.view.addSubview(scrollView)
-        
-        AnalyticsHelper.LogGuideOpen(page: titleText)
     }
     
     func ReloadThemeColors() {
@@ -98,6 +96,11 @@ class GuidePageViewController: UIViewController, UIDynamicTheme {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        AnalyticsHelper.LogGuideOpen(page: self.title ?? "Unknown Guide Page")
     }
     
 }

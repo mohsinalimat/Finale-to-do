@@ -146,6 +146,7 @@ class SaveManager {
             else if key == "appBadgeNumberTypes" {
                 App.settingsConfig.appBadgeNumberTypes = (value as? [Int])?.compactMap{ AppBadgeNumberType(rawValue: $0) } ?? App.settingsConfig.appBadgeNumberTypes
             }
+            else if key == "isNaggingModeOn" { App.settingsConfig.isNaggingModeOn = value as? Bool ?? App.settingsConfig.isNaggingModeOn}
             else if key == "widgetLists" {
                 App.settingsConfig.widgetLists = (value as? [String])?.compactMap{ UUID(uuidString: $0) } ?? App.settingsConfig.widgetLists
             }
@@ -161,6 +162,7 @@ class SaveManager {
             else if key == "smartLists" {
                 App.settingsConfig.smartLists = (value as? [Int])?.compactMap{ SmartList(rawValue: $0) } ?? App.settingsConfig.smartLists
             }
+            else if key == "hideCompletedTasks" { App.settingsConfig.hideCompletedTasks = value as? Bool ?? App.settingsConfig.hideCompletedTasks}
         }
     }
     
@@ -222,12 +224,13 @@ class SaveManager {
             else if key == "dateCompleted" { task.dateCompleted = (value as? Double) != nil ? Date(timeIntervalSinceReferenceDate: value as! Double) : task.dateCompleted }
             else if key == "notifications" {
                 if (value as? NSArray) == nil { continue }
-                
+                print(value)
                 var k = 0
                 for i in value as! NSArray {
+                    
                     if (i as? Int) != nil { k = i as! Int }
-                    else if (i as? String) != nil {
-                        task.notifications[NotificationType(rawValue: k)!] = (i as! String)
+                    else if (i as? [String]) != nil {
+                        task.notifications[NotificationType(rawValue: k)!] = (i as! [String])
                     }
                 }
             }

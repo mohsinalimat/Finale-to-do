@@ -213,7 +213,12 @@ class SettingsListsPage: SettingsPageViewController {
             SettingsSection(footer: "New tasks created from Smart Lists will be added to this list.", options: [
                 .navigationCell(model: SettingsNavigationOption(title: "Default List", nextPage: SettingsDefaultListPage(), SetPreview: { return self.defaultFolderPreview } ))
             ]),
-            SettingsSection(title: "Smart lists", footer: "Smart lists compile and present your tasks in a special way.", options: smartListsSwitchOptions)
+            SettingsSection(title: "Smart lists", footer: "Smart lists compile and present your tasks in a special way.", options: smartListsSwitchOptions),
+            SettingsSection(footer: "Only show up to five recently completed tasks.", options: [
+                .switchCell(model: SettingsSwitchOption(title: "Hide Completed Tasks", isOn: App.settingsConfig.hideCompletedTasks, OnChange: { sender in
+                    App.settingsConfig.hideCompletedTasks = sender.isOn
+                }))
+            ])
         ]
     }
     
@@ -285,7 +290,7 @@ class SettingsNotificationsPage: SettingsPageViewController {
     
     override func GetSettings() -> [SettingsSection] {
         return [
-            SettingsSection(footer: "Finale will never send you unnecessary alerts, and will only send notifications that you set yourself.", options: [
+            SettingsSection(footer: "Finale To Do will never send you unnecessary alerts, and will only send notifications that you set yourself.", options: [
                 .switchCell(model: SettingsSwitchOption(title: "Allow Notifications", isOn: App.settingsConfig.isNotificationsAllowed) { sender in
                     if sender.isOn {
                         NotificationHelper.RequestNotificationAccess(uiSwitch: sender, settingsNotificationsPage: self)
@@ -309,18 +314,24 @@ class SettingsNotificationsPage: SettingsPageViewController {
         if settingsSections.count > 1 { return }
         
         settingsSections.append(contentsOf: GetAllNotificationSettings())
-        tableView.insertSections(IndexSet(integer: 1), with: .fade)
+        tableView.insertSections(IndexSet(1..<settingsSections.count), with: .fade)
     }
     
     func HideAllNotificationSettings () {
         if settingsSections.count == 1 { return }
         
-        settingsSections.removeLast()
-        tableView.deleteSections(IndexSet(integer: 1), with: .fade)
+        let totalSections = settingsSections.count
+        for _ in 1..<totalSections {
+            settingsSections.removeLast()
+        }
+        tableView.deleteSections(IndexSet(1..<totalSections), with: .fade)
     }
     
     func GetAllNotificationSettings () -> [SettingsSection] {
         return [
+            SettingsSection(footer: "Finale To Do will send you up to 5 notifications every two minutes until you open the app.", options: [.switchCell(model: SettingsSwitchOption(title: "Nagging Mode", isOn: App.settingsConfig.isNaggingModeOn, OnChange: { sender in
+                App.settingsConfig.isNaggingModeOn = sender.isOn
+            }))]),
             SettingsSection(options: [.customViewCell(model: SettingsAppBadgeCountView())], customHeight: SettingsAppBadgeCountView.height)
         ]
     }
