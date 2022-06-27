@@ -234,8 +234,12 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             let AssignDate = UIAction(title: cell.slider.task.isDateAssigned ? "Change Date" : "Assign Date", image: UIImage(systemName: "calendar")) { action in
                 cell.slider.ShowCalendarView(taskSliderContextMenu: nil)
             }
+            let skipRepeating = UIAction(title: "Skip", image: UIImage(systemName: "arrow.right")) { action in
+                self.app.SkipRepeatingTask(task: cell.slider.task)
+            }
             
             var items = [UIAction]()
+            if cell.slider.task.repeating.count > 0 && cell.slider.task.isDateAssigned && !cell.slider.task.isCompleted { items.append(skipRepeating) }
             if indexPath.section == 0 { items.append(AssignDate); items.append(Edit) }
             if indexPath.section == 1 { items.append(Undo) }
             

@@ -496,6 +496,13 @@ class App: UIViewController {
         CreateNewTask(tasklist: getTaskList(id: newTask.taskListID), task: newTask)
     }
     
+    func SkipRepeatingTask (task: Task) {
+        if task.repeating.count == 0 || !task.isDateAssigned { return }
+        
+        DeleteTask(task: task)
+        AddRepeatingTask(task: task)
+    }
+    
     
 //MARK: Sidemenu Actions
 

@@ -15,6 +15,7 @@ class SettingsNavigationController: UINavigationController {
         super.init(nibName: nil, bundle: nil)
         
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        self.navigationBar.tintColor = ThemeManager.currentTheme.primaryElementColor()
         
         self.setViewControllers([SettingsMainPage()], animated: false)
     }
@@ -26,6 +27,7 @@ class SettingsNavigationController: UINavigationController {
     }
     
     func SetAllViewControllerColors() {
+        self.navigationBar.tintColor = ThemeManager.currentTheme.primaryElementColor()
         for viewController in self.viewControllers {
             if let dynamicTheme = viewController as? UIDynamicTheme { dynamicTheme.ReloadThemeColors() }
             for subview in viewController.view.subviews {
@@ -468,11 +470,11 @@ class SettingsStatisticsPage: SettingsPageViewController {
             ]),
             
             SettingsSection(options: [
-                .staticCell(model: SettingsStaticOption(title: "Times Shared Finale", SetPreview: { return StatsManager.stats.timesSharedProgress.description } ))
+                .staticCell(model: SettingsStaticOption(title: "Times Shared Finale To Do", SetPreview: { return StatsManager.stats.timesSharedProgress.description } ))
             ]),
             
             SettingsSection(options: [
-                .staticCell(model: SettingsStaticOption(title: "Joined Finale", SetPreview: { return StatsManager.stats.dateJoinedApp.formatted(date: .long, time: .omitted) } ))
+                .staticCell(model: SettingsStaticOption(title: "Joined Finale To Do", SetPreview: { return StatsManager.stats.dateJoinedApp.formatted(date: .long, time: .omitted) } ))
             ])
             
         ]

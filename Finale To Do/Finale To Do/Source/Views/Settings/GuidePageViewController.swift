@@ -15,7 +15,7 @@ class GuidePageViewController: UIViewController, UIDynamicTheme {
     
     let padding = 16.0
     
-    let colorLayer = UIView()
+    let iphoneFrameView = UIView()
     let descriptionContainer = UIView()
     
     init(titleText: String, descriptionText: String) {
@@ -39,18 +39,13 @@ class GuidePageViewController: UIViewController, UIDynamicTheme {
         screenshotView.layer.cornerRadius = 20
         screenshotView.clipsToBounds = true
         
-        let iphoneFrameWidth = screenshotWidth*1.3
-        let iphoneFrameHeight = screenshotHeight*1.3
-        let iphoneFrameView = UIImageView(frame: CGRect(x: 0.5*(width-iphoneFrameWidth), y: padding + 0.5*(screenshotHeight-iphoneFrameHeight), width: iphoneFrameWidth, height: iphoneFrameHeight))
-        iphoneFrameView.image = UIImage(named: "iPhone Frame")
-        iphoneFrameView.contentMode = .scaleAspectFit
-        colorLayer.frame = iphoneFrameView.frame
-        colorLayer.layer.compositingFilter = "multiplyBlendMode"
-        colorLayer.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
-        let mask = UIImageView(image: UIImage(named: "iPhone Frame"))
-        mask.frame = CGRect(x: 0, y: 0, width: colorLayer.frame.width, height: colorLayer.frame.height)
-        mask.contentMode = .scaleAspectFit
-        colorLayer.mask = mask
+        let iphoneFrameSize = 8.0
+        let iphoneFrameWidth = screenshotWidth + iphoneFrameSize*2
+        let iphoneFrameHeight = screenshotHeight + iphoneFrameSize*2
+        
+        iphoneFrameView.frame = CGRect(x: 0.5*(width-iphoneFrameWidth), y: padding + 0.5*(screenshotHeight-iphoneFrameHeight), width: iphoneFrameWidth, height: iphoneFrameHeight)
+        iphoneFrameView.layer.cornerRadius = 26
+        iphoneFrameView.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
         
         descriptionContainer.frame = CGRect(x: padding, y: screenshotView.frame.maxY+padding*2, width: width-padding*2, height: 0)
         descriptionContainer.layer.cornerRadius = 12
@@ -66,9 +61,8 @@ class GuidePageViewController: UIViewController, UIDynamicTheme {
         descriptionContainer.addSubview(descriptionLabel)
         descriptionContainer.frame.size.height = descriptionLabel.frame.height+padding*2
         
-        scrollView.addSubview(screenshotView)
         scrollView.addSubview(iphoneFrameView)
-        scrollView.addSubview(colorLayer)
+        scrollView.addSubview(screenshotView)
         scrollView.addSubview(descriptionContainer)
         
         scrollView.contentSize.height = descriptionContainer.frame.maxY + padding*5
@@ -80,7 +74,7 @@ class GuidePageViewController: UIViewController, UIDynamicTheme {
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         UIView.animate(withDuration: 0.25) { [self] in
             descriptionContainer.backgroundColor = ThemeManager.currentTheme.settingsRowBackgroundColor
-            colorLayer.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
+            iphoneFrameView.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
             self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
         }
     }

@@ -14,6 +14,7 @@ class UserProfileNavigationController: UINavigationController {
         super.init(nibName: nil, bundle: nil)
         
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        self.navigationBar.tintColor = ThemeManager.currentTheme.primaryElementColor()
         
         self.setViewControllers([UserProfileViewController()], animated: false)
     }
@@ -26,6 +27,7 @@ class UserProfileNavigationController: UINavigationController {
     }
     
     func SetAllViewControllerColors() {
+        self.navigationBar.tintColor = ThemeManager.currentTheme.primaryElementColor()
         for viewController in self.viewControllers {
             if let dynamicTheme = viewController as? UIDynamicTheme { dynamicTheme.ReloadThemeColors() }
             for subview in viewController.view.subviews {
@@ -832,7 +834,7 @@ class UnlockAllLevelPerksViewController: UIViewController {
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         UIView.animate(withDuration: 0.25) { [self] in
             self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
-            purchaseButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
+            purchaseButton?.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
         }
     }
     

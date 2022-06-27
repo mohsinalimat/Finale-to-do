@@ -224,7 +224,7 @@ class SaveManager {
             else if key == "dateCompleted" { task.dateCompleted = (value as? Double) != nil ? Date(timeIntervalSinceReferenceDate: value as! Double) : task.dateCompleted }
             else if key == "notifications" {
                 if (value as? NSArray) == nil { continue }
-                print(value)
+                
                 var k = 0
                 for i in value as! NSArray {
                     

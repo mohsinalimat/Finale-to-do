@@ -113,6 +113,8 @@
 		3752F4BF283095EC007AD922 /* HomeScreenWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3752F4BE283095EC007AD922 /* HomeScreenWidget.swift */; };
 		3752F4C1283095EE007AD922 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3752F4C0283095EE007AD922 /* Assets.xcassets */; };
 		3752F4C5283095EE007AD922 /* WidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 3752F4B8283095EC007AD922 /* WidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		37573685286A33BC005CEE67 /* Badges.png in Resources */ = {isa = PBXBuildFile; fileRef = 37573683286A33BC005CEE67 /* Badges.png */; };
+		37573688286A3419005CEE67 /* Level.png in Resources */ = {isa = PBXBuildFile; fileRef = 37573687286A3419005CEE67 /* Level.png */; };
 		375BD2D0283C805300882E52 /* Sharing Modal Background.png in Resources */ = {isa = PBXBuildFile; fileRef = 375BD2CF283C805300882E52 /* Sharing Modal Background.png */; };
 		375E5D79280F1AA2001A289E /* UndoButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E5D78280F1AA2001A289E /* UndoButton.swift */; };
 		375E5D7B280F7155001A289E /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 375E5D7A280F7155001A289E /* CalendarViewController.swift */; };
@@ -126,12 +128,9 @@
 		376AD0DD2808FD4C00986B49 /* Classes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DC2808FD4C00986B49 /* Classes.swift */; };
 		376AD0DF280901AF00986B49 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 376AD0DE280901AF00986B49 /* Extensions.swift */; };
 		377C3914281B0F4C006F42BA /* SettingsPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */; };
-		377CB320282B847F001CDBBD /* iPhone Frame.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB31F282B847F001CDBBD /* iPhone Frame.png */; };
 		377CB32E282C4166001CDBBD /* Create List.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB323282C4165001CDBBD /* Create List.png */; };
 		377CB331282C4166001CDBBD /* Reorder Tasks.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB326282C4166001CDBBD /* Reorder Tasks.png */; };
 		377CB332282C4166001CDBBD /* Reorder Lists.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB327282C4166001CDBBD /* Reorder Lists.png */; };
-		377CB333282C4166001CDBBD /* Badges.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB328282C4166001CDBBD /* Badges.png */; };
-		377CB334282C4166001CDBBD /* Level.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB329282C4166001CDBBD /* Level.png */; };
 		377CB335282C4166001CDBBD /* Sort Tasks.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB32A282C4166001CDBBD /* Sort Tasks.png */; };
 		377CB336282C4166001CDBBD /* Edit List.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB32B282C4166001CDBBD /* Edit List.png */; };
 		377CB337282C4166001CDBBD /* Create Task.png in Resources */ = {isa = PBXBuildFile; fileRef = 377CB32C282C4166001CDBBD /* Create Task.png */; };
@@ -326,6 +325,8 @@
 		3752F4BE283095EC007AD922 /* HomeScreenWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeScreenWidget.swift; sourceTree = "<group>"; };
 		3752F4C0283095EE007AD922 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3752F4C2283095EE007AD922 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		37573683286A33BC005CEE67 /* Badges.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Badges.png; path = ../../../../../../../Downloads/Badges.png; sourceTree = "<group>"; };
+		37573687286A3419005CEE67 /* Level.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Level.png; sourceTree = "<group>"; };
 		375BD2CF283C805300882E52 /* Sharing Modal Background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sharing Modal Background.png"; sourceTree = "<group>"; };
 		375E5D78280F1AA2001A289E /* UndoButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UndoButton.swift; sourceTree = "<group>"; };
 		375E5D7A280F7155001A289E /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
@@ -341,12 +342,9 @@
 		376AD0DC2808FD4C00986B49 /* Classes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Classes.swift; sourceTree = "<group>"; };
 		376AD0DE280901AF00986B49 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPageViewController.swift; sourceTree = "<group>"; };
-		377CB31F282B847F001CDBBD /* iPhone Frame.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iPhone Frame.png"; sourceTree = "<group>"; };
 		377CB323282C4165001CDBBD /* Create List.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Create List.png"; sourceTree = "<group>"; };
 		377CB326282C4166001CDBBD /* Reorder Tasks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Reorder Tasks.png"; sourceTree = "<group>"; };
 		377CB327282C4166001CDBBD /* Reorder Lists.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Reorder Lists.png"; sourceTree = "<group>"; };
-		377CB328282C4166001CDBBD /* Badges.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Badges.png; sourceTree = "<group>"; };
-		377CB329282C4166001CDBBD /* Level.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Level.png; sourceTree = "<group>"; };
 		377CB32A282C4166001CDBBD /* Sort Tasks.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Sort Tasks.png"; sourceTree = "<group>"; };
 		377CB32B282C4166001CDBBD /* Edit List.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Edit List.png"; sourceTree = "<group>"; };
 		377CB32C282C4166001CDBBD /* Create Task.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Create Task.png"; sourceTree = "<group>"; };
@@ -783,7 +781,6 @@
 		37CE7B82282AE76E00B15440 /* Guide Screenshots */ = {
 			isa = PBXGroup;
 			children = (
-				377CB31F282B847F001CDBBD /* iPhone Frame.png */,
 				377CB326282C4166001CDBBD /* Reorder Tasks.png */,
 				377CB32C282C4166001CDBBD /* Create Task.png */,
 				377CB32D282C4166001CDBBD /* Change Task Details.png */,
@@ -791,10 +788,10 @@
 				377CB32B282C4166001CDBBD /* Edit List.png */,
 				377CB32A282C4166001CDBBD /* Sort Tasks.png */,
 				377CB327282C4166001CDBBD /* Reorder Lists.png */,
-				377CB328282C4166001CDBBD /* Badges.png */,
-				377CB329282C4166001CDBBD /* Level.png */,
+				37573683286A33BC005CEE67 /* Badges.png */,
 				377CB339282C45EB001CDBBD /* Complete Task.png */,
 				377CB33A282C45EB001CDBBD /* Edit Task.png */,
+				37573687286A3419005CEE67 /* Level.png */,
 				3787307E28348D22003A7133 /* Change Task Priority.png */,
 			);
 			path = "Guide Screenshots";
@@ -915,7 +912,6 @@
 				3750A064283300C700E72EB5 /* Connoisseur II Placeholder.png in Resources */,
 				3750A044283300C700E72EB5 /* Principal V.png in Resources */,
 				3750A080283300C700E72EB5 /* Surgeon V Placeholder.png in Resources */,
-				377CB334282C4166001CDBBD /* Level.png in Resources */,
 				37D542742825888E00373987 /* redFilled@2x.png in Resources */,
 				3750A034283300C700E72EB5 /* Protagonist II.png in Resources */,
 				3750A05C283300C700E72EB5 /* Companion II Placeholder.png in Resources */,
@@ -956,6 +952,7 @@
 				372B8A2A281CE61F00117A72 /* classicFilled@2x.png in Resources */,
 				3750A037283300C700E72EB5 /* Surgeon I.png in Resources */,
 				377CB33B282C45EB001CDBBD /* Complete Task.png in Resources */,
+				37573685286A33BC005CEE67 /* Badges.png in Resources */,
 				3750A07C283300C700E72EB5 /* Workaholic III Placeholder.png in Resources */,
 				3750A05A283300C700E72EB5 /* Protagonist III.png in Resources */,
 				3787307F28348D22003A7133 /* Change Task Priority.png in Resources */,
@@ -968,13 +965,13 @@
 				3750A04D283300C700E72EB5 /* Principal I.png in Resources */,
 				376AD0CC2808DC5A00986B49 /* Assets.xcassets in Resources */,
 				37A75A7F282F3760004D6450 /* Unlock All Perks.png in Resources */,
+				37573688286A3419005CEE67 /* Level.png in Resources */,
 				3750A071283300C700E72EB5 /* Companion III Placeholder.png in Resources */,
 				3750A04E283300C700E72EB5 /* Companion V.png in Resources */,
 				3737D78C284EE8E8006A5387 /* Level Frame 1.png in Resources */,
 				372B8A2C281CE61F00117A72 /* darkmodeFilled@3x.png in Resources */,
 				3750A055283300C700E72EB5 /* Workaholic V.png in Resources */,
 				37D5426D2825888E00373987 /* purpleFilled@2x.png in Resources */,
-				377CB320282B847F001CDBBD /* iPhone Frame.png in Resources */,
 				37424C9F28480B8A00BD8349 /* TwitterIcon.png in Resources */,
 				3750A04A283300C700E72EB5 /* Principal III.png in Resources */,
 				3750A040283300C700E72EB5 /* Surgeon III.png in Resources */,
@@ -985,7 +982,6 @@
 				3750A054283300C700E72EB5 /* Patron I.png in Resources */,
 				3750A03C283300C700E72EB5 /* Surgeon II.png in Resources */,
 				3750A05B283300C700E72EB5 /* Protagonist I Placeholder.png in Resources */,
-				377CB333282C4166001CDBBD /* Badges.png in Resources */,
 				3750A05D283300C700E72EB5 /* Surgeon III Placeholder.png in Resources */,
 				3750A03A283300C700E72EB5 /* Connoisseur I.png in Resources */,
 				3750A052283300C700E72EB5 /* Protagonist V.png in Resources */,
@@ -1321,7 +1317,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1338,7 +1334,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.13.0;
+				MARKETING_VERSION = 1.13.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Grant151.Finale-To-Do";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1355,7 +1351,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Finale To Do/Finale To Do.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 19;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = AYPPAXMRMG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Finale To Do/Info.plist";
@@ -1371,7 +1367,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.13.0;
+				MARKETING_VERSION = 1.13.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.Grant151.Finale-To-Do";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
