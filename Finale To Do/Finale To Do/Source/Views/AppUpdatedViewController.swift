@@ -87,7 +87,7 @@ class AppUpdatedViewController: UIViewController {
     var titleLabelText: NSMutableAttributedString {
         var attString = NSMutableAttributedString(string: "Finale To Do")
         attString.SetColor(color: .defaultColor)
-        attString.append(NSAttributedString(" was updated"))
+        attString.append(NSAttributedString(string: " was updated"))
         return attString
     }
 }

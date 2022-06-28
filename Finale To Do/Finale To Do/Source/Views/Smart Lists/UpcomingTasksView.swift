@@ -93,9 +93,9 @@ class UpcomingTasksView: TaskListView {
                 if task.isOverdue { tasksOverdue.append(task) }
                 else if Calendar.current.isDateInToday(task.dateAssigned) { tasksToday.append(task) }
                 else if Calendar.current.isDateInTomorrow(task.dateAssigned) { tasksTomorrow.append(task) }
-                else if Calendar.current.isDate(task.dateAssigned, equalTo: Date.now, toGranularity: .weekOfYear) { tasksThisWeek.append(task) }
-                else if task.dateAssigned.get(.weekOfYear) - Date.now.get(.weekOfYear) == 1 { tasksNextWeek.append(task) }
-                else if Calendar.current.isDate(task.dateAssigned, equalTo: Date.now, toGranularity: .month) { tasksThisMonth.append(task) }
+                else if Calendar.current.isDate(task.dateAssigned, equalTo: Date(), toGranularity: .weekOfYear) { tasksThisWeek.append(task) }
+                else if task.dateAssigned.get(.weekOfYear) - Date().get(.weekOfYear) == 1 { tasksNextWeek.append(task) }
+                else if Calendar.current.isDate(task.dateAssigned, equalTo: Date(), toGranularity: .month) { tasksThisMonth.append(task) }
                 else { tasksLater.append(task) }
             }
         }

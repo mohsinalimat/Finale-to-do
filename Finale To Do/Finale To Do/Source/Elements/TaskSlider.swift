@@ -358,7 +358,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
         } else {
             let formatter = DateFormatter()
             formatter.timeStyle = .none
-            if task.dateAssigned.get(.year) == Date.now.get(.year) { //this year
+            if task.dateAssigned.get(.year) == Date().get(.year) { //this year
                 formatter.setLocalizedDateFormatFromTemplate("MMMd")
             } else { //other years
                 formatter.dateStyle = .short

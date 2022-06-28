@@ -35,7 +35,7 @@ class ICloudSyncConfirmationViewController: UIViewController {
         containerView.backgroundColor = self.view.backgroundColor
         
         let titleLable = UILabel(frame: CGRect(x: padding, y: padding, width: width-padding*2, height: 20))
-        titleLable.text = "Latest iCloud Sync\n\(deviceName) on \(lastICloudSync.formatted(date: .long, time: .shortened))"
+        titleLable.text = "Latest iCloud Sync\n\(deviceName) on " + formattedDate(date: lastICloudSync)
         titleLable.font = .preferredFont(forTextStyle: .headline)
         titleLable.textAlignment = .center
         titleLable.numberOfLines = 0
@@ -50,15 +50,12 @@ class ICloudSyncConfirmationViewController: UIViewController {
         descriptionLabel.font = .systemFont(ofSize: 14)
         descriptionLabel.frame.origin.x = 0.5*(width-descriptionLabel.frame.width)
         
-        let loadFromICloudButton = UIButton(frame: CGRect(x: padding, y: UIScreen.main.bounds.height*0.5 - padding*5 - 45, width: width-padding*2, height: 45))
-        loadFromICloudButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
-        loadFromICloudButton.setTitle("Replace data on this device", for: .normal)
-        loadFromICloudButton.tintColor = .white
-        loadFromICloudButton.setTitleColor(.systemGray, for: .highlighted)
-        loadFromICloudButton.addTarget(self, action: #selector(Confirm), for: .touchUpInside)
-        loadFromICloudButton.layer.cornerRadius = 10
-        
-        let keepDataButton = UIButton(frame: CGRect(x: padding, y: loadFromICloudButton.frame.maxY + padding, width: width-padding*2, height: 45))
+        let keepDataButton = UIButton()
+        if #available(iOS 15.0, *) {
+            keepDataButton.frame = CGRect(x: padding, y: height * 0.5 - padding - 45.0, width: width-padding*2, height: 45)
+        } else {
+            keepDataButton.frame = CGRect(x: padding, y: height - padding*6 - 45.0, width: width-padding*2, height: 45)
+        }
         keepDataButton.backgroundColor = .systemGray2
         keepDataButton.setTitle("Replace data in iCloud", for: .normal)
         keepDataButton.tintColor = .white
@@ -66,12 +63,28 @@ class ICloudSyncConfirmationViewController: UIViewController {
         keepDataButton.addTarget(self, action: #selector(Decline), for: .touchUpInside)
         keepDataButton.layer.cornerRadius = 10
         
+        let loadFromICloudButton = UIButton(frame: CGRect(x: padding, y: keepDataButton.frame.origin.y - keepDataButton.frame.height - padding, width: width-padding*2, height: 45))
+        loadFromICloudButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: .defaultColor)
+        loadFromICloudButton.setTitle("Replace data on this device", for: .normal)
+        loadFromICloudButton.tintColor = .white
+        loadFromICloudButton.setTitleColor(.systemGray, for: .highlighted)
+        loadFromICloudButton.addTarget(self, action: #selector(Confirm), for: .touchUpInside)
+        loadFromICloudButton.layer.cornerRadius = 10
+        
         containerView.addSubview(titleLable)
         containerView.addSubview(descriptionLabel)
         containerView.addSubview(loadFromICloudButton)
         containerView.addSubview(keepDataButton)
         
         self.view.addSubview(containerView)
+    }
+    
+    func formattedDate(date: Date) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .short
+        
+        return dateFormatter.string(from: date)
     }
     
     override func viewDidDisappear(_ animated: Bool) {

@@ -75,7 +75,6 @@ class UserProfileViewController: UIViewController, UIDynamicTheme {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "square.and.arrow.up", withConfiguration: UIImage.SymbolConfiguration.init(weight: .semibold)), style: .plain, target: self, action: #selector(ShareTap))
         
         let frameWidth = view.frame.width
-        let frameHeight = view.frame.height
         
         let handleWidth = frameWidth*0.15
         let handle = UIView(frame: CGRect(x: 0.5*(frameWidth-handleWidth), y: padding*0.5, width: handleWidth, height: 4))
@@ -386,7 +385,6 @@ class BadgeGroupViewController: UIViewController, UIScrollViewDelegate {
         let lastUnlockedIndex = StatsManager.stats.lastUnlockedBadgeIndex(badgeGroupID: badgeGroup.groupID)
         
         let width = self.view.frame.width
-        let height = self.view.frame.height
         
         let nBadges = badgeGroup.numberOfBadges
         let cellWidth = width*0.7
@@ -780,7 +778,6 @@ class UnlockAllLevelPerksViewController: UIViewController {
         self.title = "All Perks"
         
         let width = self.view.frame.width
-        let height = self.view.frame.height
         
         let imageSize = width*0.5
         let imageView = UIImageView(frame: CGRect(x: 0.5*(width-imageSize), y: padding*6, width: imageSize, height: imageSize))

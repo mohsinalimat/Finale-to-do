@@ -132,7 +132,9 @@ class SettingsPersonalPage: SettingsPageViewController {
         if sender.isOn {
             let keyStore = NSUbiquitousKeyValueStore()
             
-            if let lastSyncDate = keyStore.object(forKey: SaveManager.instance.lastICloudSyncKey) as? Date {
+            let lastSyncDate = Date()
+            if true {
+//            if let lastSyncDate = keyStore.object(forKey: SaveManager.instance.lastICloudSyncKey) as? Date {
                 let deviceName = keyStore.string(forKey: SaveManager.instance.deviceNameKey) ?? "Unknown device"
                 let confirmationVC = ICloudSyncConfirmationViewController(
                     lastICloudSync: lastSyncDate,
@@ -166,8 +168,10 @@ class SettingsPersonalPage: SettingsPageViewController {
                         self.tableView.reloadSections(IndexSet(integer: 1), with: .automatic)
                     }
                 })
-                if let sheet = confirmationVC.sheetPresentationController {
-                    sheet.detents = [.medium()]
+                if #available(iOS 15.0, *) {
+                    if let sheet = confirmationVC.sheetPresentationController {
+                        sheet.detents = [.medium()]
+                    }
                 }
                 self.present(confirmationVC, animated: true)
             } else {
@@ -429,7 +433,7 @@ class SettingsAboutPage: SettingsPageViewController {
             ]),
             
             SettingsSection(title: "Help", options: [
-                .navigationCell(model: SettingsNavigationOption(title: "Lead Developer", icon: UIImage(systemName: "message.fill"), iconBackgroundColor: .systemCyan, nextPage: nil, url: URL(string: "https://twitter.com/GrantOgany"))),
+                .navigationCell(model: SettingsNavigationOption(title: "Lead Developer", icon: UIImage(systemName: "message.fill"), iconBackgroundColor: .systemTeal, nextPage: nil, url: URL(string: "https://twitter.com/GrantOgany"))),
                 .navigationCell(model: SettingsNavigationOption(title: "Contact Support", icon: UIImage(systemName: "envelope.fill"), iconBackgroundColor: .systemBlue, nextPage: nil, url: URL(string: "https://www.finaletodo.com/help")))
             ]),
             
@@ -474,10 +478,18 @@ class SettingsStatisticsPage: SettingsPageViewController {
             ]),
             
             SettingsSection(options: [
-                .staticCell(model: SettingsStaticOption(title: "Joined Finale To Do", SetPreview: { return StatsManager.stats.dateJoinedApp.formatted(date: .long, time: .omitted) } ))
+                .staticCell(model: SettingsStaticOption(title: "Joined Finale To Do", SetPreview: { return self.joinedFinaleToDoString } ))
             ])
             
         ]
+    }
+    
+    var joinedFinaleToDoString: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .none
+        
+        return dateFormatter.string(from: StatsManager.stats.dateJoinedApp)
     }
     
     override var PageTitle: String {

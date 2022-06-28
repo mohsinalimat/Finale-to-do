@@ -137,7 +137,7 @@ class App: UIViewController {
         var index = -1
         
         task.isCompleted = true
-        task.dateCompleted = Date.now
+        task.dateCompleted = Date()
         
         if App.mainTaskList.upcomingTasks.contains(task) {
             index = App.mainTaskList.upcomingTasks.firstIndex(of: task) ?? index

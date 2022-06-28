@@ -263,8 +263,8 @@ class SaveManager {
             SaveValue(value: encoded, forKey: statsKey, iCloudKey: keyStore)
         }
         
-        UserDefaults.standard.set(Date.now, forKey: lastLocalSaveKey)
-        keyStore?.set(Calendar.current.date(byAdding: .minute, value: -1, to: Date.now), forKey: lastICloudSyncKey)
+        UserDefaults.standard.set(Date(), forKey: lastLocalSaveKey)
+        keyStore?.set(Calendar.current.date(byAdding: .minute, value: -1, to: Date()), forKey: lastICloudSyncKey)
         keyStore?.set(UIDevice.current.name, forKey: deviceNameKey)
         keyStore?.synchronize()
     }

@@ -85,7 +85,7 @@ class StatsManager {
     static func DetectNewDay () {
         if !Calendar.current.isDateInToday(stats.lastDayActive) {
             OnNewDay()
-            stats.lastDayActive = Date.now
+            stats.lastDayActive = Date()
         }
     }
     
@@ -191,7 +191,7 @@ struct StatsConfig: Codable {
     }
     
     var daysAgoJoined: Int {
-        return Calendar.current.daysBetween(dateJoinedApp, and: Date.now)
+        return Calendar.current.daysBetween(dateJoinedApp, and: Date())
     }
 }
 

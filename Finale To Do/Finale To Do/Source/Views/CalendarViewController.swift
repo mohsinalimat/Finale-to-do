@@ -160,7 +160,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         if taskSlider.task.isDueTimeAssigned {
             dueTimePicker.setDate(taskSlider.task.dateAssigned, animated: false)
         } else {
-            dueTimePicker.setDate(Calendar.current.date(bySettingHour: 10, minute: 0, second: 0, of: Date.now)!, animated: false)
+            dueTimePicker.setDate(Calendar.current.date(bySettingHour: 10, minute: 0, second: 0, of: Date())!, animated: false)
         }
         dueTimePicker.isEnabled = taskSlider.task.isDueTimeAssigned
         

@@ -34,7 +34,7 @@ struct WidgetTask: Identifiable, Codable {
         } else {
             let formatter = DateFormatter()
             formatter.timeStyle = .none
-            if dateAssigned.get(.year) == Date.now.get(.year) { //this year
+            if dateAssigned.get(.year) == Date().get(.year) { //this year
                 formatter.setLocalizedDateFormatFromTemplate("MMMd")
             } else { //other years
                 formatter.dateStyle = .short

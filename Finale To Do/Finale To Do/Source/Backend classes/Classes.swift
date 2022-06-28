@@ -38,7 +38,7 @@ class Task: Codable, Equatable {
         self.taskListID = UUID()
     }
     
-    init(name: String = "", priority: TaskPriority = .Normal, notes: String = "", repeating: [TaskRepeatType] = [], isComleted: Bool = false, isDateAssigned: Bool = false, isDueTimeAssigned: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date.now, dateCompleted: Date = Date(timeIntervalSince1970: 0), notifications: [NotificationType : [String]] = [NotificationType : [String]](), taskListID: UUID = UUID()) {
+    init(name: String = "", priority: TaskPriority = .Normal, notes: String = "", repeating: [TaskRepeatType] = [], isComleted: Bool = false, isDateAssigned: Bool = false, isDueTimeAssigned: Bool = false, dateAssigned: Date = Date(timeIntervalSince1970: 0), dateCreated: Date = Date(), dateCompleted: Date = Date(timeIntervalSince1970: 0), notifications: [NotificationType : [String]] = [NotificationType : [String]](), taskListID: UUID = UUID()) {
         self.name = name
         self.priority = priority
         self.notes = notes
@@ -56,7 +56,7 @@ class Task: Codable, Equatable {
     var isOverdue: Bool {
         if !isDateAssigned { return false }
         if isCompleted { return false }
-        return Date.now > dateAssigned
+        return Date() > dateAssigned
     }
     
     func containsNotification (notificationType: NotificationType) -> Bool {
