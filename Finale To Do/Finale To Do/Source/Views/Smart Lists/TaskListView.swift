@@ -239,9 +239,13 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             }
             
             var items = [UIAction]()
-            if cell.slider.task.repeating.count > 0 && cell.slider.task.isDateAssigned && !cell.slider.task.isCompleted { items.append(skipRepeating) }
-            if indexPath.section == 0 { items.append(AssignDate); items.append(Edit) }
-            if indexPath.section == 1 { items.append(Undo) }
+            if cell.slider.task.isCompleted {
+                items.append(Undo)
+            } else {
+                if cell.slider.task.repeating.count > 0 && cell.slider.task.isDateAssigned && !cell.slider.task.isCompleted { items.append(skipRepeating) }
+                items.append(AssignDate)
+                items.append(Edit)
+            }
             
             let Regular = UIMenu(title: "", options: .displayInline, children: items)
             

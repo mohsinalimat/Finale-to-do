@@ -48,32 +48,6 @@ class UpcomingTasksView: TaskListView {
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        
-        return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: {
-            let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
-            
-            return TaskSliderContextMenu(slider: cell.slider)
-        }, actionProvider: { _ in
-            let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell
-            let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
-                self.app.DeleteTask(task: cell.slider.task)
-            }
-            let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
-            
-            let Edit = UIAction(title: "Edit", image: UIImage(systemName: "square.and.pencil")) { action in
-                self.OpenTaskDetailsView(slider: cell.slider)
-            }
-            let AssignDate = UIAction(title: cell.slider.task.isDateAssigned ? "Change Date" : "Assign Date", image: UIImage(systemName: "calendar")) { action in
-                cell.slider.ShowCalendarView(taskSliderContextMenu: nil)
-            }
-            
-            let Regular = UIMenu(title: "", options: .displayInline, children: [AssignDate, Edit])
-            
-            return UIMenu(title: "", children: [Regular, Delete])
-        })
-    }
-    
     override func ReloadTaskData(sortOverviewList: Bool = true) {
         super.ReloadTaskData(sortOverviewList: sortOverviewList)
         

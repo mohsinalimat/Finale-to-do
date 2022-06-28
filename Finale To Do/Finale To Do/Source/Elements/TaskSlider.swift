@@ -48,8 +48,10 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
         super.init(frame: frame)
 
         dateLabel = UILabel()
+        dateLabel.numberOfLines = 2
+        dateLabel.textAlignment = .center
+        dateLabel.font = UIFont.systemFont(ofSize: 10)
         dateLabel.attributedText = assignedDateTimeString
-        dateLabel.font = UIFont.systemFont(ofSize: 12)
         dateLabel.frame = CGRect(x: 0, y: 0, width: dateLabel.intrinsicContentSize.width, height: frame.height)
         
         dateInfoView = UIView (frame: CGRect(x: frame.width - dateInfoWidth - padding, y: 0, width: dateInfoWidth, height: frame.height))
@@ -371,7 +373,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
             let formatter2 = DateFormatter()
             formatter2.timeStyle = .short
             formatter2.dateFormat = .none
-            attString.append(NSMutableAttributedString(string: ", \(formatter2.string(from: task.dateAssigned))"))
+            attString.append(NSMutableAttributedString(string: "\n\(formatter2.string(from: task.dateAssigned))"))
         }
         
         if task.isCompleted {

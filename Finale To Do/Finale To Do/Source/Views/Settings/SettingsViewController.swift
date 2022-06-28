@@ -132,9 +132,7 @@ class SettingsPersonalPage: SettingsPageViewController {
         if sender.isOn {
             let keyStore = NSUbiquitousKeyValueStore()
             
-            let lastSyncDate = Date()
-            if true {
-//            if let lastSyncDate = keyStore.object(forKey: SaveManager.instance.lastICloudSyncKey) as? Date {
+            if let lastSyncDate = keyStore.object(forKey: SaveManager.instance.lastICloudSyncKey) as? Date {
                 let deviceName = keyStore.string(forKey: SaveManager.instance.deviceNameKey) ?? "Unknown device"
                 let confirmationVC = ICloudSyncConfirmationViewController(
                     lastICloudSync: lastSyncDate,
