@@ -49,7 +49,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
 
         dateLabel = UILabel()
         dateLabel.numberOfLines = 2
-        dateLabel.textAlignment = .center
+        dateLabel.textAlignment = .right
         dateLabel.font = UIFont.systemFont(ofSize: 10)
         dateLabel.attributedText = assignedDateTimeString
         dateLabel.frame = CGRect(x: 0, y: 0, width: dateLabel.intrinsicContentSize.width, height: frame.height)

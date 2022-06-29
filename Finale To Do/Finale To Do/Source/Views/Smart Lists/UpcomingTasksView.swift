@@ -38,12 +38,16 @@ class UpcomingTasksView: TaskListView {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "taskCell", for: indexPath) as! TaskSliderTableCell
         
-        let task = sections[indexPath.section].tasks[indexPath.row]
-        cell.Setup(
-            task: task,
-            sliderSize: CGSize(width: tableView.frame.width-padding*2, height: tableView.rowHeight-padding*0.5),
-            cellSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight),
-            taskListColor: getTaskListColor(id: task.taskListID), app: app)
+        if sections.indices.contains(indexPath.section) {
+            if sections[indexPath.section].tasks.indices.contains(indexPath.row) {
+                let task = sections[indexPath.section].tasks[indexPath.row]
+                cell.Setup(
+                    task: task,
+                    sliderSize: CGSize(width: tableView.frame.width-padding*2, height: tableView.rowHeight-padding*0.5),
+                    cellSize: CGSize(width: tableView.frame.width, height: tableView.rowHeight),
+                    taskListColor: getTaskListColor(id: task.taskListID), app: app)
+            }
+        }
         
         return cell
     }

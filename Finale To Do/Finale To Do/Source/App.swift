@@ -109,6 +109,10 @@ class App: UIViewController {
         }
         
         taskListView.allUpcomingTasks.insert(newTask, at: 0)
+        
+        if let view = taskListView as? UpcomingTasksView {
+            view.sections.insert(UpcomingTasksSection(id: -1, title: "New task", tasks: [newTask]), at: 0)
+        }
 
         CreateNewTaskTableAnimation()
         
@@ -124,8 +128,7 @@ class App: UIViewController {
     func CreateNewTaskTableAnimation () {
         if taskListView is UpcomingTasksView {
             let view = taskListView as! UpcomingTasksView
-            view.sections.insert(UpcomingTasksSection(id: -1, title: "New task", tasks: [view.allUpcomingTasks.first!]), at: 0)
-            view.tableView.insertSections(IndexSet(integer: 0), with: .fade)
+            if view.sections.first?.id == -1 { view.tableView.insertSections(IndexSet(integer: 0), with: .fade) }
         } else {
             taskListView.tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: UITableView.RowAnimation.automatic)
         }

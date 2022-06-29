@@ -268,6 +268,8 @@ class SettingsTableCell: UITableViewCell, UITextFieldDelegate, UIDynamicTheme {
         }
         
         customViewContainer?.frame = CGRect(x: 0, y: 0, width: rowWidth, height: rowHeight)
+        
+        self.separatorInset.left = iconContainerSize == 0 ? padding : padding*4
     }
     
     func Setup(settingsOption: SettingsOptionType) {
