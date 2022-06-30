@@ -14,4 +14,10 @@
         "Hide Completed Tasks! Optional toggle to show only most recently completed tasks",
         ]
     },
+    {
+    "version": "1.14",
+    "change_logs": [
+        "Default Notifications! Select which notifications will be automatically enabled for newly created tasks.",
+        ]
+    },
 ]
