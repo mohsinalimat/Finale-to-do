@@ -25,11 +25,11 @@ class AddListView: UIView, UITextFieldDelegate, UIDynamicTheme {
     
     let placeholders: [String] = ["Travel plan" , "Final project" , "Grocery list", "Work", "Family", "Sports club", "Hobbies", "Chores", "Shopping list"]
     
-    let icons: [String] = ["folder.fill", "tray.full.fill", "archivebox.fill", "briefcase.fill", "bag.fill", "book.fill", "books.vertical.fill", "graduationcap.fill", "heart.fill", "heart.text.square.fill", "pencil.circle.fill", "lightbulb.fill", "deskclock.fill", "hourglass", "airplane", "trash.fill"]
+    static let icons: [String] = ["folder.fill", "tray.full.fill", "archivebox.fill", "briefcase.fill", "bag.fill", "book.fill", "books.vertical.fill", "graduationcap.fill", "heart.fill", "heart.text.square.fill", "pencil.circle.fill", "lightbulb.fill", "deskclock.fill", "hourglass", "airplane", "trash.fill"]
     
-    let colors: [UIColor] = [UIColor.defaultColor, UIColor(hex: "5243AA"), UIColor(hex: "87007A"), UIColor(hex: "DE0B0B"), UIColor(hex: "FF991F"), UIColor(hex: "00875A"), UIColor(hex: "008716"), UIColor(hex: "00A3BF")]
+    static let colors: [UIColor] = [UIColor.defaultColor, UIColor(hex: "5243AA"), UIColor(hex: "87007A"), UIColor(hex: "DE0B0B"), UIColor(hex: "FF991F"), UIColor(hex: "00875A"), UIColor(hex: "008716"), UIColor(hex: "00A3BF")]
     
-    init(frame: CGRect, taskList: TaskList = TaskList(name: "", primaryColor: .defaultColor, systemIcon: "folder.fill")) {
+    init(frame: CGRect, taskList: TaskList = TaskList(name: "", primaryColor: AddListView.colors.first!, systemIcon: AddListView.icons.first!)) {
         self.newTaskList = TaskList(name: taskList.name, primaryColor: taskList.primaryColor, systemIcon: taskList.systemIcon, id: taskList.id)
         super.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height))
         NotificationCenter.default.addObserver(self, selector: #selector(KeyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -134,7 +134,7 @@ class AddListView: UIView, UITextFieldDelegate, UIDynamicTheme {
         }
         let height = rowHeight*3
         let width = (frame.width-padding*2)*0.9
-        colorPickerView = ColorIconPickerView(frame: CGRect(x: padding - width*0.425, y: contentView.frame.minY - height*0.5, width: width, height: height), icons: icons, colors: colors, addListView: self)
+        colorPickerView = ColorIconPickerView(frame: CGRect(x: padding - width*0.425, y: contentView.frame.minY - height*0.5, width: width, height: height), icons: AddListView.icons, colors: AddListView.colors, addListView: self)
         self.addSubview(colorPickerView)
     }
     @objc func CloseColorIconPicker() {
@@ -196,7 +196,7 @@ class AddListView: UIView, UITextFieldDelegate, UIDynamicTheme {
         }
         colorPickerView.colorSwatches[index].isSelected = true
         
-        newTaskList.primaryColor = colors[index]
+        newTaskList.primaryColor = AddListView.colors[index]
         
         iconView.tintColor = newTaskList.primaryColor
     }
@@ -206,7 +206,7 @@ class AddListView: UIView, UITextFieldDelegate, UIDynamicTheme {
         }
         colorPickerView.iconSwatches[index].isSelected = true
         
-        newTaskList.systemIcon = icons[index]
+        newTaskList.systemIcon = AddListView.icons[index]
         
         SetTaskListIcon()
     }

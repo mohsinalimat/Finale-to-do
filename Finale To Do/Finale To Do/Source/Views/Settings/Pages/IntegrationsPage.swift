@@ -128,8 +128,23 @@ class SettingsIntegrationsPage: SettingsPageViewController {
         for tasklist in App.instance.allTaskLists {
             if ekCalendar.title == tasklist.name { return tasklist }
         }
-        App.instance.CreateNewTaskList(taskList: TaskList(name: ekCalendar.title, primaryColor: UIColor(cgColor: ekCalendar.cgColor)))
+        App.instance.CreateNewTaskList(taskList: TaskList(name: ekCalendar.title, primaryColor: getClosestPredefinedColor(initialColor: UIColor(cgColor: ekCalendar.cgColor))))
         
         return App.userTaskLists.last!
+    }
+    
+    func getClosestPredefinedColor(initialColor: UIColor) -> UIColor {
+        var closestDistance = Double.infinity
+        var selectedColor = initialColor
+        
+        for color in AddListView.colors {
+            let distanceSquared = pow((color.components.red - initialColor.components.red), 2) + pow((color.components.green - initialColor.components.green), 2) + pow((color.components.blue - initialColor.components.blue), 2)
+            if distanceSquared < closestDistance {
+                closestDistance = distanceSquared
+                selectedColor = color
+            }
+        }
+        
+        return selectedColor
     }
 }

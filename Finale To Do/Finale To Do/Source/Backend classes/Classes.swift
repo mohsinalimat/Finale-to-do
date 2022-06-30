@@ -152,7 +152,7 @@ class TaskList: Codable, Equatable {
     var upcomingTasks: [Task]
     var completedTasks: [Task]
     
-    init(name: String, primaryColor: UIColor = UIColor.defaultColor, systemIcon: String = "folder.fill", sortingPreference: SortingPreference = .Unsorted, upcomingTasks: [Task] = [Task](), completedTasks: [Task] = [Task](), id: UUID = UUID()) {
+    init(name: String, primaryColor: UIColor = AddListView.colors.first!, systemIcon: String = AddListView.icons.first!, sortingPreference: SortingPreference = .Unsorted, upcomingTasks: [Task] = [Task](), completedTasks: [Task] = [Task](), id: UUID = UUID()) {
         self.name = name
         self.upcomingTasks = upcomingTasks
         self.systemIcon = systemIcon

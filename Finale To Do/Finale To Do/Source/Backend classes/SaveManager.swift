@@ -250,7 +250,7 @@ class SaveManager {
 //MARK: Save
     
     func SaveData () {
-        return
+        
         let keyStore = App.settingsConfig.isICloudSyncOn ? NSUbiquitousKeyValueStore() : nil
         
         SaveValue(value: appVersion, forKey: appVersionKey, iCloudKey: keyStore)
@@ -311,13 +311,13 @@ class SaveManager {
     }
     
     func CheckIfAppUpdated() {
-        let oldVersion = UserDefaults.standard.string(forKey: appVersionKey) ?? "1.11.0"
+        let oldVersion = UserDefaults.standard.string(forKey: appVersionKey) ?? "1.0.0"
         guard let currentVersion = appVersion else { return }
         
         let oldVersionComponents = oldVersion.components(separatedBy: ".").compactMap{ Int($0) }
         let currentVersionComponents = currentVersion.components(separatedBy: ".").compactMap{ Int($0) }
         
-        if oldVersionComponents.count < 3 || currentVersionComponents.count < 3 { print("retuning"); return }
+        if oldVersionComponents.count < 3 || currentVersionComponents.count < 3 { return }
         
         let didMajorMinorUpdate: Bool
         if currentVersionComponents.first! > oldVersionComponents.first! { didMajorMinorUpdate = true }

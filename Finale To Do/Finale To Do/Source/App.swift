@@ -14,7 +14,7 @@ class App: UIViewController {
     
     static var settingsConfig: SettingsConfig = SettingsConfig()
     
-    static var mainTaskList: TaskList = TaskList(name: "Main", primaryColor: .defaultColor, systemIcon: "folder.fill")
+    static var mainTaskList: TaskList = TaskList(name: "Main", primaryColor: AddListView.colors.first!, systemIcon: AddListView.icons.first!)
     static var userTaskLists: [TaskList] = [TaskList]()
     
     static var selectedTaskListIndex: Int = 0
