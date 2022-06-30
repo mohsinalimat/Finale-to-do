@@ -854,3 +854,49 @@ class UnlockAllLevelPerksViewController: UIViewController {
     
     
 }
+
+//MARK: StatisticsPage
+class SettingsStatisticsPage: SettingsPageViewController {
+    override func GetSettings() -> [SettingsSection] {
+        return [
+            
+            SettingsSection(options: [
+                .staticCell(model: SettingsStaticOption(title: "Level", SetPreview: { return StatsManager.stats.level.description } )),
+                .staticCell(model: SettingsStaticOption(title: "Points", SetPreview: { return StatsManager.stats.points.description } )),
+                .staticCell(model: SettingsStaticOption(title: "Badges", SetPreview: { return StatsManager.stats.numberOfUnlockedBadges.description } ))
+            ]),
+            
+            SettingsSection(options: [
+                .staticCell(model: SettingsStaticOption(title: "Completed Tasks", SetPreview: { return StatsManager.stats.totalCompletedTasks.description } )),
+                .staticCell(model: SettingsStaticOption(title: "Completed High Priority Tasks", SetPreview: { return StatsManager.stats.totalCompletedHighPriorityTasks.description } ))
+            ]),
+            
+            SettingsSection(options: [
+                .staticCell(model: SettingsStaticOption(title: "Total Days Active", SetPreview: { return StatsManager.stats.totalDaysActive.description } )),
+                .staticCell(model: SettingsStaticOption(title: "Streak Days Active", SetPreview: { return StatsManager.stats.consecutiveDaysActive.description } )),
+                .staticCell(model: SettingsStaticOption(title: "Streak Without Overdue Tasks", SetPreview: { return StatsManager.stats.consecutiveDaysWithoutOverdueTasks.description } ))
+            ]),
+            
+            SettingsSection(options: [
+                .staticCell(model: SettingsStaticOption(title: "Times Shared Finale To Do", SetPreview: { return StatsManager.stats.timesSharedProgress.description } ))
+            ]),
+            
+            SettingsSection(options: [
+                .staticCell(model: SettingsStaticOption(title: "Joined Finale To Do", SetPreview: { return self.joinedFinaleToDoString } ))
+            ])
+            
+        ]
+    }
+    
+    var joinedFinaleToDoString: String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .long
+        dateFormatter.timeStyle = .none
+        
+        return dateFormatter.string(from: StatsManager.stats.dateJoinedApp)
+    }
+    
+    override var PageTitle: String {
+        return "Statistics"
+    }
+}

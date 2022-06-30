@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  Finale To-do
 //
-//  Created by Grant Oganan on 4/14/22.
+//  Created by Grant Oganyan on 4/14/22.
 //
 
 import UIKit
@@ -22,6 +22,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window.rootViewController = App() // Your initial view controller.
         window.makeKeyAndVisible()
         self.window = window
+        
+        if let shortcutItem = connectionOptions.shortcutItem {
+            HandleShortcuts(shortcutItem: shortcutItem)
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
@@ -52,6 +56,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
 
-
+    func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        HandleShortcuts(shortcutItem: shortcutItem)
+    }
+    
+    func HandleShortcuts(shortcutItem: UIApplicationShortcutItem) {
+        switch shortcutItem.type {
+        
+        case "AddTask":
+            AddTaskShortcut()
+            break
+        default:
+            break
+        }
+    }
+    
+    func AddTaskShortcut () {
+        App.instance.SelectTaskList(index: 0, closeMenu: true)
+        App.instance.CreateNewTask()
+    }
 }
 

@@ -24,6 +24,17 @@
 		3737D78C284EE8E8006A5387 /* Level Frame 1.png in Resources */ = {isa = PBXBuildFile; fileRef = 3737D78B284EE8E8006A5387 /* Level Frame 1.png */; };
 		37424C9D28480B3000BD8349 /* RedditIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 37424C9B28480B3000BD8349 /* RedditIcon.png */; };
 		37424C9F28480B8A00BD8349 /* TwitterIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 37424C9E28480B8A00BD8349 /* TwitterIcon.png */; };
+		374DAB9F286E268700501354 /* PersonalPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374DAB9E286E268700501354 /* PersonalPage.swift */; };
+		374DABA1286E26AF00501354 /* ListsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374DABA0286E26AF00501354 /* ListsPage.swift */; };
+		374DABA3286E26E900501354 /* NotificationsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374DABA2286E26E900501354 /* NotificationsPage.swift */; };
+		374DABA5286E271100501354 /* WidgetsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374DABA4286E271100501354 /* WidgetsPage.swift */; };
+		374DABA7286E272E00501354 /* AppearancePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374DABA6286E272E00501354 /* AppearancePage.swift */; };
+		374DABA9286E274800501354 /* GuidePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374DABA8286E274800501354 /* GuidePage.swift */; };
+		374DABAB286E276300501354 /* AboutPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374DABAA286E276300501354 /* AboutPage.swift */; };
+		374DABAD286E27BE00501354 /* DebugPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374DABAC286E27BE00501354 /* DebugPage.swift */; };
+		374DABAF286E283800501354 /* IntegrationsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374DABAE286E283800501354 /* IntegrationsPage.swift */; };
+		374DABB4286E2A4400501354 /* iOS Reminders Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 374DABB3286E2A4300501354 /* iOS Reminders Icon.png */; };
+		374DABB6286E2A6E00501354 /* Finale Daily Habit Tracker Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 374DABB5286E2A6E00501354 /* Finale Daily Habit Tracker Icon.png */; };
 		3750A033283300C700E72EB5 /* Protagonist I.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE2283300C600E72EB5 /* Protagonist I.png */; };
 		3750A034283300C700E72EB5 /* Protagonist II.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE3283300C600E72EB5 /* Protagonist II.png */; };
 		3750A035283300C700E72EB5 /* Patron V.png in Resources */ = {isa = PBXBuildFile; fileRef = 37509FE4283300C600E72EB5 /* Patron V.png */; };
@@ -237,6 +248,17 @@
 		3737D78B284EE8E8006A5387 /* Level Frame 1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Level Frame 1.png"; sourceTree = "<group>"; };
 		37424C9B28480B3000BD8349 /* RedditIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RedditIcon.png; sourceTree = "<group>"; };
 		37424C9E28480B8A00BD8349 /* TwitterIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = TwitterIcon.png; sourceTree = "<group>"; };
+		374DAB9E286E268700501354 /* PersonalPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalPage.swift; sourceTree = "<group>"; };
+		374DABA0286E26AF00501354 /* ListsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsPage.swift; sourceTree = "<group>"; };
+		374DABA2286E26E900501354 /* NotificationsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsPage.swift; sourceTree = "<group>"; };
+		374DABA4286E271100501354 /* WidgetsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetsPage.swift; sourceTree = "<group>"; };
+		374DABA6286E272E00501354 /* AppearancePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearancePage.swift; sourceTree = "<group>"; };
+		374DABA8286E274800501354 /* GuidePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuidePage.swift; sourceTree = "<group>"; };
+		374DABAA286E276300501354 /* AboutPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutPage.swift; sourceTree = "<group>"; };
+		374DABAC286E27BE00501354 /* DebugPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugPage.swift; sourceTree = "<group>"; };
+		374DABAE286E283800501354 /* IntegrationsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationsPage.swift; sourceTree = "<group>"; };
+		374DABB3286E2A4300501354 /* iOS Reminders Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "iOS Reminders Icon.png"; sourceTree = "<group>"; };
+		374DABB5286E2A6E00501354 /* Finale Daily Habit Tracker Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Finale Daily Habit Tracker Icon.png"; sourceTree = "<group>"; };
 		37509FE2283300C600E72EB5 /* Protagonist I.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist I.png"; sourceTree = "<group>"; };
 		37509FE3283300C600E72EB5 /* Protagonist II.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Protagonist II.png"; sourceTree = "<group>"; };
 		37509FE4283300C600E72EB5 /* Patron V.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Patron V.png"; sourceTree = "<group>"; };
@@ -496,6 +518,31 @@
 			path = "Social Media Logos";
 			sourceTree = "<group>";
 		};
+		374DAB9D286E265200501354 /* Pages */ = {
+			isa = PBXGroup;
+			children = (
+				374DAB9E286E268700501354 /* PersonalPage.swift */,
+				374DABA0286E26AF00501354 /* ListsPage.swift */,
+				374DABA2286E26E900501354 /* NotificationsPage.swift */,
+				374DABA4286E271100501354 /* WidgetsPage.swift */,
+				374DABA6286E272E00501354 /* AppearancePage.swift */,
+				374DABAE286E283800501354 /* IntegrationsPage.swift */,
+				374DABA8286E274800501354 /* GuidePage.swift */,
+				374DABAA286E276300501354 /* AboutPage.swift */,
+				374DABAC286E27BE00501354 /* DebugPage.swift */,
+			);
+			path = Pages;
+			sourceTree = "<group>";
+		};
+		374DABB0286E2A0C00501354 /* Other App Icons */ = {
+			isa = PBXGroup;
+			children = (
+				374DABB5286E2A6E00501354 /* Finale Daily Habit Tracker Icon.png */,
+				374DABB3286E2A4300501354 /* iOS Reminders Icon.png */,
+			);
+			path = "Other App Icons";
+			sourceTree = "<group>";
+		};
 		37509FE1283300C600E72EB5 /* Badges */ = {
 			isa = PBXGroup;
 			children = (
@@ -692,6 +739,7 @@
 		379999072829E62100A42F32 /* Graphics */ = {
 			isa = PBXGroup;
 			children = (
+				374DABB0286E2A0C00501354 /* Other App Icons */,
 				3737D784284EE7C4006A5387 /* Level Frames */,
 				37424C9928480B2400BD8349 /* Social Media Logos */,
 				377CB341282DF1B7001CDBBD /* Sharing */,
@@ -759,6 +807,7 @@
 		37B750BF281A40E900164803 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				374DAB9D286E265200501354 /* Pages */,
 				37983B8B2819F608007B241A /* SettingsViewController.swift */,
 				377C3913281B0F4C006F42BA /* SettingsPageViewController.swift */,
 				372B89FC281C4DE200117A72 /* MiscSettingsTableRows.swift */,
@@ -984,10 +1033,12 @@
 				3750A05B283300C700E72EB5 /* Protagonist I Placeholder.png in Resources */,
 				3750A05D283300C700E72EB5 /* Surgeon III Placeholder.png in Resources */,
 				3750A03A283300C700E72EB5 /* Connoisseur I.png in Resources */,
+				374DABB6286E2A6E00501354 /* Finale Daily Habit Tracker Icon.png in Resources */,
 				3750A052283300C700E72EB5 /* Protagonist V.png in Resources */,
 				37D542692825888E00373987 /* orange@2x.png in Resources */,
 				3750A048283300C700E72EB5 /* Surgeon IV.png in Resources */,
 				3750A07B283300C700E72EB5 /* Patron I Placeholder.png in Resources */,
+				374DABB4286E2A4400501354 /* iOS Reminders Icon.png in Resources */,
 				3750A033283300C700E72EB5 /* Protagonist I.png in Resources */,
 				37424C9D28480B3000BD8349 /* RedditIcon.png in Resources */,
 				3750A061283300C700E72EB5 /* Protagonist II Placeholder.png in Resources */,
@@ -1090,10 +1141,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				374DABA5286E271100501354 /* WidgetsPage.swift in Sources */,
+				374DABA1286E26AF00501354 /* ListsPage.swift in Sources */,
 				37A02360285ABEC60070EED6 /* AppUpdatedViewController.swift in Sources */,
 				37B9998C2820A5AF00B4607E /* ICloudSyncConfirmationViewController.swift in Sources */,
+				374DABAF286E283800501354 /* IntegrationsPage.swift in Sources */,
 				370A9DB128106F5D00FC30A7 /* ConfirmationSlideover.swift in Sources */,
 				376AD0C72808DC5900986B49 /* App.swift in Sources */,
+				374DABAD286E27BE00501354 /* DebugPage.swift in Sources */,
+				374DABA7286E272E00501354 /* AppearancePage.swift in Sources */,
 				376AD0D72808DDEB00986B49 /* TaskListView.swift in Sources */,
 				37E4CE032809C9F3002B4D87 /* AddTaskButton.swift in Sources */,
 				379999062829E0C600A42F32 /* WelcomeScreenViewController.swift in Sources */,
@@ -1103,6 +1159,7 @@
 				3752B66C28459D9D008A5713 /* UpcomingTasksView.swift in Sources */,
 				376AD0C32808DC5900986B49 /* AppDelegate.swift in Sources */,
 				370A9DB32810CDDE00FC30A7 /* TaskSliderContextMenu.swift in Sources */,
+				374DABA3286E26E900501354 /* NotificationsPage.swift in Sources */,
 				378922B128232F2600AA3B1B /* UserProfileViewController.swift in Sources */,
 				3763F5DC282F70B1005FB2C4 /* AnalyticsHelper.swift in Sources */,
 				37A8B9842852677E00A032AF /* SaveManager.swift in Sources */,
@@ -1112,14 +1169,17 @@
 				378922B32823645200AA3B1B /* StatsManager.swift in Sources */,
 				37F645552830ACAD0045BE78 /* WidgetTaskClass.swift in Sources */,
 				376AD0DB2808EFA300986B49 /* TaskSlider.swift in Sources */,
+				374DABAB286E276300501354 /* AboutPage.swift in Sources */,
 				37983B8C2819F608007B241A /* SettingsViewController.swift in Sources */,
 				37A75A7C282F238D004D6450 /* IAPManager.swift in Sources */,
 				37F837C7280E657E00F2A9C0 /* Theme.swift in Sources */,
 				37CE7B81282AD29B00B15440 /* GuidePageViewController.swift in Sources */,
 				375E5D79280F1AA2001A289E /* UndoButton.swift in Sources */,
+				374DAB9F286E268700501354 /* PersonalPage.swift in Sources */,
 				372B89FD281C4DE200117A72 /* MiscSettingsTableRows.swift in Sources */,
 				372B8A10281CD50A00117A72 /* AppIconManager.swift in Sources */,
 				376AD0DF280901AF00986B49 /* Extensions.swift in Sources */,
+				374DABA9286E274800501354 /* GuidePage.swift in Sources */,
 				377C3914281B0F4C006F42BA /* SettingsPageViewController.swift in Sources */,
 				37F837C5280E11BF00F2A9C0 /* AddListView.swift in Sources */,
 			);

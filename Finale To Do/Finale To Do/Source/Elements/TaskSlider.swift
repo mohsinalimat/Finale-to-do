@@ -17,7 +17,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
     var taskListColor: UIColor
     
     let padding = 8.0
-    let sliderCornerRadius = 10.0
+    let sliderCornerRadius = 9.0
     
     var sliderBackground: UIView!
     var sliderView: UIView!
@@ -40,7 +40,7 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
         self.app = app
         self.taskListColor = taskListColor
         
-        sliderHandleWidth = !task.isCompleted ? frame.width*0.075 : 0
+        sliderHandleWidth = !task.isCompleted ? frame.width*0.07 : 0
         fullSliderWidth = frame.width
         sliderHandleOriginX = 2.5
         calendarIconWidth = sliderHandleWidth*0.8
@@ -171,6 +171,8 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
     }
     
     @objc func TapSlider () {
+        if app.isSideMenuOpen { return }
+        
         let duration = 0.2
         StopEditing()
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -190,6 +192,8 @@ class TaskSlider: UIView, UITextFieldDelegate, UIDynamicTheme, UIGestureRecogniz
     }
     
     @objc func DoubleTap () {
+        if app.isSideMenuOpen { return }
+        
         StartEditing()
     }
     func StartEditing(focusTextField: Bool = true) {

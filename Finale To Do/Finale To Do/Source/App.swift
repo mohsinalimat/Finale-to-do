@@ -107,9 +107,12 @@ class App: UIViewController {
             newTask = task ?? Task(taskListID: App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].id)
             App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].upcomingTasks.insert(newTask, at: 0)
         }
-        for type in App.settingsConfig.defaultNoTimeNotificationTypes {
-            newTask.AddNotification(notificationType: type)
+        if task == nil {
+            for type in App.settingsConfig.defaultNoTimeNotificationTypes {
+                newTask.AddNotification(notificationType: type)
+            }
         }
+        
         taskListView.allUpcomingTasks.insert(newTask, at: 0)
         
         if let view = taskListView as? UpcomingTasksView {
@@ -512,7 +515,6 @@ class App: UIViewController {
 //MARK: Sidemenu Actions
 
     func SelectTaskList(index: Int, closeMenu: Bool = true){
-        let oldIndex = App.selectedTaskListIndex
         App.selectedTaskListIndex = index
         sideMenuView.UpdateSmartListsVisuals()
         sideMenuView.tableView.reloadData()
@@ -526,8 +528,8 @@ class App: UIViewController {
                 taskListView = UpcomingTasksView(frame: currentFrame, taskLists: allTaskLists, app: self)
             }
             containerView.addSubview(taskListView)
-        } else {
-            if oldIndex < App.settingsConfig.smartLists.count { //Smart list was selected
+        } else { //Normal list selected
+            if taskListView is UpcomingTasksView { //If view is Upcoming Smart class
                 let currentFrame = taskListView.frame
                 taskListView.removeFromSuperview()
                 taskListView = TaskListView(frame: currentFrame, taskLists: allTaskLists, app: self)

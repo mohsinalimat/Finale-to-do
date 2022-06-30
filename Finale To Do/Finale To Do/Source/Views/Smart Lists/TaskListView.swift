@@ -214,6 +214,7 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        if app.isSideMenuOpen { return nil }
         
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: {  
             let cell = tableView.cellForRow(at: indexPath) as! TaskSliderTableCell

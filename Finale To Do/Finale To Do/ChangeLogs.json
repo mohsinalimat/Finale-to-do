@@ -18,6 +18,7 @@
     "version": "1.14",
     "change_logs": [
         "Default Notifications! Select which notifications will be automatically enabled for newly created tasks.",
+        "Add tasks from home screen! Long press on Finale To Do icon from your home screen to quickly add a new task.",
         ]
     },
 ]

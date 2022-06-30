@@ -250,6 +250,7 @@ class SaveManager {
 //MARK: Save
     
     func SaveData () {
+        return
         let keyStore = App.settingsConfig.isICloudSyncOn ? NSUbiquitousKeyValueStore() : nil
         
         SaveValue(value: appVersion, forKey: appVersionKey, iCloudKey: keyStore)

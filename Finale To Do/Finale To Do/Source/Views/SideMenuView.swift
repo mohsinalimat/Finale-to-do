@@ -2,7 +2,7 @@
 //  SideMenuView.swift
 //  Finale To-do
 //
-//  Created by Grant Oganan on 4/15/22.
+//  Created by Grant Oganyan on 4/15/22.
 //
 
 import Foundation
@@ -121,12 +121,20 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil) { suggestedActions in
             let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
                 let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
-                App.instance.view.addSubview(ConfirmationSlideover(
+                let confirmationVC = ConfirmationSlideover(
                     title: "Delete \"\(cell.taskListMenuItem.taskList.name)\"?",
-                    subTitle: "All tasks from this list will be lost",
-                    confirmActionTitle: " Delete",
-                    confirmAction: { App.instance.DeleteTaskList(taskList: cell.taskListMenuItem.taskList) }
-                ))
+                    description: "All tasks from this list will be lost",
+                    confirmActionTitle: "Delete",
+                    confirmActionColor: .systemRed,
+                    confirmAction: { App.instance.DeleteTaskList(taskList: cell.taskListMenuItem.taskList) })
+                App.instance.present(confirmationVC, animated: true)
+                
+//                App.instance.view.addSubview(ConfirmationSlideoverOld(
+//                    title: "Delete \"\(cell.taskListMenuItem.taskList.name)\"?",
+//                    subTitle: "All tasks from this list will be lost",
+//                    confirmActionTitle: " Delete",
+//                    confirmAction: { App.instance.DeleteTaskList(taskList: cell.taskListMenuItem.taskList) }
+//                ))
             }
             let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
             
