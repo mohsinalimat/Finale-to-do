@@ -107,7 +107,9 @@ class App: UIViewController {
             newTask = task ?? Task(taskListID: App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].id)
             App.userTaskLists[App.selectedTaskListIndex-App.settingsConfig.smartLists.count-1].upcomingTasks.insert(newTask, at: 0)
         }
-        
+        for type in App.settingsConfig.defaultNoTimeNotificationTypes {
+            newTask.AddNotification(notificationType: type)
+        }
         taskListView.allUpcomingTasks.insert(newTask, at: 0)
         
         if let view = taskListView as? UpcomingTasksView {

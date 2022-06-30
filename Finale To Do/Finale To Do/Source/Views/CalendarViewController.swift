@@ -149,7 +149,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         dueTimetoggle.frame.origin.x = rowWidth - dueTimetoggle.frame.width
         dueTimetoggle.frame.origin.y += 0.5*(rowHeight-dueTimetoggle.frame.height)
         dueTimetoggle.addTarget(self, action: #selector(DueTimeToggle), for: .valueChanged)
-        dueTimetoggle.onTintColor = accentColor
+        dueTimetoggle.onTintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
         dueTimetoggle.isOn = taskSlider.task.isDueTimeAssigned
         
         dueTimePicker = UIDatePicker()
@@ -192,7 +192,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         notificationStatusLabel = UILabel(frame: CGRect(x: titleLabel.frame.maxX + padding, y: 0, width: paddedRowWidth*0.965-titleLabel.frame.width-padding*1.5, height: rowHeight))
         notificationStatusLabel.text = notificationStatusLabelText
         notificationStatusLabel.font = UIFont.systemFont(ofSize: 14)
-        notificationStatusLabel.textColor = .systemGray
+        notificationStatusLabel.textColor = selectedNotificationTypes.count == 0 ? .systemGray : ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
         notificationStatusLabel.textAlignment = .right
         
         let iconHeight = rowHeight*0.3
@@ -237,7 +237,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         repeatStatusLabel = UILabel(frame: CGRect(x: titleLabel.frame.maxX + padding, y: 0, width: paddedRowWidth*0.965-titleLabel.frame.width-padding*1.5, height: rowHeight))
         repeatStatusLabel.text = repeatStatusLabelText
         repeatStatusLabel.font = UIFont.systemFont(ofSize: 14)
-        repeatStatusLabel.textColor = .systemGray
+        repeatStatusLabel.textColor = selectedRepeatTypes.count == 0 ? .systemGray : ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
         repeatStatusLabel.textAlignment = .right
         
         let iconHeight = rowHeight*0.3
@@ -292,7 +292,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
             title: "None",
             accentColor: accentColor,
             index: -1,
-            isSelected: taskSlider.task.notifications.count == 0,
+            isSelected: selectedNotificationTypes.count == 0,
             isNone: true,
             onSelect: SelectNotificationType,
             onDeselect: DeselectNotificationType)
@@ -307,7 +307,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
                 title: NotificationType(rawValue: i)!.str,
                 accentColor: accentColor,
                 index: i,
-                isSelected: taskSlider.task.containsNotification(notificationType: NotificationType(rawValue: i)!),
+                isSelected: selectedNotificationTypes.contains(NotificationType(rawValue: i)!),
                 isNone: false,
                 onSelect: SelectNotificationType,
                 onDeselect: DeselectNotificationType)
@@ -361,6 +361,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
             }
             selectedNotificationTypes.removeAll()
             notificationSelectoinRows.first?.isSelected = true
+            CloseNotificationSelectionPage()
             return
         }
         
@@ -408,6 +409,8 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         
         weekdaysSelectionRow.isSelected = false
         weekdaysSelectionRow.DeselectAll()
+        
+        if index == -1 { CloseRepeatSelectionPage() }
     }
     
     func DeselectRepeatType (index: Int) {
@@ -422,6 +425,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
     }
     func CloseNotificationSelectionPage () {
         notificationStatusLabel.text = notificationStatusLabelText
+        notificationStatusLabel.textColor = selectedNotificationTypes.count == 0 ? .systemGray : ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
         let duration = 0.25 * ( 1 - notificationPageView.frame.origin.x / notificationPageView.frame.width)
         UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut) { [self] in
             firstPageView.frame.origin.x = 0
@@ -505,6 +509,7 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
     }
     func CloseRepeatSelectionPage () {
         repeatStatusLabel.text = repeatStatusLabelText
+        repeatStatusLabel.textColor = selectedRepeatTypes.count == 0 ? .systemGray : ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
         let duration = 0.25 * ( 1 - repeatPageView.frame.origin.x / repeatPageView.frame.width)
         UIView.animate(withDuration: duration, delay: 0, options: .curveEaseOut) { [self] in
             firstPageView.frame.origin.x = 0
@@ -543,12 +548,19 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         dueTimePicker.isEnabled = sender.isOn
         
         selectedNotificationTypes.removeAll()
+        if taskSlider.task.isDueTimeAssigned {
+            for type in App.settingsConfig.defaultDueTimeNotificationTypes { selectedNotificationTypes.append(type) }
+        } else {
+            for type in App.settingsConfig.defaultNoTimeNotificationTypes { selectedNotificationTypes.append(type) }
+        }
         
         notificationPageView.removeFromSuperview()
         notificationPageView = DrawNotificationSelectionPage(size: firstPageView.frame.size)
         containerView.addSubview(notificationPageView)
         
         notificationStatusLabel.text = notificationStatusLabelText
+        notificationStatusLabel.textColor = selectedNotificationTypes.count == 0 ? .systemGray : ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
+
     }
     
     
@@ -633,6 +645,9 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
             if calendarView != nil { calendarView.tintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) }
             if confirmButton != nil { confirmButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) }
             for row in notificationSelectoinRows { row.SetAccentColor(color: accentColor) }
+            if dueTimetoggle != nil { dueTimetoggle.onTintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) }
+            notificationStatusLabel.textColor = selectedNotificationTypes.count == 0 ? .systemGray : ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
+            repeatStatusLabel.textColor = selectedRepeatTypes.count == 0 ? .systemGray : ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
         }
     }
     
@@ -711,6 +726,8 @@ class WeekdaysSelectionRow: SettingsSelectionRow {
         }
     }
     func DeselectWeekday(sender: WeekdaySelectionButton) {
+        if calView.selectedRepeatTypes.count == 1 { return }
+        
         if calView.selectedRepeatTypes.contains(sender.type) {
             calView.selectedRepeatTypes.remove(at: calView.selectedRepeatTypes.firstIndex(of: sender.type)!)
         }

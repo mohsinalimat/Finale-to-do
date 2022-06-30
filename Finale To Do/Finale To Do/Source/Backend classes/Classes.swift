@@ -208,6 +208,8 @@ struct SettingsConfig: Codable {
     
     var isNotificationsAllowed: Bool = false
     var isNaggingModeOn: Bool = false
+    var defaultNoTimeNotificationTypes: [NotificationType] = []
+    var defaultDueTimeNotificationTypes: [NotificationType] = [.OnTime]
     var appBadgeNumberTypes: [AppBadgeNumberType] = [.OverdueTasks]
     
     var widgetLists: [UUID] = []

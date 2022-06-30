@@ -147,6 +147,8 @@ class SaveManager {
                 App.settingsConfig.appBadgeNumberTypes = (value as? [Int])?.compactMap{ AppBadgeNumberType(rawValue: $0) } ?? App.settingsConfig.appBadgeNumberTypes
             }
             else if key == "isNaggingModeOn" { App.settingsConfig.isNaggingModeOn = value as? Bool ?? App.settingsConfig.isNaggingModeOn}
+            else if key == "defaultDueTimeNotificationTypes" { App.settingsConfig.defaultDueTimeNotificationTypes = (value as? [Int])?.compactMap{ NotificationType(rawValue: $0) } ?? App.settingsConfig.defaultDueTimeNotificationTypes }
+            else if key == "defaultNoTimeNotificationTypes" { App.settingsConfig.defaultNoTimeNotificationTypes = (value as? [Int])?.compactMap{ NotificationType(rawValue: $0) } ?? App.settingsConfig.defaultNoTimeNotificationTypes }
             else if key == "widgetLists" {
                 App.settingsConfig.widgetLists = (value as? [String])?.compactMap{ UUID(uuidString: $0) } ?? App.settingsConfig.widgetLists
             }

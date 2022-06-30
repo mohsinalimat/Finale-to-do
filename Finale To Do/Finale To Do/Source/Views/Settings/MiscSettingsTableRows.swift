@@ -242,7 +242,6 @@ class SettingsSelectionRow: UIView, UIDynamicTheme {
 }
 
 //MARK: Widget Lists View
-
 class SettingsWidgetListsView: UIView {
     static var height: CGFloat {
         return CGFloat(68 + 50*(App.userTaskLists.count+2))
@@ -840,4 +839,186 @@ class SettingsAppLogoAndVersionView: UIView, UIDynamicTheme {
     
     
     
+}
+
+
+
+//MARK: Default Notifications Type View
+class SettingsDefaultNotificationTypeView: UIView {
+    static var height: CGFloat {
+        return CGFloat(88 + 45.0*6)
+    }
+    let selectionRowHeight = 45.0
+    
+    let padding = 16.0
+    var rowWidth: CGFloat!
+    let rowHeight: CGFloat
+    
+    let titleLabel = UILabel()
+    let subtitleLabel = UILabel()
+    let rowsContainer = UIView()
+    
+    var selectionRows = [SettingsSelectionRow]()
+    
+    let isWithDueTime: Bool
+    
+    init(isWithDueTime: Bool) {
+        self.isWithDueTime = isWithDueTime
+        self.rowHeight = SettingsAppBadgeCountView.height
+        super.init(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 0, height: rowHeight)))
+        
+        titleLabel.text = !isWithDueTime ? "Tasks Without Due Time" : "Tasks With Due Time"
+        titleLabel.textColor = .label
+        
+        subtitleLabel.numberOfLines = 2
+        subtitleLabel.text = !isWithDueTime ? "New tasks without a specific due time will automatically have these notifications enabled." : "New tasks with a specific due time will automatically have these notifications enabled."
+        subtitleLabel.textColor = .systemGray
+        subtitleLabel.font = .preferredFont(forTextStyle: .footnote)
+        subtitleLabel.adjustsFontSizeToFitWidth = true
+        
+        self.addSubview(titleLabel)
+        self.addSubview(subtitleLabel)
+        self.addSubview(rowsContainer)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        
+        rowWidth = superview!.frame.width
+        let paddedRowWidth = rowWidth - padding*2
+        self.frame.size.width = rowWidth
+        
+        titleLabel.frame = CGRect(x: padding, y: padding, width: paddedRowWidth, height: 20)
+        subtitleLabel.frame = CGRect(x: padding, y: titleLabel.frame.maxY+padding*0.25, width: paddedRowWidth, height: 40.0)
+        
+        SetupRows()
+        for row in selectionRows { rowsContainer.addSubview(row) }
+        rowsContainer.frame = CGRect(x: 0, y: subtitleLabel.frame.maxY + padding*0.5-4, width: rowWidth, height: Double(selectionRows.count)*selectionRowHeight)
+    }
+    
+    func SetupRows () {
+        if selectionRows.count != 0 { return }
+        
+        selectionRows.append(
+            SettingsSelectionRow(frame: CGRect(x: 0, y: 0, width: rowWidth, height: selectionRowHeight),
+                title: "None",
+                index: -1,
+                isSelected: isWithDueTime ? App.settingsConfig.defaultDueTimeNotificationTypes.count == 0 : App.settingsConfig.defaultNoTimeNotificationTypes.count == 0,
+                isNone: true,
+                onSelect: SelectOption,
+                onDeselect: DeselectOption))
+        
+        let start = isWithDueTime ? 0 : 5
+        let end = isWithDueTime ? 5 : 10
+        for i in start..<end {
+            selectionRows.append(
+                SettingsSelectionRow(frame: CGRect(x: 0, y: selectionRowHeight + Double(isWithDueTime ? i : i-5)*selectionRowHeight, width: rowWidth, height: selectionRowHeight),
+                    title: NotificationType(rawValue: i)!.str,
+                    index: i,
+                    isSelected: isWithDueTime ? App.settingsConfig.defaultDueTimeNotificationTypes.contains(NotificationType(rawValue: i)!) : App.settingsConfig.defaultNoTimeNotificationTypes.contains(NotificationType(rawValue: i)!),
+                    isNone: false,
+                    onSelect: SelectOption,
+                    onDeselect: DeselectOption)
+            )
+        }
+    }
+    
+    func SelectOption(index: Int) {
+        if isWithDueTime {
+            if index == -1 {
+                for selectionRow in selectionRows {
+                    selectionRow.isSelected = false
+                }
+                App.settingsConfig.defaultDueTimeNotificationTypes.removeAll()
+                selectionRows.first?.isSelected = true
+                return
+            }
+            
+            let notifPerk = StatsManager.getLevelPerk(type: .UnlimitedNotifications)
+            if App.settingsConfig.defaultDueTimeNotificationTypes.count >= 2 && !notifPerk.isUnlocked {
+                let coloredSubstring = "Level \(notifPerk.unlockLevel)"
+                let vc = LockedPerkPopupViewController(warningText: "Reach \(coloredSubstring) to set more than 2 notifications per task", coloredSubstring: coloredSubstring, parentVC: self.parentViewController)
+                vc.modalPresentationStyle = .overFullScreen
+                vc.modalTransitionStyle = .crossDissolve
+                self.parentViewController!.present(vc, animated: true)
+                return
+            }
+            
+            App.settingsConfig.defaultDueTimeNotificationTypes.append(NotificationType(rawValue: index)!)
+            selectionRows.first?.isSelected = false
+            for selectionRow in selectionRows {
+                if selectionRow.index == index {
+                    selectionRow.isSelected = true
+                    break
+                }
+            }
+        } else {
+            if index == -1 {
+                for selectionRow in selectionRows {
+                    selectionRow.isSelected = false
+                }
+                App.settingsConfig.defaultNoTimeNotificationTypes.removeAll()
+                selectionRows.first?.isSelected = true
+                return
+            }
+            
+            let notifPerk = StatsManager.getLevelPerk(type: .UnlimitedNotifications)
+            if App.settingsConfig.defaultNoTimeNotificationTypes.count >= 2 && !notifPerk.isUnlocked {
+                let coloredSubstring = "Level \(notifPerk.unlockLevel)"
+                let vc = LockedPerkPopupViewController(warningText: "Reach \(coloredSubstring) to set more than 2 notifications per task", coloredSubstring: coloredSubstring, parentVC: self.parentViewController)
+                vc.modalPresentationStyle = .overFullScreen
+                vc.modalTransitionStyle = .crossDissolve
+                self.parentViewController!.present(vc, animated: true)
+                return
+            }
+            
+            App.settingsConfig.defaultNoTimeNotificationTypes.append(NotificationType(rawValue: index)!)
+            selectionRows.first?.isSelected = false
+            for selectionRow in selectionRows {
+                if selectionRow.index == index {
+                    selectionRow.isSelected = true
+                    break
+                }
+            }
+        }
+    }
+    
+    func DeselectOption (index: Int) {
+        if isWithDueTime {
+            if index == -1 { return }
+            
+            if App.settingsConfig.defaultDueTimeNotificationTypes.contains(NotificationType(rawValue: index)!) {
+                App.settingsConfig.defaultDueTimeNotificationTypes.remove(at: App.settingsConfig.defaultDueTimeNotificationTypes.firstIndex(of: NotificationType(rawValue: index)!)!)
+            }
+            
+            if App.settingsConfig.defaultDueTimeNotificationTypes.count == 0 { selectionRows.first?.isSelected = true }
+            for selectionRow in selectionRows {
+                if selectionRow.index == index {
+                    selectionRow.isSelected = false
+                    break
+                }
+            }
+        } else {
+            if index == -1 { return }
+            
+            if App.settingsConfig.defaultNoTimeNotificationTypes.contains(NotificationType(rawValue: index)!) {
+                App.settingsConfig.defaultNoTimeNotificationTypes.remove(at: App.settingsConfig.defaultNoTimeNotificationTypes.firstIndex(of: NotificationType(rawValue: index)!)!)
+            }
+            
+            if App.settingsConfig.defaultNoTimeNotificationTypes.count == 0 { selectionRows.first?.isSelected = true }
+            for selectionRow in selectionRows {
+                if selectionRow.index == index {
+                    selectionRow.isSelected = false
+                    break
+                }
+            }
+        }
+    }
+    
+    
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }

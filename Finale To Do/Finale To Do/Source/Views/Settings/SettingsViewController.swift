@@ -336,6 +336,9 @@ class SettingsNotificationsPage: SettingsPageViewController {
             SettingsSection(footer: "Finale To Do will send you up to 5 notifications every two minutes until you open the app.", options: [.switchCell(model: SettingsSwitchOption(title: "Nagging Mode", isOn: App.settingsConfig.isNaggingModeOn, OnChange: { sender in
                 App.settingsConfig.isNaggingModeOn = sender.isOn
             }))]),
+            SettingsSection(options: [
+                .navigationCell(model: SettingsNavigationOption(title: "Default Notifications", nextPage: SettingsNotificationsDefaultNotificationsPage()))
+            ]),
             SettingsSection(options: [.customViewCell(model: SettingsAppBadgeCountView())], customHeight: SettingsAppBadgeCountView.height)
         ]
     }
@@ -354,6 +357,26 @@ class SettingsNotificationsPage: SettingsPageViewController {
     }
     
 }
+
+//MARK: Default Notifications
+class SettingsNotificationsDefaultNotificationsPage: SettingsPageViewController {
+    
+    override func GetSettings() -> [SettingsSection] {
+        return [
+            SettingsSection(options: [.customViewCell(model: SettingsDefaultNotificationTypeView(isWithDueTime: true))], customHeight: SettingsDefaultNotificationTypeView.height),
+            SettingsSection(options: [.customViewCell(model: SettingsDefaultNotificationTypeView(isWithDueTime: false))], customHeight: SettingsDefaultNotificationTypeView.height)
+        ]
+    }
+    
+    
+    
+    override var PageTitle: String {
+        return "Default Notifications"
+    }
+    
+}
+
+
 
 //MARK: Widget
 
