@@ -137,6 +137,7 @@ class SettingsPageViewController: UIViewController, UITableViewDelegate, UITable
     
     func ReloadThemeColors() {
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        self.navigationController?.navigationBar.tintColor = ThemeManager.currentTheme.primaryElementColor()
         UIView.animate(withDuration: 0.25) { [self] in
             if tableView != nil {
                 tableView.backgroundColor = ThemeManager.currentTheme.interface == .Light ? .systemGray6 : .black

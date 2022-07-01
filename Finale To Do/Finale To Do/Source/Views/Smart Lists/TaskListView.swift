@@ -277,15 +277,18 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
             self.OpenTaskDetailsView(slider: cell.slider)
             completion(true)
         }
-        editAction.backgroundColor = .systemGray
+        
+        let undoAction = UIContextualAction(style: .normal, title: "Undo") { (action, view, completion) in
+            self.app.UndoCompletingTask(task: cell.slider.task)
+            completion(true)
+        }
 
         let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { (action, view, completion) in
             self.app.DeleteTask(task: cell.slider.task)
             completion(true)
         }
-        deleteAction.backgroundColor = UIColor.red
 
-        return UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        return UISwipeActionsConfiguration(actions: [deleteAction, cell.slider.task.isCompleted ? undoAction : editAction])
     }
     
     func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {

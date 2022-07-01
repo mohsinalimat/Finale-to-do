@@ -39,13 +39,13 @@ class GuidePageViewController: UIViewController, UIDynamicTheme {
         screenshotView.layer.cornerRadius = 20
         screenshotView.clipsToBounds = true
         
-        let iphoneFrameSize = 8.0
+        let iphoneFrameSize = 6.0
         let iphoneFrameWidth = screenshotWidth + iphoneFrameSize*2
         let iphoneFrameHeight = screenshotHeight + iphoneFrameSize*2
         
         iphoneFrameView.frame = CGRect(x: 0.5*(width-iphoneFrameWidth), y: padding + 0.5*(screenshotHeight-iphoneFrameHeight), width: iphoneFrameWidth, height: iphoneFrameHeight)
         iphoneFrameView.layer.cornerRadius = 26
-        iphoneFrameView.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
+        iphoneFrameView.backgroundColor = ThemeManager.currentTheme.primaryElementColor().dark
         
         descriptionContainer.frame = CGRect(x: padding, y: screenshotView.frame.maxY+padding*2, width: width-padding*2, height: 0)
         descriptionContainer.layer.cornerRadius = 12
@@ -72,9 +72,10 @@ class GuidePageViewController: UIViewController, UIDynamicTheme {
     
     func ReloadThemeColors() {
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
+        self.navigationController?.navigationBar.tintColor = ThemeManager.currentTheme.primaryElementColor()
         UIView.animate(withDuration: 0.25) { [self] in
             descriptionContainer.backgroundColor = ThemeManager.currentTheme.settingsRowBackgroundColor
-            iphoneFrameView.backgroundColor = ThemeManager.currentTheme.primaryElementColor()
+            iphoneFrameView.backgroundColor = ThemeManager.currentTheme.primaryElementColor().dark
             self.view.backgroundColor = ThemeManager.currentTheme.settingsBackgroundColor
         }
     }

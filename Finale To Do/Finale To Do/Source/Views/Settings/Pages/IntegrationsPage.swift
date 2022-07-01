@@ -69,7 +69,7 @@ class SettingsIntegrationsPage: SettingsPageViewController {
                     DispatchQueue.main.async {
                         for reminder: EKReminder? in reminders as? [EKReminder?] ?? [EKReminder?]() {
                             if reminder != nil {
-                                if self.doesTaskExist(reminder: reminder!) { continue }
+                                if self.doesTaskExist(reminder: reminder!, taskList: taskList) { continue }
                                 
                                 let importedTask = Task(
                                     name: reminder!.title,
@@ -107,18 +107,14 @@ class SettingsIntegrationsPage: SettingsPageViewController {
         }
     }
     
-    func doesTaskExist (reminder: EKReminder) -> Bool {
+    func doesTaskExist (reminder: EKReminder, taskList: TaskList) -> Bool {
         if !reminder.isCompleted {
-            for tasklist in App.instance.allTaskLists {
-                for task in tasklist.upcomingTasks {
-                    if task.name == reminder.title { return true }
-                }
+            for task in taskList.upcomingTasks {
+                if task.name == reminder.title { return true }
             }
         } else {
-            for tasklist in App.instance.allTaskLists {
-                for task in tasklist.completedTasks {
-                    if task.name == reminder.title { return true }
-                }
+            for task in taskList.completedTasks {
+                if task.name == reminder.title { return true }
             }
         }
         return false

@@ -59,15 +59,15 @@ struct WidgetTask: Identifiable, Codable {
     }
     
     func isToday(currentDate: Date) -> Bool {
-        let diff = dateAssigned.get(.day, calendar: Calendar.current) - currentDate.get(.day, calendar: Calendar.current)
+        let diff = (Calendar.current.ordinality(of: .day, in: .year, for: dateAssigned) ?? 0) - (Calendar.current.ordinality(of: .day, in: .year, for: currentDate) ?? 0)
         return diff == 0
     }
     func isYesterday(currentDate: Date) -> Bool {
-        let diff = dateAssigned.get(.day, calendar: Calendar.current) - currentDate.get(.day, calendar: Calendar.current)
+        let diff = (Calendar.current.ordinality(of: .day, in: .year, for: dateAssigned) ?? 0) - (Calendar.current.ordinality(of: .day, in: .year, for: currentDate) ?? 0)
         return diff == -1
     }
     func isTomorrow(currentDate: Date) -> Bool {
-        let diff = dateAssigned.get(.day, calendar: Calendar.current) - currentDate.get(.day, calendar: Calendar.current)
+        let diff = (Calendar.current.ordinality(of: .day, in: .year, for: dateAssigned) ?? 0) - (Calendar.current.ordinality(of: .day, in: .year, for: currentDate) ?? 0)
         return diff == 1
     }
     
