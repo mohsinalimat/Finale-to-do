@@ -22,4 +22,11 @@
         "Add tasks from home screen! Long press on Finale To Do icon from your home screen to quickly add a new task.",
         ]
     },
+    {
+    "version": "1.15",
+    "change_logs": [
+        "Hide in Smart Lists: Select which personal lists will contribute tasks to Smart Lists.",
+        "Grayscale Theme: Beautiful white dominant theme for light interface connoisseurs.",
+        ]
+    },
 ]

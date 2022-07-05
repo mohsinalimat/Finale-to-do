@@ -17,6 +17,7 @@ class AppUpdatedViewController: UIViewController {
         self.changeLog = changeLog
         super.init(nibName: nil, bundle: nil)
         
+        overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
         self.view.backgroundColor = .systemBackground
         
         let frameWidth = self.view.frame.width

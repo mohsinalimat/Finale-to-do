@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  Finale To-do
 //
-//  Created by Grant Oganan on 4/14/22.
+//  Created by Grant Oganyan on 4/14/22.
 //
 
 import UIKit
@@ -23,6 +23,7 @@ class App: UIViewController {
     
     var lastCompletedTask: Task?
     var lastDeletedTask: Task?
+    var newlyCreatedRepeatingTask: Task?
     
     var allTaskLists: [TaskList] {
         var x = [TaskList]()
@@ -471,8 +472,16 @@ class App: UIViewController {
         if lastCompletedTask != nil {
             StatsManager.DeductPointsForTask(task: lastCompletedTask!)
             UndoCompletingTask(task: lastCompletedTask!)
+            if newlyCreatedRepeatingTask != nil {
+                DeleteTask(task: newlyCreatedRepeatingTask!)
+                newlyCreatedRepeatingTask = nil
+            }
         } else if lastDeletedTask != nil {
             UndoDeletingTask(task: lastDeletedTask!)
+            if newlyCreatedRepeatingTask != nil {
+                DeleteTask(task: newlyCreatedRepeatingTask!)
+                newlyCreatedRepeatingTask = nil
+            }
         }
     }
     
@@ -502,6 +511,8 @@ class App: UIViewController {
         let newTask = Task(name: task.name, priority: task.priority, notes: task.notes, repeating: task.repeating, isComleted: false, isDateAssigned: task.isDateAssigned, isDueTimeAssigned: task.isDueTimeAssigned, dateAssigned: newDate, dateCreated: task.dateCreated, notifications: task.notifications, taskListID: task.taskListID)
         
         CreateNewTask(tasklist: getTaskList(id: newTask.taskListID), task: newTask)
+        
+        newlyCreatedRepeatingTask = newTask
     }
     
     func SkipRepeatingTask (task: Task) {
@@ -596,8 +607,8 @@ class App: UIViewController {
     func OpenAddTaskListView () {
         let listPerk = StatsManager.getLevelPerk(type: .UnlimitedLists)
         if App.userTaskLists.count >= 9 && !listPerk.isUnlocked {
-            let coloredSubstring = "Level \(listPerk.unlockLevel)"
-            let vc = LockedPerkPopupViewController(warningText: "Reach \(coloredSubstring) to create more than 10 lists", coloredSubstring: coloredSubstring, parentVC: self)
+            let level = "Level \(listPerk.unlockLevel)"
+            let vc = LockedPerkPopupViewController(warningText: "Reach \(level) to create more than ten lists", coloredSubstring: [level], parentVC: self)
             vc.modalPresentationStyle = .overFullScreen
             vc.modalTransitionStyle = .crossDissolve
             self.present(vc, animated: true)

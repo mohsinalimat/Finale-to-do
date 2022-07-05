@@ -16,7 +16,7 @@ class LockedPerkPopupViewController: UIViewController {
     let containerView = UIView()
     let parentVC: UIViewController?
     
-    init(warningText: String, coloredSubstring: String? = nil, parentVC: UIViewController? = nil) {
+    init(warningText: String, coloredSubstring: [String]? = nil, parentVC: UIViewController? = nil) {
         self.parentVC = parentVC
         super.init(nibName: nil, bundle: nil)
         overrideUserInterfaceStyle = App.settingsConfig.interface == .System ? .unspecified : App.settingsConfig.interface == .Light ? .light : .dark
@@ -109,14 +109,14 @@ class LockedPerkPopupViewController: UIViewController {
         })
     }
     
-    func getWarningText(warningText: String, coloredSubstring: String? = nil) -> NSMutableAttributedString {
+    func getWarningText(warningText: String, coloredSubstring: [String]? = nil) -> NSMutableAttributedString {
         let mutableAttributedString = NSMutableAttributedString.init(string: warningText)
         
         if coloredSubstring == nil { return mutableAttributedString }
         
-        let range = (warningText as NSString).range(of: coloredSubstring!)
-        
-        mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: ThemeManager.currentTheme.primaryElementColor(), range: range)
+        for substr in coloredSubstring! {
+            mutableAttributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: ThemeManager.currentTheme.primaryElementColor(), range: (warningText as NSString).range(of: substr))
+        }
         return mutableAttributedString
     }
     

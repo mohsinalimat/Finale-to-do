@@ -204,6 +204,7 @@ struct SettingsConfig: Codable {
     
     var defaultListID: UUID = UUID()
     var smartLists: [SmartList] = [.Overview]
+    var listsShownInSmartLists: [UUID] = []
     var hideCompletedTasks: Bool = false
     
     var isNotificationsAllowed: Bool = false
@@ -309,7 +310,7 @@ enum AppBadgeNumberType: Int, Codable {
     case TasksToday = 1
     case TasksTomorrow = 2
     case OverdueTasks = 3
-    case UpcomingTasks = 4
+    case AllUpcomingTasks = 4
     
     var str: String {
         switch self {
@@ -321,8 +322,8 @@ enum AppBadgeNumberType: Int, Codable {
             return "Tasks tomorrow"
         case .OverdueTasks:
             return "Overdue tasks"
-        case .UpcomingTasks:
-            return "Upcoming tasks"
+        case .AllUpcomingTasks:
+            return "All upcoming tasks"
         }
     }
 }
@@ -424,6 +425,8 @@ enum SmartList: Int, Codable, CaseIterable {
             return {
                 var n = 0
                 for list in App.instance.allTaskLists {
+                    if App.settingsConfig.listsShownInSmartLists.count != 0 && !App.settingsConfig.listsShownInSmartLists.contains(list.id) { continue }
+                    
                     for task in list.upcomingTasks {
                         if task.isOverdue {
                             n += 1

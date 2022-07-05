@@ -177,10 +177,10 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     }
     
     var headerElementsColor: UIColor {
-        if App.selectedTaskListIndex >= App.settingsConfig.smartLists.count { return .white }
+        if App.selectedTaskListIndex >= App.settingsConfig.smartLists.count { return ThemeManager.currentTheme.tasklistHeaderElementsColor }
         
         if ThemeManager.currentTheme.usesDynamicColors { return .label }
-        else { return .white }
+        else { return ThemeManager.currentTheme.tasklistHeaderElementsColor }
     }
     
     var headerTitle: String {
@@ -431,8 +431,10 @@ class TaskListView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
         allUpcomingTasks.removeAll()
         allCompletedTasks.removeAll()
         for taskList in taskLists {
-            allUpcomingTasks.append(contentsOf: taskList.upcomingTasks)
-            allCompletedTasks.append(contentsOf: taskList.completedTasks)
+            if App.selectedTaskListIndex >= App.settingsConfig.smartLists.count || App.settingsConfig.listsShownInSmartLists.count == 0 || App.settingsConfig.listsShownInSmartLists.contains(taskList.id) {
+                allUpcomingTasks.append(contentsOf: taskList.upcomingTasks)
+                allCompletedTasks.append(contentsOf: taskList.completedTasks)
+            }
         }
         allCompletedTasks = allCompletedTasks.sorted { $0.dateCompleted > $1.dateCompleted }
         if App.selectedTaskListIndex < App.settingsConfig.smartLists.count && sortOverviewList { SortUpcomingTasks(sortPreference: App.instance.overviewSortingPreference, animated: false) }

@@ -142,6 +142,9 @@ class SaveManager {
             else if key == "defaultListID" {
                 App.settingsConfig.defaultListID = (value as? String) != nil ? UUID(uuidString: (value as! String))! : App.settingsConfig.defaultListID
             }
+            else if key == "listsShownInSmartLists" {
+                App.settingsConfig.listsShownInSmartLists = (value as? [String])?.compactMap{ UUID(uuidString: $0) } ?? App.settingsConfig.listsShownInSmartLists
+            }
             else if key == "isNotificationsAllowed" { App.settingsConfig.isNotificationsAllowed = value as? Bool ?? App.settingsConfig.isNotificationsAllowed}
             else if key == "appBadgeNumberTypes" {
                 App.settingsConfig.appBadgeNumberTypes = (value as? [Int])?.compactMap{ AppBadgeNumberType(rawValue: $0) } ?? App.settingsConfig.appBadgeNumberTypes

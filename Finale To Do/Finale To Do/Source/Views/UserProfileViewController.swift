@@ -529,14 +529,15 @@ class MyLevelPerksController: UIViewController, UIDynamicTheme, UITableViewDeleg
             selectionID: 0,
             isSelected: StatsManager.allLevelPerks[indexPath.section].isUnlocked,
             OnSelect: {})))
-        cell.selectionStyle = StatsManager.allLevelPerks[indexPath.section].type == .TrueBlackTheme || StatsManager.allLevelPerks[indexPath.section].type == .ColoredAppIcons ? .default : .none
-        cell.accessoryType = StatsManager.allLevelPerks[indexPath.section].type == .TrueBlackTheme || StatsManager.allLevelPerks[indexPath.section].type == .ColoredAppIcons ? .disclosureIndicator : .none
+        cell.selectionStyle = StatsManager.allLevelPerks[indexPath.section].type == .GrayscaleAndTrueBlackThemes || StatsManager.allLevelPerks[indexPath.section].type == .ColoredAppIcons ? .default : .none
+        cell.accessoryType = StatsManager.allLevelPerks[indexPath.section].type == .GrayscaleAndTrueBlackThemes || StatsManager.allLevelPerks[indexPath.section].type == .ColoredAppIcons ? .disclosureIndicator : .none
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        if indexPath.section == 0 || indexPath.section == 1 {
+        
+        if StatsManager.allLevelPerks[indexPath.section].type == .GrayscaleAndTrueBlackThemes || StatsManager.allLevelPerks[indexPath.section].type == .ColoredAppIcons {
             self.show(SettingsAppearancePage(), sender: nil)
         }
     }

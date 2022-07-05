@@ -62,6 +62,9 @@ struct AppTheme: Equatable {
         if usesDynamicColors { return self.interface == .Light ? tasklistColor.light : tasklistColor }
         return overrideTasklistHeaderGradientSecondaryColor ?? (self.interface == .Light ? self.primaryColor.light : self.primaryColor)
     }
+    var tasklistHeaderElementsColor: UIColor {
+        return overrideTaskListHeaderElementsColor ??  .white
+    }
     
     //Sidemenu colors
     var sidemenuBackgroundColor: UIColor { return overrideSidemenuBackgroundColor ?? (self.interface == .Light ? self.primaryColor.dark2 : self.primaryColor.dark3) }
@@ -80,6 +83,7 @@ struct AppTheme: Equatable {
     var overrideTasklistBackgroundColor: UIColor? = nil
     var overrideTasklistHeaderColor: UIColor? = nil
     var overrideTasklistHeaderGradientSecondaryColor: UIColor? = nil
+    var overrideTaskListHeaderElementsColor: UIColor? = nil
     
     //Override Sidemenu colors
     var overrideSidemenuBackgroundColor: UIColor? = nil
@@ -116,6 +120,11 @@ class ThemeManager {
         AppTheme(name: "Aqua", interface: .Light, primaryColor: UIColor(hex: "22A0ED"), overrideTasklistHeaderColor: .defaultColor.lerp(second: .white, percentage: 0.1), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "47FCF9")),
         
         AppTheme(name: "Sunset", interface: .Light, primaryColor: UIColor(hex: "EB4F34"), overrideTasklistHeaderColor: .defaultColor.lerp(second: .white, percentage: 0.1), overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "FF3C00")),
+        
+        AppTheme(name: "Grayscale", interface: .Light, primaryColor: UIColor(hex: "646464"),
+                 overrideTasklistHeaderColor: UIColor(hex: "FFFFFF"),
+                 overrideTasklistHeaderGradientSecondaryColor: UIColor(hex: "FFFFFF"),
+                 overrideTaskListHeaderElementsColor: .black)
     
     ]
     

@@ -230,7 +230,7 @@ struct AchievementBadgeGroup {
 }
 
 enum LevelPerkType {
-    case TrueBlackTheme
+    case GrayscaleAndTrueBlackThemes
     case ColoredAppIcons
     case UnlimitedNotifications
     case UnlimitedLists
@@ -318,9 +318,9 @@ extension StatsManager {
     
     static let allLevelPerks: [LevelPerk] = [
         
-        LevelPerk(unlockLevel: 5, type: .TrueBlackTheme, title: "True Black theme", OnTap: {}),
-        LevelPerk(unlockLevel: 10, type: .ColoredAppIcons, title: "Colored app icons", OnTap: {}),
-        LevelPerk(unlockLevel: 15, type: .UnlimitedNotifications, title: "Set unlimited notifications", OnTap: {}),
+        LevelPerk(unlockLevel: 5, type: .GrayscaleAndTrueBlackThemes, title: "Grayscale & True Black themes", OnTap: {}),
+        LevelPerk(unlockLevel: 10, type: .UnlimitedNotifications, title: "Set unlimited notifications", OnTap: {}),
+        LevelPerk(unlockLevel: 15, type: .ColoredAppIcons, title: "Colored app icons", OnTap: {}),
         LevelPerk(unlockLevel: 20, type: .UnlimitedLists, title: "Create unlimited lists", OnTap: {}),
         LevelPerk(unlockLevel: 25, type: .HigherTaskHistoryLimit, title: "Up to 100 tasks history", OnTap: {}),
     

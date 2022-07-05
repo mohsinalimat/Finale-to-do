@@ -367,8 +367,8 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
         
         let notifPerk = StatsManager.getLevelPerk(type: .UnlimitedNotifications)
         if selectedNotificationTypes.count >= 2 && !notifPerk.isUnlocked {
-            let coloredSubstring = "Level \(notifPerk.unlockLevel)"
-            let vc = LockedPerkPopupViewController(warningText: "Reach \(coloredSubstring) to set more than 2 notifications per task", coloredSubstring: coloredSubstring, parentVC: self)
+            let level = "Level \(notifPerk.unlockLevel)"
+            let vc = LockedPerkPopupViewController(warningText: "Reach \(level) to set more than 2 notifications per task", coloredSubstring: [level], parentVC: self)
             vc.modalPresentationStyle = .overFullScreen
             vc.modalTransitionStyle = .crossDissolve
             self.present(vc, animated: true)
@@ -646,8 +646,8 @@ class CalendarViewController: UIViewController, UIDynamicTheme {
             if confirmButton != nil { confirmButton.backgroundColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) }
             for row in notificationSelectoinRows { row.SetAccentColor(color: accentColor) }
             if dueTimetoggle != nil { dueTimetoggle.onTintColor = ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) }
-            notificationStatusLabel.textColor = selectedNotificationTypes.count == 0 ? .systemGray : ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
-            repeatStatusLabel.textColor = selectedRepeatTypes.count == 0 ? .systemGray : ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor)
+            if notificationStatusLabel != nil { notificationStatusLabel.textColor = selectedNotificationTypes.count == 0 ? .systemGray : ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) }
+            if repeatStatusLabel != nil { repeatStatusLabel.textColor = selectedRepeatTypes.count == 0 ? .systemGray : ThemeManager.currentTheme.primaryElementColor(tasklistColor: accentColor) }
         }
     }
     

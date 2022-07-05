@@ -250,14 +250,12 @@ class NotificationHelper {
                         }
                         for task in overdue {  if !includedTasks.contains(task) {includedTasks.append(task)} }
                     }
-                case .UpcomingTasks:
+                case .AllUpcomingTasks:
                     for list in App.instance.allTaskLists {
+                        if App.settingsConfig.listsShownInSmartLists.count != 0 && !App.settingsConfig.listsShownInSmartLists.contains(list.id) { continue }
+                        
                         for task in list.upcomingTasks {
-                            if task.isOverdue {
-                                if !includedTasks.contains(task) {includedTasks.append(task)}
-                            } else if task.isDateAssigned && Calendar.current.isDateInToday(task.dateAssigned) {
-                                if !includedTasks.contains(task) {includedTasks.append(task)}
-                            }
+                            if !includedTasks.contains(task) {includedTasks.append(task)}
                         }
                     }
                 }

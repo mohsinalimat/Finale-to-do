@@ -119,8 +119,9 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
     
     func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath, previewProvider: nil) { suggestedActions in
+            let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
+            
             let DeleteAction = UIAction(title: "Delete", image: UIImage(systemName: "trash"), attributes: .destructive) { action in
-                let cell = tableView.cellForRow(at: indexPath) as! TaskListTableCell
                 let confirmationVC = ConfirmationSlideover(
                     title: "Delete \"\(cell.taskListMenuItem.taskList.name)\"?",
                     description: "All tasks from this list will be lost",
@@ -128,13 +129,6 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
                     confirmActionColor: .systemRed,
                     confirmAction: { App.instance.DeleteTaskList(taskList: cell.taskListMenuItem.taskList) })
                 App.instance.present(confirmationVC, animated: true)
-                
-//                App.instance.view.addSubview(ConfirmationSlideoverOld(
-//                    title: "Delete \"\(cell.taskListMenuItem.taskList.name)\"?",
-//                    subTitle: "All tasks from this list will be lost",
-//                    confirmActionTitle: " Delete",
-//                    confirmAction: { App.instance.DeleteTaskList(taskList: cell.taskListMenuItem.taskList) }
-//                ))
             }
             let Delete = UIMenu(title: "", options: .displayInline, children: [DeleteAction])
             
@@ -143,7 +137,15 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
                 App.instance.OpenEditTaskListView(taskList: cell.taskListMenuItem.taskList)
             }
             
-            let Regular = UIMenu(title: "", options: .displayInline, children: [Edit])
+            let isIncludedInSmartList = App.settingsConfig.listsShownInSmartLists.contains(cell.taskListMenuItem.taskList.id) || App.settingsConfig.listsShownInSmartLists.count == 0
+            let ToggleSmartListInclusion = UIAction(title: isIncludedInSmartList ? "Hide from Smart Lists" : "Show in Smart Lists", image: UIImage(systemName: isIncludedInSmartList ? "minus.square" : "plus.square")) { action in
+                self.ToggleSmartListInclusion(tasklist: cell.taskListMenuItem.taskList)
+            }
+            
+            var regularChildren = [Edit, ToggleSmartListInclusion]
+            if isIncludedInSmartList && App.settingsConfig.listsShownInSmartLists.count == 1 { regularChildren.removeLast() }
+            
+            let Regular = UIMenu(title: "", options: .displayInline, children: regularChildren)
             
             if indexPath.row == 0 { return UIMenu(title: "", children: [Regular]) }
             return UIMenu(title: "", children: [Regular, Delete])
@@ -211,6 +213,34 @@ class SideMenuView: UIView, UITableViewDataSource, UITableViewDelegate, UITableV
                 break
             }
         }
+    }
+    
+    func ToggleSmartListInclusion(tasklist: TaskList) {
+        let isIncludedInSmartList = App.settingsConfig.listsShownInSmartLists.contains(tasklist.id) || App.settingsConfig.listsShownInSmartLists.count == 0
+        
+        if !isIncludedInSmartList {
+            if !App.settingsConfig.listsShownInSmartLists.contains(tasklist.id) {
+                App.settingsConfig.listsShownInSmartLists.append(tasklist.id)
+                if App.settingsConfig.listsShownInSmartLists.count >= App.userTaskLists.count + 1 {
+                    App.settingsConfig.listsShownInSmartLists.removeAll()
+                }
+            }
+        } else {
+            if App.settingsConfig.listsShownInSmartLists.contains(tasklist.id) {
+                App.settingsConfig.listsShownInSmartLists.remove(at: App.settingsConfig.listsShownInSmartLists.firstIndex(of: tasklist.id)!)
+            } else if App.settingsConfig.listsShownInSmartLists.count == 0 {
+                if App.mainTaskList.id != tasklist.id {
+                    App.settingsConfig.listsShownInSmartLists.append(App.mainTaskList.id)
+                }
+                for userlist in App.userTaskLists {
+                    if userlist.id == tasklist.id { continue }
+                    App.settingsConfig.listsShownInSmartLists.append(userlist.id)
+                }
+            }
+        }
+        App.instance.SelectTaskList(index: App.selectedTaskListIndex, closeMenu: false)
+        App.instance.sideMenuView.UpdateSmartListTasksCount()
+        SaveManager.instance.SaveSettings()
     }
     
     func getMenuItemPreview(configuration: UIContextMenuConfiguration, isDismissing: Bool) -> UITargetedPreview {
