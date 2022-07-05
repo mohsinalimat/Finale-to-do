@@ -1,6 +1,6 @@
 <img src="https://i.imgur.com/aRMWepb.png" alt="Task Manager" width="200"/><img src="https://i.imgur.com/w3WgfBc.png" alt="Task Manager" width="200"/><img src="https://i.imgur.com/V65kNxJ.png" alt="Task Manager" width="200"/><img src="https://i.imgur.com/aZX7oGY.png" alt="Task Manager" width="200"/>
 
-# Finale To Do
+# Finale To Do: Tasks & Widget
 Finale To Do is a minimalistic yet powerful task manager, planner, and reminder. It is a flexible tool to help you organize work, life, studies, hobbies, grocery lists, or anything you can throw at it.
 
 Create tasks, add notes, set multiple reminders, specify priorities. Separate tasks by lists, colors, icons, sorting preference, and more. Level up by completing tasks and receiving awards to keep you motivated in your journey. Use the beautiful home screen widget to keep important tasks always on hand. Select from a variety of themes to have the visual style that suits your own taste.
